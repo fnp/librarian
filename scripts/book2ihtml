@@ -2,26 +2,23 @@
 import os
 import optparse
 
-from librarian import text
-from librarian import dcparser, ParseError
+from librarian import html, ParseError
 
 
 if __name__ == '__main__':
     # Parse commandline arguments
     usage = """Usage: %prog [options] SOURCE [SOURCE...]
-    Convert SOURCE files to TXT format."""
+    Convert SOURCE files to HTML format."""
 
     parser = optparse.OptionParser(usage=usage)
 
     parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
         help='print status messages to stdout')
-    parser.add_option('-w', '--wrap', action='store', type='int', dest='wrapping', default=0,
-        help='set line wrap column')
     parser.add_option('-i', '--ignore-dublin-core', action='store_false', dest='parse_dublincore', default=True,
         help='don\'t try to parse dublin core metadata')
             
     options, input_filenames = parser.parse_args()
-    
+
     if len(input_filenames) < 1:
         parser.print_help()
         exit(1)
@@ -31,15 +28,15 @@ if __name__ == '__main__':
         if options.verbose:
             print input_filename
         
-        output_filename = os.path.splitext(input_filename)[0] + '.txt'
+        output_filename = os.path.splitext(input_filename)[0] + '.html'
         try:
-            text.transform(input_filename, output_filename, parse_dublincore=options.parse_dublincore,
-                wrapping=str(options.wrapping))
+            html.transform(input_filename, output_filename, parse_dublincore=options.parse_dublincore,\
+                stylesheet='partial')
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
                 'file': input_filename,
                 'name': e.__class__.__name__,
-                'message': e.message
+                'message': e.message.encode('utf-8')
             }
         except IOError, e:
             print '%(file)s:%(name)s:%(message)s' % {
@@ -51,6 +48,7 @@ if __name__ == '__main__':
             print '%(file)s:%(etype)s:%(message)s' % {
                 'file': input_filename,
                 'etype': e.__class__.__name__,
-                'message': e.message,
+                'message': e.message.encode('utf-8'),
             }
             raise e
+

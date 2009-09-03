@@ -3,5 +3,5 @@
 MANIFEST
 dist
 build
-nbproject
-nbproject/*
+*.egg-info
+.coverage

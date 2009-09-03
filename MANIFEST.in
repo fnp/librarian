@@ -1,2 +1,2 @@
-include librarian/*.xslt
-recursive-include tests/files/ *.xml
+include librarian/*.xslt 
+include librarian/config.xml

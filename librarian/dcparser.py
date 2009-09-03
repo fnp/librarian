@@ -3,7 +3,7 @@ from xml.parsers.expat import ExpatError
 from datetime import date
 import time
 
-from librarian import ValidationError, NoDublinCore
+from librarian import ValidationError, NoDublinCore, ParseError, DCNS, RDFNS
 
 import lxml.etree as etree # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
@@ -105,54 +105,31 @@ class Field(object):
 
         return self.validate_value(f)
 
-# ==========
-# = Parser =
-# ==========
-
-class XMLNamespace(object):
-    '''Represents XML namespace.'''
-    
-    def __init__(self, uri):
-        self.uri = uri
-
-    def __call__(self, tag):
-        return '{%s}%s' % (self.uri, tag)
-
-    def __contains__(self, tag):
-        return tag.startswith(str(self))
-
-    def __repr__(self):
-        return 'XMLNamespace(%r)' % self.uri
-    
-    def __str__(self):
-        return '%s' % self.uri
 
 
-class BookInfo(object):
-    RDF = XMLNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
-    DC = XMLNamespace('http://purl.org/dc/elements/1.1/')
-    
+
+class BookInfo(object):    
     FIELDS = (
-        Field( DC('creator'), 'author', as_person),
-        Field( DC('title'), 'title'),
-        Field( DC('subject.period'), 'epoches', salias='epoch', multiple=True),
-        Field( DC('subject.type'), 'kinds', salias='kind', multiple=True),
-        Field( DC('subject.genre'), 'genres', salias='genre', multiple=True),
-        Field( DC('date'), 'created_at', as_date),
-        Field( DC('date.pd'), 'released_to_public_domain_at', as_date, required=False),
-        Field( DC('contributor.editor'), 'editors', \
+        Field( DCNS('creator'), 'author', as_person),
+        Field( DCNS('title'), 'title'),
+        Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
+        Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
+        Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True),
+        Field( DCNS('date'), 'created_at', as_date),
+        Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
+        Field( DCNS('contributor.editor'), 'editors', \
             as_person, salias='editor', multiple=True, default=[]),
-        Field( DC('contributor.translator'), 'translators', \
+        Field( DCNS('contributor.translator'), 'translators', \
             as_person,  salias='translator', multiple=True, default=[]),
-        Field( DC('contributor.technical_editor'), 'technical_editors',
+        Field( DCNS('contributor.technical_editor'), 'technical_editors',
             as_person, salias='technical_editor', multiple=True, default=[]),
-        Field( DC('publisher'), 'publisher'),
-        Field( DC('source'), 'source_name', required=False),
-        Field( DC('source.URL'), 'source_url', required=False),
-        Field( DC('identifier.url'), 'url'),
-        Field( DC('relation.hasPart'), 'parts', multiple=True, required=False),
-        Field( DC('rights.license'), 'license', required=False),
-        Field( DC('rights'), 'license_description'), 
+        Field( DCNS('publisher'), 'publisher'),
+        Field( DCNS('source'), 'source_name', required=False),
+        Field( DCNS('source.URL'), 'source_url', required=False),
+        Field( DCNS('identifier.url'), 'url'),
+        Field( DCNS('relation.hasPart'), 'parts', multiple=True, required=False),
+        Field( DCNS('rights.license'), 'license', required=False),
+        Field( DCNS('rights'), 'license_description'),
     )
 
     @classmethod
@@ -166,7 +143,7 @@ class BookInfo(object):
         try:
             iter = etree.iterparse(xmlfile, ['start', 'end'])            
             for (event, element) in iter:
-                if element.tag == cls.RDF('RDF') and event == 'start':
+                if element.tag == RDFNS('RDF') and event == 'start':
                     desc_tag = element
                     break
 
@@ -176,7 +153,7 @@ class BookInfo(object):
 
             # continue 'till the end of RDF section
             for (event, element) in iter:
-                if element.tag == cls.RDF('RDF') and event == 'end':
+                if element.tag == RDFNS('RDF') and event == 'end':
                     break
 
             # if there is no end, Expat should yell at us with an ExpatError
@@ -192,7 +169,7 @@ class BookInfo(object):
     def from_element(cls, rdf_tag):
         # the tree is already parsed, so we don't need to worry about Expat errors
         field_dict = {}
-        desc = rdf_tag.find(".//" + cls.RDF('Description') )        
+        desc = rdf_tag.find(".//" + RDFNS('Description') )
         
         if desc is None:
             raise NoDublinCore("No DublinCore section found.")
@@ -202,14 +179,14 @@ class BookInfo(object):
             fv.append(e.text)
             field_dict[e.tag] = fv
                 
-        return cls( desc.attrib, field_dict )        
+        return cls( desc.attrib, field_dict )
 
     def __init__(self, rdf_attrs, dc_fields):
         """rdf_attrs should be a dictionary-like object with any attributes of the RDF:Description.
         dc_fields - dictionary mapping DC fields (with namespace) to list of text values for the 
         given field. """
 
-        self.about = rdf_attrs.get(self.RDF('about'))
+        self.about = rdf_attrs.get(RDFNS('about'))
         self.fmap = {}
 
         for field in self.FIELDS:
@@ -258,14 +235,14 @@ class BookInfo(object):
         #etree._namespace_map[str(self.DC)] = 'dc'
         
         if parent is None:
-            root = etree.Element(self.RDF('RDF'))
+            root = etree.Element(RDFNS('RDF'))
         else:
-            root = parent.makeelement(self.RDF('RDF'))
+            root = parent.makeelement(RDFNS('RDF'))
 
-        description = etree.SubElement(root, self.RDF('Description'))
+        description = etree.SubElement(root, RDFNS('Description'))
         
         if self.about:
-            description.set(self.RDF('about'), self.about)
+            description.set(RDFNS('about'), self.about)
         
         for field in self.FIELDS:
             v = getattr(self, field.name, None)
@@ -283,6 +260,25 @@ class BookInfo(object):
         
         return root
 
+
+    def serialize(self):
+        rdf = {}
+        rdf['about'] = { 'uri': RDFNS('about'), 'value': self.about }
+
+        dc = {}
+        for field in self.FIELDS:
+            v = getattr(self, field.name, None)
+            if v is not None:
+                if field.multiple:
+                    if len(v) == 0: continue
+                    v = [ unicode(x) for x in v if v is not None ]
+                else:
+                    v = unicode(v)
+                    
+                dc[field.name] = {'uri': field.uri, 'value': v}
+        rdf['fields'] = dc
+        return rdf
+
     def to_dict(self):
         result = {'about': self.about}
         for field in self.FIELDS:
@@ -291,14 +287,14 @@ class BookInfo(object):
             if v is not None:
                 if field.multiple:
                     if len(v) == 0: continue
-                    v = [ unicode(x) for x in v ]
+                    v = [ unicode(x) for x in v if v is not None ]
                 else:
                     v = unicode(v)
                 result[field.name] = v
 
             if field.salias:
                 v = getattr(self, field.salias)
-                if v is not None: result[field.salias] = v
+                if v is not None: result[field.salias] = unicode(v)
         
         return result
 

@@ -1,25 +1,64 @@
 <?xml version='1.0' encoding='utf-8'?>
-<utwor><liryka_lp>
-    <autor_utworu>Adam Asnyk</autor_utworu>
-    <nazwa_utworu>Między nami nic nie było</nazwa_utworu>
+<utwor>
+  <liryka_lp>
 
-    <strofa>Między nami nic nie było!/
-    Żadnych zwierzeń, wyznań żadnych!/
-    Nic nas z sobą nie łączyło ---/
-    Prócz wiosennych marzeń zdradnych;</strofa>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Asnyk/Między_nami_nic_nie_było">
+<dc:creator xml:lang="pl">Asnyk, Adam</dc:creator>
+<dc:title xml:lang="pl">Między nami nic nie było</dc:title>
+<dc:contributor.editor xml:lang="pl">Sekuła, Aleksandra</dc:contributor.editor>
+<dc:contributor.technical_editor xml:lang="pl">Sutkowska, Olga</dc:contributor.technical_editor>
+<dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+<dc:subject.period xml:lang="pl">Pozytywizm</dc:subject.period>
+<dc:subject.type xml:lang="pl">Liryka</dc:subject.type>
+<dc:subject.genre xml:lang="pl">Wiersz</dc:subject.genre>
+<dc:description xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.</dc:description>
+<dc:identifier.url xml:lang="pl">http://wolnelektury.pl/katalog/lektura/miedzy-nami-nic-nie-bylo</dc:identifier.url>
+<dc:source.URL xml:lang="pl">http://www.polona.pl/Content/5164</dc:source.URL>
+<dc:source xml:lang="pl">(Asnyk, Adam) El...y (1838-1897), Poezye, t. 3,  Gebethner i Wolff, wyd. nowe poprzedzone słowem wstępnym St. Krzemińskiego, Warszawa, 1898</dc:source>
+<dc:rights xml:lang="pl">Domena publiczna - Adam Asnyk zm. 1897</dc:rights>
+<dc:date.pd xml:lang="pl">1897</dc:date.pd>
+<dc:format xml:lang="pl">xml</dc:format>
+<dc:type xml:lang="pl">text</dc:type>
+<dc:type xml:lang="en">text</dc:type>
+<dc:date xml:lang="pl">2007-09-06</dc:date>
+<dc:audience xml:lang="pl">L</dc:audience>
+<dc:language xml:lang="pl">pol</dc:language>
+</rdf:Description>
+</rdf:RDF>
 
-    <strofa>Prócz tych woni, barw i blasków,/
-    Unoszących się w przestrzeni;/
-    Prócz szumiących śpiewem lasków/
-    I tej świeżej łąk zieleni;</strofa>
 
-    <strofa>Prócz tych kaskad i potoków,/
-    Zraszających każdy parów,/
-    Prócz girlandy tęcz, obłoków,/
-    Prócz natury słodkich czarów;</strofa>
+<autor_utworu>Adam Asnyk</autor_utworu>
 
-    <strofa>Prócz tych wspólnych, jasnych zdrojów,/
-    Z których serce zachwyt piło;/
-    Prócz pierwiosnków i powojów,---/
-    Między nami nic nie było!</strofa>
-</liryka_lp></utwor>
+<nazwa_utworu><begin id="b1189062500041"/><motyw id="m1189062500041">Miłość platoniczna</motyw>Między nami nic nie było</nazwa_utworu>
+
+
+
+<strofa>Między nami nic nie było!/
+Żadnych zwierzeń, wyznań żadnych!/
+Nic nas z sobą nie łączyło ---/
+Prócz wiosennych marzeń zdradnych;</strofa>
+
+
+
+<strofa><begin id="b1189062528872"/><motyw id="m1189062528872">Natura</motyw>Prócz tych woni, barw i blasków,/
+Unoszących się w przestrzeni;/
+Prócz szumiących śpiewem lasków/
+I tej świeżej łąk zieleni;</strofa>
+
+
+
+<strofa>Prócz tych kaskad i potoków,/
+Zraszających każdy parów,/
+Prócz girlandy tęcz, obłoków,/
+Prócz natury słodkich czarów;</strofa>
+
+
+
+<strofa>Prócz tych wspólnych, jasnych zdrojów,/
+Z których serce zachwyt piło;/
+Prócz pierwiosnków i powojów,---/
+Między nami nic nie było!<end id="e1189062528872"/><end id="e1189062500041"/></strofa>
+
+</liryka_lp>
+</utwor>

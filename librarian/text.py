@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
-import cStringIO
-import re
-import codecs
-
+from librarian import dcparser, parser
 from lxml import etree
-
-from librarian import dcparser
+import cStringIO
+import codecs
+import os
+import re
 
 
 ENTITY_SUBSTITUTIONS = [
@@ -78,22 +76,27 @@ ns['substitute_entities'] = substitute_entities
 ns['wrap_words'] = wrap_words
 
 
-def transform(input_filename, output_filename, **options):
+def transform(input_filename, output_filename, is_file=True, parse_dublincore=True, **options):
     """Transforms file input_filename in XML to output_filename in TXT."""
     # Parse XSLT
     style_filename = os.path.join(os.path.dirname(__file__), 'book2txt.xslt')
     style = etree.parse(style_filename)
 
     if is_file:
-        document = WLDocument.from_file(input, True)
+        document = parser.WLDocument.from_file(input_filename, True, parse_dublincore=parse_dublincore)
     else:
-        document = WLDocument.from_string(input, True)
+        document = parser.WLDocument.from_string(input_filename, True, parse_dublincore=parse_dublincore)
 
     result = document.transform(style, **options)
 
     output_file = codecs.open(output_filename, 'wb', encoding='utf-8')
+    
+    if parse_dublincore:
+        url = dcparser.parse(input_filename).url
+    else:
+        url = '*' * 10
     output_file.write(TEMPLATE % {
-        'url': dcparser.parse(input_filename).url,
+        'url': url,
         'text': unicode(result),
     })
 

@@ -6,7 +6,9 @@ import copy
 
 from lxml import etree
 from librarian.parser import WLDocument
+from librarian import XHTMLNS, ParseError
 
+from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 ENTITY_SUBSTITUTIONS = [
     (u'---', u'—'),
@@ -16,6 +18,14 @@ ENTITY_SUBSTITUTIONS = [
     (u'"', u'”'),
 ]
 
+STYLESHEETS = {
+    'legacy': 'book2html.xslt',
+    'full': 'wl2html_full.xslt',
+    'partial': 'wl2html_partial.xslt'
+}
+
+def get_stylesheet(name):
+    return os.path.join(os.path.dirname(__file__), STYLESHEETS[name])
 
 def substitute_entities(context, text):
     """XPath extension function converting all entites in passed text."""
@@ -25,38 +35,44 @@ def substitute_entities(context, text):
         text = text.replace(entity, substitutution)
     return text
 
-
 # Register substitute_entities function with lxml
 ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
 ns['substitute_entities'] = substitute_entities
 
-
-def transform(input, output_filename=None, is_file=True):
+def transform(input, output_filename=None, is_file=True, \
+    parse_dublincore=True, stylesheet='legacy', options={}):
     """Transforms file input_filename in XML to output_filename in XHTML."""
     # Parse XSLT
-    style_filename = os.path.join(os.path.dirname(__file__), 'book2html.xslt')
-    style = etree.parse(style_filename)
+    try:
+        style_filename = get_stylesheet(stylesheet)
+        style = etree.parse(style_filename)
 
-    if is_file:
-        document = WLDocument.from_file(input, True)
-    else:
-        document = WLDocument.from_string(input, True)
-
-    result = document.transform(style)
-    del document # no longer needed large object :)
-
-    if result.find('//p') is not None:
-        add_anchors(result.getroot())
-        add_table_of_contents(result.getroot())
-        
-        if output_filename is not None:
-            result.write(output_filename, xml_declaration=False, pretty_print=True, encoding='utf-8')
+        if is_file:
+            document = WLDocument.from_file(input, True, \
+                parse_dublincore=parse_dublincore)
         else:
-            return result
-        return True
-    else:
-        return False
+            document = WLDocument.from_string(input, True, \
+                parse_dublincore=parse_dublincore)
 
+        result = document.transform(style, **options)
+        del document # no longer needed large object :)        
+        
+        if etree.ETXPath('//p|//{%s}p' % str(XHTMLNS))(result) is not None:
+            add_anchors(result.getroot())
+            add_table_of_contents(result.getroot())
+        
+            if output_filename is not None:
+                result.write(output_filename, xml_declaration=False, pretty_print=True, encoding='utf-8')
+            else:
+                return result
+            return True
+        else:
+            print "[Librarian] didn't find any paragraphs"
+            return "<empty />"
+    except KeyError:
+        raise ValueError("'%s' is not a valid stylesheet.")
+    except (XMLSyntaxError, XSLTApplyError), e:
+        raise ParseError(e)
 
 class Fragment(object):
     def __init__(self, id, themes):

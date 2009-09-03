@@ -1,0 +1,125 @@
+<config>
+    <block-elements>              
+        <!-- tagi głowne -->
+        <utwor />
+        <opowiadanie />
+        <liryka_l />
+        <liryka_lp />
+        <powiesc />
+        <dramat_wierszowany_l />
+        <dramat_wierszowany_lp />
+        <dramat_wspolczesny />
+
+        <!-- inne tagi -->
+        <nota />
+        <dedykacja />
+        <kwestia />
+        <motto />
+        <didaskalia />
+    </block-elements>
+
+    <inline-elements>       
+        <!-- with emphasis -->
+        <mat />
+        <didask_tekst />
+        <slowo_obce />
+        <wyroznienie />
+        <osoba />
+        <tytul_dziela />
+    </inline-elements>
+
+    <paragraph-elements>
+        <!-- akapity -->
+        <akap />
+        <akap_cd />
+        <akap_dialog />
+        <miejsce_czas />
+        <motto_podpis />
+        <wers_cd />
+        <wers_akap />
+        <wers_wciety />
+    </paragraph-elements>        
+        
+    <header-1-elements>
+        <!-- placeholder -->        
+        <dzielo_nadrzedne />
+    </header-1-elements>
+    
+    <header-2-elements>
+        <naglowek_akt />        
+        <naglowek_czesc />
+        <autor_utworu />
+        <nazwa_utworu />
+        <srodtytul />
+    </header-2-elements>
+    
+    <header-3-elements>
+        <naglowek_scena />
+        <naglowek_rozdzial />
+        <podtytul />
+    </header-3-elements>
+    
+    <header-4-elements>
+        <naglowek_osoba />
+        <naglowek_podrozdzial />
+    </header-4-elements>
+
+    <special-tags>
+        <strofa />
+        <lista_osob />
+        <lista_osoba />
+        <sekcja_swiatlo />
+        <sekcja_asterysk />
+        <separator_linia />
+        <zastepnik_wersu />
+        <dlugi_cytat />
+    </special-tags>
+
+    <annotations>
+        <pa />
+        <pe />
+        <pr />
+        <pt />
+    </annotations>
+    
+    <no-show-elements>
+        <begin />
+        <end />
+        <extra />
+        <uwaga />
+        <motyw />        
+        <br />
+        <pa />
+        <pe />
+        <pr />
+        <pt />
+    </no-show-elements>
+
+    <editable>
+        <strofa />
+        <akap />
+        <akap_cd />
+        <akap_dialog />
+        <dzielo_nadrzedne />
+
+        <naglowek_akt />
+        <naglowek_czesc />
+        <autor_utworu />
+        <nazwa_utworu />
+        <srodtytul />
+
+        <naglowek_scena />
+        <naglowek_rozdzial />
+        <podtytul />
+
+        <naglowek_osoba />
+        <naglowek_podrozdzial />
+
+        <lista_osoba />
+
+        <dlugi_cytat />
+        <poezja_cyt />
+
+        <didaskalia />
+    </editable>
+</config>
