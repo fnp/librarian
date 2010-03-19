@@ -73,7 +73,8 @@ To extract book fragments marked as "theme":
 
 Authors
 -------
-Originally written by Marek Stępniowski <marek@stepniowski>
+Originally written by Marek Stępniowski <marek@stepniowski.com>
 	
 Later contributions:
-    Łukasz Rekucki <lrekucki@gmail.com>
+
+ * Łukasz Rekucki <lrekucki@gmail.com>
