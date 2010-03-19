@@ -11,8 +11,7 @@ setup(
     author_email='marek@stepniowski.com',
     mantainer='Łukasz Rekucki',
     mantainer_email='lrekucki@gmail.com',
-    url='http://redmine.nowoczesnapolska.org.pl/',
-    
+    url='http://github.com/fnp/librarian',    
     packages=['librarian'],
     package_data = {'librarian': ['xslt/*.xslt']},
     include_package_data=True,

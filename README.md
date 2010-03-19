@@ -1,9 +1,9 @@
-Licence
-=======
+License
+-------
     
     Copyright © 2008,2009,2010 Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>
     
-    For full list of contibutors see AUTHORS section at the end. 
+    For full list of contributors see AUTHORS section at the end. 
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -19,63 +19,61 @@ Licence
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Librarian
-=========
+About 
+------
 
-Librarian (*ang. bibliotekarz*) to biblioteka służąca do konwersji języka składu książek opartego na XML opracowanego przez Fundację Nowoczesna Polska na inne formaty.
+Librarian converts XML-based markup language used by FNP for writing books to other formats, whiche are more subtable for presentation.
 
-Obecnie obsługiwane są formaty:
+Currently we support:
 
- * XML
- * TXT
+ * HTML4, XHTML 1.0
+ * Plain text 
  
-Biblioteka librarian potrafi również parsować metadane opisane przez DublinCore oraz wyciągać fragmenty motywów z lektur.
+In the future, we plan to support:
+
+ * EPUB (XHTML based)
+ * print-ready PDF 
 
 
-Wymagania
----------
+Other features: 
 
- * [lxml 2.2](http://codespeak.net/lxml/)
-
- 
-Instalacja
-----------
-Zainstaluj biblioteki z sekcji *Wymagania* powyżej. Następnie rozpakuj archiwum z biblioteką librarian, przejdź w terminalu do rozpakowanego katalogu i wpisz:
-
-<pre>python setup.py install</pre>
-
-Na Linuxie i OSX mogą być wymagane uprawnienia administratora. W takim wypadku wpisz:
-
-<pre>sudo python setup.py install</pre>
-
-Alternatywnie możesz zainstalować bibliotekę librarian w wybranym przez siebie katalogu. W takim wypadku należy użyć argumentu *prefix* do *setup.py*:
-
-<pre>python setup.py install --prefix=ŚCIEŻKA_DO_WYBRANEGO_KATALOGU</pre> 
-
-W takim wypadku będzie jednak potrzebne własnoręczne edytowanie zmiennych systemowych *PATH* i *PYTHONPATH*.
+ * extract DublinCore meta-data from documents;
+ * extract marked "themes" from documents.
 
 
-Sposób użycia
--------------
-Konwersja plików lektur do XHTML:
+Dependencies
+------------
 
-<pre>book2html LEKTURA1 LEKTURA2...</pre>
+ * [lxml] (http://codespeak.net/lxml/) >= 2.2
 
-Konwersja plików lektur do TXT:
 
-<pre>book2txt LEKTURA1 LEKTURA2...</pre>
+Installation
+------------
 
-Wyciągnięcie wszystkich fragmentów motywów z wygenerowanych plików XHTML:
+Librarian uses standard Python distutils for packaging. After installing all the dependencies just run:
 
-<pre>bookfragments PLIK1 PLIK2...</pre>
+    python setup.py install
+    
+
+Usage
+------
+
+To convert a series of file to XHTML:
+
+    book2html file1.xml [file2.xml ...]
+
+To convert a series of file to plain text:
+
+    book2txt file1.xml [file2.xml ...]
+
+To extract book fragments marked as "theme":
+
+    bookfragments file1.xml [file2.xml ...]
+
 
 Authors
 -------
-Originally written by Marek Stępniowski <marek@stepniowski>;
+Originally written by Marek Stępniowski <marek@stepniowski>
 	
 Later contributions:
     Łukasz Rekucki <lrekucki@gmail.com>
-
-
-
-
