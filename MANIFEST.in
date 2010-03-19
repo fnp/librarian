@@ -1,3 +1,0 @@
-include ez_setup.py
-include librarian/xslt/*.xslt 
-include librarian/xslt/config.xml

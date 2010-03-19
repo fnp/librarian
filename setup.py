@@ -1,21 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from ez_setup import use_setuptools
-use_setuptools()
 
-from setuptools import setup, find_packages
-
+from distutils.core import setup
 
 setup(
     name='librarian',
     version='1.3',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
-    author='Marek Stepniowski',
+    author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
+    mantainer='Łukasz Rekucki',
+    mantainer_email='lrekucki@gmail.com',
     url='http://redmine.nowoczesnapolska.org.pl/',
-    packages=find_packages(exclude=['tests']),
+    
+    packages=['librarian'],
+    package_data = {'librarian': ['xslt/*.xslt']},
     include_package_data=True,
     install_requires=['lxml>=2.2'],
-    scripts=['scripts/book2html', 'scripts/book2txt', 'scripts/bookfragments', 'scripts/genslugs'],
+    scripts=['scripts/book2html', 
+             'scripts/book2txt', 
+             'scripts/bookfragments', 
+             'scripts/genslugs'],
+             
     tests_require=['nose>=0.11', 'coverage>=3.0.1'],
 )
