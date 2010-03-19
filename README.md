@@ -22,7 +22,8 @@ License
 About 
 ------
 
-Librarian converts XML-based markup language used by FNP for writing books to other formats, whiche are more subtable for presentation.
+Librarian converts XML-based markup language used by FNP for writing books to 
+other formats, which are more suitable for presentation.
 
 Currently we support:
 
