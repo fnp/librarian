@@ -8,9 +8,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='librarian',
-    version='1.2.5',
+    version='1.3',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
-    author='Marek Stępniowski',
+    author='Marek Stepniowski',
     author_email='marek@stepniowski.com',
     url='http://redmine.nowoczesnapolska.org.pl/',
     packages=find_packages(exclude=['tests']),

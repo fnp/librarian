@@ -4,17 +4,23 @@
 
     <xsl:param name="with-paths" select="boolean(0)" />
     <xsl:param name="base-path" select="'.'"/>
-    <xsl:param name="base-offset" select="1" />    
+    <xsl:param name="base-offset" select="0" />
     
     <xsl:include href="wl2html_base.xslt" />    
-    <xsl:output encoding="utf-8" indent="yes" omit-xml-declaration = "yes" /> 
+    
+    <xsl:output
+        encoding="utf-8"
+        indent="yes"
+        omit-xml-declaration = "yes" />
 
     <xsl:template match="/">
-        <xsl:message>Processing...</xsl:message>
-        <xsl:apply-templates select="/*" mode="element-tag">
+        <chunk>
+        <xsl:apply-templates select="//chunk/child::node()" mode="element-tag">
             <xsl:with-param name="offset" select="$base-offset" />
             <xsl:with-param name="parent-path" select="$base-path" />
+            <xsl:with-param name="mixed" select="true()" />
         </xsl:apply-templates>
-    </xsl:template>   
-
+        </chunk>
+    </xsl:template>    
+    
 </xsl:stylesheet>

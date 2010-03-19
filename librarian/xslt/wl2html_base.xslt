@@ -4,7 +4,6 @@
     
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"   
-    xmlns:wl2o="http://nowoczesnapolska.org.pl/WL/2.0/Overlay"   
     xmlns:wl="http://wolnelektury.pl/functions"
 
     exclude-result-prefixes="wl" >
@@ -16,7 +15,6 @@
         indent="yes"
         omit-xml-declaration = "yes" />
 
-    <xsl:strip-space elements = "strofa utwor kwestia liryka_l liryka_lp powiesc opowiadanie dramat_wierszowany_lp" />
     <!--     
         Dokument ten opisuje podstawowe przekształcenia potrzebne
      do zamiany dokumentu WLML 1.0 na poprawnie sformatowany
@@ -30,13 +28,13 @@
         <xsl:variable name="tag" select="name($element)" />
 
         <xsl:if test="$with-paths">
-        <xsl:attribute name="wl2o:path">
-            <xsl:value-of select="$mypath" />
-        </xsl:attribute>
+            <xsl:attribute name="x-pointer">
+                <xsl:value-of select="$mypath" />
+            </xsl:attribute>
         </xsl:if>
 
         <xsl:if test="$config//editable/*[name() = $tag]">
-            <xsl:attribute name="wl2o:editable">editable</xsl:attribute>
+            <xsl:attribute name="x-editable">editable</xsl:attribute>
         </xsl:if>
 
         <xsl:attribute name="class">
@@ -47,11 +45,13 @@
     <xsl:template name="generic-descent">
         <xsl:param name="element" />
         <xsl:param name="mypath" />
+        <xsl:param name="mixed" />
         
-        <xsl:for-each select="child::node()">            
+        <xsl:for-each select="child::node()">
             <xsl:apply-templates select="." mode="element-tag">
-                <xsl:with-param name="offset" select="position()" />
+                <xsl:with-param name="offset" select="count(preceding-sibling::*)" />
                 <xsl:with-param name="parent-path" select="$mypath" />
+                <xsl:with-param name="mixed" select="$mixed" />
             </xsl:apply-templates>
         </xsl:for-each>
     </xsl:template>
@@ -59,6 +59,7 @@
     <xsl:template name="generic-content">
         <xsl:param name="element" />
         <xsl:param name="mypath" />
+        <xsl:param name="mixed" />
 
         <xsl:call-template name="generic-attributes">
             <xsl:with-param name="element" select="$element" />
@@ -68,6 +69,7 @@
         <xsl:call-template name="generic-descent">
             <xsl:with-param name="element" select="$element" />
             <xsl:with-param name="mypath" select="$mypath" />
+            <xsl:with-param name="mixed" select="$mixed" />
         </xsl:call-template>
     </xsl:template>
     
@@ -79,88 +81,33 @@
 
         <!-- <xsl:param name="parent-type" select="'block'" /> -->
 
-        <xsl:variable name="tag" select="name($element)" />        
-            
-        <xsl:choose>            
+        <xsl:variable name="tag" select="name($element)" />
+        <xsl:variable name="group" select="$config//types/*[@element and child::*[local-name() = $tag]]" />
+                    
+        <xsl:choose>
             <!-- ignore namespaced elements -->
             <xsl:when test="namespace-uri()" />
-
-            <xsl:when test="$config//block-elements/*[local-name() = $tag]">
-                <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
-                    <xsl:apply-templates select="$element" mode="element-content" >
-                        <xsl:with-param name="mypath" select="$mypath"/>
-                    </xsl:apply-templates>
-                </xsl:element>
-            </xsl:when>
-
-            <xsl:when test="$config//paragraph-elements/*[local-name() = $tag]">
-                <xsl:element name="p" namespace="http://www.w3.org/1999/xhtml">                    
-                        <xsl:apply-templates select="$element" mode="element-content" >
-                        <xsl:with-param name="mypath" select="$mypath"/>
-                    </xsl:apply-templates>
-                </xsl:element>
-            </xsl:when>
+            <xsl:when test="$group/@element">
             
-            <xsl:when test="$config//inline-elements/*[local-name() = $tag]">
-                <xsl:element name="span" namespace="http://www.w3.org/1999/xhtml">
+                <xsl:element name="{$group/@element}" namespace="http://www.w3.org/1999/xhtml">
                     <xsl:apply-templates select="$element" mode="element-content" >
-                        <xsl:with-param name="mypath" select="$mypath"/>
+                        <xsl:with-param name="mypath" select="$mypath" />
+                        <xsl:with-param name="mixed" select="boolean($group/@mixed)" />
                     </xsl:apply-templates>
                 </xsl:element>
             </xsl:when>
-
-            <xsl:when test="$config//header-1-elements/*[local-name() = $tag]">
-                <xsl:element name="h1" namespace="http://www.w3.org/1999/xhtml">
-                    <xsl:apply-templates select="$element" mode="element-content" >
-                        <xsl:with-param name="mypath" select="$mypath"/>
-                    </xsl:apply-templates>
-                </xsl:element>
-            </xsl:when>
-
-            <xsl:when test="$config//header-2-elements/*[local-name() = $tag]">
-                <xsl:element name="h2" namespace="http://www.w3.org/1999/xhtml">
-                    <xsl:apply-templates select="$element" mode="element-content" >
-                        <xsl:with-param name="mypath" select="$mypath"/>
-                    </xsl:apply-templates>
-                </xsl:element>
-            </xsl:when>
-
-            <xsl:when test="$config//header-3-elements/*[local-name() = $tag]">
-                <xsl:element name="h3" namespace="http://www.w3.org/1999/xhtml">
-                    <xsl:apply-templates select="$element" mode="element-content" >
-                        <xsl:with-param name="mypath" select="$mypath"/>
-                    </xsl:apply-templates>
-                </xsl:element>
-            </xsl:when>
-
-            <xsl:when test="$config//header-4-elements/*[local-name() = $tag]">
-                <xsl:element name="h4" namespace="http://www.w3.org/1999/xhtml">
-                    <xsl:apply-templates select="$element" mode="element-content" >
-                        <xsl:with-param name="mypath" select="$mypath"/>
-                    </xsl:apply-templates>
-                </xsl:element>
-            </xsl:when>
-
-            <xsl:when test="$config//no-show-elements/*[local-name() = $tag]" />
-
-            <xsl:otherwise>
-                <xsl:message terminate="yes">
-                    Nieznany tag '<xsl:value-of select="$tag" />' :(.
-                </xsl:message>
-            </xsl:otherwise>
+            <xsl:otherwise />
         </xsl:choose>
+
     </xsl:template>
-    
 
     <!--
-    <special-tags>
-        <strofa />
-        <lista_osob />
-        <sekcja_swiatlo />
-        <sekcja_asterysk />
-        <separator_linia />
-    </special-tags>
-    -->    
+        Tagi niestandardowe
+    -->
+
+    <xsl:template match="pr|pa|pe|pt" mode="element-tag">
+        <a href="#annotation-{generate-id(.)}"><span class="annotation"/></a><a name="anchor-{generate-id(.)}" />
+    </xsl:template>      
 
     <xsl:template match="dlugi_cytat|poezja_cyt" mode="element-tag">
         <xsl:param name="offset" />
@@ -176,6 +123,7 @@
             <xsl:call-template name="generic-descent">
                 <xsl:with-param name="element" select="current()" />
                 <xsl:with-param name="mypath" select="$mypath" />
+                <xsl:with-param name="mixed" select="true" />
             </xsl:call-template>
         </xsl:element>
     </xsl:template>
@@ -196,10 +144,11 @@
             <xsl:apply-templates select="./naglowek-listy" mode="element-tag" />
             <ul>
                 <xsl:for-each select="./lista_osoba">
-                <xsl:apply-templates select="." mode="element-tag">
-                    <xsl:with-param name="offset" select="position()" />
-                    <xsl:with-param name="parent-path" select="$mypath" />
-                </xsl:apply-templates>
+                    <xsl:apply-templates select="." mode="element-tag">
+                        <xsl:with-param name="offset" select="count(preceding-sibling::*)" />
+                        <xsl:with-param name="parent-path" select="$mypath" />
+                        <xsl:with-param name="mixed" select="false" />
+                    </xsl:apply-templates>
                 </xsl:for-each>
             </ul>
         </xsl:element>
@@ -219,6 +168,7 @@
             <xsl:call-template name="generic-descent">
                 <xsl:with-param name="element" select="current()" />
                 <xsl:with-param name="mypath" select="$mypath" />
+                <xsl:with-param name="mixed" select="true" />
             </xsl:call-template>
         </xsl:element>
     </xsl:template>
@@ -233,7 +183,7 @@
             <xsl:call-template name="generic-attributes">
                 <xsl:with-param name="element" select="current()" />
                 <xsl:with-param name="mypath" select="$mypath" />
-            </xsl:call-template>            
+            </xsl:call-template>
         </xsl:element>
     </xsl:template>
 
@@ -276,7 +226,8 @@
         <xsl:call-template name="generic-descent">
             <xsl:with-param name="element" select="current()" />
             <xsl:with-param name="mypath" select="$mypath" />
-        </xsl:call-template>        
+            <xsl:with-param name="mixed" select="boolean(1)" />
+        </xsl:call-template>
     </xsl:template>
 
     <!-- strofy -->
@@ -287,7 +238,7 @@
         <xsl:variable name="mypath"
             select="concat($parent-path, '/', name(), '[', string($offset),']')" />
 
-        <xsl:element name="div" >            
+        <xsl:element name="div" >
             <xsl:call-template name="generic-attributes">
                 <xsl:with-param name="element" select="current()" />
                 <xsl:with-param name="mypath" select="$mypath" />
@@ -333,8 +284,9 @@
             </xsl:attribute>
             <xsl:for-each select="$verse-content">
                 <xsl:apply-templates select="." mode="element-tag">
-                    <xsl:with-param name="offset" select="position()" />
+                    <xsl:with-param name="offset" select="count(preceding-sibling::*)" />
                     <xsl:with-param name="parent-path" select="$mypath" />
+                    <xsl:with-param name="mixed" select="boolean(1)" />
                 </xsl:apply-templates>
             </xsl:for-each>
         </xsl:element>
@@ -344,15 +296,19 @@
 <!-- default content processing -->
     <xsl:template match="*" mode="element-content">
         <xsl:param name="mypath" />
+        <xsl:param name="mixed" />
+
         <xsl:call-template name="generic-content">
             <xsl:with-param name="element" select="current()"/>
             <xsl:with-param name="mypath" select="$mypath"/>
+            <xsl:with-param name="mixed" select="$mixed"/>
         </xsl:call-template>
     </xsl:template>
 
     <xsl:template match="*" mode="element-tag" >
         <xsl:param name="offset" />
         <xsl:param name="parent-path" />
+        <xsl:param name="mixed" />
 
         <xsl:variable name="mypath"
             select="concat($parent-path, '/', name(), '[', string($offset),']')" />
@@ -361,14 +317,39 @@
             <xsl:with-param name="element" select="current()" />
             <xsl:with-param name="offset" select="$offset" />
             <xsl:with-param name="mypath" select="$mypath" />
+            <xsl:with-param name="mixed" select="$mixed"/>
         </xsl:call-template>
     </xsl:template>
-
+   
     <xsl:template match="text()" mode="element-tag">
+        <xsl:param name="mixed" />
+
+        <xsl:choose>
         
-        <xsl:value-of select="wl:substitute_entities(.)" />
+            <xsl:when test="not($mixed)">
+                <xsl:choose>
+                    <xsl:when test="not(normalize-space(.))" />
+                    <xsl:when test="normalize-space(.) = '&#xfeff;'"/>
+
+                    <xsl:otherwise>
+                        <div class="parse-warning">
+                            <p class="message">Uwaga! Tekst poza paragrafem</p>
+                            <p>#<xsl:copy-of select="." />#</p>
+                        </div>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
         
-        <!--<xsl:value-of select="." /> -->
+            <xsl:otherwise>
+                <xsl:value-of select="wl:substitute_entities(.)">
+                    <xsl:fallback>
+                        <xsl:value-of select="." />
+                    </xsl:fallback>
+                </xsl:value-of>
+            </xsl:otherwise>
+
+        </xsl:choose>
+        
     </xsl:template>
 
     <xsl:template match="node()" />

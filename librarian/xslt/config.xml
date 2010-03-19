@@ -1,5 +1,6 @@
 <config>
-    <block-elements>              
+    <types>
+    <structure element="div">
         <!-- tagi głowne -->
         <utwor />
         <opowiadanie />
@@ -9,16 +10,18 @@
         <dramat_wierszowany_l />
         <dramat_wierszowany_lp />
         <dramat_wspolczesny />
+    </structure>
 
+    <block element="div" mixed="true" >
         <!-- inne tagi -->
         <nota />
         <dedykacja />
         <kwestia />
         <motto />
         <didaskalia />
-    </block-elements>
+    </block>
 
-    <inline-elements>       
+    <inline-elements element="span" mixed="true">
         <!-- with emphasis -->
         <mat />
         <didask_tekst />
@@ -28,7 +31,7 @@
         <tytul_dziela />
     </inline-elements>
 
-    <paragraph-elements>
+    <paragraph-elements element="p" mixed="true">
         <!-- akapity -->
         <akap />
         <akap_cd />
@@ -40,12 +43,12 @@
         <wers_wciety />
     </paragraph-elements>        
         
-    <header-1-elements>
+    <header-1-elements element="h1" mixed="true">
         <!-- placeholder -->        
         <dzielo_nadrzedne />
     </header-1-elements>
     
-    <header-2-elements>
+    <header-2-elements element="h2" mixed="true">
         <naglowek_akt />        
         <naglowek_czesc />
         <autor_utworu />
@@ -53,13 +56,13 @@
         <srodtytul />
     </header-2-elements>
     
-    <header-3-elements>
+    <header-3-elements element="h3" mixed="true">
         <naglowek_scena />
         <naglowek_rozdzial />
         <podtytul />
     </header-3-elements>
     
-    <header-4-elements>
+    <header-4-elements element="h4" mixed="true">
         <naglowek_osoba />
         <naglowek_podrozdzial />
     </header-4-elements>
@@ -94,6 +97,7 @@
         <pr />
         <pt />
     </no-show-elements>
+    </types>
 
     <editable>
         <strofa />

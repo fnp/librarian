@@ -19,9 +19,9 @@ ENTITY_SUBSTITUTIONS = [
 ]
 
 STYLESHEETS = {
-    'legacy': 'book2html.xslt',
-    'full': 'wl2html_full.xslt',
-    'partial': 'wl2html_partial.xslt'
+    'legacy': 'xslt/book2html.xslt',
+    'full': 'xslt/wl2html_full.xslt',
+    'partial': 'xslt/wl2html_partial.xslt'
 }
 
 def get_stylesheet(name):
@@ -67,7 +67,6 @@ def transform(input, output_filename=None, is_file=True, \
                 return result
             return True
         else:
-            print "[Librarian] didn't find any paragraphs"
             return "<empty />"
     except KeyError:
         raise ValueError("'%s' is not a valid stylesheet.")

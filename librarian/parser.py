@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from librarian import ValidationError, NoDublinCore,  ParseError
-from librarian import RDFNS, DCNS
+from librarian import RDFNS
 from librarian import dcparser
 
 from xml.parsers.expat import ExpatError
@@ -57,23 +57,20 @@ class WLDocument(object):
             data = cls.LINE_SWAP_EXPR.sub(u'<br />\n', data)
     
         try:
-            parser = etree.XMLParser(remove_blank_text=True)
+            parser = etree.XMLParser(remove_blank_text=False)
             return cls(etree.parse(StringIO(data), parser), parse_dublincore=parse_dublincore)
         except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
             raise ParseError(e)                  
 
-    def part_as_text(self, path):
+    def chunk(self, path):
         # convert the path to XPath        
-        print "[L] Retrieving part:", path
+        expr = self.path_to_xpath(path)
+        elems = self.edoc.xpath(expr)
 
-        elems = self.edoc.xpath(self.path_to_xpath(path))
-        print "[L] xpath", elems
-        
         if len(elems) == 0:
-            return None        
-
-        return etree.tostring(elems[0], encoding=unicode, pretty_print=True)
-
+            return None
+        else:        
+            return elems[0]
 
     def path_to_xpath(self, path):
         parts = []
@@ -84,7 +81,7 @@ class WLDocument(object):
                 parts.append(part)
             else:
                 tag, n = match.groups()
-                parts.append("node()[position() = %d and name() = '%s']" % (int(n), tag) )
+                parts.append("*[%d][name() = '%s']" % (int(n)+1, tag) )
 
         if parts[0] == '.':
             parts[0] = ''
@@ -95,8 +92,9 @@ class WLDocument(object):
         return self.edoc.xslt(stylesheet, **options)
 
     def update_dc(self):
-        parent = self.rdf_elem.getparent()
-        parent.replace( self.rdf_elem, self.book_info.to_etree(parent) )
+        if self.book_info:
+            parent = self.rdf_elem.getparent()
+            parent.replace( self.rdf_elem, self.book_info.to_etree(parent) )
 
     def serialize(self):
         self.update_dc()
@@ -108,8 +106,8 @@ class WLDocument(object):
         for key, data in chunk_dict.iteritems():
             try:
                 xpath = self.path_to_xpath(key)
-                node = self.edoc.xpath(xpath)[0]                
-                repl = etree.fromstring(data)
+                node = self.edoc.xpath(xpath)[0]
+                repl = etree.fromstring(u"<%s>%s</%s>" %(node.tag, data, node.tag) )
                 node.getparent().replace(node, repl);
             except Exception, e:
                 unmerged.append( repr( (key, xpath, e) ) )

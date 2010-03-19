@@ -86,3 +86,24 @@ def wrap_text(ocrtext, creation_date, bookinfo=DEFAULT_BOOKINFO):
 
     return u'<utwor>\n' + dcstring + u'\n<plain-text>\n' + ocrtext +\
         u'\n</plain-text>\n</utwor>';
+
+
+def serialize_raw(element):
+    b = u'' + (element.text or '')
+
+    for child in element.iterchildren():
+        e = etree.tostring(child, method='xml', encoding=unicode, pretty_print=True)
+        b += e
+
+    return b
+
+from wl_light import serialize_nl
+
+
+SERIALIZERS = {
+    'raw': serialize_raw,
+    'nl': serialize_nl,
+}
+
+def serialize_children(element, format='raw'):
+    return SERIALIZERS[format](element)

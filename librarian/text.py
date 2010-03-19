@@ -79,7 +79,7 @@ ns['wrap_words'] = wrap_words
 def transform(input_filename, output_filename, is_file=True, parse_dublincore=True, **options):
     """Transforms file input_filename in XML to output_filename in TXT."""
     # Parse XSLT
-    style_filename = os.path.join(os.path.dirname(__file__), 'book2txt.xslt')
+    style_filename = os.path.join(os.path.dirname(__file__), 'xslt/book2txt.xslt')
     style = etree.parse(style_filename)
 
     if is_file:
