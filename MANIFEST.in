@@ -1,2 +1,2 @@
 include librarian/*.xslt
-recursive-include librarian/tests/files/ *.xml
+recursive-include tests/files/ *.xml

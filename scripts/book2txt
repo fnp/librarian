@@ -3,6 +3,7 @@ import os
 import optparse
 
 from librarian import text
+from librarian import dcparser, ParseError
 
 
 if __name__ == '__main__':
@@ -14,9 +15,11 @@ if __name__ == '__main__':
 
     parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
         help='print status messages to stdout')
-
+    parser.add_option('-w', '--wrap', action='store', type='int', dest='wrapping', default=0,
+        help='set line wrap column')
+    
     options, input_filenames = parser.parse_args()
-
+    
     if len(input_filenames) < 1:
         parser.print_help()
         exit(1)
@@ -27,5 +30,24 @@ if __name__ == '__main__':
             print input_filename
         
         output_filename = os.path.splitext(input_filename)[0] + '.txt'
-        text.transform(input_filename, output_filename)
-
+        try:
+            text.transform(input_filename, output_filename, wrapping=str(options.wrapping))
+        except ParseError, e:
+            print '%(file)s:%(name)s:%(message)s' % {
+                'file': input_filename,
+                'name': e.__class__.__name__,
+                'message': e.message
+            }
+        except IOError, e:
+            print '%(file)s:%(name)s:%(message)s' % {
+                'file': input_filename,
+                'name': e.__class__.__name__,
+                'message': e.strerror,
+            }
+        except BaseException, e:
+            print '%(file)s:%(etype)s:%(message)s' % {
+                'file': input_filename,
+                'etype': e.__class__.__name__,
+                'message': e.message,
+            }
+            raise e

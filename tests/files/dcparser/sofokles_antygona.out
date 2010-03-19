@@ -1,0 +1,19 @@
+{
+            'editors': [u'Sekuła, Aleksandra'],
+            'publisher': u'Fundacja Nowoczesna Polska',
+            'about': 'http://wiki.wolnepodreczniki.pl/Lektury:Sofokles/Antygona',
+            'source_name': u'Sofokles (496-406 a.C.), Antygona, Zakład Narodowy im. Ossolińskich, wyd. 7, Lwów, 1939',
+            'author': u'Sofokles',
+            'url': u'http://wolnelektury.pl/katalog/lektura/antygona',
+            'created_at': u'2007-08-30',
+            'title': u'Antygona',
+            'kind': u'Dramat',
+            'source_url': u'http://www.polona.pl/Content/3768',
+            'translators': [u'Morawski, Kazimierz'],
+            'released_to_public_domain_at': u'1925-01-01',
+            'epoch': u'Starożytność',
+            'genre': u'Tragedia',
+            'technical_editors': [u'Gałecki, Dariusz'],
+            'license_description': u'Domena publiczna - tłumacz Kazimierz Morawski zm. 1925',
+}
+

@@ -3,9 +3,9 @@ import os
 import cStringIO
 import re
 import copy
-import pkgutil
 
 from lxml import etree
+from librarian.parser import WLDocument
 
 
 ENTITY_SUBSTITUTIONS = [
@@ -31,32 +31,28 @@ ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
 ns['substitute_entities'] = substitute_entities
 
 
-def transform(input_filename, output_filename):
+def transform(input, output_filename=None, is_file=True):
     """Transforms file input_filename in XML to output_filename in XHTML."""
     # Parse XSLT
     style_filename = os.path.join(os.path.dirname(__file__), 'book2html.xslt')
     style = etree.parse(style_filename)
 
-    doc_file = cStringIO.StringIO()
-    expr = re.compile(r'/\s', re.MULTILINE | re.UNICODE);
+    if is_file:
+        document = WLDocument.from_file(input, True)
+    else:
+        document = WLDocument.from_string(input, True)
 
-    f = open(input_filename, 'r')
-    for line in f:
-        line = line.decode('utf-8')
-        line = expr.sub(u'<br/>\n', line)
-        doc_file.write(line.encode('utf-8'))
-    f.close()
+    result = document.transform(style)
+    del document # no longer needed large object :)
 
-    doc_file.seek(0);
-
-    parser = etree.XMLParser(remove_blank_text=True)
-    doc = etree.parse(doc_file, parser)
-
-    result = doc.xslt(style)
     if result.find('//p') is not None:
         add_anchors(result.getroot())
         add_table_of_contents(result.getroot())
-        result.write(output_filename, xml_declaration=False, pretty_print=True, encoding='utf-8')
+        
+        if output_filename is not None:
+            result.write(output_filename, xml_declaration=False, pretty_print=True, encoding='utf-8')
+        else:
+            return result
         return True
     else:
         return False

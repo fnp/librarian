@@ -3,14 +3,10 @@ from xml.parsers.expat import ExpatError
 from datetime import date
 import time
 
-# Import ElementTree from anywhere
-try:
-    import xml.etree.ElementTree as etree # Python >= 2.5
-except ImportError:
-    try:
-        import elementtree.ElementTree as etree # effbot's pure Python module
-    except ImportError:
-        import lxml.etree as etree # ElementTree API using libxml2
+from librarian import ValidationError, NoDublinCore
+
+import lxml.etree as etree # ElementTree API using libxml2
+from lxml.etree import XMLSyntaxError
 
 
 # ==============
@@ -21,7 +17,22 @@ class Person(object):
     def __init__(self, last_name, *first_names):
         self.last_name = last_name
         self.first_names = first_names
-    
+        
+    @classmethod
+    def from_text(cls, text):
+        parts = [ token.strip() for token in text.split(',') ]
+        if len(parts) == 1:
+            surname = parts[0]
+            names = []
+        elif len(parts) != 2:
+            raise ValueError("Invalid person name. There should be at most one comma: \"%s\"." % text)
+        else:
+            surname = parts[0]
+            if len(parts[1]) == 0:
+                # there is no non-whitespace data after the comma
+                raise ValueError("Found a comma, but no names given: \"%s\" -> %r." % (text, parts))
+            names = [ name for name in parts[1].split() if len(name) ] # all non-whitespace tokens
+        return cls(surname, *names)
     
     def __eq__(self, right):
         return self.last_name == right.last_name and self.first_names == right.first_names
@@ -32,52 +43,71 @@ class Person(object):
             return '%s, %s' % (self.last_name, ' '.join(self.first_names))
         else:
             return self.last_name
-    
-    
+        
     def __repr__(self):
         return 'Person(last_name=%r, first_names=*%r)' % (self.last_name, self.first_names)
 
-
-def str_to_unicode(value, previous):
-    return unicode(value)
-
-
-def str_to_unicode_list(value, previous):
-    if previous is None:
-        previous = []
-    previous.append(str_to_unicode(value, None))
-    return previous
-
-
-def str_to_person(value, previous):
-    comma_count = value.count(',')
-    
-    if comma_count == 0:
-        last_name, first_names = value, []
-    elif comma_count == 1:
-        last_name, first_names = value.split(',')
-        first_names = [name for name in first_names.split(' ') if len(name)]
-    else:
-        raise ValueError("value contains more than one comma: %r" % value)
-    
-    return Person(last_name.strip(), *first_names)
-
-
-def str_to_date(value, previous):
+def as_date(text):
     try:
-        t = time.strptime(value, '%Y-%m-%d')
-    except ValueError:
-        t = time.strptime(value, '%Y')
-    return date(t[0], t[1], t[2])
+        try:
+            t = time.strptime(text, '%Y-%m-%d')
+        except ValueError:
+            t = time.strptime(text, '%Y')
+        return date(t[0], t[1], t[2])
+    except ValueError, e:
+        raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
+def as_person(text):
+    return Person.from_text(text)
+
+def as_unicode(text):
+    if isinstance(text, unicode):
+        return text
+    else:
+        return text.decode('utf-8')
+
+class Field(object):
+    def __init__(self, uri, attr_name, type=as_unicode, multiple=False, salias=None, **kwargs):
+        self.uri = uri
+        self.name = attr_name
+        self.validator = type
+        self.multiple = multiple
+        self.salias = salias
+
+        self.required = kwargs.get('required', True) and not kwargs.has_key('default')
+        self.default = kwargs.get('default', [] if multiple else [None])
+
+    def validate_value(self, val):
+        try:
+            if self.multiple:
+                if self.validator is None:
+                    return val
+                return [ self.validator(v) if v is not None else v for v in val ]
+            elif len(val) > 1:
+                raise ValidationError("Mulitply values not allowed for field '%s'" % self.uri)
+            elif len(val) == 0:
+                raise ValidationError("Field %s has no value to assign. Check your defaults." % self.uri)
+            else:
+                if self.validator is None or val[0] is None:
+                    return val[0]
+                return self.validator(val[0])
+        except ValueError, e:
+            raise ValidationError("Field '%s' - invald value: %s" % (self.uri, e.message))
+
+    def validate(self, fdict):
+        if not fdict.has_key(self.uri):
+            if not self.required:
+                f = self.default
+            else:
+                raise ValidationError("Required field %s not found" % self.uri)
+        else:
+            f = fdict[self.uri]
+
+        return self.validate_value(f)
 
 # ==========
 # = Parser =
 # ==========
-class ParseError(Exception):
-    def __init__(self, message):
-        super(ParseError, self).__init__(message)
-
 
 class XMLNamespace(object):
     '''Represents XML namespace.'''
@@ -102,96 +132,175 @@ class BookInfo(object):
     RDF = XMLNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
     DC = XMLNamespace('http://purl.org/dc/elements/1.1/')
     
-    mapping = {
-        DC('creator')        : ('author', str_to_person),
-        DC('title')          : ('title', str_to_unicode),
-        DC('subject.period') : ('epoch', str_to_unicode),
-        DC('subject.type')   : ('kind', str_to_unicode),
-        DC('subject.genre')  : ('genre', str_to_unicode),
-        DC('date')           : ('created_at', str_to_date),
-        DC('date.pd')        : ('released_to_public_domain_at', str_to_date),
-        DC('contributor.translator') : ('translator', str_to_person),
-        DC('contributor.technical_editor') : ('technical_editor', str_to_person),
-        DC('publisher')      : ('publisher', str_to_unicode),
-        DC('source')         : ('source_name', str_to_unicode),
-        DC('source.URL')     : ('source_url', str_to_unicode),
-        DC('identifier.url') : ('url', str_to_unicode),
-        DC('relation.hasPart') : ('parts', str_to_unicode_list),
-        DC('rights.license') : ('license', str_to_unicode),
-        DC('rights')         : ('license_description', str_to_unicode), 
-    }
+    FIELDS = (
+        Field( DC('creator'), 'author', as_person),
+        Field( DC('title'), 'title'),
+        Field( DC('subject.period'), 'epoches', salias='epoch', multiple=True),
+        Field( DC('subject.type'), 'kinds', salias='kind', multiple=True),
+        Field( DC('subject.genre'), 'genres', salias='genre', multiple=True),
+        Field( DC('date'), 'created_at', as_date),
+        Field( DC('date.pd'), 'released_to_public_domain_at', as_date, required=False),
+        Field( DC('contributor.editor'), 'editors', \
+            as_person, salias='editor', multiple=True, default=[]),
+        Field( DC('contributor.translator'), 'translators', \
+            as_person,  salias='translator', multiple=True, default=[]),
+        Field( DC('contributor.technical_editor'), 'technical_editors',
+            as_person, salias='technical_editor', multiple=True, default=[]),
+        Field( DC('publisher'), 'publisher'),
+        Field( DC('source'), 'source_name', required=False),
+        Field( DC('source.URL'), 'source_url', required=False),
+        Field( DC('identifier.url'), 'url'),
+        Field( DC('relation.hasPart'), 'parts', multiple=True, required=False),
+        Field( DC('rights.license'), 'license', required=False),
+        Field( DC('rights'), 'license_description'), 
+    )
 
     @classmethod
     def from_string(cls, xml):
         from StringIO import StringIO
         return cls.from_file(StringIO(xml))
-    
+   
     @classmethod
-    def from_file(cls, xml_file):
-        book_info = cls()
-        
+    def from_file(cls, xmlfile):
+        desc_tag = None        
         try:
-            tree = etree.parse(xml_file)
+            iter = etree.iterparse(xmlfile, ['start', 'end'])            
+            for (event, element) in iter:
+                if element.tag == cls.RDF('RDF') and event == 'start':
+                    desc_tag = element
+                    break
+
+            if desc_tag is None:
+                raise NoDublinCore("DublinCore section not found. \
+                    Check if there are rdf:RDF and rdf:Description tags.")
+
+            # continue 'till the end of RDF section
+            for (event, element) in iter:
+                if element.tag == cls.RDF('RDF') and event == 'end':
+                    break
+
+            # if there is no end, Expat should yell at us with an ExpatError
+            
+            # extract data from the element and make the info
+            return cls.from_element(desc_tag)
+        except XMLSyntaxError, e:
+            raise ParseError(e)
         except ExpatError, e:
             raise ParseError(e)
 
-        description = tree.find('//' + book_info.RDF('Description'))
-        book_info.wiki_url = description.get(cls.RDF('about'), None)
+    @classmethod
+    def from_element(cls, rdf_tag):
+        # the tree is already parsed, so we don't need to worry about Expat errors
+        field_dict = {}
+        desc = rdf_tag.find(".//" + cls.RDF('Description') )        
         
-        if description is None:
-            raise ParseError('no Description tag found in document')
-        
-        for element in description.findall('*'):
-            book_info.parse_element(element) 
-        
-        return book_info
+        if desc is None:
+            raise NoDublinCore("No DublinCore section found.")
 
-    def parse_element(self, element):
+        for e in desc.getchildren():
+            fv = field_dict.get(e.tag, [])
+            fv.append(e.text)
+            field_dict[e.tag] = fv
+                
+        return cls( desc.attrib, field_dict )        
+
+    def __init__(self, rdf_attrs, dc_fields):
+        """rdf_attrs should be a dictionary-like object with any attributes of the RDF:Description.
+        dc_fields - dictionary mapping DC fields (with namespace) to list of text values for the 
+        given field. """
+
+        self.about = rdf_attrs.get(self.RDF('about'))
+        self.fmap = {}
+
+        for field in self.FIELDS:
+            value = field.validate( dc_fields )
+            setattr(self, 'prop_' + field.name, value)
+            self.fmap[field.name] = field
+            if field.salias: self.fmap[field.salias] = field
+
+    def __getattribute__(self, name):
         try:
-            attribute, converter = self.mapping[element.tag]
-            setattr(self, attribute, converter(element.text, getattr(self, attribute, None)))
-        except KeyError:
-            pass
+            field = object.__getattribute__(self, 'fmap')[name]
+            value = object.__getattribute__(self, 'prop_'+field.name)
+            if field.name == name:
+                return value
+            else: # singular alias
+                if not field.multiple:
+                    raise "OUCH!! for field %s" % name
+                
+                return value[0]
+        except (KeyError, AttributeError):
+            return object.__getattribute__(self, name)
 
-    def to_xml(self):
+    def __setattr__(self, name, newvalue):
+        try:
+            field = object.__getattribute__(self, 'fmap')[name]
+            if field.name == name:
+                object.__setattr__(self, 'prop_'+field.name, newvalue)
+            else: # singular alias
+                if not field.multiple:
+                    raise "OUCH! while setting field %s" % name
+
+                object.__setattr__(self, 'prop_'+field.name, [newvalue])
+        except (KeyError, AttributeError):
+            return object.__setattr__(self, name, newvalue)
+
+    def update(self, field_dict):
+        """Update using field_dict. Verify correctness, but don't check if all 
+        required fields are present."""
+        for field in self.FIELDS:
+            if field_dict.has_key(field.name):
+                setattr(self, field.name, field_dict[field.name])
+
+    def to_etree(self, parent = None):
         """XML representation of this object."""
-        etree._namespace_map[str(self.RDF)] = 'rdf'
-        etree._namespace_map[str(self.DC)] = 'dc'
+        #etree._namespace_map[str(self.RDF)] = 'rdf'
+        #etree._namespace_map[str(self.DC)] = 'dc'
         
-        root = etree.Element(self.RDF('RDF'))
+        if parent is None:
+            root = etree.Element(self.RDF('RDF'))
+        else:
+            root = parent.makeelement(self.RDF('RDF'))
+
         description = etree.SubElement(root, self.RDF('Description'))
         
-        if self.wiki_url:
-            description.set(self.RDF('about'), self.wiki_url)
+        if self.about:
+            description.set(self.RDF('about'), self.about)
         
-        for tag, (attribute, converter) in self.mapping.iteritems():
-            if hasattr(self, attribute):
-                e = etree.Element(tag)
-                e.text = unicode(getattr(self, attribute))
-                description.append(e)
+        for field in self.FIELDS:
+            v = getattr(self, field.name, None)
+            if v is not None:
+                if field.multiple:
+                    if len(v) == 0: continue
+                    for x in v:
+                        e = etree.Element(field.uri)
+                        e.text = unicode(x)
+                        description.append(e)
+                else:
+                    e = etree.Element(field.uri)
+                    e.text = unicode(v)
+                    description.append(e)
         
-        return unicode(etree.tostring(root, 'utf-8'), 'utf-8')
+        return root
 
     def to_dict(self):
-        etree._namespace_map[str(self.RDF)] = 'rdf'
-        etree._namespace_map[str(self.DC)] = 'dc'
-        
-        result = {'about': self.wiki_url}
-        for tag, (attribute, converter) in self.mapping.iteritems():
-            if hasattr(self, attribute):
-                result[attribute] = unicode(getattr(self, attribute))
+        result = {'about': self.about}
+        for field in self.FIELDS:
+            v = getattr(self, field.name, None)
+
+            if v is not None:
+                if field.multiple:
+                    if len(v) == 0: continue
+                    v = [ unicode(x) for x in v ]
+                else:
+                    v = unicode(v)
+                result[field.name] = v
+
+            if field.salias:
+                v = getattr(self, field.salias)
+                if v is not None: result[field.salias] = v
         
         return result
 
-
 def parse(file_name):
     return BookInfo.from_file(file_name)
-
-
-if __name__ == '__main__':
-    import sys
-    
-    info = parse(sys.argv[1])
-    for attribute, _ in BookInfo.mapping.values():
-        print '%s: %r' % (attribute, getattr(info, attribute, None))
-

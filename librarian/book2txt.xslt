@@ -3,22 +3,13 @@
 
 <xsl:output encoding="utf-8" method="text" />
 
+<xsl:param name="wrapping" select="0" />
+
 <!-- ============================================================================== -->
 <!-- = MASTER TAG                                                                 = -->
 <!-- = (can contain block tags, paragraph tags, standalone tags and special tags) = -->
 <!-- ============================================================================== -->
 <xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny">
-<xsl:text>Kodowanie znaków w dokumencie: UTF-8.
------
-Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl/). Reprodukcja cyfrowa wykonana przez
-Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN. Ten utwór nie jest chroniony prawem autorskim i znajduje
-się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać.
-
-Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie %s.
------
-
-
-</xsl:text>
 <xsl:if test="nazwa_utworu"><xsl:apply-templates select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul" mode="header" /></xsl:if>
 <xsl:text>
 
@@ -150,8 +141,8 @@ Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dost
     <xsl:apply-templates select="*|text()" mode="inline" />
 </xsl:variable>
 <xsl:text>
-
-/ </xsl:text><xsl:value-of select="wl:wrap_words(wl:strip($content))" /><xsl:text> /</xsl:text>
+    
+/ </xsl:text><xsl:value-of select="wl:wrap_words(wl:strip($content), $wrapping)" /><xsl:text> /</xsl:text>
 </xsl:template>
 
 <xsl:template match="lista_osoba">
@@ -167,7 +158,7 @@ Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dost
 <xsl:text>
 
 </xsl:text>
-<xsl:value-of select="wl:wrap_words(wl:strip($content))" />
+<xsl:value-of select="wl:wrap_words(wl:strip($content), $wrapping)" />
 </xsl:template>
 
 <xsl:template match="strofa">

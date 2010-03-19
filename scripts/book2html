@@ -2,7 +2,7 @@
 import os
 import optparse
 
-from librarian import html
+from librarian import html, ParseError
 
 
 if __name__ == '__main__':
@@ -27,5 +27,25 @@ if __name__ == '__main__':
             print input_filename
         
         output_filename = os.path.splitext(input_filename)[0] + '.html'
-        html.transform(input_filename, output_filename)
+        try:
+            html.transform(input_filename, output_filename)
+        except ParseError, e:
+            print '%(file)s:%(name)s:%(message)s' % {
+                'file': input_filename,
+                'name': e.__class__.__name__,
+                'message': e.message
+            }
+        except IOError, e:
+            print '%(file)s:%(name)s:%(message)s' % {
+                'file': input_filename,
+                'name': e.__class__.__name__,
+                'message': e.strerror,
+            }
+        except BaseException, e:
+            print '%(file)s:%(etype)s:%(message)s' % {
+                'file': input_filename,
+                'etype': e.__class__.__name__,
+                'message': e.message,
+            }
+            raise e
 
