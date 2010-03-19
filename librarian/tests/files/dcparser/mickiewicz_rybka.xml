@@ -1,0 +1,28 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Mickiewicz/Ballady/Rybka">
+        <dc:creator xml:lang="pl">Mickiewicz, Adam</dc:creator>
+        <dc:title xml:lang="pl">Rybka</dc:title>
+        <dc:relation.isPartOf xml:lang="pl">http://www.wolnelektury.pl/lektura/ballady-i-romanse</dc:relation.isPartOf>
+        <dc:contributor.editor xml:lang="pl">Sekuła, Aleksandra</dc:contributor.editor>
+        <dc:contributor.editor xml:lang="pl">Kallenbach, Józef</dc:contributor.editor>
+        <dc:contributor.technical_editor xml:lang="pl">Sutkowska, Olga</dc:contributor.technical_editor>
+        <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+        <dc:subject.period xml:lang="pl">Romantyzm</dc:subject.period>
+        <dc:subject.type xml:lang="pl">Liryka</dc:subject.type>
+        <dc:subject.genre xml:lang="pl">Ballada</dc:subject.genre>
+        <dc:description xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.</dc:description>
+        <dc:identifier.url xml:lang="pl">http://wolnelektury.pl/katalog/lektura/ballady-i-romanse-rybka</dc:identifier.url>
+        <dc:source.URL xml:lang="pl">http://www.polona.pl/Content/2222</dc:source.URL>
+        <dc:source xml:lang="pl">Mickiewicz, Adam (1798-1855), Poezje, tom 1 (Wiersze młodzieńcze - Ballady i romanse - Wiersze do r. 1824), Krakowska Spółdzielnia Wydawnicza, wyd. 2 zwiększone, Kraków, 1922</dc:source>
+        <dc:rights xml:lang="pl">Domena publiczna - Adam Mickiewicz zm. 1855</dc:rights>
+        <dc:date.pd xml:lang="pl">1855</dc:date.pd>
+        <dc:format xml:lang="pl">xml</dc:format>
+        <dc:type xml:lang="pl">text</dc:type>
+        <dc:type xml:lang="en">text</dc:type>
+        <dc:date xml:lang="pl">2007-09-06</dc:date>
+        <dc:audience xml:lang="pl">SP2</dc:audience>
+        <dc:audience xml:lang="pl">G</dc:audience>
+        <dc:audience xml:lang="pl">L</dc:audience>
+        <dc:language xml:lang="pl">pol</dc:language>
+    </rdf:Description>
+</rdf:RDF>

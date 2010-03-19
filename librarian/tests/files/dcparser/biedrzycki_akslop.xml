@@ -1,0 +1,25 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Biedrzycki/Akslop">
+        <dc:creator xml:lang="pl">Biedrzycki, Miłosz</dc:creator>
+        <dc:title xml:lang="pl">Akslop</dc:title>
+        <dc:contributor.editor xml:lang="pl">Sekuła, Aleksandra</dc:contributor.editor>
+        <dc:contributor.technical_editor xml:lang="pl">Sutkowska, Olga</dc:contributor.technical_editor>
+        <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+        <dc:subject.period xml:lang="pl">Współczesność</dc:subject.period>
+        <dc:subject.type xml:lang="pl">Liryka</dc:subject.type>
+        <dc:subject.genre xml:lang="pl">Wiersz</dc:subject.genre>
+        <dc:description xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).</dc:description>
+        <dc:identifier.url xml:lang="pl">http://wolnelektury.pl/katalog/lektura/akslop</dc:identifier.url>
+        <dc:source.URL xml:lang="pl">http://free.art.pl/mlb/gwiazdka.html#t1</dc:source.URL>
+        <dc:source xml:lang="pl">Miłosz Biedrzycki, * ("Gwiazdka"), Fundacja "brulion", Kraków-Warszawa, 1993</dc:source>
+        <dc:rights xml:lang="pl">Creative Commons Uznanie Autorstwa - Na Tych Samych Warunkach 3.0.PL</dc:rights>
+        <dc:rights.license>http://creativecommons.org/licenses/by-sa/3.0/</dc:rights.license>
+        <dc:format xml:lang="pl">xml</dc:format>
+        <dc:type xml:lang="pl">text</dc:type>
+        <dc:type xml:lang="en">text</dc:type>
+        <dc:date xml:lang="pl">2009-06-04</dc:date>
+        <dc:audience xml:lang="pl">L</dc:audience>
+        <dc:language xml:lang="pl">pol</dc:language>
+    </rdf:Description>
+</rdf:RDF>

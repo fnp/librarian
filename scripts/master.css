@@ -1,0 +1,207 @@
+body {
+    font-size: 16px;
+    font: Georgia, "Times New Roman", serif;
+    line-height: 1.5em;
+    margin: 3em;
+    max-width: 36em;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+}
+
+/* =================================================== */
+/* = Common elements: headings, paragraphs and lines = */
+/* =================================================== */
+h1 {
+    font-size: 3em;
+    margin: 1.5em 0;
+    text-align: center;
+    line-height: 1.5em;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 2em;
+    margin: 1.5em 0 0;
+    font-weight: bold;
+    line-height: 1.5em;
+}
+
+h3 {
+    font-size: 1.5em;
+    margin: 1.5em 0 0;
+    font-weight: normal;
+    line-height: 1.5em;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.5em 0 0;
+    line-height: 1.5em;
+}
+
+p {
+    margin: 0;
+}
+
+/* ======================== */
+/* = Footnotes and themes = */
+/* ======================== */
+.theme-begin {
+    border-left: 0.1em solid #DDDDDD;
+    color: #777;
+    padding: 0 0.5em;
+    width: 7.5em;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    position: absolute;
+    left: 40em;
+    line-height: 1.5em;
+    text-align: left;
+}
+
+.annotation {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+}
+
+#footnotes .annotation {
+    display: block;
+    float: left;
+    width: 2.5em;
+    clear: both;
+}
+
+#footnotes div {
+    margin: 1.5em 0 0 0;
+}
+
+#footnotes p {
+    margin-left: 2.5em;
+}
+
+
+/* ============= */
+/* = Numbering = */
+/* ============= */
+.anchor {
+    float: left;
+    margin: -0.2em -0.5em -0.2em -3.5em;
+    color: #777;
+    font-size: 12px;
+    width: 2em;
+    text-align: center;
+    padding: 0.2em 0.5em;
+}
+
+.anchor:hover, .anchor:active {
+    color: #FFF;
+    background-color: #CCC;
+}
+
+
+/* =================== */
+/* = Custom elements = */
+/* =================== */
+span.author {
+    font-size: 0.75em;
+    display: block;
+    line-height: 1.5em;
+    margin-bottom: 0.25em;
+}
+
+span.collection {
+    font-size: 0.75em;
+    display: block;
+    line-height: 1.5em;
+    margin-bottom: -0.25em;
+}
+
+span.subtitle {
+    font-size: 0.75em;
+    display: block;
+    line-height: 1.5em;
+    margin-top: -0.25em;
+}
+
+div.didaskalia {
+    font-style: italic;
+    margin: 0.5em 0 0;
+}
+
+div.kwestia {
+    margin: 0.5em 0 0;
+}
+
+div.stanza {
+    margin: 1.5em 0 0;
+}
+
+div.kwestia div.stanza {
+    margin: 0;
+}
+
+p.paragraph {
+    text-align: justify;
+    margin: 1.5em 0 0;
+}
+
+p.motto {
+    text-align: justify;
+    font-style: italic;
+    margin: 1.5em 0 0;
+}
+
+p.motto_podpis {
+    font-size: 0.875em;
+}
+
+div.fragment {
+    border-bottom: 0.1em solid #999;
+    padding-bottom: 1.5em;
+}
+
+div.note p, div.dedication p, div.note p.paragraph, div.dedication p.paragraph {
+    text-align: right;
+    font-style: italic;
+}
+
+hr.spacer {
+    height: 3em;
+    visibility: hidden;
+}
+
+hr.spacer-line {
+    margin: 1.5em 0;
+    border: none;
+    border-bottom: 0.1em solid #000;
+}
+
+p.spacer-asterisk {
+    padding: 0;
+    margin: 1.5em 0;
+    text-align: center;
+}
+
+div.person-list ol {
+    list-style: none;
+    padding: 0 0 0 1.5em;
+}
+
+p.place-and-time {
+    font-style: italic;
+}
+
+em.math, em.foreign-word, em.book-title, em.didaskalia, em.author-emphasis {
+    font-style: italic;
+}
+
+em.person {
+    font-style: normal;
+    font-variant: small-caps;
+}
+

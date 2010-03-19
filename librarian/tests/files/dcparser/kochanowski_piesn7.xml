@@ -1,0 +1,27 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Kochanowski/Pieśni/Pieśń_VII_(1)">
+        <dc:creator xml:lang="pl">Kochanowski, Jan</dc:creator>
+        <dc:title xml:lang="pl">Pieśń VII (Trudna rada w tej mierze: przyjdzie się rozjechać...)</dc:title>
+        <dc:relation.isPartOf xml:lang="pl">http://www.wolnelektury.pl/lektura/piesni-ksiegi-pierwsze</dc:relation.isPartOf>
+        <dc:contributor.editor xml:lang="pl">Sekuła, Aleksandra</dc:contributor.editor>
+        <dc:contributor.editor xml:lang="pl">Krzyżanowski, Julian</dc:contributor.editor>
+        <dc:contributor.editor xml:lang="pl">Otwinowska, Barbara</dc:contributor.editor>
+        <dc:contributor.technical_editor xml:lang="pl">Gałecki, Dariusz</dc:contributor.technical_editor>
+        <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+        <dc:subject.period xml:lang="pl">Renesans</dc:subject.period>
+        <dc:subject.type xml:lang="pl">Liryka</dc:subject.type>
+        <dc:subject.genre xml:lang="pl">Pieśń</dc:subject.genre>
+        <dc:description xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.</dc:description>
+        <dc:identifier.url xml:lang="pl">http://wolnelektury.pl/katalog/lektura/piesni-ksiegi-pierwsze-piesn-vii-trudna-rada-w-tej-mierze-pr</dc:identifier.url>
+        <dc:source.URL xml:lang="pl">http://www.polona.pl/Content/1499</dc:source.URL>
+        <dc:source xml:lang="pl">Kochanowski, Jan (1530-1584), Dzieła polskie, tom 1, oprac. Julian Krzyżanowski, wyd. 8, Państwowy Instytut Wydawniczy, Warszawa, 1976</dc:source>
+        <dc:rights xml:lang="pl">Domena publiczna - Jan Kochanowski zm. 1584 </dc:rights>
+        <dc:date.pd xml:lang="pl">1584</dc:date.pd>
+        <dc:format xml:lang="pl">xml</dc:format>
+        <dc:type xml:lang="pl">text</dc:type>
+        <dc:type xml:lang="en">text</dc:type>
+        <dc:date xml:lang="pl">2007-08-31</dc:date>
+        <dc:audience xml:lang="pl">L</dc:audience>
+        <dc:language xml:lang="pl">pol</dc:language>
+    </rdf:Description>
+</rdf:RDF>
