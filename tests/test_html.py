@@ -23,7 +23,6 @@ from librarian import html, NoDublinCore
 from nose.tools import *
 from utils import get_fixture, remove_output_file
 
-
 def teardown_transform():
     remove_output_file('text', 'asnyk_miedzy_nami.html')
 

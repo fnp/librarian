@@ -117,12 +117,8 @@ def serialize_raw(element):
 
     return b
 
-from wl_light import serialize_nl
-
-
 SERIALIZERS = {
     'raw': serialize_raw,
-    'nl': serialize_nl,
 }
 
 def serialize_children(element, format='raw'):

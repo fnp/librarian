@@ -435,11 +435,11 @@
 <!-- ========================================== -->
 <!-- Title page -->
 <xsl:template match="autor_utworu" mode="header">
-    <span class="author editable"><xsl:apply-templates mode="inline" /></span>
+    <span class="author"><xsl:apply-templates mode="inline" /></span>
 </xsl:template>
 
 <xsl:template match="nazwa_utworu" mode="header">
-    <span class="title editable"><xsl:apply-templates mode="inline" /></span>
+    <span class="title"><xsl:apply-templates mode="inline" /></span>
 </xsl:template>
 
 <xsl:template match="dzielo_nadrzedne" mode="header">
@@ -477,11 +477,11 @@
 </xsl:template>
 
 <xsl:template match="akap|akap_dialog|akap_cd">
-    <p class="paragraph editable"><xsl:apply-templates mode="inline" /></p>
+    <p class="paragraph"><xsl:apply-templates mode="inline" /></p>
 </xsl:template>
 
 <xsl:template match="strofa">
-    <div class="stanza editable">
+    <div class="stanza">
         <xsl:choose>
             <xsl:when test="count(br) > 0">     
                 <xsl:call-template name="verse">
