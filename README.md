@@ -1,5 +1,7 @@
 License
 -------
+
+  ![AGPL Logo](http://www.gnu.org/graphics/agplv3-155x51.png)
     
     Copyright © 2008,2009,2010 Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>
     
@@ -45,7 +47,7 @@ Other features:
 Dependencies
 ------------
 
- * [lxml] (http://codespeak.net/lxml/) >= 2.2
+ * lxml <http://codespeak.net/lxml/>, version 2.2 or later
 
 
 Installation
