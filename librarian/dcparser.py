@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2008,2009,2010 Fundacja Nowoczesna Polska  
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# For full license text see COPYING or <http://www.gnu.org/licenses/agpl.html>
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
 #
 from xml.parsers.expat import ExpatError
 from datetime import date
@@ -137,6 +135,10 @@ class BookInfo(object):
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
     )
+    
+    @property
+    def slug(self):
+        return self.url.rsplit('/', 1)[1]
 
     @classmethod
     def from_string(cls, xml):
