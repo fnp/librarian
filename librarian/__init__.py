@@ -4,13 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
 #
 class ParseError(Exception):
-    
-    def __init__(self, cause, message=None):
-        self.cause = cause
-        try:
-            self.message = message or self.cause.message
-        except:
-            self.message = "No message."
+    pass
 
 class ValidationError(Exception):
     pass
@@ -28,7 +22,7 @@ class XMLNamespace(object):
         return '{%s}%s' % (self.uri, tag)
 
     def __contains__(self, tag):
-        return tag.startswith('{'+str(self)+'}')
+        return tag.startswith('{' + str(self) + '}')
 
     def __repr__(self):
         return 'XMLNamespace(%r)' % self.uri
@@ -55,7 +49,7 @@ import lxml.etree as etree
 import dcparser
 
 DEFAULT_BOOKINFO = dcparser.BookInfo(
-        { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'},\
+        { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'}, \
         { DCNS('creator'): [u'Some, Author'],
           DCNS('title'): [u'Some Title'],
           DCNS('subject.period'): [u'Unknown'],
@@ -75,18 +69,18 @@ DEFAULT_BOOKINFO = dcparser.BookInfo(
             [u"Domena publiczna - zm. [OPIS STANU PRAWNEGO TEKSTU]"] })
 
 def xinclude_forURI(uri):
-    e = etree.Element( XINS("include") )
+    e = etree.Element(XINS("include"))
     e.set("href", uri)
     return etree.tostring(e, encoding=unicode)
-    
+
 def wrap_text(ocrtext, creation_date, bookinfo=DEFAULT_BOOKINFO):
     """Wrap the text within the minimal XML structure with a DC template."""
     bookinfo.created_at = creation_date
-    
-    dcstring = etree.tostring(bookinfo.to_etree(),\
+
+    dcstring = etree.tostring(bookinfo.to_etree(), \
         method='xml', encoding=unicode, pretty_print=True)
 
-    return u'<utwor>\n' + dcstring + u'\n<plain-text>\n' + ocrtext +\
+    return u'<utwor>\n' + dcstring + u'\n<plain-text>\n' + ocrtext + \
         u'\n</plain-text>\n</utwor>';
 
 
