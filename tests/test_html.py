@@ -41,3 +41,6 @@ def test_passing_parse_dublincore_to_transform():
         get_fixture('text', 'asnyk_miedzy_nami.html'),
         parse_dublincore=False,
     )
+
+def test_empty():
+    assert html.transform('<utwor />', is_file=False, parse_dublincore=False).find('empty')

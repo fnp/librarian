@@ -45,7 +45,12 @@ ns['substitute_entities'] = substitute_entities
 
 def transform(input, output_filename=None, is_file=True, \
     parse_dublincore=True, stylesheet='legacy', options={}):
-    """Transforms file input_filename in XML to output_filename in XHTML."""
+    """Transforms file input_filename in XML to output_filename in XHTML.
+    
+    If output_filename is None, returns an XML,
+    otherwise returns True if file has been written,False if it hasn't.
+    File won't be written if it has no content.
+    """
     # Parse XSLT
     try:
         style_filename = get_stylesheet(stylesheet)
@@ -61,7 +66,7 @@ def transform(input, output_filename=None, is_file=True, \
         result = document.transform(style, **options)
         del document # no longer needed large object :)        
         
-        if etree.ETXPath('//p|//{%s}p' % str(XHTMLNS))(result) is not None:
+        if etree.ETXPath('//p|//{%s}p' % str(XHTMLNS))(result):
             add_anchors(result.getroot())
             add_table_of_contents(result.getroot())
         
@@ -71,7 +76,10 @@ def transform(input, output_filename=None, is_file=True, \
                 return result
             return True
         else:
-            return "<empty />"
+            if output_filename is not None:
+                return False
+            else:
+                return "<empty />"
     except KeyError:
         raise ValueError("'%s' is not a valid stylesheet.")
     except (XMLSyntaxError, XSLTApplyError), e:
