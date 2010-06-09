@@ -43,6 +43,9 @@ def substitute_entities(context, text):
 ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
 ns['substitute_entities'] = substitute_entities
 
+def html_has_content(text):
+    return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)
+
 def transform(input, output_filename=None, is_file=True, \
     parse_dublincore=True, stylesheet='legacy', options={}):
     """Transforms file input_filename in XML to output_filename in XHTML.
@@ -66,7 +69,7 @@ def transform(input, output_filename=None, is_file=True, \
         result = document.transform(style, **options)
         del document # no longer needed large object :)        
         
-        if etree.ETXPath('//p|//{%s}p' % str(XHTMLNS))(result):
+        if html_has_content(result):
             add_anchors(result.getroot())
             add_table_of_contents(result.getroot())
         
