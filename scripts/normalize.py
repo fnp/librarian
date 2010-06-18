@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from __future__ import with_statement
 
@@ -47,8 +47,8 @@ def wl_fix_dialog(context, data):
     if m is not None:
         return m.group(1)
     else:
-        return text   
-    
+        return text
+
 
 def filter_verse_ends(data):
     return data.replace('/\n', '<br />')
@@ -60,7 +60,7 @@ ns['fix-dialog-line'] = wl_fix_dialog
 def normalize_stylesheet():
     return etree.XSLT(etree.parse(os.path.join(os.path.dirname(librarian.__file__), 'xslt', 'normalize.xslt')))
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
     tran = normalize_stylesheet()
     input = StringIO( f )
     doc = trans( etree.parse(input) )

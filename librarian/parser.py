@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian import ValidationError, NoDublinCore,  ParseError
 from librarian import RDFNS
@@ -21,9 +21,9 @@ class WLDocument(object):
         self.edoc = edoc
 
         root_elem = edoc.getroot()
-       
+
         dc_path = './/' + RDFNS('RDF')
-        
+
         if root_elem.tag != 'utwor':
             raise ValidationError("Invalid root element. Found '%s', should be 'utwor'" % root_elem.tag)
 
@@ -32,11 +32,11 @@ class WLDocument(object):
 
             if self.rdf_elem is None:
                 raise NoDublinCore('Document has no DublinCore - which is required.')
-            
+
             self.book_info = dcparser.BookInfo.from_element(self.rdf_elem)
         else:
             self.book_info = None
-    
+
     @classmethod
     def from_string(cls, xml, swap_endlines=False, parse_dublincore=True):
         return cls.from_file(StringIO(xml), swap_endlines, parse_dublincore=parse_dublincore)
@@ -59,21 +59,21 @@ class WLDocument(object):
 
         if swap_endlines:
             data = cls.LINE_SWAP_EXPR.sub(u'<br />\n', data)
-    
+
         try:
             parser = etree.XMLParser(remove_blank_text=False)
             return cls(etree.parse(StringIO(data), parser), parse_dublincore=parse_dublincore)
         except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
-            raise ParseError(e)                  
+            raise ParseError(e)
 
     def chunk(self, path):
-        # convert the path to XPath        
+        # convert the path to XPath
         expr = self.path_to_xpath(path)
         elems = self.edoc.xpath(expr)
 
         if len(elems) == 0:
             return None
-        else:        
+        else:
             return elems[0]
 
     def path_to_xpath(self, path):

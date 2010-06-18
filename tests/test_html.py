@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian import html, NoDublinCore
 from nose.tools import *
@@ -15,12 +15,12 @@ def teardown_transform():
 def test_transform():
     output_file_path = get_fixture('text', 'asnyk_miedzy_nami.html')
     expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.html')
-    
+
     html.transform(
         get_fixture('text', 'asnyk_miedzy_nami.xml'),
         output_file_path,
     )
-    
+
     assert_equal(file(output_file_path).read(), file(expected_output_file_path).read())
 
 

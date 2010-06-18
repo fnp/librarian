@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian import dcparser, parser
 from lxml import etree
@@ -58,9 +58,9 @@ def wrap_words(context, text, wrapping):
         text = ''.join(text)
     if not wrapping:
         return text
-    
+
     words = re.split(r'\s', text)
-    
+
     line_length = 0
     lines = [[]]
     for word in words:
@@ -94,7 +94,7 @@ def transform(input_filename, output_filename, is_file=True, parse_dublincore=Tr
     result = document.transform(style, **options)
 
     output_file = codecs.open(output_filename, 'wb', encoding='utf-8')
-    
+
     if parse_dublincore:
         url = dcparser.parse(input_filename).url
     else:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
 import cStringIO
@@ -49,7 +49,7 @@ def html_has_content(text):
 def transform(input, output_filename=None, is_file=True, \
     parse_dublincore=True, stylesheet='legacy', options={}):
     """Transforms file input_filename in XML to output_filename in XHTML.
-    
+
     If output_filename is None, returns an XML,
     otherwise returns True if file has been written,False if it hasn't.
     File won't be written if it has no content.
@@ -67,12 +67,12 @@ def transform(input, output_filename=None, is_file=True, \
                 parse_dublincore=parse_dublincore)
 
         result = document.transform(style, **options)
-        del document # no longer needed large object :)        
-        
+        del document # no longer needed large object :)
+
         if html_has_content(result):
             add_anchors(result.getroot())
             add_table_of_contents(result.getroot())
-        
+
             if output_filename is not None:
                 result.write(output_filename, xml_declaration=False, pretty_print=True, encoding='utf-8')
             else:
@@ -199,7 +199,7 @@ def add_anchor(element, prefix, with_link=True, with_target=True, link_text=None
             anchor.tail = element.text
             element.text = u''
         element.insert(0, anchor)
-    
+
     if with_target:
         anchor_target = etree.Element('a', name='%s' % prefix)
         anchor_target.set('class', 'target')
@@ -223,7 +223,7 @@ def add_anchors(root):
         if any_ancestor(element, lambda e: e.get('class') in ('note', 'motto', 'motto_podpis', 'dedication')
         or e.tag == 'blockquote'):
             continue
-        
+
         if element.tag == 'p' and 'verse' in element.get('class', ''):
             if counter == 1 or counter % 5 == 0:
                 add_anchor(element, "f%d" % counter, link_text=counter)
@@ -240,14 +240,14 @@ def add_table_of_contents(root):
         if element.tag in ('h2', 'h3'):
             if any_ancestor(element, lambda e: e.get('id') in ('footnotes',) or e.get('class') in ('person-list',)):
                 continue
-            
+
             if element.tag == 'h3' and len(sections) and sections[-1][1] == 'h2':
                 sections[-1][3].append((counter, element.tag, ''.join(element.xpath('text()')), []))
             else:
                 sections.append((counter, element.tag, ''.join(element.xpath('text()')), []))
             add_anchor(element, "s%d" % counter, with_link=False)
             counter += 1
-    
+
     toc = etree.Element('div')
     toc.set('id', 'toc')
     toc_header = etree.SubElement(toc, 'h2')
@@ -257,12 +257,12 @@ def add_table_of_contents(root):
     for n, section, text, subsections in sections:
         section_element = etree.SubElement(toc_list, 'li')
         add_anchor(section_element, "s%d" % n, with_target=False, link_text=text)
-        
+
         if len(subsections):
             subsection_list = etree.SubElement(section_element, 'ol')
             for n, subsection, text, _ in subsections:
                 subsection_element = etree.SubElement(subsection_list, 'li')
                 add_anchor(subsection_element, "s%d" % n, with_target=False, link_text=text)
-    
+
     root.insert(0, toc)
 

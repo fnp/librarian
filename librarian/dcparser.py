@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from xml.parsers.expat import ExpatError
 from datetime import date
@@ -21,7 +21,7 @@ class Person(object):
     def __init__(self, last_name, *first_names):
         self.last_name = last_name
         self.first_names = first_names
-        
+
     @classmethod
     def from_text(cls, text):
         parts = [ token.strip() for token in text.split(',') ]
@@ -37,17 +37,17 @@ class Person(object):
                 raise ValueError("Found a comma, but no names given: \"%s\" -> %r." % (text, parts))
             names = [ name for name in parts[1].split() if len(name) ] # all non-whitespace tokens
         return cls(surname, *names)
-    
+
     def __eq__(self, right):
         return self.last_name == right.last_name and self.first_names == right.first_names
-    
-    
+
+
     def __unicode__(self):
         if len(self.first_names) > 0:
             return '%s, %s' % (self.last_name, ' '.join(self.first_names))
         else:
             return self.last_name
-        
+
     def __repr__(self):
         return 'Person(last_name=%r, first_names=*%r)' % (self.last_name, self.first_names)
 
@@ -112,7 +112,7 @@ class Field(object):
 
 
 
-class BookInfo(object):    
+class BookInfo(object):
     FIELDS = (
         Field( DCNS('creator'), 'author', as_person),
         Field( DCNS('title'), 'title'),
@@ -135,7 +135,7 @@ class BookInfo(object):
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
     )
-    
+
     @property
     def slug(self):
         return self.url.rsplit('/', 1)[1]
@@ -144,12 +144,12 @@ class BookInfo(object):
     def from_string(cls, xml):
         from StringIO import StringIO
         return cls.from_file(StringIO(xml))
-   
+
     @classmethod
     def from_file(cls, xmlfile):
-        desc_tag = None        
+        desc_tag = None
         try:
-            iter = etree.iterparse(xmlfile, ['start', 'end'])            
+            iter = etree.iterparse(xmlfile, ['start', 'end'])
             for (event, element) in iter:
                 if element.tag == RDFNS('RDF') and event == 'start':
                     desc_tag = element
@@ -165,7 +165,7 @@ class BookInfo(object):
                     break
 
             # if there is no end, Expat should yell at us with an ExpatError
-            
+
             # extract data from the element and make the info
             return cls.from_element(desc_tag)
         except XMLSyntaxError, e:
@@ -178,7 +178,7 @@ class BookInfo(object):
         # the tree is already parsed, so we don't need to worry about Expat errors
         field_dict = {}
         desc = rdf_tag.find(".//" + RDFNS('Description') )
-        
+
         if desc is None:
             raise NoDublinCore("No DublinCore section found.")
 
@@ -186,12 +186,12 @@ class BookInfo(object):
             fv = field_dict.get(e.tag, [])
             fv.append(e.text)
             field_dict[e.tag] = fv
-                
+
         return cls( desc.attrib, field_dict )
 
     def __init__(self, rdf_attrs, dc_fields):
         """rdf_attrs should be a dictionary-like object with any attributes of the RDF:Description.
-        dc_fields - dictionary mapping DC fields (with namespace) to list of text values for the 
+        dc_fields - dictionary mapping DC fields (with namespace) to list of text values for the
         given field. """
 
         self.about = rdf_attrs.get(RDFNS('about'))
@@ -212,7 +212,7 @@ class BookInfo(object):
             else: # singular alias
                 if not field.multiple:
                     raise "OUCH!! for field %s" % name
-                
+
                 return value[0]
         except (KeyError, AttributeError):
             return object.__getattribute__(self, name)
@@ -231,7 +231,7 @@ class BookInfo(object):
             return object.__setattr__(self, name, newvalue)
 
     def update(self, field_dict):
-        """Update using field_dict. Verify correctness, but don't check if all 
+        """Update using field_dict. Verify correctness, but don't check if all
         required fields are present."""
         for field in self.FIELDS:
             if field_dict.has_key(field.name):
@@ -241,17 +241,17 @@ class BookInfo(object):
         """XML representation of this object."""
         #etree._namespace_map[str(self.RDF)] = 'rdf'
         #etree._namespace_map[str(self.DC)] = 'dc'
-        
+
         if parent is None:
             root = etree.Element(RDFNS('RDF'))
         else:
             root = parent.makeelement(RDFNS('RDF'))
 
         description = etree.SubElement(root, RDFNS('Description'))
-        
+
         if self.about:
             description.set(RDFNS('about'), self.about)
-        
+
         for field in self.FIELDS:
             v = getattr(self, field.name, None)
             if v is not None:
@@ -265,7 +265,7 @@ class BookInfo(object):
                     e = etree.Element(field.uri)
                     e.text = unicode(v)
                     description.append(e)
-        
+
         return root
 
 
@@ -282,7 +282,7 @@ class BookInfo(object):
                     v = [ unicode(x) for x in v if v is not None ]
                 else:
                     v = unicode(v)
-                    
+
                 dc[field.name] = {'uri': field.uri, 'value': v}
         rdf['fields'] = dc
         return rdf
@@ -303,7 +303,7 @@ class BookInfo(object):
             if field.salias:
                 v = getattr(self, field.salias)
                 if v is not None: result[field.salias] = unicode(v)
-        
+
         return result
 
 def parse(file_name):
