@@ -1,0 +1,317 @@
+body
+{
+	font-size: 12pt;
+	font: Georgia, "Times New Roman" , serif;
+	line-height: 1.5em;
+	margin: 0;
+}
+
+a
+{
+	color: black;
+	text-decoration: none;
+}
+
+#book-text
+{
+	margin: 2em;
+	/*margin-right: 9em;*/
+}
+
+/* =================================================== */
+/* = Common elements: headings, paragraphs and lines = */
+/* =================================================== */
+
+
+.h2
+{
+	size: big;
+	font-size: 2em;
+	margin: 0;
+	margin-top: 1.5em;
+	font-weight: bold;
+	line-height: 1.5em;
+}
+
+.h3
+{
+	text-align:left;
+    font-size: 1.5em;
+    margin-top: 1.5em;
+    font-weight: normal;
+    line-height: 1.5em;
+}
+
+.h4
+{
+	font-size: 1em;
+    margin: 0;
+    margin-top: 1.5em;
+	line-height: 1.5em;
+}
+
+p
+{
+	margin: 0;
+}
+
+/* ======================== */
+/* = Footnotes and themes = */
+/* ======================== */
+
+.theme-begin
+{
+	border-left: 0.1em solid #DDDDDD;
+	color: #777;
+	padding: 0 0.5em;
+	width: 7.5em;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 0.875em;
+	float: right;
+	margin-right: -9.5em;
+	clear: both;
+	left: 40em;
+	line-height: 1.5em;
+	text-align: left;
+}
+
+.annotation
+{
+	font-style: normal;
+	font-weight: normal;
+	font-size: 0.875em;
+}
+
+#footnotes .annotation
+{
+	display: block;
+	float: left;
+	width: 2.5em;
+	clear: both;
+}
+
+#footnotes div
+{
+    margin: 0;
+    margin-top: 1.5em;
+}
+
+#footnotes p
+{
+	margin-left: 2.5em;
+	font-size: 0.875em;
+}
+
+.block
+{
+	font-size: 0.875em;
+	padding: 1em;
+}
+
+/* ============= */
+/* = Numbering = */
+/* ============= */
+
+.anchor
+{
+	margin: -0.25em -0.5em;
+	color: #777;
+	font-size: 0.875em;
+	width: 2em;
+	text-align: center;
+	padding: 0.25em 0.5em;
+	line-height: 1.5em;
+}
+
+/* =================== */
+/* = Custom elements = */
+/* =================== */
+
+.title-page
+{
+    margin-top: 1.5em;
+}
+
+.title
+{
+    font-size: 3em;
+    margin-bottom: 1.5em;
+    text-align: center;
+    line-height: 1.5em;
+    font-weight: bold;
+}
+
+.author
+{
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
+
+    font-size: 1.5em;
+    line-height: 1.5em;
+    margin-bottom: 0.25em;
+}
+
+.collection
+{
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
+
+	font-size: 1.125em;
+	line-height: 1.5em;
+	margin-bottom: -0.25em;
+}
+
+.subtitle
+{
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
+
+	font-size: 1.5em;
+	line-height: 1.5em;
+	margin-top: -0.25em;
+}
+
+div.didaskalia
+{
+	font-style: italic;
+	margin-top: 0.5em;
+	margin-left: 1.5em;
+}
+
+div.kwestia
+{
+	margin-top: 0.5em;
+}
+
+div.stanza
+{
+	margin-top: 1.5em;
+}
+
+.paragraph
+{
+	text-align: justify;
+	margin-top: 1.5em;
+}
+
+.motto
+{
+	text-align: justify;
+	font-style: italic;
+	margin-top: 1.5em;
+}
+
+.motto_podpis
+{
+	font-size: 0.875em;
+	text-align: right;
+}
+
+div.fragment
+{
+	border-bottom: 0.1em solid #999;
+	padding-bottom: 1.5em;
+}
+
+div.note
+{
+	text-align: right;
+	font-style: italic;
+}
+div.note div.paragraph
+{
+    text-align: right;
+    font-style: italic;
+}
+div.dedication
+{
+    text-align: right;
+    font-style: italic;
+}
+div.dedication div.paragaph
+{
+    text-align: right;
+    font-style: italic;
+}
+
+
+hr.spacer
+{
+	height: 3em;
+	visibility: hidden;
+}
+
+hr.spacer-line
+{
+	margin: 0;
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+	border: none;
+	border-bottom: 0.1em solid #000;
+}
+
+.spacer-asterisk
+{
+	padding: 0;
+    margin: 0;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+	text-align: center;
+}
+
+div.person-list ol
+{
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5em;
+}
+
+.place-and-time
+{
+	font-style: italic;
+}
+
+em.math
+{
+	font-style: italic;
+}
+em.foreign-word
+{
+    font-style: italic;
+}
+em.book-title
+{
+    font-style: italic;
+}
+em.didaskalia
+{
+    font-style: italic;
+}
+
+em.author-emphasis
+{
+	letter-spacing: 0.1em;
+}
+
+em.person
+{
+	font-style: normal;
+	font-variant: small-caps;
+}
+
+p.info
+{
+	text-align: center;
+	margin-bottom: 1em;
+}
+
+p.info img
+{
+	margin: 0;
+	margin-left: 2em;
+	margin-right: 2em;
+}
