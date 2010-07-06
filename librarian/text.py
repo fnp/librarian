@@ -24,8 +24,8 @@ TEMPLATE = u"""\
 Kodowanie znaków w dokumencie: UTF-8.
 -----
 Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl/). Reprodukcja cyfrowa wykonana przez
-Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN. Ten utwór nie jest chroniony prawem autorskim i znajduje
-się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać.
+Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN. 
+\n%(license_description)s.
 
 Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie %(url)s.
 -----
@@ -96,11 +96,21 @@ def transform(input_filename, output_filename, is_file=True, parse_dublincore=Tr
     output_file = codecs.open(output_filename, 'wb', encoding='utf-8')
 
     if parse_dublincore:
-        url = dcparser.parse(input_filename).url
+        parsed_dc = dcparser.parse(input_filename)
+        url = parsed_dc.url
+        license_description = parsed_dc.license_description
+	license = parsed_dc.license
+        if license:
+            license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (license_description, license)        
+        else:
+            license_description = u"Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać" 
     else:
         url = '*' * 10
+        license = ""
+        license_description = ""
     output_file.write(TEMPLATE % {
         'url': url,
+	'license_description': license_description,
         'text': unicode(result),
     })
 
