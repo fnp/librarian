@@ -16,7 +16,7 @@ setup(
     maintainer_email='lrekucki@gmail.com',
     url='http://github.com/fnp/librarian',
     packages=['librarian'],
-    package_data={'librarian': ['xslt/*.xslt']},
+    package_data={'librarian': ['xslt/*.xslt', 'epub/*']},
     include_package_data=True,
     install_requires=['lxml>=2.2'],
     scripts=['scripts/book2html',
