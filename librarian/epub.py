@@ -358,7 +358,8 @@ if __name__ == '__main__':
     print input
     if html.transform(input, is_file=True) == '<empty />':
         print 'empty content - skipping'
-    transform(open(input, 'r'), open(output, 'w'))
+    else:
+        transform(open(input, 'r'), open(output, 'w'))
 
 
 
