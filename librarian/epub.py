@@ -342,6 +342,8 @@ def transform(input_file, output_file):
 
 
 if __name__ == '__main__':
+    import html
+
     if len(sys.argv) < 2:
         print >> sys.stderr, 'Usage: wl2epub <input file> [output file]'
         sys.exit(1)
@@ -353,7 +355,10 @@ if __name__ == '__main__':
         basename, ext = os.path.splitext(input)
         output = basename + '.epub' 
 
-    wl2epub(open(input, 'r'), open(output, 'w'))
+    print input
+    if html.transform(input, is_file=True) == '<empty />':
+        print 'empty content - skipping'
+    transform(open(input, 'r'), open(output, 'w'))
 
 
 
