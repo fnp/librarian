@@ -15,7 +15,7 @@ a
 #book-text
 {
 	margin: 2em;
-	/*margin-right: 9em;*/
+	margin-right: 9em;
 }
 
 /* =================================================== */
@@ -74,6 +74,12 @@ p
 	left: 40em;
 	line-height: 1.5em;
 	text-align: left;
+}
+.dumb-viewer
+{
+    font-style: italic;
+	text-decoration: underline;
+	display: none;
 }
 
 .annotation
