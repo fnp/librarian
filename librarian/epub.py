@@ -345,7 +345,7 @@ if __name__ == '__main__':
     import html
 
     if len(sys.argv) < 2:
-        print >> sys.stderr, 'Usage: wl2epub <input file> [output file]'
+        print >> sys.stderr, 'Usage: python epub.py <input file> [output file]'
         sys.exit(1)
 
     input = sys.argv[1]
