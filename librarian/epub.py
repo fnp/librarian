@@ -13,7 +13,7 @@ from copy import deepcopy
 from lxml import etree
 import zipfile
 
-from librarian import XMLNamespace, RDFNS, DCNS, WLNS, XHTMLNS
+from librarian import XMLNamespace, RDFNS, DCNS, WLNS, XHTMLNS, NoDublinCore
 
 NCXNS = XMLNamespace("http://www.daisy.org/z3986/2005/ncx/")
 OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
@@ -211,6 +211,8 @@ def transform(input_file, output_file):
                        '</rootfiles></container>')
 
     metadata_el = input_xml.find('.//'+RDFNS('Description'))
+    if metadata_el is None:
+        raise NoDublinCore('Document has no DublinCore - which is required.')
     metadatasource = etree.ElementTree(metadata_el)
 
     opf = xslt(metadatasource, res('xsltContent.xsl'))
