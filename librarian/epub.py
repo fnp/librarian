@@ -14,9 +14,34 @@ from lxml import etree
 import zipfile
 
 from librarian import XMLNamespace, RDFNS, DCNS, WLNS, XHTMLNS, NoDublinCore
+from librarian.parser import WLDocument
 
+#TODO: shouldn't be repeated here
 NCXNS = XMLNamespace("http://www.daisy.org/z3986/2005/ncx/")
 OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
+
+
+class DocProvider(object):
+    class DoesNotExist(Exception):
+        pass
+    
+    def by_slug(self, slug):
+        raise NotImplemented
+
+    def __getitem__(self, slug):
+        return self.by_slug(slug)
+
+    def by_uri(self, uri):
+        return self.by_slug(uri.rsplit('/', 1)[1])
+
+
+class DirDocProvider(DocProvider):
+    def __init__(self, dir):
+        self.dir = dir
+        self.files = {}
+
+    def by_slug(self, slug):
+        return open(os.path.join(self.dir, '%s.xml' % slug))
 
 
 def inner_xml(node):
@@ -93,24 +118,26 @@ def replace_characters(node):
             replace_characters(child)
 
 
-def find_annotations(annotations, source, part_number):
+def find_annotations(annotations, source, part_no):
     for child in source:
         if child.tag in ('pe', 'pa', 'pt', 'pr'):
             annotation = deepcopy(child)
-            annotation.set('number', str(len(annotations)+1))
-            annotation.set('part', str(part_number))
+            number = str(len(annotations)+1)
+            annotation.set('number', number)
+            annotation.set('part', str(part_no))
             annotation.tail = ''
             annotations.append(annotation)
             tail = child.tail
             child.clear()
             child.tail = tail
-            child.text = str(len(annotations))
+            child.text = number
         if child.tag not in ('extra', 'podtytul'):
-            find_annotations(annotations, child, part_number)
+            find_annotations(annotations, child, part_no)
 
 
 def replace_by_verse(tree):
     """ Find stanzas and create new verses in place of a '/' character """
+
     stanzas = tree.findall('.//' + WLNS('strofa'))
     for node in stanzas:
         for child_node in node:
@@ -137,6 +164,7 @@ def replace_by_verse(tree):
 
 def add_to_manifest(manifest, partno):
     """ Adds a node to the manifest section in content.opf file """
+
     partstr = 'part%d' % partno
     e = manifest.makeelement(OPFNS('item'), attrib={
                                  'id': partstr,
@@ -148,84 +176,187 @@ def add_to_manifest(manifest, partno):
 
 def add_to_spine(spine, partno):
     """ Adds a node to the spine section in content.opf file """
+
     e = spine.makeelement(OPFNS('itemref'), attrib={'idref': 'part%d' % partno});
     spine.append(e)
 
 
-def add_nav_point(nav_map, counter, title, part_counter):
-    nav_point = nav_map.makeelement(NCXNS('navPoint'))
-    nav_point.set('id', 'NavPoint-%d' % counter)
-    nav_point.set('playOrder', str(counter))
+class TOC(object):
+    def __init__(self, name=None, part_number=None):
+        self.children = []
+        self.name = name
+        self.part_number = part_number
+        self.sub_number = None
 
-    nav_label = nav_map.makeelement(NCXNS('navLabel'))
-    text = nav_map.makeelement(NCXNS('text'))
-    text.text = title
-    nav_label.append(text)
-    nav_point.append(nav_label)
+    def add(self, name, part_number, level=0, is_part=True):
+        if level > 0 and self.children:
+            return self.children[-1].add(name, part_number, level-1, is_part)
+        else:
+            t = TOC(name)
+            t.part_number = part_number
+            self.children.append(t)
+            if not is_part:
+                t.sub_number = len(self.children) + 1
+                return t.sub_number
 
-    content = nav_map.makeelement(NCXNS('content'))
-    content.set('src', 'part%d.html' % part_counter)
-    nav_point.append(content)
+    def append(self, toc):
+        self.children.append(toc)
 
-    nav_map.append(nav_point)
+    def extend(self, toc):
+        self.children.extend(toc.children)
+
+    def depth(self):
+        if self.children:
+            return max((c.depth() for c in self.children)) + 1
+        else:
+            return 0
+
+    def write_to_xml(self, nav_map, counter):
+        for child in self.children:
+            nav_point = nav_map.makeelement(NCXNS('navPoint'))
+            nav_point.set('id', 'NavPoint-%d' % counter)
+            nav_point.set('playOrder', str(counter))
+
+            nav_label = nav_map.makeelement(NCXNS('navLabel'))
+            text = nav_map.makeelement(NCXNS('text'))
+            text.text = child.name
+            nav_label.append(text)
+            nav_point.append(nav_label)
+
+            content = nav_map.makeelement(NCXNS('content'))
+            src = 'part%d.html' % child.part_number
+            if child.sub_number is not None:
+                src += '#sub%d' % child.sub_number
+            content.set('src', src)
+            nav_point.append(content)
+            nav_map.append(nav_point)
+            counter = child.write_to_xml(nav_point, counter + 1)
+        return counter
 
 
-def add_nav_point2(nav_map, counter, title, part_counter, subcounter):
-    nav_point = nav_map.makeelement(NCXNS('navPoint'))
-    nav_point.set('id', 'NavPoint-%d' % counter)
-    nav_point.set('playOrder', str(counter))
+def chop(main_text):
+    """ divide main content of the XML file into chunks """
 
-    nav_label = nav_map.makeelement(NCXNS('navLabel'))
-    text = nav_map.makeelement(NCXNS('text'))
-    text.text = title
-    nav_label.append(text)
-    nav_point.append(nav_label)
+    # prepare a container for each chunk
+    part_xml = etree.Element('utwor')
+    etree.SubElement(part_xml, 'master')
+    main_xml_part = part_xml[0] # master
 
-    content = nav_map.makeelement(NCXNS('content'))
-    content.set('src', 'part%d.html#sub%d' % (part_counter, subcounter))
-    nav_point.append(content)
+    last_node_part = False
+    for one_part in main_text:
+        name = one_part.tag
+        if name == 'naglowek_czesc':
+            yield part_xml
+            last_node_part = True
+            main_xml_part[:] = [deepcopy(one_part)]
+        elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+            yield part_xml
+            main_xml_part[:] = [deepcopy(one_part)]
+        else:
+            main_xml_part.append(deepcopy(one_part))
+            last_node_part = False
+    yield part_xml
 
-    nav_map[-1].append(nav_point)
+
+def transform_chunk(chunk_xml, chunk_no, annotations):
+    """ transforms one chunk, returns a HTML string and a TOC object """
+
+    toc = TOC()
+    for element in chunk_xml[0]:
+        if element.tag in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+            toc.add(node_name(element), chunk_no)
+        elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
+            subnumber = toc.add(node_name(element), chunk_no, level=1, is_part=False)
+            element.set('sub', str(subnumber))
+    find_annotations(annotations, chunk_xml, chunk_no)
+    replace_by_verse(chunk_xml)
+    output_html = etree.tostring(xslt(chunk_xml, res('xsltScheme.xsl')), pretty_print=True)
+    return output_html, toc
 
 
-def transform(input_file, output_file):
+def transform(provider, slug, output_file):
     """ produces an epub
 
-    input_file and output_file should be filelike objects
+    provider is a DocProvider
+    output_file should be filelike object
     """
 
-    input_xml = etree.parse(input_file)
+    def transform_file(input_xml, chunk_counter=1, first=True):
+        """ processes one input file and proceeds to its children """
+
+        children = [child.text for child in input_xml.findall('.//'+DCNS('relation.hasPart'))]
+
+        # every input file will have a TOC entry,
+        # pointing to starting chunk
+        toc = TOC(node_name(input_xml.find('.//'+DCNS('title'))), chunk_counter)
+        if first:
+            # write book title page
+            zip.writestr('OPS/title.html',
+                 etree.tostring(xslt(input_xml, res('xsltTitle.xsl')), pretty_print=True))
+        elif children:
+            # write title page for every parent
+            zip.writestr('OPS/part%d.html' % chunk_counter, 
+                etree.tostring(xslt(input_xml, res('xsltChunkTitle.xsl')), pretty_print=True))
+            add_to_manifest(manifest, chunk_counter)
+            add_to_spine(spine, chunk_counter)
+            chunk_counter += 1
+
+        if len(input_xml.getroot()) > 1:
+            # rdf before style master
+            main_text = input_xml.getroot()[1]
+        else:
+            # rdf in style master
+            main_text = input_xml.getroot()[0]
+            if main_text.tag == RDFNS('RDF'):
+                main_text = None
+
+        if main_text is not None:
+            replace_characters(main_text)
+
+            for chunk_no, chunk_xml in enumerate(chop(main_text), chunk_counter):
+                chunk_html, chunk_toc = transform_chunk(chunk_xml, chunk_counter, annotations)
+                toc.extend(chunk_toc)
+                zip.writestr('OPS/part%d.html' % chunk_counter, chunk_html)
+                add_to_manifest(manifest, chunk_counter)
+                add_to_spine(spine, chunk_counter)
+                chunk_counter += 1
+
+        if children:
+            for child in children:
+                child_xml = etree.parse(provider.by_uri(child))
+                child_toc, chunk_counter = transform_file(child_xml, chunk_counter, first=False)
+                toc.append(child_toc)
+
+        return toc, chunk_counter
+
 
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
+    # write static elements
     mime = zipfile.ZipInfo()
     mime.filename = 'mimetype'
     mime.compress_type = zipfile.ZIP_STORED
     mime.extra = ''
     zip.writestr(mime, 'application/epub+zip')
-
     zip.writestr('META-INF/container.xml', '<?xml version="1.0" ?><container version="1.0" ' \
                        'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' \
                        '<rootfiles><rootfile full-path="OPS/content.opf" ' \
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
-
-    metadata_el = input_xml.find('.//'+RDFNS('Description'))
-    if metadata_el is None:
-        raise NoDublinCore('Document has no DublinCore - which is required.')
-    metadatasource = etree.ElementTree(metadata_el)
-
-    opf = xslt(metadatasource, res('xsltContent.xsl'))
-
-    manifest = opf.find('.//' + OPFNS('manifest'))
-    spine = opf.find('.//' + OPFNS('spine'))
-
     for fname in 'style.css', 'logo_wolnelektury.png':
         zip.write(res(fname), os.path.join('OPS', fname))
 
+    # metadata from first file
+    input_xml = etree.parse(provider[slug])
+    metadata = input_xml.find('.//'+RDFNS('Description'))
+    if metadata is None:
+        raise NoDublinCore('Document has no DublinCore - which is required.')
+    metadata = etree.ElementTree(metadata)
+    opf = xslt(metadata, res('xsltContent.xsl'))
+    manifest = opf.find('.//' + OPFNS('manifest'))
+    spine = opf.find('.//' + OPFNS('spine'))
+
     annotations = etree.Element('annotations')
-    part_xml = etree.Element('utwor')
-    etree.SubElement(part_xml, 'master')
 
     toc_file = etree.fromstring('<?xml version="1.0" encoding="utf-8"?><!DOCTYPE ncx PUBLIC ' \
                                '"-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">' \
@@ -236,89 +367,16 @@ def transform(input_file, output_file):
                                '</navPoint><navPoint id="NavPoint-2" playOrder="2"><navLabel>' \
                                '<text>Początek utworu</text></navLabel><content src="part1.html" />' \
                                '</navPoint></navMap></ncx>')
+    nav_map = toc_file[-1]
 
-    main_xml_part = part_xml[0] # było [0][0], master
-    nav_map = toc_file[-1] # było [-1][-1]
-    depth = 1 # navmap
-
-    if len(input_xml.getroot()) > 1:
-        # rdf before style master
-        main_text = input_xml.getroot()[1]
-    else:
-        # rdf in style master
-        main_text = input_xml.getroot()[0]
-
-    replace_characters(main_text)
-    zip.writestr('OPS/title.html', 
-                 etree.tostring(xslt(input_xml, res('xsltTitle.xsl')), pretty_print=True))
-
-    # Search for table of contents elements and book division
-
-    stupid_i = stupid_j = stupid_k = 1
-    last_node_part = False
-    for one_part in main_text:
-        name = one_part.tag
-        if name in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-            if name == "naglowek_czesc":
-                stupid_k = 1
-                last_node_part = True
-                find_annotations(annotations, part_xml, stupid_j)
-                replace_by_verse(part_xml)
-                zip.writestr('OPS/part%d.html' % stupid_j,
-                            etree.tostring(xslt(part_xml, res('xsltScheme.xsl')), pretty_print=True))
-                main_xml_part[:] = [deepcopy(one_part)]
-                # add to manifest and spine
-                add_to_manifest(manifest, stupid_j)
-                add_to_spine(spine, stupid_j)
-                name_toc = node_name(one_part)
-                # build table of contents
-                # i+2 because of title page
-                add_nav_point(nav_map, stupid_i+2, name_toc, stupid_j + 1)
-                stupid_i += 1
-                stupid_j += 1
-            else:
-                if last_node_part:
-                    main_xml_part.append(one_part)
-                    last_node_part = False
-                    name_toc = node_name(one_part)
-                    add_nav_point(nav_map, stupid_i + 1, name_toc, stupid_j)
-                else:
-                    stupid_k = 1
-                    find_annotations(annotations, part_xml, stupid_j)
-                    replace_by_verse(part_xml)
-                    zip.writestr('OPS/part%d.html' % stupid_j,
-                                 etree.tostring(xslt(part_xml, res('xsltScheme.xsl')), pretty_print=True))
-                    # start building a new part
-                    main_xml_part[:] = [deepcopy(one_part)]
-                    add_to_manifest(manifest, stupid_j)
-                    add_to_spine(spine, stupid_j)
-                    name_toc = node_name(one_part)
-                    add_nav_point(nav_map, stupid_i + 2, name_toc, stupid_j + 1) # title page
-                    stupid_j += 1
-                    stupid_i += 1
-        else:
-            if name in ('naglowek_podrozdzial', 'naglowek_scena'):
-                depth = 2
-                name_toc =  node_name(one_part)
-                add_nav_point2(nav_map, stupid_i + 2, name_toc, stupid_j, stupid_k)
-                one_part.set('sub', str(stupid_k))
-                stupid_k += 1
-                stupid_i += 1
-            main_xml_part.append(deepcopy(one_part))
-            last_node_part = False
-    find_annotations(annotations, part_xml, stupid_j)
-    replace_by_verse(part_xml)
-    add_to_manifest(manifest, stupid_j)
-    add_to_spine(spine, stupid_j)
-
-    zip.writestr('OPS/part%d.html' % stupid_j,
-                 etree.tostring(xslt(part_xml, res('xsltScheme.xsl')), pretty_print=True))
+    toc, chunk_counter = transform_file(input_xml)
+    toc_counter = toc.write_to_xml(nav_map, 3) # we already have 2 navpoints
 
     # Last modifications in container files and EPUB creation
     if len(annotations) > 0:
         nav_map.append(etree.fromstring(
             '<navPoint id="NavPoint-%(i)d" playOrder="%(i)d" ><navLabel><text>Przypisy</text>'\
-            '</navLabel><content src="annotations.html" /></navPoint>' % {'i':stupid_i+2}))
+            '</navLabel><content src="annotations.html" /></navPoint>' % {'i': toc_counter}))
         manifest.append(etree.fromstring(
             '<item id="annotations" href="annotations.html" media-type="application/xhtml+xml" />'))
         spine.append(etree.fromstring(
@@ -337,31 +395,21 @@ def transform(input_file, output_file):
         meta.set('content', '0')
         toc_file[0].append(meta)
     toc_file[0][0].set('content', ''.join((title, 'WolneLektury.pl')))
-    toc_file[0][1].set('content', str(depth))
+    toc_file[0][1].set('content', str(toc.depth()))
     set_inner_xml(toc_file[1], ''.join(('<text>', title, '</text>')))
     zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))
     zip.close()
 
 
 if __name__ == '__main__':
-    import html
-
     if len(sys.argv) < 2:
-        print >> sys.stderr, 'Usage: python epub.py <input file> [output file]'
+        print >> sys.stderr, 'Usage: python epub.py <input file>'
         sys.exit(1)
 
-    input = sys.argv[1]
-    if len(sys.argv) > 2:
-        output = sys.argv[2]
-    else:
-        basename, ext = os.path.splitext(input)
-        output = basename + '.epub' 
-
-    print input
-    if html.transform(input, is_file=True) == '<empty />':
-        print 'empty content - skipping'
-    else:
-        transform(open(input, 'r'), open(output, 'w'))
-
-
+    main_input = sys.argv[1]
+    basepath, ext = os.path.splitext(main_input)
+    path, slug = os.path.realpath(basepath).rsplit('/', 1)
+    output = basepath + '.epub'
+    provider = DirDocProvider(path)
+    transform(provider, slug, open(output, 'w'))
 

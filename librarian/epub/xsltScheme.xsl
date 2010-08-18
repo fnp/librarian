@@ -302,12 +302,7 @@
   <!-- Tagi SPECJALNE -->
   <!--===========================================================-->
 
-  <xsl:template match="motyw" >
-    <a class="theme-begin" xmlns="http://www.w3.org/1999/xhtml">
-      <span class="dumb-viewer"> [motywy: </span><xsl:apply-templates select="text()" /><span class="dumb-viewer"> ]<br/></span>
-    </a>
-  </xsl:template>
-  <!--xsl:template match="motyw" /-->
+  <xsl:template match="motyw" />
 
   <!--===========================================================-->
   <!-- Tagi IGNOROWANE -->

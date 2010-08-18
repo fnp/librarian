@@ -75,12 +75,6 @@ p
 	line-height: 1.5em;
 	text-align: left;
 }
-.dumb-viewer
-{
-    font-style: italic;
-	text-decoration: underline;
-	display: none;
-}
 
 .annotation
 {
