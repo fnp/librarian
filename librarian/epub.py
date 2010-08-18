@@ -103,12 +103,11 @@ def replace_characters(node):
     def replace_chars(text):
         if text is None:
             return None
-        return text.replace("&", "&amp;")\
-                   .replace("---", "&#8212;")\
-                   .replace("--", "&#8211;")\
-                   .replace(",,", "&#8222;")\
-                   .replace('"', "&#8221;")\
-                   .replace("'", "&#8217;")
+        return text.replace("---", u"\u2014")\
+                   .replace("--", u"\u2013")\
+                   .replace(",,", u"\u201E")\
+                   .replace('"', u"\u201D")\
+                   .replace("'", u"\u2019")
     if node.tag == 'extra':
         node.clear()
     else:
