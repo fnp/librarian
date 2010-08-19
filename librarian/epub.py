@@ -7,16 +7,13 @@ from __future__ import with_statement
 
 import os
 import os.path
-import shutil
-import sys
 from copy import deepcopy
 from lxml import etree
 import zipfile
 
-from librarian import XMLNamespace, RDFNS, DCNS, WLNS, XHTMLNS, NoDublinCore
-from librarian.parser import WLDocument
+from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NoDublinCore
+from librarian.dcparser import BookInfo
 
-#TODO: shouldn't be repeated here
 NCXNS = XMLNamespace("http://www.daisy.org/z3986/2005/ncx/")
 OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
 
@@ -63,7 +60,6 @@ def set_inner_xml(node, text):
     <a>x<b>y</b>z</a>
     """
 
-    
     p = etree.fromstring('<x>%s</x>' % text)
     node.text = p.text
     node[:] = p[:]
@@ -273,11 +269,12 @@ def transform_chunk(chunk_xml, chunk_no, annotations):
     return output_html, toc
 
 
-def transform(provider, slug, output_file):
+def transform(provider, slug, output_file=None, output_dir=None):
     """ produces an epub
 
     provider is a DocProvider
-    output_file should be filelike object
+    either output_file (a file-like object) or output_dir (path to file/dir) should be specified
+    if output_dir is specified, file will be written to <output_dir>/<author>/<slug>.epub
     """
 
     def transform_file(input_xml, chunk_counter=1, first=True):
@@ -328,6 +325,24 @@ def transform(provider, slug, output_file):
 
         return toc, chunk_counter
 
+    # read metadata from the first file
+    input_xml = etree.parse(provider[slug])
+    metadata = input_xml.find('.//'+RDFNS('Description'))
+    if metadata is None:
+        raise NoDublinCore('Document has no DublinCore - which is required.')
+    book_info = BookInfo.from_element(input_xml)
+    metadata = etree.ElementTree(metadata)
+
+    # if output to dir, create the file
+    if output_dir is not None:
+        author = unicode(book_info.author)
+        author_dir = os.path.join(output_dir, author)
+        try:
+            os.makedirs(author_dir)
+        except OSError:
+            pass
+        output_file = open(os.path.join(author_dir, '%s.epub' % slug), 'w')
+
 
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
@@ -345,12 +360,6 @@ def transform(provider, slug, output_file):
     for fname in 'style.css', 'logo_wolnelektury.png':
         zip.write(res(fname), os.path.join('OPS', fname))
 
-    # metadata from first file
-    input_xml = etree.parse(provider[slug])
-    metadata = input_xml.find('.//'+RDFNS('Description'))
-    if metadata is None:
-        raise NoDublinCore('Document has no DublinCore - which is required.')
-    metadata = etree.ElementTree(metadata)
     opf = xslt(metadata, res('xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
     spine = opf.find('.//' + OPFNS('spine'))
@@ -401,6 +410,8 @@ def transform(provider, slug, output_file):
 
 
 if __name__ == '__main__':
+    import sys
+
     if len(sys.argv) < 2:
         print >> sys.stderr, 'Usage: python epub.py <input file>'
         sys.exit(1)
@@ -408,7 +419,6 @@ if __name__ == '__main__':
     main_input = sys.argv[1]
     basepath, ext = os.path.splitext(main_input)
     path, slug = os.path.realpath(basepath).rsplit('/', 1)
-    output = basepath + '.epub'
     provider = DirDocProvider(path)
-    transform(provider, slug, open(output, 'w'))
+    transform(provider, slug, output_dir=path)
 
