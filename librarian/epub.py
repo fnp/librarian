@@ -11,34 +11,11 @@ from copy import deepcopy
 from lxml import etree
 import zipfile
 
-from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NoDublinCore
+import sys
+sys.path.append('..') # for running from working copy
+
+from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, NoDublinCore
 from librarian.dcparser import BookInfo
-
-NCXNS = XMLNamespace("http://www.daisy.org/z3986/2005/ncx/")
-OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
-
-
-class DocProvider(object):
-    class DoesNotExist(Exception):
-        pass
-    
-    def by_slug(self, slug):
-        raise NotImplemented
-
-    def __getitem__(self, slug):
-        return self.by_slug(slug)
-
-    def by_uri(self, uri):
-        return self.by_slug(uri.rsplit('/', 1)[1])
-
-
-class DirDocProvider(DocProvider):
-    def __init__(self, dir):
-        self.dir = dir
-        self.files = {}
-
-    def by_slug(self, slug):
-        return open(os.path.join(self.dir, '%s.xml' % slug))
 
 
 def inner_xml(node):
@@ -410,7 +387,7 @@ def transform(provider, slug, output_file=None, output_dir=None):
 
 
 if __name__ == '__main__':
-    import sys
+    from librarian import DirDocProvider
 
     if len(sys.argv) < 2:
         print >> sys.stderr, 'Usage: python epub.py <input file>'

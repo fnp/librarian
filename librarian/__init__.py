@@ -3,6 +3,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+import os
+
 class ParseError(Exception):
     pass
 
@@ -42,8 +44,37 @@ RDFNS = XMLNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 DCNS = XMLNamespace('http://purl.org/dc/elements/1.1/')
 XINS = XMLNamespace("http://www.w3.org/2001/XInclude")
 XHTMLNS = XMLNamespace("http://www.w3.org/1999/xhtml")
+NCXNS = XMLNamespace("http://www.daisy.org/z3986/2005/ncx/")
+OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
 
 WLNS = EmptyNamespace()
+
+
+class DocProvider(object):
+    """ Base class for a repository of XML files.
+        Used for generating joined files, like EPUBs
+    """
+
+    def by_slug(self, slug):
+        raise NotImplemented
+
+    def __getitem__(self, slug):
+        return self.by_slug(slug)
+
+    def by_uri(self, uri):
+        return self.by_slug(uri.rsplit('/', 1)[1])
+
+
+class DirDocProvider(DocProvider):
+    """ Serve docs from a directory of files in form <slug>.xml """
+
+    def __init__(self, dir):
+        self.dir = dir
+        self.files = {}
+
+    def by_slug(self, slug):
+        return open(os.path.join(self.dir, '%s.xml' % slug))
+
 
 import lxml.etree as etree
 import dcparser
