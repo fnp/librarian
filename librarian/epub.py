@@ -286,7 +286,7 @@ def transform(provider, slug, output_file=None, output_dir=None):
         if main_text is not None:
             replace_characters(main_text)
 
-            for chunk_no, chunk_xml in enumerate(chop(main_text), chunk_counter):
+            for chunk_xml in chop(main_text):
                 chunk_html, chunk_toc = transform_chunk(chunk_xml, chunk_counter, annotations)
                 toc.extend(chunk_toc)
                 zip.writestr('OPS/part%d.html' % chunk_counter, chunk_html)
