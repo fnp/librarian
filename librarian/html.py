@@ -11,16 +11,11 @@ import copy
 from lxml import etree
 from librarian.parser import WLDocument
 from librarian import XHTMLNS, ParseError
+from librarian import functions
 
 from lxml.etree import XMLSyntaxError, XSLTApplyError
 
-ENTITY_SUBSTITUTIONS = [
-    (u'---', u'—'),
-    (u'--', u'–'),
-    (u'...', u'…'),
-    (u',,', u'„'),
-    (u'"', u'”'),
-]
+functions.reg_substitute_entities()
 
 STYLESHEETS = {
     'legacy': 'xslt/book2html.xslt',
@@ -30,18 +25,6 @@ STYLESHEETS = {
 
 def get_stylesheet(name):
     return os.path.join(os.path.dirname(__file__), STYLESHEETS[name])
-
-def substitute_entities(context, text):
-    """XPath extension function converting all entites in passed text."""
-    if isinstance(text, list):
-        text = ''.join(text)
-    for entity, substitutution in ENTITY_SUBSTITUTIONS:
-        text = text.replace(entity, substitutution)
-    return text
-
-# Register substitute_entities function with lxml
-ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
-ns['substitute_entities'] = substitute_entities
 
 def html_has_content(text):
     return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)

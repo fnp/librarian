@@ -38,11 +38,11 @@ class WLDocument(object):
             self.book_info = None
 
     @classmethod
-    def from_string(cls, xml, swap_endlines=False, parse_dublincore=True):
-        return cls.from_file(StringIO(xml), swap_endlines, parse_dublincore=parse_dublincore)
+    def from_string(cls, xml, *args, **kwargs):
+        return cls.from_file(StringIO(xml), *args, **kwargs)
 
     @classmethod
-    def from_file(cls, xmlfile, swap_endlines=False, parse_dublincore=True):
+    def from_file(cls, xmlfile, swap_endlines=False, parse_dublincore=True, preserve_lines=True):
 
         # first, prepare for parsing
         if isinstance(xmlfile, basestring):
@@ -58,7 +58,10 @@ class WLDocument(object):
             data = data.decode('utf-8')
 
         if swap_endlines:
-            data = cls.LINE_SWAP_EXPR.sub(u'<br />\n', data)
+            sub = u'<br/>'
+            if preserve_lines:
+                sub += u'\n'
+            data = cls.LINE_SWAP_EXPR.sub(sub, data)
 
         try:
             parser = etree.XMLParser(remove_blank_text=False)
