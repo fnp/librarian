@@ -349,13 +349,13 @@ def transform(provider, slug, output_file=None, output_dir=None):
                                'version="2005-1"><head></head><docTitle></docTitle><navMap>' \
                                '<navPoint id="NavPoint-1" playOrder="1"><navLabel>' \
                                '<text>Strona tytułowa</text></navLabel><content src="title.html" />' \
-                               '</navPoint><navPoint id="NavPoint-2" playOrder="2"><navLabel>' \
-                               '<text>Początek utworu</text></navLabel><content src="part1.html" />' \
                                '</navPoint></navMap></ncx>')
     nav_map = toc_file[-1]
 
     toc, chunk_counter = transform_file(input_xml)
-    toc_counter = toc.write_to_xml(nav_map, 3) # we already have 2 navpoints
+    if not toc.children:
+        toc.add(u"Początek utworu", 1)
+    toc_counter = toc.write_to_xml(nav_map, 2)
 
     # Last modifications in container files and EPUB creation
     if len(annotations) > 0:
