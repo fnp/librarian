@@ -165,9 +165,9 @@
   </xsl:template>
 
   <xsl:template match="strofa">
-    <div class="stanza" xmlns="http://www.w3.org/1999/xhtml">
+    <p class="stanza" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </div>
+    </p><p xmlns="http://www.w3.org/1999/xhtml">&#160;</p>
   </xsl:template>
 
   <xsl:template match="wers_normalny">
