@@ -1,7 +1,33 @@
+@font-face {
+    font-family: "DejaVu Serif";
+    font-weight: normal;
+    font-style: normal;
+    src: url(DejaVuSerif.ttf);
+}
+@font-face {
+    font-family: "DejaVu Serif";
+    font-weight: bold;
+    font-style: normal;
+    src: url(DejaVuSerif-Bold.ttf);
+}
+@font-face {
+    font-family: "DejaVu Serif";
+    font-weight: normal;
+    font-style: italic;
+    src: url(DejaVuSerif-Italic.ttf);
+}
+@font-face {
+    font-family: "DejaVu Serif";
+    font-weight: bold;
+    font-style: italic;
+    src: url(DejaVuSerif-BoldItalic.ttf);
+}
+
+
 body
 {
 	font-size: 12pt;
-	font: Georgia, "Times New Roman" , serif;
+	font-family: "DejaVu Serif", serif;
 	line-height: 1.5em;
 	margin: 0;
 }

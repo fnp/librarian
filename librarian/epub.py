@@ -7,9 +7,12 @@ from __future__ import with_statement
 
 import os
 import os.path
+import subprocess
 from copy import deepcopy
 from lxml import etree
 import zipfile
+from tempfile import mkdtemp
+from shutil import rmtree
 
 import sys
 sys.path.append('..') # for running from working copy
@@ -206,6 +209,15 @@ class TOC(object):
         return counter
 
 
+def used_chars(element):
+    """ Lists characters used in an ETree Element """
+    print (element.text or '') + (element.tail or '')
+    chars = set((element.text or '') + (element.tail or ''))
+    for child in element:
+        chars = chars.union(used_chars(child))
+    return chars
+
+
 def chop(main_text):
     """ divide main content of the XML file into chunks """
 
@@ -231,7 +243,7 @@ def chop(main_text):
 
 
 def transform_chunk(chunk_xml, chunk_no, annotations):
-    """ transforms one chunk, returns a HTML string and a TOC object """
+    """ transforms one chunk, returns a HTML string, a TOC object and a set of used characters """
 
     toc = TOC()
     for element in chunk_xml[0]:
@@ -242,8 +254,10 @@ def transform_chunk(chunk_xml, chunk_no, annotations):
             element.set('sub', str(subnumber))
     find_annotations(annotations, chunk_xml, chunk_no)
     replace_by_verse(chunk_xml)
-    output_html = etree.tostring(xslt(chunk_xml, res('xsltScheme.xsl')), pretty_print=True)
-    return output_html, toc
+    html_tree = xslt(chunk_xml, res('xsltScheme.xsl'))
+    chars = used_chars(html_tree.getroot())
+    output_html = etree.tostring(html_tree, pretty_print=True)
+    return output_html, toc, chars
 
 
 def transform(provider, slug, output_file=None, output_dir=None):
@@ -262,14 +276,19 @@ def transform(provider, slug, output_file=None, output_dir=None):
         # every input file will have a TOC entry,
         # pointing to starting chunk
         toc = TOC(node_name(input_xml.find('.//'+DCNS('title'))), chunk_counter)
+        chars = set()
         if first:
             # write book title page
+            html_tree = xslt(input_xml, res('xsltTitle.xsl'))
+            chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/title.html',
-                 etree.tostring(xslt(input_xml, res('xsltTitle.xsl')), pretty_print=True))
+                 etree.tostring(html_tree, pretty_print=True))
         elif children:
             # write title page for every parent
+            html_tree = xslt(input_xml, res('xsltChunkTitle.xsl'))
+            chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/part%d.html' % chunk_counter, 
-                etree.tostring(xslt(input_xml, res('xsltChunkTitle.xsl')), pretty_print=True))
+                etree.tostring(html_tree, pretty_print=True))
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
             chunk_counter += 1
@@ -287,8 +306,9 @@ def transform(provider, slug, output_file=None, output_dir=None):
             replace_characters(main_text)
 
             for chunk_xml in chop(main_text):
-                chunk_html, chunk_toc = transform_chunk(chunk_xml, chunk_counter, annotations)
+                chunk_html, chunk_toc, chunk_chars = transform_chunk(chunk_xml, chunk_counter, annotations)
                 toc.extend(chunk_toc)
+                chars = chars.union(chunk_chars)
                 zip.writestr('OPS/part%d.html' % chunk_counter, chunk_html)
                 add_to_manifest(manifest, chunk_counter)
                 add_to_spine(spine, chunk_counter)
@@ -297,10 +317,11 @@ def transform(provider, slug, output_file=None, output_dir=None):
         if children:
             for child in children:
                 child_xml = etree.parse(provider.by_uri(child))
-                child_toc, chunk_counter = transform_file(child_xml, chunk_counter, first=False)
+                child_toc, chunk_counter, chunk_chars = transform_file(child_xml, chunk_counter, first=False)
                 toc.append(child_toc)
+                chars = chars.union(chunk_chars)
 
-        return toc, chunk_counter
+        return toc, chunk_counter, chars
 
     # read metadata from the first file
     input_xml = etree.parse(provider[slug])
@@ -352,7 +373,8 @@ def transform(provider, slug, output_file=None, output_dir=None):
                                '</navPoint></navMap></ncx>')
     nav_map = toc_file[-1]
 
-    toc, chunk_counter = transform_file(input_xml)
+    toc, chunk_counter, chars = transform_file(input_xml)
+
     if not toc.children:
         toc.add(u"Początek utworu", 1)
     toc_counter = toc.write_to_xml(nav_map, 2)
@@ -367,8 +389,21 @@ def transform(provider, slug, output_file=None, output_dir=None):
         spine.append(etree.fromstring(
             '<itemref idref="annotations" />'))
         replace_by_verse(annotations)
+        html_tree = xslt(annotations, res("xsltAnnotations.xsl"))
+        chars = chars.union(used_chars(html_tree.getroot()))
         zip.writestr('OPS/annotations.html', etree.tostring(
-                            xslt(annotations, res("xsltAnnotations.xsl")), pretty_print=True))
+                            html_tree, pretty_print=True))
+
+    # strip fonts
+    tmpdir = mkdtemp('-librarian-epub')
+    cwd = os.getcwd()
+
+    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../font-optimizer'))
+    for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
+        subprocess.check_call(['./subset.pl', '--chars', ''.join(chars), res('../fonts/' + fname), os.path.join(tmpdir, fname)])
+        zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
+    rmtree(tmpdir)
+    os.chdir(cwd)
 
     zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
     contents = []
