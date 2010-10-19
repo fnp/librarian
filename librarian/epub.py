@@ -211,7 +211,6 @@ class TOC(object):
 
 def used_chars(element):
     """ Lists characters used in an ETree Element """
-    print (element.text or '') + (element.tail or '')
     chars = set((element.text or '') + (element.tail or ''))
     for child in element:
         chars = chars.union(used_chars(child))
