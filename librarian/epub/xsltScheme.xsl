@@ -159,9 +159,9 @@
   </xsl:template>
 
   <xsl:template match="akap|akap_dialog|akap_cd">
-    <div class="paragraph" xmlns="http://www.w3.org/1999/xhtml">
+    <p class="paragraph" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </div>
+    </p>
   </xsl:template>
 
   <xsl:template match="strofa">
