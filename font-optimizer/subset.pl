@@ -1,5 +1,8 @@
-#!/usr/bin/perl -CA
-  # use the -CA flag so @ARGV is interpreted as UTF-8
+#!/usr/bin/perl
+
+# -CA flag is forbidden in #! line
+use Encode qw(decode);
+    @ARGV = map { decode 'utf-8', $_ } @ARGV;
 
 use strict;
 use warnings;
