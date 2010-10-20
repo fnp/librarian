@@ -399,7 +399,7 @@ def transform(provider, slug, output_file=None, output_dir=None):
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../font-optimizer'))
     for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-        subprocess.check_call(['./subset.pl', '--chars', ''.join(chars), res('../fonts/' + fname), os.path.join(tmpdir, fname)])
+        subprocess.check_call(['./subset.pl', '--chars', ''.join(chars).encode('utf-8'), res('../fonts/' + fname), os.path.join(tmpdir, fname)])
         zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
     rmtree(tmpdir)
     os.chdir(cwd)
