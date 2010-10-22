@@ -3,12 +3,16 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import with_statement
 import os
 import os.path
 import shutil
 from StringIO import StringIO
 from tempfile import mkdtemp
 import re
+
+import sys
+sys.path.append('..') # for running from working copy
 
 from Texml.processor import process
 from lxml import etree
@@ -18,7 +22,13 @@ from librarian.parser import WLDocument
 from librarian import ParseError
 from librarian import functions
 
+
+
 functions.reg_substitute_entities()
+functions.reg_person_name()
+functions.reg_strip()
+functions.reg_starts_white()
+functions.reg_ends_white()
 
 STYLESHEETS = {
     'wl2tex': 'xslt/wl2tex.xslt',
@@ -26,7 +36,14 @@ STYLESHEETS = {
 
 
 def insert_tags(doc, split_re, tagname):
-    print tagname
+    """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree 
+
+    >>> t = etree.fromstring('<a><b>A-B-C</b>X-Y-Z</a>');
+    >>> insert_tags(t, re.compile('-'), 'd');
+    >>> print etree.tostring(t)
+    <a><b>A<d/>B<d/>C</b>X<d/>Y<d/>Z</a>
+    """
+
     for elem in doc.iter():
         if elem.text:
             chunks = split_re.split(elem.text)
@@ -42,7 +59,7 @@ def insert_tags(doc, split_re, tagname):
             elem.tail = chunks.pop(0)
             while chunks:
                 ins = etree.Element(tagname)
-                ins.tail = chunks.pop(0)
+                ins.tail = chunks.pop()
                 parent.insert(ins_index, ins)
 
 
@@ -58,8 +75,11 @@ def fix_hanging(doc):
                 "nbsp")
 
 
+def get_resource(path):
+    return os.path.join(os.path.dirname(__file__), path)
+
 def get_stylesheet(name):
-    return os.path.join(os.path.dirname(__file__), STYLESHEETS[name])
+    return get_resource(STYLESHEETS[name])
 
 def transform(provider, slug, output_file=None, output_dir=None):
     """ produces a pdf file
@@ -78,8 +98,6 @@ def transform(provider, slug, output_file=None, output_dir=None):
 
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
-        
-        print etree.tostring(document.edoc)
 
         # if output to dir, create the file
         if output_dir is not None:
@@ -96,6 +114,8 @@ def transform(provider, slug, output_file=None, output_dir=None):
         fout.close()
         del texml
 
+        shutil.copy(get_resource('pdf/wl.sty'), temp)
+        shutil.copy(get_resource('pdf/wl-logo.png'), temp)
         print "pdflatex -output-directory %s %s" % (temp, os.path.join(temp, 'doc.tex'))
         if os.system("pdflatex -output-directory %s %s" % (temp, os.path.join(temp, 'doc.tex'))):
             raise ParseError("Error parsing .tex file")

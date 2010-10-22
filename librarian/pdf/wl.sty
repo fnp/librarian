@@ -1,0 +1,72 @@
+\usepackage[MeX]{polski}
+\usepackage[utf8]{inputenc}
+\pagestyle{plain}
+%\usepackage{antpolt}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+
+\makeatletter
+
+% bottom figure below footnotes
+\usepackage{fnpos}
+\makeFNabove
+
+\usepackage{color}
+\definecolor{theme-gray}{gray}{.3}
+
+\setlength{\marginparsep}{2em}
+\setlength{\marginparwidth}{8.5em}
+\setlength{\oddsidemargin}{0pt}
+\setlength{\voffset}{0pt}
+\setlength{\topmargin}{0pt}
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\textheight}{24cm}
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\lfoot{\footnotesize \@author, \emph{\@title}}
+\cfoot{}
+\rfoot{\footnotesize \thepage}
+
+\clubpenalty=100000
+\widowpenalty=100000
+%\interlinepenalty=8000
+
+
+\renewcommand{\maketitle}{
+    \thispagestyle{empty}
+    \footnotesize
+    \color{theme-gray}
+
+    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
+        \includegraphics[width=\textwidth]{pdf/wl-logo.png}
+    \end{minipage}
+    \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
+        Wejdź na stronę http://wolnelektury.pl/ i~zobacz, jak wiele możliwości daje interaktywna wersja szkolnej biblioteki
+        internetowej Wolne Lektury.
+        \vspace{.5em}
+
+        Ten utwór nie jest chroniony prawem autorskim i~znajduje się w~domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i~rozpowszechniać.
+
+        \vspace{.6em}
+
+    \end{minipage}
+    \noindent \rule{\linewidth}{0.4pt}
+
+    \vspace{.6em}
+    \color{black}
+
+    \begin{figure}[b!]
+        \footnotesize
+        \color{theme-gray}
+        \noindent \rule{\linewidth}{0.4pt}
+
+        Szkolna biblioteka internetowa Wolne Lektury tworzona jest dzięki pracy Wolontariuszy, ale to osoby
+        zatrudnione w~FNP będą musiały wymyślić, co powinno zostać napisane w~tym miejscu. Można zupełnie usunąć
+        tę sekcję, ale autor konwertera chciał się popisać, że umie coś takiego zrobić.
+        \color{black}
+    \end{figure}
+}
+

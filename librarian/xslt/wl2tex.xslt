@@ -12,33 +12,30 @@
 
 <xsl:output encoding="utf-8" indent="yes" version="2.0" />
 
-
 <xsl:template match="utwor">
     <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
         <TeXML escape="0">
         \documentclass[a4paper, oneside, 11pt]{book}
-        \usepackage[MeX]{polski}
-        \usepackage[utf8]{inputenc}
-        \pagestyle{plain}
-        \usepackage{antpolt}
-        \usepackage[bottom]{footmisc}
-
-        \usepackage{color}
-        \definecolor{theme-gray}{gray}{.3}
-
-
-        \setlength{\marginparsep}{2em}
-        \setlength{\marginparwidth}{8.5em}
-        \setlength{\oddsidemargin}{0pt}
-        \clubpenalty=10000
-        \widowpenalty=10000 
+        \usepackage{wl}
         </TeXML>
 
-        <xsl:apply-templates select="rdf:RDF" mode='title' />
-        <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='title' />
+        <xsl:apply-templates select="rdf:RDF" mode="titlepage" />
+        <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='titlepage' />
 
         <env name="document">
             <cmd name="maketitle" />
+
+            <xsl:choose>
+                <xsl:when test="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu">
+                    <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/autor_utworu" mode="title" />
+                    <!-- title in master -->
+                </xsl:when>
+                <xsl:otherwise>
+                    <!-- look for author title in dc -->
+                    <xsl:apply-templates select="rdf:RDF" mode="firstdctitle" />
+                    <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='firstdctitle' />
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
             <xsl:apply-templates select="utwor" mode="part" />
         </env>
@@ -46,12 +43,68 @@
 </xsl:template>
 
 <xsl:template match="utwor" mode="part">
-    <xsl:if test="utwor">
-        <xsl:apply-templates select="rdf:RDF" mode='subtitle' />
-        <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='subtitle' />
-    </xsl:if>
+    <!-- title for empty dc -->
+    <xsl:choose>
+        <xsl:when test="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu">
+            <!-- title in master -->
+        </xsl:when>
+        <xsl:otherwise>
+            <!-- look for title in dc -->
+            <xsl:apply-templates select="rdf:RDF" mode="dctitle" />
+            <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='dctitle' />
+        </xsl:otherwise>
+    </xsl:choose>
+
     <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
     <xsl:apply-templates select="utwor" mode="part" />
+</xsl:template>
+
+<!-- =================== -->
+<!-- = MAIN TITLE PAGE = -->
+<!-- = (from DC)       = -->
+<!-- =================== -->
+
+<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode="titlepage">
+    <xsl:apply-templates select="rdf:RDF" mode="titlepage" />
+</xsl:template>
+
+<xsl:template match="rdf:RDF" mode="titlepage">
+    <cmd name='title'><parm>
+        <xsl:value-of select=".//dc:title/text()" />
+    </parm></cmd>
+    <cmd name='author'><parm>
+        <xsl:value-of select="wl:person_name(.//dc:creator/text())" />
+    </parm></cmd>
+</xsl:template>
+
+
+<!-- ============== -->
+<!-- = BOOK TITLE = -->
+<!-- = (from DC)  = -->
+<!-- ============== -->
+
+<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode="dctitle">
+    <xsl:apply-templates select="rdf:RDF" mode="dctitle" />
+</xsl:template>
+
+<xsl:template match="rdf:RDF" mode="dctitle">
+    <cmd name="section*"><parm>
+        <xsl:value-of select=".//dc:title/text()" />
+    </parm></cmd>
+</xsl:template>
+
+
+<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode="firstdctitle">
+    <xsl:apply-templates select="rdf:RDF" mode="firstdctitle" />
+</xsl:template>
+
+<xsl:template match="rdf:RDF" mode="firstdctitle">
+    <cmd name="subsection*"><parm>
+        <xsl:value-of select="wl:person_name(.//dc:creator/text())" />
+    </parm></cmd>
+    <cmd name="section*"><parm>
+        <xsl:value-of select=".//dc:title/text()" />
+    </parm></cmd>
 </xsl:template>
 
 
@@ -59,39 +112,6 @@
 <!-- = MASTER TAG                                                                 = -->
 <!-- = (can contain block tags, paragraph tags, standalone tags and special tags) = -->
 <!-- ============================================================================== -->
-
-<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode="title">
-    <xsl:apply-templates select="rdf:RDF" mode='title' />
-</xsl:template>
-
-<xsl:template match="rdf:RDF" mode="title">
-
-<!-- TODO!
-            <cmd name='title'><parm>
-                <xsl:apply-templates select="dzielo_nadrzedne|podtytul" mode="header" />
-            </parm></cmd>
-            czytanie z tagów nazwa_utworu, autor_utworu
--->
-
-                <cmd name='title'><parm>
-                    <xsl:apply-templates select=".//dc:title" mode="header" />
-                </parm></cmd>
-                <cmd name='author'><parm>
-                    <xsl:apply-templates select=".//dc:author" mode="header" />
-                </parm></cmd>
-</xsl:template>
-
-<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode="subtitle">
-    <xsl:apply-templates select="rdf:RDF" mode='subtitle' />
-</xsl:template>
-
-<xsl:template match="rdf:RDF" mode="subtitle">
-                <cmd name='part*'><parm>
-                    <xsl:apply-templates select=".//dc:title" mode="header" />
-                </parm></cmd>
-</xsl:template>
-
-
 
 <xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny">
     <xsl:apply-templates />
@@ -110,22 +130,23 @@
 </xsl:template>
 
 <xsl:template match="lista_osob">
-    <cmd name="par">
+    <cmd name="par"><parm>
         <cmd name="textbf">
             <parm><xsl:value-of select="naglowek_listy" /></parm>
         </cmd>
         <env name="itemize">
             <xsl:apply-templates select="lista_osoba" />
         </env>
-    </cmd>
+    </parm></cmd>
 </xsl:template>
 
 <xsl:template match="dedykacja">
-    <cmd name="raggedleft"><parm>
+    <cmd name="hspace"><parm>0.4<cmd name='linewidth' /></parm></cmd>
+    <env name="minipage"><parm>0.6<cmd name='linewidth' /></parm>
         <env name="em">
             <xsl:apply-templates />
         </env>
-    </parm></cmd>
+    </env>
 </xsl:template>
 
 <xsl:template match="kwestia">
@@ -157,26 +178,15 @@
 <!-- = PARAGRAPH TAGS                         = -->
 <!-- = (can contain inline and special tags)  = -->
 <!-- ========================================== -->
-<!-- Title page -->
-<xsl:template match="autor_utworu" mode="header">
-    <xsl:apply-templates mode="inline" />
-</xsl:template>
 
-<xsl:template match="nazwa_utworu" mode="header">
-    <xsl:apply-templates mode="inline" />
+<!-- only in root -->
+<xsl:template match="autor_utworu" mode="title">X
+    <cmd name="subsection*"><parm>
+        <xsl:apply-templates mode="inline" />
+    </parm></cmd>
 </xsl:template>
-
-<xsl:template match="dzielo_nadrzedne" mode="header">
-    <xsl:apply-templates mode="inline" />
-</xsl:template>
-
-<xsl:template match="podtytul" mode="header">
-    <xsl:apply-templates mode="inline" />
-</xsl:template>
-
 
 <xsl:template match="nazwa_utworu">
-    <cmd name="pagebreak" />
     <cmd name="section*"><parm>
         <xsl:apply-templates mode="inline" />
     </parm></cmd>
@@ -283,16 +293,19 @@
 </xsl:template>
 
 <xsl:template match="motto_podpis">
-    <cmd name="raggedleft"><parm>
-        <xsl:apply-templates mode="inline" />
-    </parm></cmd>
+    <cmd name="hspace"><parm>0.4<cmd name='linewidth' /></parm></cmd>
+    <env name="minipage"><parm>0.6<cmd name='linewidth' /></parm>
+        <env name="em">
+            <xsl:apply-templates mode="inline" />
+        </env>
+    </env>
 </xsl:template>
-
 
 <!-- ================================================ -->
 <!-- = INLINE TAGS                                  = -->
 <!-- = (contain other inline tags and special tags) = -->
 <!-- ================================================ -->
+
 <!-- Annotations -->
 <xsl:template match="pa|pe|pr|pt" mode="inline">
     <cmd name="footnote"><parm><xsl:apply-templates mode="inline" /></parm></cmd>
@@ -318,7 +331,6 @@
 </xsl:template>
 
 <xsl:template match="wyroznienie" mode="inline">
-    <!-- TODO: letterspacing 1pt -->
     <cmd name="emph"><parm><xsl:apply-templates mode="inline" /></parm></cmd>
 </xsl:template>
 
@@ -354,7 +366,7 @@
 
 <xsl:template match="begin" mode="inline">
     <xsl:variable name="mnum" select="concat('m', substring(@id, 2))" />
-    <cmd name="mbox" />
+    <!--cmd name="mbox" />
     <cmd name="marginpar">
         <parm><cmd name="raggedright"><parm>
             <cmd name="hspace"><parm>0pt</parm></cmd>
@@ -364,7 +376,7 @@
                 </parm></cmd>
             </parm></cmd>
         </parm></cmd></parm>
-    </cmd>
+    </cmd-->
 </xsl:template>
 
 <xsl:template match="begin|end">
@@ -400,7 +412,15 @@
 <!-- ======== -->
 <xsl:template match="text()" />
 <xsl:template match="text()" mode="inline">
-    <xsl:value-of select="wl:substitute_entities(.)" />
+    <xsl:if test="preceding-sibling::node() and wl:starts_white(.)">
+      <xsl:text> </xsl:text>
+    </xsl:if>
+
+    <xsl:value-of select="wl:substitute_entities(wl:strip(.))" />
+
+    <xsl:if test="following-sibling::node() and wl:ends_white(.)">
+      <xsl:text> </xsl:text>
+    </xsl:if>
 </xsl:template>
 
 

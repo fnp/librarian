@@ -41,6 +41,26 @@ def reg_strip():
     _register_function(strip)
 
 
+def reg_starts_white():
+    def starts_white(context, text):
+        if isinstance(text, list):
+            text = ''.join(text)
+        if not text:
+            return False
+        return text[0].isspace()
+    _register_function(starts_white)
+
+
+def reg_ends_white():
+    def ends_white(context, text):
+        if isinstance(text, list):
+            text = ''.join(text)
+        if not text:
+            return False
+        return text[-1].isspace()
+    _register_function(ends_white)
+
+
 def reg_wrap_words():
     def wrap_words(context, text, wrapping):
         """XPath extension function automatically wrapping words in passed text"""
@@ -62,4 +82,14 @@ def reg_wrap_words():
             lines[-1].append(word)
         return '\n'.join(' '.join(line) for line in lines)
     _register_function(wrap_words)
+
+
+def reg_person_name():
+    def person_name(context, text):
+        """ Converts "Name, Forename" to "Forename Name" """
+        if isinstance(text, list):
+            text = ''.join(text)
+        return ' '.join([t.strip() for t in text.split(',', 1)[::-1]])
+    _register_function(person_name)
+
 
