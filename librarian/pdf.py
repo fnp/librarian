@@ -10,6 +10,7 @@ import shutil
 from StringIO import StringIO
 from tempfile import mkdtemp
 import re
+from copy import deepcopy
 
 import sys
 sys.path.append('..') # for running from working copy
@@ -95,6 +96,32 @@ def transform(provider, slug, output_file=None, output_dir=None):
         style = etree.parse(style_filename)
 
         document = load_including_children(provider, slug)
+
+        # dirty hack for the marginpar-creates-orphans LaTeX problem
+        # see http://www.latex-project.org/cgi-bin/ltxbugs2html?pr=latex/2304
+        for motif in document.edoc.findall('//strofa//motyw'):
+            # find relevant verse-level tag
+            verse, stanza = motif, motif.getparent()
+            while stanza is not None and stanza.tag != 'strofa':
+                verse, stanza = stanza, stanza.getparent()
+            breaks_before = sum(1 for i in verse.itersiblings('br', preceding=True))
+            breaks_after = sum(1 for i in verse.itersiblings('br'))
+            if (breaks_before == 0 and breaks_after > 0) or breaks_after == 1:
+                move_by = 1
+                if breaks_after == 2:
+                    move_by += 1
+                moved_motif = deepcopy(motif)
+                motif.tag = 'span'
+                motif.text = None
+                moved_motif.tail = None
+                moved_motif.set('moved', str(move_by))
+
+                for br in verse.itersiblings(tag='br'):
+                    if move_by > 1:
+                        move_by -= 1
+                        continue
+                    br.addnext(moved_motif)
+                    break
 
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)

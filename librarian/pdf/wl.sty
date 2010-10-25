@@ -12,7 +12,7 @@
 \makeFNabove
 
 \usepackage{color}
-\definecolor{theme-gray}{gray}{.3}
+\definecolor{theme}{gray}{.3}
 
 \setlength{\marginparsep}{2em}
 \setlength{\marginparwidth}{8.5em}
@@ -26,9 +26,9 @@
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0.4pt}
-\lfoot{\footnotesize \@author, \emph{\@title}}
+\lfoot{{\footnotesize \@author, \emph{\@title}}}
 \cfoot{}
-\rfoot{\footnotesize \thepage}
+\rfoot{{\footnotesize \thepage}}
 
 \clubpenalty=100000
 \widowpenalty=100000
@@ -36,9 +36,10 @@
 
 
 \renewcommand{\maketitle}{
+    {
     \thispagestyle{empty}
     \footnotesize
-    \color{theme-gray}
+    \color{theme}
 
     \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
         \includegraphics[width=\textwidth]{pdf/wl-logo.png}
@@ -60,7 +61,7 @@
 
     \begin{figure}[b!]
         \footnotesize
-        \color{theme-gray}
+        \color{theme}
         \noindent \rule{\linewidth}{0.4pt}
 
         Szkolna biblioteka internetowa Wolne Lektury tworzona jest dzięki pracy Wolontariuszy, ale to osoby
@@ -68,5 +69,5 @@
         tę sekcję, ale autor konwertera chciał się popisać, że umie coś takiego zrobić.
         \color{black}
     \end{figure}
+    }
 }
-

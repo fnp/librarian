@@ -364,27 +364,32 @@
 <!-- Themes -->
 
 
-<xsl:template match="begin" mode="inline">
-    <xsl:variable name="mnum" select="concat('m', substring(@id, 2))" />
-    <!--cmd name="mbox" />
-    <cmd name="marginpar">
-        <parm><cmd name="raggedright"><parm>
-            <cmd name="hspace"><parm>0pt</parm></cmd>
-            <cmd name="footnotesize"><parm>
-                <cmd name="color"><parm>theme-gray</parm><parm>
-                    <xsl:value-of select="string(following::motyw[@id=$mnum]/text())" />
-                </parm></cmd>
-            </parm></cmd>
-        </parm></cmd></parm>
-    </cmd-->
-</xsl:template>
-
-<xsl:template match="begin|end">
+<xsl:template match="begin|end|motyw">
     <xsl:apply-templates select='.' mode="inline" />
 </xsl:template>
 
+<xsl:template match="begin" mode="inline" />
 <xsl:template match="end" mode="inline" />
-<xsl:template match="motyw" mode="inline" />
+
+<xsl:template match="motyw" mode="inline">
+    <cmd name="mbox" />
+    <cmd name="marginpar">
+        <parm>
+            <cmd name="vspace"><parm>-8pt</parm></cmd>
+            <xsl:if test="@moved">
+                <cmd name="vspace"><parm>-<xsl:value-of select="@moved" /><cmd name="baselineskip" /></parm></cmd>
+            </xsl:if>
+            <cmd name="raggedright"><parm>
+                <cmd name="hspace"><parm>0pt</parm></cmd>
+                <cmd name="footnotesize"><parm>
+                    <cmd name="color"><parm>theme</parm><parm>
+                        <xsl:value-of select="." />
+                    </parm></cmd>
+                </parm></cmd>
+            </parm></cmd>
+        </parm>
+    </cmd>
+</xsl:template>
 
 
 <!-- ============== -->
