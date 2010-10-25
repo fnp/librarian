@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<xsl:stylesheet version="1.0" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:wl="http://wolnelektury.pl/functions">
   <xsl:output method="html" version="1.0" encoding="utf-8" />
   <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
   <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
@@ -18,10 +21,12 @@
           <div class='title-page'>
             <xsl:choose>
               <xsl:when test="//autor_utworu | //nazwa_utworu">
-                <xsl:apply-templates select="//autor_utworu | //nazwa_utworu | //podtytul | //dzielo_nadrzedne" mode="poczatek"/>
+                <xsl:apply-templates select="//autor_utworu" mode="poczatek"/>
+                <xsl:apply-templates select="//nazwa_utworu | //podtytul | //dzielo_nadrzedne" mode="poczatek"/>
               </xsl:when>
               <xsl:otherwise>
-                <xsl:apply-templates select="//dc:creator | //dc:title | //podtytul | //dzielo_nadrzedne" mode="poczatek"/>
+                <xsl:apply-templates select="//dc:creator" mode="poczatek"/>
+                <xsl:apply-templates select="//dc:title | //podtytul | //dzielo_nadrzedne" mode="poczatek"/>
               </xsl:otherwise>
             </xsl:choose>
           </div>
@@ -45,6 +50,12 @@
   <xsl:template match="dc:creator" mode="poczatek">
     <div class="author" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
+    </div>
+  </xsl:template>
+
+  <xsl:template match="dc:creator/text()">
+    <div class="author" xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:value-of select="wl:person_name(.)" />
     </div>
   </xsl:template>
 

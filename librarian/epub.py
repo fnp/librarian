@@ -20,6 +20,10 @@ sys.path.append('..') # for running from working copy
 from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, NoDublinCore
 from librarian.dcparser import BookInfo
 
+from librarian import functions
+
+functions.reg_person_name()
+
 
 def inner_xml(node):
     """ returns node's text and children as a string
