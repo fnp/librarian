@@ -165,13 +165,19 @@
   </xsl:template>
 
   <xsl:template match="strofa">
-    <p class="stanza" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="stanza" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </p><p xmlns="http://www.w3.org/1999/xhtml">&#160;</p>
+    </div><div xmlns="http://www.w3.org/1999/xhtml">&#160;</div>
   </xsl:template>
 
   <xsl:template match="wers_normalny">
     <div class="verse" xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates />
+    </div>
+  </xsl:template>
+
+  <xsl:template match="wers_akap">
+    <div class="verse" style="padding-left: 1em;" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </div>
   </xsl:template>
