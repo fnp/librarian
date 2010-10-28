@@ -30,14 +30,10 @@ other formats, which are more suitable for presentation.
 Currently we support:
 
  * HTML4, XHTML 1.0
- * Plain text 
- 
-In the future, we plan to support:
-
+ * Plain text
  * EPUB (XHTML based)
- * print-ready PDF 
-
-
+ * print-ready PDF
+ 
 Other features: 
 
  * extract DublinCore meta-data from documents;
@@ -48,6 +44,9 @@ Dependencies
 ------------
 
  * lxml <http://codespeak.net/lxml/>, version 2.2 or later
+ * additional PDF converter dependencies:
+   * XeTeX
+   * TeXML <http://getfo.org/texml/>
 
 
 Installation
@@ -61,13 +60,21 @@ Librarian uses standard Python distutils for packaging. After installing all the
 Usage
 ------
 
-To convert a series of file to XHTML:
+To convert a series of files to XHTML:
 
     book2html file1.xml [file2.xml ...]
 
-To convert a series of file to plain text:
+To convert a series of files to plain text:
 
     book2txt file1.xml [file2.xml ...]
+
+To convert a file to EPUB:
+
+    book2epub file.xml
+
+To convert a file to PDF:
+
+    book2pdf file.xml
 
 To extract book fragments marked as "theme":
 
