@@ -19,6 +19,21 @@
         \usepackage{wl}
         </TeXML>
 
+        <xsl:choose>
+            <xsl:when test="@old-morefloats">
+                <TeXML escape="0">
+                    \IfFileExists{morefloats.sty}{
+                        \usepackage{morefloats}
+                    }{}
+                </TeXML>
+            </xsl:when>
+            <xsl:otherwise>
+                <TeXML escape="0">
+                    \usepackage[maxfloats=64]{morefloats}
+                </TeXML>
+            </xsl:otherwise>
+        </xsl:choose>
+
         <xsl:apply-templates select="rdf:RDF" mode="titlepage" />
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='titlepage' />
 
@@ -141,10 +156,9 @@
 </xsl:template>
 
 <xsl:template match="dedykacja">
-    <cmd name="hspace"><parm>0.4<cmd name='linewidth' /></parm></cmd>
-    <env name="minipage"><parm>0.6<cmd name='linewidth' /></parm>
-        <env name="em">
-            <xsl:apply-templates />
+    <env name="em">
+        <env name="flushright">
+            <xsl:apply-templates/>
         </env>
     </env>
 </xsl:template>
@@ -180,7 +194,7 @@
 <!-- ========================================== -->
 
 <!-- only in root -->
-<xsl:template match="autor_utworu" mode="title">X
+<xsl:template match="autor_utworu" mode="title">
     <cmd name="subsection*"><parm>
         <xsl:apply-templates mode="inline" />
     </parm></cmd>
@@ -206,9 +220,9 @@
 </xsl:template>
 
 <xsl:template match="naglowek_osoba|naglowek_podrozdzial">
-    <cmd name="paragraph*">
+    <cmd name="par">
         <parm><xsl:apply-templates mode="inline" /></parm>
-    </cmd>
+    </cmd><cmd name="nopagebreak" />
 </xsl:template>
 
 <!-- Other paragraph tags -->
@@ -242,30 +256,30 @@
 
 <xsl:template match="strofa">
 <cmd name="par"><parm><cmd name="noindent"><parm>
-            <xsl:choose>
-            <xsl:when test="count(br) > 0">
+    <xsl:choose>
+        <xsl:when test="count(br) > 0">
+            <xsl:call-template name="verse">
+                <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::text() | br[1]/preceding-sibling::node()" />
+                <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd'][1]" />
+            </xsl:call-template>
+            <xsl:for-each select="br">
+                <TeXML escape="0">\\{}</TeXML>
+                <!-- Each BR tag "consumes" text after it -->
+                <xsl:variable name="lnum" select="count(preceding-sibling::br)" />
                 <xsl:call-template name="verse">
-                    <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::text() | br[1]/preceding-sibling::node()" />
-                    <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd'][1]" />
+                    <xsl:with-param name="verse-content"
+                        select="following-sibling::text()[count(preceding-sibling::br) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />
+                    <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd')][1]" />
                 </xsl:call-template>
-                <xsl:for-each select="br">
-                    <cmd name="newline" />
-                    <!-- Each BR tag "consumes" text after it -->
-                    <xsl:variable name="lnum" select="count(preceding-sibling::br)" />
-                    <xsl:call-template name="verse">
-                        <xsl:with-param name="verse-content"
-                            select="following-sibling::text()[count(preceding-sibling::br) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />
-                        <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd')][1]" />
-                    </xsl:call-template>
-                </xsl:for-each>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:call-template name="verse">
-                    <xsl:with-param name="verse-content" select="text() | node()" />
-                    <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd[1]" />
-                 </xsl:call-template>
-            </xsl:otherwise>
-        </xsl:choose>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:call-template name="verse">
+                <xsl:with-param name="verse-content" select="text() | node()" />
+                <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd[1]" />
+            </xsl:call-template>
+        </xsl:otherwise>
+    </xsl:choose>
     <cmd name="vspace"><parm>1em</parm></cmd>
 </parm></cmd></parm></cmd>
 </xsl:template>
@@ -274,10 +288,10 @@
 <xsl:template name="verse">
     <xsl:param name="verse-content" />
     <xsl:param name="verse-type" />
-        <xsl:choose><xsl:when test="name($verse-type) = 'wers_akap'"><cmd name="hspace" ><parm><xsl:value-of select="$firet" />pt</parm></cmd></xsl:when>
+        <xsl:choose><xsl:when test="name($verse-type) = 'wers_akap'"><cmd name="hspace" ><parm>1em</parm></cmd></xsl:when>
             <xsl:when test="name($verse-type) = 'wers_wciety'">
                 <xsl:choose>
-                    <xsl:when test="$verse-content/@typ">
+                    <xsl:when test="string($verse-content/@typ)">
                         <cmd name="hspace" ><parm><xsl:value-of select="$verse-content/@typ" />em</parm></cmd>
                     </xsl:when>
                     <xsl:otherwise>
@@ -286,17 +300,16 @@
                 </xsl:choose>
             </xsl:when>
             <xsl:when test="name($verse-type) = 'wers_cd'">
-                <cmd name="hspace" ><parm>12em</parm></cmd>
+                <cmd name="hspace" ><parm>8em</parm></cmd>
             </xsl:when>
         </xsl:choose>
         <xsl:apply-templates select="$verse-content" mode="inline" />
 </xsl:template>
 
 <xsl:template match="motto_podpis">
-    <cmd name="hspace"><parm>0.4<cmd name='linewidth' /></parm></cmd>
-    <env name="minipage"><parm>0.6<cmd name='linewidth' /></parm>
-        <env name="em">
-            <xsl:apply-templates mode="inline" />
+    <env name="em">
+        <env name="flushright">
+            <xsl:apply-templates mode="inline"/>
         </env>
     </env>
 </xsl:template>

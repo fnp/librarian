@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+#
+import os.path
+from optparse import OptionParser
+from librarian import pdf, DirDocProvider, ParseError
+
+if __name__ == '__main__':
+    usage = "usage: %prog [options] <input_file> [output_file]"
+    parser = OptionParser(usage)
+    parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
+                      help='make lots of noise and revert to default interaction in LaTeX')
+    parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
+                      help='create a directory for author and put the PDF in it')
+    parser.add_option('-t', '--save-tex', dest='save_tex', metavar='FILE',
+                      help='path to save the intermediary LaTeX file to')
+    (options, args) = parser.parse_args()
+
+    if not 1 <= len(args) <= 2:
+        parser.print_help()
+        exit(1)
+
+    main_input = args[0]
+    basepath, ext = os.path.splitext(main_input)
+    path, slug = os.path.realpath(basepath).rsplit('/', 1)
+    provider = DirDocProvider(path)
+    try:
+        if len(args) > 1:
+            pdf.transform(provider, slug, output_file=args[1], verbose=options.verbose, save_tex=options.save_tex)
+        else:
+            pdf.transform(provider, slug, output_dir=path, make_dir=options.make_dir, verbose=options.verbose, save_tex=options.save_tex)
+    except ParseError, e:
+        print '%(file)s:%(name)s:%(message)s' % {
+            'file': main_input,
+            'name': e.__class__.__name__,
+            'message': e.message
+        }

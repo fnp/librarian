@@ -81,3 +81,4 @@ Originally written by Marek Stępniowski <marek@stepniowski.com>
 Later contributions:
 
  * Łukasz Rekucki <lrekucki@gmail.com>
+ * Radek Czajka <radek.czajka@gmail.com>

@@ -15,7 +15,6 @@ from tempfile import mkdtemp
 from shutil import rmtree
 
 import sys
-sys.path.append('..') # for running from working copy
 
 from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, NoDublinCore
 from librarian.dcparser import BookInfo
@@ -263,12 +262,14 @@ def transform_chunk(chunk_xml, chunk_no, annotations):
     return output_html, toc, chars
 
 
-def transform(provider, slug, output_file=None, output_dir=None):
-    """ produces an epub
+def transform(provider, slug, output_file=None, output_dir=None, make_dir=False):
+    """ produces a EPUB file
 
-    provider is a DocProvider
-    either output_file (a file-like object) or output_dir (path to file/dir) should be specified
-    if output_dir is specified, file will be written to <output_dir>/<author>/<slug>.epub
+    provider: a DocProvider
+    slug: slug of file to process, available by provider
+    output_file: file-like object or path to output file
+    output_dir: path to directory to save output file to; either this or output_file must be present
+    make_dir: writes output to <output_dir>/<author>/<slug>.epub instead of <output_dir>/<slug>.epub
     """
 
     def transform_file(input_xml, chunk_counter=1, first=True):
@@ -336,14 +337,14 @@ def transform(provider, slug, output_file=None, output_dir=None):
 
     # if output to dir, create the file
     if output_dir is not None:
-        author = unicode(book_info.author)
-        author_dir = os.path.join(output_dir, author)
-        try:
-            os.makedirs(author_dir)
-        except OSError:
-            pass
-        output_file = open(os.path.join(author_dir, '%s.epub' % slug), 'w')
-
+        if make_dir:
+            author = unicode(book_info.author)
+            output_dir = os.path.join(output_dir, author)
+            try:
+                os.makedirs(output_dir)
+            except OSError:
+                pass
+        output_file = open(os.path.join(output_dir, '%s.epub' % slug), 'w')
 
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
@@ -401,9 +402,9 @@ def transform(provider, slug, output_file=None, output_dir=None):
     tmpdir = mkdtemp('-librarian-epub')
     cwd = os.getcwd()
 
-    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../font-optimizer'))
+    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
     for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-        subprocess.check_call(['./subset.pl', '--chars', ''.join(chars).encode('utf-8'), res('../fonts/' + fname), os.path.join(tmpdir, fname)])
+        subprocess.check_call(['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'), res('../fonts/' + fname), os.path.join(tmpdir, fname)])
         zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
     rmtree(tmpdir)
     os.chdir(cwd)
@@ -422,18 +423,3 @@ def transform(provider, slug, output_file=None, output_dir=None):
     set_inner_xml(toc_file[1], ''.join(('<text>', title, '</text>')))
     zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))
     zip.close()
-
-
-if __name__ == '__main__':
-    from librarian import DirDocProvider
-
-    if len(sys.argv) < 2:
-        print >> sys.stderr, 'Usage: python epub.py <input file>'
-        sys.exit(1)
-
-    main_input = sys.argv[1]
-    basepath, ext = os.path.splitext(main_input)
-    path, slug = os.path.realpath(basepath).rsplit('/', 1)
-    provider = DirDocProvider(path)
-    transform(provider, slug, output_dir=path)
-
