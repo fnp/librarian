@@ -167,6 +167,8 @@ def transform(provider, slug, output_file=None, output_dir=None, make_dir=False,
 
     # Parse XSLT
     try:
+        document = load_including_children(provider, slug)
+
         # check for latex packages
         if not package_available('morefloats', 'maxfloats=19', verbose=verbose):
             document.edoc.getroot().set('old-morefloats', 'yes')
@@ -175,8 +177,6 @@ def transform(provider, slug, output_file=None, output_dir=None, make_dir=False,
 LaTeX `morefloats' package is older than v.1.0c or not available at all.
 Some documents with many motifs in long stanzas or paragraphs may not compile.
 =============================================================================="""
-
-        document = load_including_children(provider, slug)
 
         # hack the tree
         move_motifs_inside(document.edoc)

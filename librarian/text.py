@@ -13,7 +13,7 @@ import re
 
 functions.reg_substitute_entities()
 functions.reg_wrap_words()
-functions.reg_split()
+functions.reg_strip()
 
 TEMPLATE = u"""\
 Kodowanie znaków w dokumencie: UTF-8.
