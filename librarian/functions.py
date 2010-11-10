@@ -6,6 +6,8 @@
 from lxml import etree
 import re
 
+from librarian.dcparser import Person
+
 def _register_function(f):
     """ Register extension function with lxml """
     ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
@@ -68,9 +70,9 @@ def reg_wrap_words():
             text = ''.join(text)
         if not wrapping:
             return text
-    
+
         words = re.split(r'\s', text)
-    
+
         line_length = 0
         lines = [[]]
         for word in words:
@@ -89,7 +91,8 @@ def reg_person_name():
         """ Converts "Name, Forename" to "Forename Name" """
         if isinstance(text, list):
             text = ''.join(text)
-        return ' '.join([t.strip() for t in text.split(',', 1)[::-1]])
+        p = Person.from_text(text)
+        return ' '.join(p.first_names + (p.last_name,))
     _register_function(person_name)
 
 

@@ -85,11 +85,14 @@
 
 <xsl:template match="rdf:RDF" mode="titlepage">
     <cmd name='title'><parm>
-        <xsl:value-of select=".//dc:title/text()" />
+        <xsl:apply-templates select=".//dc:title/node()" mode="inline" />
     </parm></cmd>
     <cmd name='author'><parm>
-        <xsl:value-of select="wl:person_name(.//dc:creator/text())" />
+        <xsl:apply-templates select=".//dc:creator_parsed/node()" mode="inline" />
     </parm></cmd>
+    <TeXML escape="0">
+        \def\sourceinfo{<TeXML escape="1"><xsl:apply-templates select=".//dc:source/node()" mode="inline" /></TeXML>}
+    </TeXML>
 </xsl:template>
 
 
@@ -115,10 +118,10 @@
 
 <xsl:template match="rdf:RDF" mode="firstdctitle">
     <cmd name="subsection*"><parm>
-        <xsl:value-of select="wl:person_name(.//dc:creator/text())" />
+        <xsl:apply-templates select=".//dc:creator_parsed/node()" mode="inline" />
     </parm></cmd>
     <cmd name="section*"><parm>
-        <xsl:value-of select=".//dc:title/text()" />
+        <xsl:apply-templates select=".//dc:title/node()" mode="inline" />
     </parm></cmd>
 </xsl:template>
 

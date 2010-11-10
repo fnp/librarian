@@ -22,6 +22,8 @@ Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl/
 Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN. 
 \n%(license_description)s.
 
+%(source)s
+
 Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie %(url)s.
 -----
 
@@ -49,18 +51,21 @@ def transform(input_filename, output_filename, is_file=True, parse_dublincore=Tr
         parsed_dc = dcparser.parse(input_filename)
         url = parsed_dc.url
         license_description = parsed_dc.license_description
-	license = parsed_dc.license
+        license = parsed_dc.license
         if license:
             license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (license_description, license)        
         else:
-            license_description = u"Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać" 
+            license_description = u"Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać"
+        source = parsed_dc.source_name 
     else:
         url = '*' * 10
         license = ""
         license_description = ""
+        source = ""
     output_file.write(TEMPLATE % {
         'url': url,
-	'license_description': license_description,
+        'license_description': license_description,
         'text': unicode(result),
+        'source': source,
     })
 

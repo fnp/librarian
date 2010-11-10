@@ -19,14 +19,13 @@ from Texml.processor import process
 from lxml import etree
 from lxml.etree import XMLSyntaxError, XSLTApplyError
 
+from librarian.dcparser import Person
 from librarian.parser import WLDocument
-from librarian import ParseError
+from librarian import ParseError, DCNS
 from librarian import functions
 
 
-
 functions.reg_substitute_entities()
-functions.reg_person_name()
 functions.reg_strip()
 functions.reg_starts_white()
 functions.reg_ends_white()
@@ -45,27 +44,23 @@ def insert_tags(doc, split_re, tagname):
     <a><b>A<d/>B<d/>C</b>X<d/>Y<d/>Z</a>
     """
 
-    for elem in doc.iter():
-        try:
-            if elem.text:
-                chunks = split_re.split(elem.text)
-                while len(chunks) > 1:
-                    ins = etree.Element(tagname)
-                    ins.tail = chunks.pop()
-                    elem.insert(0, ins)
-                elem.text = chunks.pop(0)
-            if elem.tail:
-                chunks = split_re.split(elem.tail)
-                parent = elem.getparent()
-                ins_index = parent.index(elem) + 1
-                while len(chunks) > 1:
-                    ins = etree.Element(tagname)
-                    ins.tail = chunks.pop()
-                    parent.insert(ins_index, ins)
-                elem.tail = chunks.pop(0)
-        except TypeError, e:
-            # element with no children, like comment
-            pass
+    for elem in doc.iter(tag=etree.Element):
+        if elem.text:
+            chunks = split_re.split(elem.text)
+            while len(chunks) > 1:
+                ins = etree.Element(tagname)
+                ins.tail = chunks.pop()
+                elem.insert(0, ins)
+            elem.text = chunks.pop(0)
+        if elem.tail:
+            chunks = split_re.split(elem.tail)
+            parent = elem.getparent()
+            ins_index = parent.index(elem) + 1
+            while len(chunks) > 1:
+                ins = etree.Element(tagname)
+                ins.tail = chunks.pop()
+                parent.insert(ins_index, ins)
+            elem.tail = chunks.pop(0)
 
 
 def substitute_hyphens(doc):
@@ -124,6 +119,16 @@ def hack_motifs(doc):
                     continue
                 br.addnext(moved_motif)
                 break
+
+
+def parse_creator(doc):
+    """ find all dc:creator tags and add dc:creator_parsed with forenames first """
+    for creator in doc.findall('//'+DCNS('creator')):
+        p = Person.from_text(creator.text)
+        creator_parsed = deepcopy(creator)
+        creator_parsed.tag = DCNS('creator_parsed')
+        creator_parsed.text = ' '.join(p.first_names + (p.last_name,))
+        creator.getparent().insert(0, creator_parsed)
 
 
 def get_resource(path):
@@ -185,6 +190,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         # hack the tree
         move_motifs_inside(document.edoc)
         hack_motifs(document.edoc)
+        parse_creator(document.edoc)
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
 

@@ -88,7 +88,7 @@ class Field(object):
                     return val
                 return [ self.validator(v) if v is not None else v for v in val ]
             elif len(val) > 1:
-                raise ValidationError("Mulitply values not allowed for field '%s'" % self.uri)
+                raise ValidationError("Multiple values not allowed for field '%s'" % self.uri)
             elif len(val) == 0:
                 raise ValidationError("Field %s has no value to assign. Check your defaults." % self.uri)
             else:
