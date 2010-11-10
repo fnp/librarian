@@ -45,8 +45,11 @@ Dependencies
 
  * lxml <http://codespeak.net/lxml/>, version 2.2 or later
  * additional PDF converter dependencies:
-   * XeTeX
+   * XeTeX with support for Polish language
    * TeXML <http://getfo.org/texml/>
+   * recommended: morefloats LaTeX package, version >=1.0c
+     for dealing with documents with many motifs in one paragraph.
+     <http://www.ctan.org/tex-archive/help/Catalogue/entries/morefloats.html>
 
 
 Installation

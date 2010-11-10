@@ -153,11 +153,12 @@ def package_available(package, args='', verbose=False):
     return p == 0
 
 
-def transform(provider, slug, output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None):
+def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None):
     """ produces a PDF file with XeLaTeX
 
     provider: a DocProvider
     slug: slug of file to process, available by provider
+    file_path can be provided instead of a slug
     output_file: file-like object or path to output file
     output_dir: path to directory to save output file to; either this or output_file must be present
     make_dir: writes output to <output_dir>/<author>/<slug>.pdf istead of <output_dir>/<slug>.pdf
@@ -167,16 +168,19 @@ def transform(provider, slug, output_file=None, output_dir=None, make_dir=False,
 
     # Parse XSLT
     try:
-        document = load_including_children(provider, slug)
+        if file_path:
+            if slug:
+                raise ValueError('slug or file_path should be specified, not both')
+            document = load_including_children(provider, file_path=file_path)
+        else:
+            if not slug:
+                raise ValueError('either slug or file_path should be specified')
+            document = load_including_children(provider, slug=slug)
 
-        # check for latex packages
-        if not package_available('morefloats', 'maxfloats=19', verbose=verbose):
+        # check for LaTeX packages
+        if not package_available('morefloats', 'maxfloats=19'):
+            # using old morefloats or none at all
             document.edoc.getroot().set('old-morefloats', 'yes')
-            print >> sys.stderr, """
-==============================================================================
-LaTeX `morefloats' package is older than v.1.0c or not available at all.
-Some documents with many motifs in long stanzas or paragraphs may not compile.
-=============================================================================="""
 
         # hack the tree
         move_motifs_inside(document.edoc)
@@ -229,7 +233,10 @@ Some documents with many motifs in long stanzas or paragraphs may not compile.
                 os.makedirs(output_dir)
             except OSError:
                 pass
-            output_path = os.path.join(output_dir, '%s.pdf' % slug)
+            if slug:
+                output_path = os.path.join(output_dir, '%s.pdf' % slug)
+            else:
+                output_path = os.path.join(output_dir, os.path.splitext(os.path.basename(file_path))[0] + '.pdf')
             shutil.move(pdf_path, output_path)
         else:
             if hasattr(output_file, 'write'):
@@ -246,7 +253,7 @@ Some documents with many motifs in long stanzas or paragraphs may not compile.
         raise ParseError(e)
 
 
-def load_including_children(provider, slug=None, uri=None):
+def load_including_children(provider, slug=None, uri=None, file_path=None):
     """ makes one big xml file with children inserted at end 
     either slug or uri must be provided
     """
@@ -255,12 +262,16 @@ def load_including_children(provider, slug=None, uri=None):
         f = provider.by_uri(uri)
     elif slug:
         f = provider[slug]
+    elif file_path:
+        f = open(file_path, 'r')
     else:
-        raise ValueError('Neither slug nor URI provided for a book.')
+        raise ValueError('Neither slug, URI nor file path provided for a book.')
 
     document = WLDocument.from_file(f, True,
         parse_dublincore=True,
         preserve_lines=False)
+
+    f.close()
 
     for child_uri in document.book_info.parts:
         child = load_including_children(provider, uri=child_uri)

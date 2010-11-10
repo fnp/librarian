@@ -262,7 +262,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations):
     return output_html, toc, chars
 
 
-def transform(provider, slug, output_file=None, output_dir=None, make_dir=False):
+def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False):
     """ produces a EPUB file
 
     provider: a DocProvider
@@ -328,7 +328,17 @@ def transform(provider, slug, output_file=None, output_dir=None, make_dir=False)
         return toc, chunk_counter, chars
 
     # read metadata from the first file
-    input_xml = etree.parse(provider[slug])
+    if file_path:
+        if slug:
+            raise ValueError('slug or file_path should be specified, not both')
+        f = open(file_path, 'r')
+        input_xml = etree.parse(f)
+        f.close()
+    else:
+        if not slug:
+            raise ValueError('either slug or file_path should be specified')
+        input_xml = etree.parse(provider[slug])
+
     metadata = input_xml.find('.//'+RDFNS('Description'))
     if metadata is None:
         raise NoDublinCore('Document has no DublinCore - which is required.')
@@ -344,7 +354,10 @@ def transform(provider, slug, output_file=None, output_dir=None, make_dir=False)
                 os.makedirs(output_dir)
             except OSError:
                 pass
-        output_file = open(os.path.join(output_dir, '%s.epub' % slug), 'w')
+        if slug:
+            output_file = open(os.path.join(output_dir, '%s.epub' % slug), 'w')
+        else:
+            output_file = open(os.path.join(output_dir, os.path.splitext(os.path.basename(file_path))[0] + '.epub'), 'w')
 
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
@@ -404,7 +417,12 @@ def transform(provider, slug, output_file=None, output_dir=None, make_dir=False)
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
     for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-        subprocess.check_call(['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'), res('../fonts/' + fname), os.path.join(tmpdir, fname)])
+        optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'), res('../fonts/' + fname), os.path.join(tmpdir, fname)]
+        if verbose:
+            print "Running font-optimizer"
+            subprocess.check_call(optimizer_call)
+        else:
+            subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
     rmtree(tmpdir)
     os.chdir(cwd)
