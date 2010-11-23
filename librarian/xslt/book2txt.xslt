@@ -305,6 +305,7 @@
 <xsl:template match="extra|uwaga" />
 <xsl:template match="extra|uwaga" mode="inline" />
 
+<xsl:template match="nota_red" />
 
 <!-- ======== -->
 <!-- = TEXT = -->

@@ -368,6 +368,7 @@
 <!-- = (can contain block tags, paragraph tags, standalone tags and special tags) = -->
 <!-- ============================================================================== -->
 <xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny">
+    <xsl:apply-templates select="nota_red" mode="special" />
     <xsl:if test="nazwa_utworu">
         <h1>
             <xsl:apply-templates select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul" mode="header" />
@@ -600,12 +601,20 @@
 <xsl:template match="motyw" mode="inline" />
 
 
+<xsl:template match="nota_red" mode="special">
+    <div id="nota_red">
+        <xsl:apply-templates />
+    </div>
+</xsl:template>
+
+
 <!-- ================ -->
 <!-- = IGNORED TAGS = -->
 <!-- ================ -->
 <xsl:template match="extra|uwaga" />
 <xsl:template match="extra|uwaga" mode="inline" />
 
+<xsl:template match="nota_red" />
 
 <!-- ======== -->
 <!-- = TEXT = -->
