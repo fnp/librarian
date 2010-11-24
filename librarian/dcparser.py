@@ -134,6 +134,7 @@ class BookInfo(object):
         Field( DCNS('relation.hasPart'), 'parts', multiple=True, required=False),
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
+        Field( DCNS('description'), 'description', required=False),
     )
 
     @property

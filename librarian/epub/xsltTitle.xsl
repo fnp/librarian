@@ -30,8 +30,10 @@
               </xsl:otherwise>
             </xsl:choose>
           </div>
-          <p class="info"><xsl:value-of select="//dc:source" /></p>
           <p class="info">Publikacja zrealizowana w ramach projektu WolneLektury.pl</p>
+          <xsl:if test="//dc:source" >
+            <p class="info">Na podstawie: <xsl:value-of select="//dc:source" /></p>
+          </xsl:if>
           <p class="info">
             <img src="logo_wolnelektury.png" alt="WolneLektury.pl" />
           </p>

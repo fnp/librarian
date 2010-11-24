@@ -18,11 +18,9 @@ functions.reg_strip()
 TEMPLATE = u"""\
 Kodowanie znaków w dokumencie: UTF-8.
 -----
-Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl/). Reprodukcja cyfrowa wykonana przez
-Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN. 
-\n%(license_description)s.
+%(description)s 
 
-%(source)s
+%(license_description)s.%(source)s
 
 Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie %(url)s.
 -----
@@ -49,6 +47,7 @@ def transform(input_filename, output_filename, is_file=True, parse_dublincore=Tr
 
     if parse_dublincore:
         parsed_dc = dcparser.parse(input_filename)
+        description = parsed_dc.description
         url = parsed_dc.url
         license_description = parsed_dc.license_description
         license = parsed_dc.license
@@ -56,13 +55,19 @@ def transform(input_filename, output_filename, is_file=True, parse_dublincore=Tr
             license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (license_description, license)        
         else:
             license_description = u"Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać"
-        source = parsed_dc.source_name 
+        source = parsed_dc.source_name
+        if source:
+            source = "\n\nNa podstawie: " + source
+        else:
+            source = ''
     else:
+        description = 'Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).'
         url = '*' * 10
         license = ""
         license_description = ""
         source = ""
     output_file.write(TEMPLATE % {
+        'description': description,
         'url': url,
         'license_description': license_description,
         'text': unicode(result),
