@@ -55,5 +55,5 @@ if __name__ == '__main__':
                 'etype': e.__class__.__name__,
                 'message': e.message.encode('utf-8'),
             }
-            raise e
+            raise
 
