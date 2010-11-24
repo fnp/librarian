@@ -49,6 +49,8 @@ def transform(input, output_filename=None, is_file=True, \
             document = WLDocument.from_string(input, True, \
                 parse_dublincore=parse_dublincore)
 
+        document.clean_ed_note()
+
         result = document.transform(style, **options)
         del document # no longer needed large object :)
 

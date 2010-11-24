@@ -120,3 +120,13 @@ class WLDocument(object):
                 unmerged.append( repr( (key, xpath, e) ) )
 
         return unmerged
+
+    def clean_ed_note(self):
+        """ deletes forbidden tags from nota_red """
+
+        for node in self.edoc.xpath('|'.join('//nota_red//%s' % tag for tag in
+                    ('pa', 'pe', 'pr', 'pt', 'begin', 'end', 'motyw'))):
+            tail = node.tail
+            node.clear()
+            node.tag = 'span'
+            node.tail = tail
