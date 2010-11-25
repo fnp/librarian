@@ -258,7 +258,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations):
     replace_by_verse(chunk_xml)
     html_tree = xslt(chunk_xml, res('xsltScheme.xsl'))
     chars = used_chars(html_tree.getroot())
-    output_html = etree.tostring(html_tree, pretty_print=True)
+    output_html = etree.tostring(html_tree, method="html", pretty_print=True)
     return output_html, toc, chars
 
 
@@ -286,13 +286,13 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
             html_tree = xslt(input_xml, res('xsltTitle.xsl'))
             chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/title.html',
-                 etree.tostring(html_tree, pretty_print=True))
+                 etree.tostring(html_tree, method="html", pretty_print=True))
         elif children:
             # write title page for every parent
             html_tree = xslt(input_xml, res('xsltChunkTitle.xsl'))
             chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/part%d.html' % chunk_counter, 
-                etree.tostring(html_tree, pretty_print=True))
+                etree.tostring(html_tree, method="html", pretty_print=True))
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
             chunk_counter += 1
@@ -409,7 +409,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         html_tree = xslt(annotations, res("xsltAnnotations.xsl"))
         chars = chars.union(used_chars(html_tree.getroot()))
         zip.writestr('OPS/annotations.html', etree.tostring(
-                            html_tree, pretty_print=True))
+                            html_tree, method="html", pretty_print=True))
 
     # strip fonts
     tmpdir = mkdtemp('-librarian-epub')

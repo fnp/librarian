@@ -59,7 +59,7 @@ def transform(input, output_filename=None, is_file=True, \
             add_table_of_contents(result.getroot())
 
             if output_filename is not None:
-                result.write(output_filename, xml_declaration=False, pretty_print=True, encoding='utf-8')
+                result.write(output_filename, method='html', xml_declaration=False, pretty_print=True, encoding='utf-8')
             else:
                 return result
             return True
