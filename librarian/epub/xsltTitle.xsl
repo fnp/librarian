@@ -35,6 +35,24 @@
             <p class="info">Na podstawie: <xsl:value-of select="//dc:source" /></p>
           </xsl:if>
           <p class="info">
+              <xsl:choose>
+                  <xsl:when test="//dc:rights.license">
+                      Ten utwór jest udostepniony na licencji
+                      <a>
+                          <xsl:attribute name="href">
+                              <xsl:value-of select="//dc:rights.license" />
+                          </xsl:attribute>
+                          <xsl:value-of select="//dc:rights" />
+                      </a>
+                  </xsl:when>
+                  <xsl:otherwise>
+                      Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać
+                  </xsl:otherwise>
+              </xsl:choose>
+          </p>
+
+
+          <p class="info">
             <img src="logo_wolnelektury.png" alt="WolneLektury.pl" />
           </p>
         </div>
