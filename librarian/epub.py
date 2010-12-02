@@ -82,7 +82,8 @@ def replace_characters(node):
     def replace_chars(text):
         if text is None:
             return None
-        return text.replace("---", u"\u2014")\
+        return text.replace(u"\ufeff", u"")\
+                   .replace("---", u"\u2014")\
                    .replace("--", u"\u2013")\
                    .replace(",,", u"\u201E")\
                    .replace('"', u"\u201D")\

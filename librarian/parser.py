@@ -57,6 +57,8 @@ class WLDocument(object):
         if not isinstance(data, unicode):
             data = data.decode('utf-8')
 
+        data = data.replace(u'\ufeff', '')
+
         if swap_endlines:
             sub = u'<br/>'
             if preserve_lines:
