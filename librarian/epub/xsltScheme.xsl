@@ -177,55 +177,28 @@
   </xsl:template>
 
   <xsl:template match="wers_akap">
-    <div class="verse" style="padding-left: 1em;" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="verse" style="margin-left: 1em;" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </div>
   </xsl:template>
 
   <xsl:template match="wers_wciety">
-    <div class="verse" style="padding-left: 1em;" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="verse" style='margin-left:1em;' xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </div>
   </xsl:template>
 
-  <xsl:template match="wers_wciety[@typ='1']">
-    <div class="verse" style="padding-left: 1em;" xmlns="http://www.w3.org/1999/xhtml">
-      <xsl:apply-templates />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="wers_wciety[@typ='2']">
-    <div class="verse" style="padding-left: 2em;" xmlns="http://www.w3.org/1999/xhtml">
-      <xsl:apply-templates />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="wers_wciety[@typ='3']">
-    <div class="verse" style="padding-left: 3em;" xmlns="http://www.w3.org/1999/xhtml">
-      <xsl:apply-templates />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="wers_wciety[@typ='4']">
-    <div class="verse" style="padding-left: 4em;" xmlns="http://www.w3.org/1999/xhtml">
-      <xsl:apply-templates />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="wers_wciety[@typ='5']">
-    <div class="verse" style="padding-left: 5em;" xmlns="http://www.w3.org/1999/xhtml">
-      <xsl:apply-templates />
-    </div>
-  </xsl:template>
-
-  <xsl:template match="wers_wciety[@typ='6']">
-    <div class="verse" style="padding-left: 6em;" xmlns="http://www.w3.org/1999/xhtml">
+  <xsl:template match="wers_wciety[@typ!='']">
+    <div class="verse" xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:attribute name="style">
+          margin-left: <xsl:value-of select="@typ" />em;
+      </xsl:attribute>
       <xsl:apply-templates />
     </div>
   </xsl:template>
 
   <xsl:template match="wers_cd">
-    <div class="verse" style="padding-left: 12em;" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="verse" style="margin-left: 12em;" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </div>
   </xsl:template>

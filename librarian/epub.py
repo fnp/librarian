@@ -276,6 +276,8 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     def transform_file(input_xml, chunk_counter=1, first=True):
         """ processes one input file and proceeds to its children """
 
+        replace_characters(input_xml.getroot())
+
         children = [child.text for child in input_xml.findall('.//'+DCNS('relation.hasPart'))]
 
         # every input file will have a TOC entry,
@@ -308,8 +310,6 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                 main_text = None
 
         if main_text is not None:
-            replace_characters(main_text)
-
             for chunk_xml in chop(main_text):
                 chunk_html, chunk_toc, chunk_chars = transform_chunk(chunk_xml, chunk_counter, annotations)
                 toc.extend(chunk_toc)
