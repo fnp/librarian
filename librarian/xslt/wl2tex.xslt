@@ -107,7 +107,7 @@
 
 <xsl:template match="rdf:RDF" mode="dctitle">
     <cmd name="section*"><parm>
-        <xsl:value-of select=".//dc:title/text()" />
+        <xsl:apply-templates select=".//dc:title/node()" mode="inline" />
     </parm></cmd>
 </xsl:template>
 
@@ -150,7 +150,7 @@
 <xsl:template match="lista_osob">
     <cmd name="par"><parm>
         <cmd name="textbf">
-            <parm><xsl:value-of select="naglowek_listy" /></parm>
+            <parm><xsl:apply-templates select="naglowek_listy" mode="inline" /></parm>
         </cmd>
         <env name="itemize">
             <xsl:apply-templates select="lista_osoba" />
@@ -399,7 +399,7 @@
                 <cmd name="hspace"><parm>0pt</parm></cmd>
                 <cmd name="footnotesize"><parm>
                     <cmd name="color"><parm>theme</parm><parm>
-                        <xsl:value-of select="." />
+                        <xsl:apply-templates mode="inline" />
                     </parm></cmd>
                 </parm></cmd>
             </parm></cmd>
