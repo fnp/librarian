@@ -79,7 +79,6 @@ def move_motifs_inside(doc):
     """ moves motifs to be into block elements """
     for master in doc.xpath('//powiesc|//opowiadanie|//liryka_l|//liryka_lp|//dramat_wierszowany_l|//dramat_wierszowany_lp|//dramat_wspolczesny'):
         for motif in master.xpath('motyw'):
-            print motif.text
             for sib in motif.itersiblings():
                 if sib.tag not in ('sekcja_swiatlo', 'sekcja_asterysk', 'separator_linia', 'begin', 'end', 'motyw', 'extra', 'uwaga'):
                     # motif shouldn't have a tail - it would be untagged text
