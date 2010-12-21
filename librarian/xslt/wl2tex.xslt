@@ -403,6 +403,7 @@
                     </parm></cmd>
                 </parm></cmd>
             </parm></cmd>
+            <cmd name="vspace"><parm><cmd name="baselineskip" /></parm></cmd>
         </parm>
     </cmd>
 </xsl:template>
