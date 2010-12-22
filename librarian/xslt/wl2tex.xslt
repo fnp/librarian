@@ -20,16 +20,22 @@
         </TeXML>
 
         <xsl:choose>
-            <xsl:when test="@old-morefloats">
+            <xsl:when test="@morefloats = 'new'">
+                <TeXML escape="0">
+                    \usepackage[maxfloats=64]{morefloats}
+                </TeXML>
+            </xsl:when>
+            <xsl:when test="@morefloats = 'old'">
+                <TeXML escape="0">
+                    \usepackage{morefloats}
+                </TeXML>
+            </xsl:when>
+            <xsl:when test="@morefloats = 'none'" />
+            <xsl:otherwise>
                 <TeXML escape="0">
                     \IfFileExists{morefloats.sty}{
                         \usepackage{morefloats}
                     }{}
-                </TeXML>
-            </xsl:when>
-            <xsl:otherwise>
-                <TeXML escape="0">
-                    \usepackage[maxfloats=64]{morefloats}
                 </TeXML>
             </xsl:otherwise>
         </xsl:choose>

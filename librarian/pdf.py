@@ -158,7 +158,8 @@ def package_available(package, args='', verbose=False):
     return p == 0
 
 
-def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None):
+def transform(provider, slug=None, file_path=None, 
+              output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None, morefloats=None):
     """ produces a PDF file with XeLaTeX
 
     provider: a DocProvider
@@ -169,6 +170,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     make_dir: writes output to <output_dir>/<author>/<slug>.pdf istead of <output_dir>/<slug>.pdf
     verbose: prints all output from LaTeX
     save_tex: path to save the intermediary LaTeX file to
+    morefloats (old/new/none): force specific morefloats
     """
 
     # Parse XSLT
@@ -183,9 +185,10 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
             document = load_including_children(provider, slug=slug)
 
         # check for LaTeX packages
-        if not package_available('morefloats', 'maxfloats=19'):
-            # using old morefloats or none at all
-            document.edoc.getroot().set('old-morefloats', 'yes')
+        if morefloats:
+            document.edoc.getroot().set('morefloats', morefloats.lower())
+        elif package_available('morefloats', 'maxfloats=19'):
+            document.edoc.getroot().set('morefloats', 'new')
 
         # hack the tree
         move_motifs_inside(document.edoc)
