@@ -96,3 +96,12 @@ def reg_person_name():
     _register_function(person_name)
 
 
+def reg_texcommand():
+    def texcommand(context, text):
+        """Remove non-letters"""
+        if isinstance(text, list):
+            text = ''.join(text)
+        return re.sub(r'[^a-zA-Z]', '', text).strip()
+    _register_function(texcommand)
+
+

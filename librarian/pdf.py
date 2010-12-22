@@ -29,6 +29,7 @@ functions.reg_substitute_entities()
 functions.reg_strip()
 functions.reg_starts_white()
 functions.reg_ends_white()
+functions.reg_texcommand()
 
 STYLESHEETS = {
     'wl2tex': 'xslt/wl2tex.xslt',
