@@ -10,7 +10,7 @@ from librarian import pdf, DirDocProvider, ParseError
 
 if __name__ == '__main__':
     usage = """Usage: %prog [options] SOURCE [SOURCE...]
-    Convert SOURCE files to EPUB format."""
+    Convert SOURCE files to PDF format."""
 
     parser = OptionParser(usage)
     parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
