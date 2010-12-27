@@ -8,12 +8,12 @@
 \usepackage{xltxtra}
 
 \setmainfont [
-ExternalLocation,
-UprightFont = JunicodeWL-Regular.ttf,
-ItalicFont = JunicodeWL-Italic.ttf,
-BoldFont = JunicodeWL-Regular.ttf,
-BoldItalicFont = JunicodeWL-Italic.ttf,
-SmallCapsFont = JunicodeWL-Regular.ttf,
+%ExternalLocation,
+UprightFont = JunicodeWL-Regular,
+ItalicFont = JunicodeWL-Italic,
+BoldFont = JunicodeWL-Regular,
+BoldItalicFont = JunicodeWL-Italic,
+SmallCapsFont = JunicodeWL-Regular,
 SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
 Numbers=OldStyle,
 Scale=1.04,
@@ -28,7 +28,7 @@ SizeFeatures={
 }
 }
 
-\renewcommand{\textsc}[1]{
+\renewcommand{\textsc}[1]{%
 {\addfontfeature{
 SizeFeatures={
   {Size={-10}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
@@ -117,11 +117,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
     }
 }
 
-\newcommand{\typosubsubsection}[1]{
+\newcommand{\typosubsubsection}[1]{%
 {\textsc{#1}}
 }
 
-\newcommand{\typosubsection}[1]{
+\newcommand{\typosubsection}[1]{%
 {\addfontfeature{
 SizeFeatures={
   {Size={-10}, Scale=1.2, FakeStretch=1.00, LetterSpace=8.0 },
@@ -133,7 +133,7 @@ Letters={Uppercase}
 \MakeUppercase{#1}}
 }
 
-\newcommand{\typosection}[1]{
+\newcommand{\typosection}[1]{%
 {\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
 }
 

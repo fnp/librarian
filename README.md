@@ -58,7 +58,9 @@ Installation
 Librarian uses standard Python distutils for packaging. After installing all the dependencies just run:
 
     python setup.py install
-    
+
+PDF converter also needs the Junicode-WL fonts (librarian/pdf/JunicodeWL-*.ttf) installed.
+In Debian/Ubuntu, put those files in ~/.fonts/ and run `fc-cache'.
 
 Usage
 ------
