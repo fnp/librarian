@@ -8,6 +8,8 @@
 \usepackage{xltxtra}
 
 \usepackage[overload]{textcase}
+\usepackage{scalefnt}
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=black]{hyperref}
 
 \setmainfont [
 %ExternalLocation,
@@ -78,6 +80,19 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \clubpenalty=100000
 \widowpenalty=100000
 
+
+% see http://osdir.com/ml/tex.xetex/2005-10/msg00003.html
+\newsavebox{\ximagebox}\newlength{\ximageheight}
+\newsavebox{\xglyphbox}\newlength{\xglyphheight}
+\newcommand{\xbox}[1]
+{\savebox{\ximagebox}{#1}\settoheight{\ximageheight}{\usebox {\ximagebox}}%
+\savebox{\xglyphbox}{\char32}\settoheight{\xglyphheight}{\usebox {\xglyphbox}}%
+\raisebox{\ximageheight}[0pt][0pt]{%\raisebox{-\xglyphheight}[0pt] [0pt]{%
+\makebox[0pt][l]{\usebox{\xglyphbox}}}%}%
+\usebox{\ximagebox}%
+\raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
+
+
 \renewcommand{\maketitle}{
     {
     \thispagestyle{empty}
@@ -85,18 +100,18 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \color{theme}
 
     \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
-        \includegraphics[width=\textwidth]{wl-logo.png}
+        \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
     \end{minipage}
     \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
         \sourceinfo
 
         \vspace{.5em}
 
-        Wejdź na stronę http://wolnelektury.pl/ i~zobacz, jak wiele możliwości daje interaktywna wersja szkolnej biblioteki
-        internetowej Wolne Lektury.
+        Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy)
+        dostępna jest \href{\bookurl}{na stronie Wolnych Lektur}.
         \vspace{.5em}
 
-        Ten utwór nie jest chroniony prawem autorskim i~znajduje się w~domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i~rozpowszechniać.
+        \rightsinfo
 
         \vspace{.6em}
 
@@ -136,7 +151,8 @@ Letters={Uppercase}
 }
 
 \newcommand{\typosection}[1]{%
-{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
+{\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{2}#1}}
+%{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
 }
 
 \newcommand{\nazwapodutworu}[1]{%

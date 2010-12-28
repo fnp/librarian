@@ -36,7 +36,7 @@ STYLESHEETS = {
 }
 
 
-def insert_tags(doc, split_re, tagname):
+def insert_tags(doc, split_re, tagname, exclude=None):
     """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree 
 
     >>> t = etree.fromstring('<a><b>A-B-C</b>X-Y-Z</a>');
@@ -46,6 +46,8 @@ def insert_tags(doc, split_re, tagname):
     """
 
     for elem in doc.iter(tag=etree.Element):
+        if exclude and elem.tag in exclude:
+            continue
         if elem.text:
             chunks = split_re.split(elem.text)
             while len(chunks) > 1:
@@ -67,13 +69,17 @@ def insert_tags(doc, split_re, tagname):
 def substitute_hyphens(doc):
     insert_tags(doc, 
                 re.compile("(?<=[^-\s])-(?=[^-\s])"),
-                "dywiz")
+                "dywiz",
+                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+                )
 
 
 def fix_hanging(doc):
     insert_tags(doc, 
                 re.compile("(?<=\s\w)\s+"),
-                "nbsp")
+                "nbsp",
+                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+                )
 
 
 def move_motifs_inside(doc):
