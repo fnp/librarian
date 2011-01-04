@@ -42,7 +42,7 @@ class WLDocument(object):
         return cls.from_file(StringIO(xml), *args, **kwargs)
 
     @classmethod
-    def from_file(cls, xmlfile, swap_endlines=False, parse_dublincore=True, preserve_lines=True):
+    def from_file(cls, xmlfile, swap_endlines=False, parse_dublincore=True):
 
         # first, prepare for parsing
         if isinstance(xmlfile, basestring):
@@ -59,17 +59,37 @@ class WLDocument(object):
 
         data = data.replace(u'\ufeff', '')
 
-        if swap_endlines:
-            sub = u'<br/>'
-            if preserve_lines:
-                sub += u'\n'
-            data = cls.LINE_SWAP_EXPR.sub(sub, data)
-
         try:
             parser = etree.XMLParser(remove_blank_text=False)
-            return cls(etree.parse(StringIO(data), parser), parse_dublincore=parse_dublincore)
+            tree = etree.parse(StringIO(data), parser)
+
+            if swap_endlines:
+                cls.swap_endlines(tree)
+
+            return cls(tree, parse_dublincore=parse_dublincore)
         except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
             raise ParseError(e)
+
+    @classmethod
+    def swap_endlines(cls, tree):
+        # only swap inside stanzas
+        for elem in tree.iter('strofa'):
+            for child in list(elem):
+                if child.tail:
+                    chunks = cls.LINE_SWAP_EXPR.split(child.tail)
+                    ins_index = elem.index(child) + 1
+                    while len(chunks) > 1:
+                        ins = etree.Element('br')
+                        ins.tail = chunks.pop()
+                        elem.insert(ins_index, ins)
+                    child.tail = chunks.pop(0)
+            if elem.text:
+                chunks = cls.LINE_SWAP_EXPR.split(elem.text)
+                while len(chunks) > 1:
+                    ins = etree.Element('br')
+                    ins.tail = chunks.pop()
+                    elem.insert(0, ins)
+                elem.text = chunks.pop(0)
 
     def chunk(self, path):
         # convert the path to XPath

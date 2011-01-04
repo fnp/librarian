@@ -283,8 +283,7 @@ def load_including_children(provider, slug=None, uri=None, file_path=None):
         raise ValueError('Neither slug, URI nor file path provided for a book.')
 
     document = WLDocument.from_file(f, True,
-        parse_dublincore=True,
-        preserve_lines=False)
+        parse_dublincore=True)
 
     f.close()
 
