@@ -282,7 +282,10 @@ def load_including_children(provider, slug=None, uri=None, file_path=None):
     else:
         raise ValueError('Neither slug, URI nor file path provided for a book.')
 
-    document = WLDocument.from_file(f, True,
+    text = f.read().decode('utf-8')
+    text = re.sub(ur"([\u0400-\u04ff]+)", ur"<alien>\1</alien>", text)
+
+    document = WLDocument.from_string(text, True,
         parse_dublincore=True)
 
     f.close()

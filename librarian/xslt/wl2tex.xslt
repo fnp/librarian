@@ -319,6 +319,13 @@
     <spec cat="tilde" />
 </xsl:template>
 
+<xsl:template match="alien" mode="inline">
+    <group>
+        <cmd name="alien" />
+        <xsl:apply-templates mode="inline" />
+    </group>
+</xsl:template>
+
 <!-- ================ -->
 <!-- = IGNORED TAGS = -->
 <!-- ================ -->
