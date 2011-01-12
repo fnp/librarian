@@ -21,7 +21,7 @@ from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
-from librarian import ParseError, DCNS
+from librarian import ParseError, DCNS, get_resource
 from librarian import functions
 
 
@@ -136,9 +136,6 @@ def parse_creator(doc):
         creator_parsed.text = ' '.join(p.first_names + (p.last_name,))
         creator.getparent().insert(0, creator_parsed)
 
-
-def get_resource(path):
-    return os.path.join(os.path.dirname(__file__), path)
 
 def get_stylesheet(name):
     return get_resource(STYLESHEETS[name])

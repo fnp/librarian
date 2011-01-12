@@ -245,7 +245,7 @@ def chop(main_text):
     yield part_xml
 
 
-def transform_chunk(chunk_xml, chunk_no, annotations):
+def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_static=[]):
     """ transforms one chunk, returns a HTML string, a TOC object and a set of used characters """
 
     toc = TOC()
@@ -255,15 +255,21 @@ def transform_chunk(chunk_xml, chunk_no, annotations):
         elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
             subnumber = toc.add(node_name(element), chunk_no, level=1, is_part=False)
             element.set('sub', str(subnumber))
-    find_annotations(annotations, chunk_xml, chunk_no)
-    replace_by_verse(chunk_xml)
-    html_tree = xslt(chunk_xml, res('xsltScheme.xsl'))
-    chars = used_chars(html_tree.getroot())
-    output_html = etree.tostring(html_tree, method="html", pretty_print=True)
+    if empty:
+        if not _empty_html_static:
+            _empty_html_static.append(open(res('emptyChunk.html')).read())
+        chars = set()
+        output_html = _empty_html_static[0]
+    else:
+        find_annotations(annotations, chunk_xml, chunk_no)
+        replace_by_verse(chunk_xml)
+        html_tree = xslt(chunk_xml, res('xsltScheme.xsl'))
+        chars = used_chars(html_tree.getroot())
+        output_html = etree.tostring(html_tree, method="html", pretty_print=True)
     return output_html, toc, chars
 
 
-def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False):
+def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False, sample=None):
     """ produces a EPUB file
 
     provider: a DocProvider
@@ -271,9 +277,10 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     output_file: file-like object or path to output file
     output_dir: path to directory to save output file to; either this or output_file must be present
     make_dir: writes output to <output_dir>/<author>/<slug>.epub instead of <output_dir>/<slug>.epub
+    sample=n: generate sample e-book (with at least n paragraphs)
     """
 
-    def transform_file(input_xml, chunk_counter=1, first=True):
+    def transform_file(input_xml, chunk_counter=1, first=True, sample=None):
         """ processes one input file and proceeds to its children """
 
         replace_characters(input_xml.getroot())
@@ -292,10 +299,14 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                  etree.tostring(html_tree, method="html", pretty_print=True))
         elif children:
             # write title page for every parent
-            html_tree = xslt(input_xml, res('xsltChunkTitle.xsl'))
-            chars = used_chars(html_tree.getroot())
-            zip.writestr('OPS/part%d.html' % chunk_counter, 
-                etree.tostring(html_tree, method="html", pretty_print=True))
+            if sample is not None and sample <= 0:
+                chars = set()
+                html_string = open(res('emptyChunk.html')).read()
+            else:
+                html_tree = xslt(input_xml, res('xsltChunkTitle.xsl'))
+                chars = used_chars(html_tree.getroot())
+                html_string = etree.tostring(html_tree, method="html", pretty_print=True)
+            zip.writestr('OPS/part%d.html' % chunk_counter, html_string)
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
             chunk_counter += 1
@@ -311,7 +322,14 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
 
         if main_text is not None:
             for chunk_xml in chop(main_text):
-                chunk_html, chunk_toc, chunk_chars = transform_chunk(chunk_xml, chunk_counter, annotations)
+                empty = False
+                if sample is not None:
+                    if sample <= 0:
+                        empty = True
+                    else:
+                        sample -= len(chunk_xml.xpath('//strofa|//akap|//akap_cd|//akap_dialog'))
+                chunk_html, chunk_toc, chunk_chars = transform_chunk(chunk_xml, chunk_counter, annotations, empty)
+
                 toc.extend(chunk_toc)
                 chars = chars.union(chunk_chars)
                 zip.writestr('OPS/part%d.html' % chunk_counter, chunk_html)
@@ -322,11 +340,11 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         if children:
             for child in children:
                 child_xml = etree.parse(provider.by_uri(child))
-                child_toc, chunk_counter, chunk_chars = transform_file(child_xml, chunk_counter, first=False)
+                child_toc, chunk_counter, chunk_chars, sample = transform_file(child_xml, chunk_counter, first=False, sample=sample)
                 toc.append(child_toc)
                 chars = chars.union(chunk_chars)
 
-        return toc, chunk_counter, chars
+        return toc, chunk_counter, chars, sample
 
     # read metadata from the first file
     if file_path:
@@ -391,7 +409,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                                '</navPoint></navMap></ncx>')
     nav_map = toc_file[-1]
 
-    toc, chunk_counter, chars = transform_file(input_xml)
+    toc, chunk_counter, chars, sample = transform_file(input_xml, sample=sample)
 
     if not toc.children:
         toc.add(u"Początek utworu", 1)

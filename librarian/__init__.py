@@ -130,3 +130,7 @@ SERIALIZERS = {
 
 def serialize_children(element, format='raw'):
     return SERIALIZERS[format](element)
+
+def get_resource(path):
+    return os.path.join(os.path.dirname(__file__), path)
+
