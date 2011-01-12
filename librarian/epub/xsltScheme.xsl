@@ -173,19 +173,19 @@
   <xsl:template match="wers_normalny">
     <div class="verse" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </div>
+    &#160;</div>
   </xsl:template>
 
   <xsl:template match="wers_akap">
     <div class="verse" style="margin-left: 1em;" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </div>
+    &#160;</div>
   </xsl:template>
 
   <xsl:template match="wers_wciety">
     <div class="verse" style='margin-left:1em;' xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </div>
+    &#160;</div>
   </xsl:template>
 
   <xsl:template match="wers_wciety[@typ!='']">
@@ -194,13 +194,13 @@
           margin-left: <xsl:value-of select="@typ" />em;
       </xsl:attribute>
       <xsl:apply-templates />
-    </div>
+    &#160;</div>
   </xsl:template>
 
   <xsl:template match="wers_cd">
     <div class="verse" style="margin-left: 12em;" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </div>
+    &#160;</div>
   </xsl:template>
 
   <xsl:template match="motto_podpis">
@@ -266,7 +266,7 @@
   <!--===========================================================-->
 
   <xsl:template match="sekcja_swiatlo">
-    <hr class="spacer" xmlns="http://www.w3.org/1999/xhtml"></hr>
+    <p class="spacer" xmlns="http://www.w3.org/1999/xhtml">&#160;</p>
   </xsl:template>
 
   <xsl:template match="sekcja_asterysk">

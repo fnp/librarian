@@ -54,6 +54,7 @@
                 background: #333;
                 color: #FFF;
                 opacity: 0.9;
+                z-index: 99;
             }
 
             #menu ul {
@@ -74,15 +75,30 @@
 
             #menu li a:hover, #menu li a:active {
                 color: #000;
-                background: #FFF url(/media/img/arrow-down.png) no-repeat center right;
+                background: #FFF url(/static/img/arrow-down.png) no-repeat center right;
             }
 
             #menu li a.selected {
                 color: #000;
-                background: #FFF url(/media/img/arrow-up.png) no-repeat center right;
+                background: #FFF url(/static/img/arrow-up.png) no-repeat center right;
+            }
+            #menu a.menu-link {
+                display: block;
+                float: left;
+                height: 1.5em;
+                margin-left: 0.5em;
+                text-align: center;
+                color: #FFF;
+            }
+            #menu span {
+                color: #888;
+                font-style: italic;
+                font-size: .75em;
+                margin-right: 0.5em;
             }
 
-            #toc, #themes {
+
+            #toc, #themes, #nota_red {
                 position: fixed;
                 left: 0em;
                 top: 1.5em;
@@ -96,6 +112,7 @@
                 overflow-x: hidden;
                 overflow-y: auto;
                 opacity: 0.9;
+                z-index: 99;
             }
 
             #toc ol, #themes ol {
@@ -172,11 +189,18 @@
                 color: #777;
                 padding: 0 0.5em;
                 width: 7.5em;
+
                 font-style: normal;
                 font-weight: normal;
+                font-variant: normal;
+                letter-spacing: 0;
+                text-transform: none;
+                text-decoration: none;
+
                 font-size: 16px;
                 float: right;
                 margin-right: -9.5em;
+                margin-bottom: 0.5em;
                 clear: both;
                 left: 40em;
                 line-height: 1.5em;
@@ -187,6 +211,9 @@
                 font-style: normal;
                 font-weight: normal;
                 font-size: 12px;
+                padding-left: 2px;
+                position: relative;
+                top: -4px;
             }
 
             #footnotes .annotation {
@@ -212,10 +239,13 @@
             /* ============= */
             /* = Numbering = */
             /* ============= */
+            .verse, .paragraph {
+                position:relative;
+            }
             .anchor {
                 position: absolute;
                 margin: -0.25em -0.5em;
-                left: 1em;
+                left: -3em;
                 color: #777;
                 font-size: 12px;
                 width: 2em;
@@ -333,6 +363,19 @@
             em.person {
                 font-style: normal;
                 font-variant: small-caps;
+            }
+
+            .verse:after {
+                content: "\feff";
+            }
+
+
+            /* =================================== */
+            /* = Hide some elements for printing = */
+            /* =================================== */
+
+            @media print {
+                #menu {display: none;}
             }
         </style>
         <body> -->
