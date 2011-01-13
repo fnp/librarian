@@ -32,7 +32,7 @@ functions.reg_ends_white()
 functions.reg_texcommand()
 
 STYLESHEETS = {
-    'wl2tex': 'xslt/wl2tex.xslt',
+    'wl2tex': 'pdf/wl2tex.xslt',
 }
 
 
@@ -224,7 +224,7 @@ def transform(provider, slug=None, file_path=None,
 
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.sty'), temp)
-        shutil.copy(get_resource('pdf/wl-logo.png'), temp)
+        shutil.copy(get_resource('res/wl-logo.png'), temp)
 
         cwd = os.getcwd()
         os.chdir(temp)

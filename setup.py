@@ -29,7 +29,7 @@ setup(
     maintainer_email='radek.czajka@gmail.com',
     url='http://github.com/fnp/librarian',
     packages=['librarian'],
-    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'pdf/*', 'fonts/*'] + 
+    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'pdf/*', 'fonts/*', 'res/*'] + 
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer')},
     include_package_data=True,
     install_requires=['lxml>=2.2'],

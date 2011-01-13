@@ -19,7 +19,7 @@ import sys
 from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, NoDublinCore
 from librarian.dcparser import BookInfo
 
-from librarian import functions
+from librarian import functions, get_resource
 
 functions.reg_person_name()
 
@@ -71,11 +71,6 @@ def xslt(xml, sheet):
         xml = etree.ElementTree(xml)
     with open(sheet) as xsltf:
         return xml.xslt(etree.parse(xsltf))
-
-
-_resdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'epub')
-def res(fname):
-    return os.path.join(_resdir, fname)
 
 
 def replace_characters(node):
@@ -257,13 +252,13 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
             element.set('sub', str(subnumber))
     if empty:
         if not _empty_html_static:
-            _empty_html_static.append(open(res('emptyChunk.html')).read())
+            _empty_html_static.append(open(get_resource('epub/emptyChunk.html')).read())
         chars = set()
         output_html = _empty_html_static[0]
     else:
         find_annotations(annotations, chunk_xml, chunk_no)
         replace_by_verse(chunk_xml)
-        html_tree = xslt(chunk_xml, res('xsltScheme.xsl'))
+        html_tree = xslt(chunk_xml, get_resource('epub/xsltScheme.xsl'))
         chars = used_chars(html_tree.getroot())
         output_html = etree.tostring(html_tree, method="html", pretty_print=True)
     return output_html, toc, chars
@@ -293,7 +288,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         chars = set()
         if first:
             # write book title page
-            html_tree = xslt(input_xml, res('xsltTitle.xsl'))
+            html_tree = xslt(input_xml, get_resource('epub/xsltTitle.xsl'))
             chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/title.html',
                  etree.tostring(html_tree, method="html", pretty_print=True))
@@ -301,9 +296,9 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
             # write title page for every parent
             if sample is not None and sample <= 0:
                 chars = set()
-                html_string = open(res('emptyChunk.html')).read()
+                html_string = open(get_resource('epub/emptyChunk.html')).read()
             else:
-                html_tree = xslt(input_xml, res('xsltChunkTitle.xsl'))
+                html_tree = xslt(input_xml, get_resource('epub/xsltChunkTitle.xsl'))
                 chars = used_chars(html_tree.getroot())
                 html_string = etree.tostring(html_tree, method="html", pretty_print=True)
             zip.writestr('OPS/part%d.html' % chunk_counter, html_string)
@@ -391,10 +386,10 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                        '<rootfiles><rootfile full-path="OPS/content.opf" ' \
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
-    for fname in 'style.css', 'logo_wolnelektury.png':
-        zip.write(res(fname), os.path.join('OPS', fname))
+    zip.write(get_resource('epub/style.css'), os.path.join('OPS', 'style.css'))
+    zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
 
-    opf = xslt(metadata, res('xsltContent.xsl'))
+    opf = xslt(metadata, get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
     spine = opf.find('.//' + OPFNS('spine'))
 
@@ -425,7 +420,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         spine.append(etree.fromstring(
             '<itemref idref="annotations" />'))
         replace_by_verse(annotations)
-        html_tree = xslt(annotations, res("xsltAnnotations.xsl"))
+        html_tree = xslt(annotations, get_resource('epub/xsltAnnotations.xsl'))
         chars = chars.union(used_chars(html_tree.getroot()))
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, method="html", pretty_print=True))
@@ -436,7 +431,8 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
     for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-        optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'), res('../fonts/' + fname), os.path.join(tmpdir, fname)]
+        optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'), 
+                          get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
         if verbose:
             print "Running font-optimizer"
             subprocess.check_call(optimizer_call)

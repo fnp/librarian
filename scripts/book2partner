@@ -14,7 +14,7 @@ from librarian.dcparser import BookInfo
 
 
 def utf_trunc(text, limit):
-""" truncates text to at most `limit' bytes in utf-8 """
+    """ truncates text to at most `limit' bytes in utf-8 """
     if text is None:
         return text
     orig_text = text
@@ -66,7 +66,7 @@ def virtualo(filenames, output_dir, verbose):
             product_elem[4][0][1].text = utf_trunc(info.author.last_name, 100)
             xml.append(product_elem)
 
-            cover.cover(600, 730, 
+            cover.virtualo_cover(
                 u' '.join(info.author.first_names + (info.author.last_name,)), 
                 info.title
                 ).save(os.path.join(outfile_dir, slug+'.jpg'))
