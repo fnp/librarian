@@ -5,10 +5,7 @@
 #
 from librarian import dcparser, parser, functions
 from lxml import etree
-import cStringIO
-import codecs
 import os
-import re
 
 
 functions.reg_substitute_entities()
@@ -30,23 +27,17 @@ Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dost
 %(text)s
 """
 
-def transform(input_filename, output_filename, is_file=True, parse_dublincore=True, **options):
-    """Transforms file input_filename in XML to output_filename in TXT."""
+def transform(input_file, output_file, parse_dublincore=True, **options):
+    """Transforms input_file in XML to output_file in TXT."""
     # Parse XSLT
     style_filename = os.path.join(os.path.dirname(__file__), 'xslt/book2txt.xslt')
     style = etree.parse(style_filename)
 
-    if is_file:
-        document = parser.WLDocument.from_file(input_filename, True, parse_dublincore=parse_dublincore)
-    else:
-        document = parser.WLDocument.from_string(input_filename, True, parse_dublincore=parse_dublincore)
-
+    document = parser.WLDocument.from_file(input_file, True, parse_dublincore=parse_dublincore)
     result = document.transform(style, **options)
 
-    output_file = codecs.open(output_filename, 'wb', encoding='utf-8')
-
     if parse_dublincore:
-        parsed_dc = dcparser.parse(input_filename)
+        parsed_dc = dcparser.BookInfo.from_element(document.edoc)
         description = parsed_dc.description
         url = parsed_dc.url
         license_description = parsed_dc.license_description
@@ -66,11 +57,11 @@ def transform(input_filename, output_filename, is_file=True, parse_dublincore=Tr
         license = ""
         license_description = ""
         source = ""
-    output_file.write(TEMPLATE % {
+    output_file.write((TEMPLATE % {
         'description': description,
         'url': url,
         'license_description': license_description,
         'text': unicode(result),
         'source': source,
-    })
+    }).encode('utf-8'))
 

@@ -38,7 +38,8 @@ if __name__ == '__main__':
         
         output_filename = os.path.splitext(input_filename)[0] + '.txt'
         try:
-            text.transform(input_filename, output_filename, parse_dublincore=options.parse_dublincore,
+            output_file = open(output_filename, 'w')
+            text.transform(open(input_filename), output_file, parse_dublincore=options.parse_dublincore,
                 wrapping=str(options.wrapping))
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
