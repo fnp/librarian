@@ -43,7 +43,7 @@ def cover(author, title,
 
     if background_img:
         background = Image.open(background_img)
-        img.paste(background)
+        img.paste(background, None, background)
         del background
 
     # WL logo
@@ -72,9 +72,9 @@ def virtualo_cover(author, title):
 
 def asbis_cover(author, title):
     return cover(author, u"„%s”" % title,
-          800, 800, '#000', '',
-          455, 230, 170, 60, '#fff', ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50), '#000',
-          0, 230, 170, 60, '#fff', ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50), '#000',
+          580, 783, '#fff', get_resource('res/cover-prestigio.png'),
+          446, 118, 62, 60, '#fff', ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50), '#000',
+          0, 118, 62, 60, '#fff', ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50), '#000',
           None, None
           )
 

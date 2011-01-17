@@ -37,6 +37,11 @@ body
 a
 {
 	text-decoration: none;
+	color: #00e;
+}
+
+a img {
+    border: 0;
 }
 
 #book-text
@@ -157,13 +162,11 @@ p
 .title-page
 {
     margin-top: 1.5em;
-    margin-bottom: 1.5em;
 }
 
 .title
 {
     font-size: 3em;
-    margin-bottom: 1.5em;
     text-align: center;
     line-height: 1.5em;
     font-weight: bold;
@@ -336,4 +339,11 @@ p.info img
 	margin: 0;
 	margin-left: 2em;
 	margin-right: 2em;
+}
+
+p.minor {
+    font-size: 0.75em;
+}
+p.footer {
+    margin-top: 2em;
 }

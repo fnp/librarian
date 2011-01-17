@@ -91,8 +91,7 @@ def reg_person_name():
         """ Converts "Name, Forename" to "Forename Name" """
         if isinstance(text, list):
             text = ''.join(text)
-        p = Person.from_text(text)
-        return ' '.join(p.first_names + (p.last_name,))
+        return Person.from_text(text).readable()
     _register_function(person_name)
 
 

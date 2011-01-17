@@ -19,6 +19,7 @@
           <xsl:if test="//nazwa_utworu">
             <!--h1 xmlns="http://www.w3.org/1999/xhtml"-->
               <xsl:apply-templates select=" //nazwa_utworu" mode="poczatek"/>
+              <xsl:apply-templates select=" //podtytul" mode="poczatek"/>
             <!--/h1-->
           </xsl:if>
           <xsl:apply-templates />
@@ -101,7 +102,7 @@
   <xsl:template match="nazwa_utworu" />
 
   <xsl:template match="podtytul" mode="poczatek">
-    <h2 class="subtitle" xmlns="http://www.w3.org/1999/xhtml">
+    <h2 class="author" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
   </xsl:template>
@@ -286,8 +287,6 @@
   <!--===========================================================-->
   <!-- Tagi IGNOROWANE -->
   <!--===========================================================-->
-
-  <xsl:template match="pe|pa|pr|pt" />
 
   <xsl:template match="extra" />
 

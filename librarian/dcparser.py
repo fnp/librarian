@@ -38,6 +38,9 @@ class Person(object):
             names = [ name for name in parts[1].split() if len(name) ] # all non-whitespace tokens
         return cls(surname, *names)
 
+    def readable(self):
+        return u" ".join(self.first_names + (self.last_name,))
+
     def __eq__(self, right):
         return self.last_name == right.last_name and self.first_names == right.first_names
 
