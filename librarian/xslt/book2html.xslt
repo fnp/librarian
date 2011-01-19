@@ -6,7 +6,8 @@
 
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:wl="http://wolnelektury.pl/functions" >
+    xmlns:wl="http://wolnelektury.pl/functions"
+    xmlns:dc="http://purl.org/dc/elements/1.1/" >
 
 <xsl:output encoding="utf-8" indent="yes" omit-xml-declaration = "yes" version="2.0" />
 <xsl:template match="utwor">
@@ -100,7 +101,7 @@
                 }
 
 
-                #toc, #themes, #nota_red {
+                #toc, #themes, #nota_red, #info {
                     position: fixed;
                     left: 0em;
                     top: 1.5em;
@@ -146,6 +147,11 @@
                     color: blue;
                     font-size: 16px;
                     position: inherit;
+                }
+
+                #info p {
+                    text-align: justify;
+                    margin: 1.5em 0 0;
                 }
 
                 /* =================================================== */
@@ -283,6 +289,13 @@
                     display: block;
                     line-height: 1.5em;
                     margin-top: -0.25em;
+                }
+
+                span.translator {
+                    font-size: 0.375em;
+                    display: block;
+                    line-height: 1.5em;
+                    margin-top: 0.25em;
                 }
 
                 div.didaskalia {
@@ -426,6 +439,7 @@
     <xsl:if test="nazwa_utworu">
         <h1>
             <xsl:apply-templates select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul" mode="header" />
+            <xsl:call-template name="translators" />
         </h1>
     </xsl:if>
     <xsl:apply-templates />
@@ -659,6 +673,23 @@
     <div id="nota_red">
         <xsl:apply-templates />
     </div>
+</xsl:template>
+
+
+<xsl:template name="translators">
+    <xsl:if test="//dc:contributor.translator">
+        <span class="translator">
+            <xsl:text>tłum. </xsl:text>
+            <xsl:for-each select="//dc:contributor.translator">
+                <xsl:if test="position() != 1">, </xsl:if>
+                <xsl:apply-templates mode="person" />
+            </xsl:for-each>
+        </span>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="text()" mode="person">
+    <xsl:value-of select="wl:person_name(.)" />
 </xsl:template>
 
 

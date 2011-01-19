@@ -265,7 +265,8 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     return output_html, toc, chars
 
 
-def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False, sample=None, cover_fn=None):
+def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False,
+              sample=None, cover_fn=None, flags=None):
     """ produces a EPUB file
 
     provider: a DocProvider
@@ -275,6 +276,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     make_dir: writes output to <output_dir>/<author>/<slug>.epub instead of <output_dir>/<slug>.epub
     sample=n: generate sample e-book (with at least n paragraphs)
     cover_fn: function(author, title) -> cover image
+    flags: less-advertising,
     """
 
     def transform_file(input_xml, chunk_counter=1, first=True, sample=None):
@@ -354,6 +356,10 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         if not slug:
             raise ValueError('either slug or file_path should be specified')
         input_xml = etree.parse(provider[slug])
+
+    if flags:
+        for flag in flags:
+            input_xml.getroot().set(flag, 'yes')
 
     metadata = input_xml.find('.//'+RDFNS('Description'))
     if metadata is None:

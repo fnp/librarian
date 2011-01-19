@@ -33,12 +33,12 @@
                   </xsl:when>
                   <xsl:otherwise>
                     Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie
-                    publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować
+                    publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
                     i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
-                    (przypisy, motywy literackie etc.) które podlegają prawu autorskiemu, to
+                    (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
                     te dodatkowe materiały udostępnione są na licencji
                     <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons
-                    Uznanie Autorstwa - Na Tych Samych Warunkach 3.0 PL</a>.
+                    Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL</a>.
                   </xsl:otherwise>
               </xsl:choose>
           </p>
@@ -54,15 +54,14 @@
           </a></p>
 
           <xsl:if test="//dc:source" >
-            <p class="info">Na podstawie: <xsl:value-of select="//dc:source" /></p>
+            <p class="info">Tekst opracowany na podstawie: <xsl:value-of select="//dc:source" /></p>
           </xsl:if>
 
-          <xsl:if test="//dc:contributor.editor|//dc:contributor.technical_editor">
-              <p class="info">
-                Opracowanie redakcyjne i przypisy:
-                <xsl:apply-templates select="//dc:contributor.editor|//dc:contributor.technical_editor" />
-              </p>
+          <xsl:if test="//dc:description" >
+            <p class="info"><xsl:value-of select="//dc:description" /></p>
           </xsl:if>
+
+          <xsl:call-template name="editors" />
 
           <p class="info">&#160;</p>
           <p class="minor info">
@@ -76,6 +75,18 @@
 
   <xsl:template match="text()" >
     <xsl:value-of select="." disable-output-escaping="yes" />
+  </xsl:template>
+
+  <xsl:template name="editors">
+    <xsl:if test="//dc:contributor.editor|//dc:contributor.technical_editor">
+        <p class="info">
+            <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
+            <xsl:for-each select="//dc:contributor.editor|//dc:contributor.technical_editor">
+                <xsl:if test="position() != 1">, </xsl:if>
+                <xsl:apply-templates mode="person" />
+            </xsl:for-each>.
+        </p>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="dc:contributor.editor|dc:contributor.technical_editor">

@@ -101,7 +101,8 @@ def asbis(filenames, output_dir, verbose):
                 except:
                     pass
             outfile = os.path.join(output_dir, slug + '.epub')
-            epub.transform(provider, file_path=main_input, output_file=outfile, cover_fn=cover.asbis_cover)
+            epub.transform(provider, file_path=main_input, output_file=outfile,
+                    cover_fn=cover.asbis_cover, flags=('less-advertising',))
     except ParseError, e:
         print '%(file)s:%(name)s:%(message)s' % {
             'file': main_input,

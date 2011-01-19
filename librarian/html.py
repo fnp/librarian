@@ -16,6 +16,7 @@ from librarian import functions
 from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 functions.reg_substitute_entities()
+functions.reg_person_name()
 
 STYLESHEETS = {
     'legacy': 'xslt/book2html.xslt',

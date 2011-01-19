@@ -94,7 +94,7 @@
   <xsl:template match="dzielo_nadrzedne" />
 
   <xsl:template match="nazwa_utworu" mode="poczatek" >
-    <h2 class="author" xmlns="http://www.w3.org/1999/xhtml">
+    <h2 class="intitle" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
   </xsl:template>
@@ -102,7 +102,7 @@
   <xsl:template match="nazwa_utworu" />
 
   <xsl:template match="podtytul" mode="poczatek">
-    <h2 class="author" xmlns="http://www.w3.org/1999/xhtml">
+    <h2 class="insubtitle" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
   </xsl:template>

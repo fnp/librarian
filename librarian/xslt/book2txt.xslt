@@ -6,7 +6,8 @@
   
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:wl="http://wolnelektury.pl/functions" >
+    xmlns:wl="http://wolnelektury.pl/functions"
+    xmlns:dc="http://purl.org/dc/elements/1.1/" >
 
 <xsl:output encoding="utf-8" method="text" />
 
@@ -17,11 +18,16 @@
 <!-- = (can contain block tags, paragraph tags, standalone tags and special tags) = -->
 <!-- ============================================================================== -->
 <xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny">
-<xsl:if test="nazwa_utworu"><xsl:apply-templates select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul" mode="header" /></xsl:if>
+<xsl:if test="nazwa_utworu">
+    <xsl:apply-templates select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul" mode="header" />
+    <xsl:call-template name="translators" />
+    <xsl:text>
+</xsl:text>
+</xsl:if>
+<xsl:apply-templates />
 <xsl:text>
 
 </xsl:text>
-<xsl:apply-templates />
 </xsl:template>
 
 
@@ -79,30 +85,28 @@
 <!-- ========================================== -->
 <!-- Title page -->
 <xsl:template match="autor_utworu" mode="header">
+<xsl:apply-templates mode="inline" />
 <xsl:text>
 
 </xsl:text>
-<xsl:apply-templates mode="inline" />
 </xsl:template>
 
 <xsl:template match="nazwa_utworu" mode="header">
-<xsl:text>
-
-</xsl:text>
 <xsl:apply-templates mode="inline" />
+<xsl:text>
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="dzielo_nadrzedne" mode="header">
-<xsl:text>
-    
-</xsl:text>
 <xsl:apply-templates mode="inline" />
+<xsl:text>
+</xsl:text>
 </xsl:template>
 
 <xsl:template match="podtytul" mode="header">
+<xsl:apply-templates mode="inline" />
 <xsl:text>
 </xsl:text>
-<xsl:apply-templates mode="inline" />
 </xsl:template>
 
 <!-- Section headers (included in index)-->
@@ -297,6 +301,20 @@
 <xsl:template match="begin|end" />
 
 <xsl:template match="motyw" mode="inline" />
+
+<xsl:template name="translators">
+    <xsl:if test="//dc:contributor.translator">
+        <text>tłum. </text>
+        <xsl:for-each select="//dc:contributor.translator/text()">
+            <xsl:if test="position() != 1">
+                <xsl:text>, </xsl:text>
+            </xsl:if>
+            <xsl:value-of select="wl:person_name(.)" />
+        </xsl:for-each>
+        <xsl:text>
+</xsl:text>
+    </xsl:if>
+</xsl:template>
 
 
 <!-- ================ -->

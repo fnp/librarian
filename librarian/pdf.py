@@ -128,13 +128,15 @@ def hack_motifs(doc):
 
 
 def parse_creator(doc):
-    """ find all dc:creator tags and add dc:creator_parsed with forenames first """
-    for creator in doc.findall('//'+DCNS('creator')):
-        p = Person.from_text(creator.text)
-        creator_parsed = deepcopy(creator)
-        creator_parsed.tag = DCNS('creator_parsed')
-        creator_parsed.text = ' '.join(p.first_names + (p.last_name,))
-        creator.getparent().insert(0, creator_parsed)
+    """ find all dc:creator and dc.contributor tags and add *_parsed versions with forenames first """
+    for person in doc.xpath("|".join('//dc:'+(tag) for tag in (
+                    'creator', 'contributor.translator', 'contributor.editor', 'contributor.technical_editor')),
+                    namespaces = {'dc': str(DCNS)})[::-1]:
+        p = Person.from_text(person.text)
+        person_parsed = deepcopy(person)
+        person_parsed.tag = person.tag + '_parsed'
+        person_parsed.text = p.readable()
+        person.getparent().insert(0, person_parsed)
 
 
 def get_stylesheet(name):
@@ -286,9 +288,9 @@ def load_including_children(provider, slug=None, uri=None, file_path=None):
         parse_dublincore=True)
 
     f.close()
-
+    print document.book_info
     for child_uri in document.book_info.parts:
+        print child_uri
         child = load_including_children(provider, uri=child_uri)
         document.edoc.getroot().append(child.edoc.getroot())
-
     return document

@@ -111,35 +111,44 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
     \end{minipage}
     \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
-        Na podstawie: \sourceinfo
 
+        \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
+        \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
         \vspace{.5em}
 
-        Wersja lektury on-line dostępna jest \href{\bookurl}{na stronie wolnelektury.pl}.
-        \vspace{.5em}
-
-        \rightsinfo
-
-        \vspace{.6em}
+        Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
+        przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
 
     \end{minipage}
     \noindent \rule{\linewidth}{0.4pt}
 
     \vspace{.6em}
     \color{black}
-
-%    \begin{figure}[b!]
-%        \footnotesize
-%        \color{theme}
-%        \noindent \rule{\linewidth}{0.4pt}
-
-%        Szkolna biblioteka internetowa Wolne Lektury tworzona jest dzięki pracy Wolontariuszy, ale to osoby
-%        zatrudnione w~FNP będą musiały wymyślić, co powinno zostać napisane w~tym miejscu. Można zupełnie usunąć
-%        tę sekcję, ale autor konwertera chciał się popisać, że umie coś takiego zrobić.
-%        \color{black}
-%    \end{figure}
     }
 }
+
+\newcommand{\editorialsection}{
+  \begin{figure}[b!]
+  {
+    \footnotesize
+    \color{theme}
+    \noindent \rule{\linewidth}{0.4pt}
+
+    \rightsinfo
+    \vspace{.6em}
+
+    \sourceinfo
+
+    \description
+    \vspace{.6em}
+
+    Opracowanie redakcyjne i przypisy: \editors.
+
+    \color{black}
+  }
+  \end{figure}
+}
+
 
 \newcommand{\typosubsubsection}[1]{%
 {\textsc{#1}}
@@ -162,6 +171,12 @@ Letters={Uppercase}
 %{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
 }
 
+
+\newcommand{\tytul}[1]{%
+#1%
+\vspace{1em}%
+}
+
 \newcommand{\nazwapodutworu}[1]{%
 \section*{\typosection{#1}}%
 }
@@ -170,13 +185,22 @@ Letters={Uppercase}
 \subsection*{\typosubsection{#1}}%
 }
 
+\newcommand{\dzielonadrzedne}[1]{%
+\subsection*{\typosubsubsection{#1}}%
+}
+
 \newcommand{\nazwautworu}[1]{%
 \section*{\typosection{#1}}%
 }
 
 \newcommand{\podtytul}[1]{%
-\subsection*{\typosubsection{#1}}%
+\subsection*{\typosubsubsection{#1}}%
 }
+
+\newcommand{\translator}[1]{%
+\subsection*{\typosubsubsection{tłum. #1}}%
+}
+
 
 \newcommand{\powiesc}[1]{#1}
 \newcommand{\opowiadanie}[1]{#1}

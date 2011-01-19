@@ -34,9 +34,10 @@
 
           <p class="info">&#160;</p>
 
-          <xsl:apply-templates select="//dc:contributor.translator" />
+          <xsl:call-template name="translators" />
 
-          <!--p class="info">
+          <xsl:if test="not(utwor/@less-advertising)">
+            <p class="info">
               <a>
                   <xsl:attribute name="href">
                       <xsl:value-of select="//dc:identifier.url" />
@@ -44,10 +45,11 @@
                   Ta lektura</a>,
               podobnie jak tysiące innych, jest dostępna on-line na stronie
               <a href="http://www.wolnelektury.pl/">wolnelektury.pl</a>.
-          </p-->
+            </p>
+          </xsl:if>
 
           <p class="info">
-            Utwór opracowany został w&#160;ramach projektu<a href="http://www.wolnelektury.pl/"> Wolne Lektury</a> przez<a href="http://www.nowoczesnapolska.org.pl/"> Fundację Nowoczesna Polska</a>.
+            Utwór opracowany został w&#160;ramach projektu<a href="http://www.wolnelektury.pl/"> Wolne Lektury</a> przez<a href="http://www.nowoczesnapolska.org.pl/"> fundację Nowoczesna Polska</a>.
           </p>
 
           <p class="footer info">
@@ -78,10 +80,16 @@
     </h2>
   </xsl:template>
 
-  <xsl:template match="dc:contributor.translator">
-    <p class="info">
-      tłum. <xsl:apply-templates mode="person" />
-    </p>
+  <xsl:template name="translators">
+    <xsl:if test="//dc:contributor.translator">
+        <p class="info">
+            <xsl:text>tłum. </xsl:text>
+            <xsl:for-each select="//dc:contributor.translator">
+                <xsl:if test="position() != 1">, </xsl:if>
+                <xsl:apply-templates mode="person" />
+            </xsl:for-each>
+        </p>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="text()" mode="person">
