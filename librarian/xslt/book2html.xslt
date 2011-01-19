@@ -1,408 +1,419 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- 
+
    This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
    Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
-  
+
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:wl="http://wolnelektury.pl/functions" >
 
 <xsl:output encoding="utf-8" indent="yes" omit-xml-declaration = "yes" version="2.0" />
 <xsl:template match="utwor">
-    <!-- <html>
-        <head>
-            <title>Książka z serwisu WolneLektury.pl</title>
-            <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
-        </head>
-        <style>
-            body {
-                font-size: 16px;
-                font: Georgia, "Times New Roman", serif;
-                line-height: 1.5em;
-                margin: 0;
-            }
+    <xsl:choose>
+        <xsl:when test="@full-page">
+            <html>
+            <head>
+                <title>Książka z serwisu WolneLektury.pl</title>
+                <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+            </head>
+            <style>
+                body {
+                    font-size: 16px;
+                    font: Georgia, "Times New Roman", serif;
+                    line-height: 1.5em;
+                    margin: 0;
+                }
 
-            a {
-                color: blue;
-                text-decoration: none;
-            }
+                a {
+                    color: blue;
+                    text-decoration: none;
+                }
 
-            #book-text {
-                margin: 3em;
-                max-width: 36em;
-            }
+                #book-text {
+                    margin: 3em;
+                    max-width: 36em;
+                }
 
-            /* ================================== */
-            /* = Header with logo and menu      = */
-            /* ================================== */
-            #header {
-                margin: 3.4em 0 0 1.4em;
-            }
+                /* ================================== */
+                /* = Header with logo and menu      = */
+                /* ================================== */
+                #header {
+                    margin: 3.4em 0 0 1.4em;
+                }
 
-            img {
-                border: none;
-            }
-
-
-            #menu {
-                position: fixed;
-                left: 0em;
-                top: 0em;
-                width: 100%;
-                height: 1.5em;
-                background: #333;
-                color: #FFF;
-                opacity: 0.9;
-                z-index: 99;
-            }
-
-            #menu ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            #menu li a {
-                display: block;
-                float: left;
-                width: 7.5em;
-                height: 1.5em;
-                margin-left: 0.5em;
-                text-align: center;
-                color: #FFF;
-            }
-
-            #menu li a:hover, #menu li a:active {
-                color: #000;
-                background: #FFF url(/static/img/arrow-down.png) no-repeat center right;
-            }
-
-            #menu li a.selected {
-                color: #000;
-                background: #FFF url(/static/img/arrow-up.png) no-repeat center right;
-            }
-            #menu a.menu-link {
-                display: block;
-                float: left;
-                height: 1.5em;
-                margin-left: 0.5em;
-                text-align: center;
-                color: #FFF;
-            }
-            #menu span {
-                color: #888;
-                font-style: italic;
-                font-size: .75em;
-                margin-right: 0.5em;
-            }
+                img {
+                    border: none;
+                }
 
 
-            #toc, #themes, #nota_red {
-                position: fixed;
-                left: 0em;
-                top: 1.5em;
-                width: 37em;
-                padding: 1.5em;
-                background: #FFF;
-                border-bottom: 0.25em solid #DDD;
-                border-right: 0.25em solid #DDD;
-                display: none;
-                height: 16em;
-                overflow-x: hidden;
-                overflow-y: auto;
-                opacity: 0.9;
-                z-index: 99;
-            }
+                #menu {
+                    position: fixed;
+                    left: 0em;
+                    top: 0em;
+                    width: 100%;
+                    height: 1.5em;
+                    background: #333;
+                    color: #FFF;
+                    opacity: 0.9;
+                    z-index: 99;
+                }
 
-            #toc ol, #themes ol {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
+                #menu ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
 
-            #toc ol li {
-                font-weight: bold;
-            }
+                #menu li a {
+                    display: block;
+                    float: left;
+                    width: 7.5em;
+                    height: 1.5em;
+                    margin-left: 0.5em;
+                    text-align: center;
+                    color: #FFF;
+                }
 
-            #toc ol ol {
-                padding: 0 0 1.5em 1.5em;
-                margin: 0;
-            }
+                #menu li a:hover, #menu li a:active {
+                    color: #000;
+                    background: #FFF url(/static/img/arrow-down.png) no-repeat center right;
+                }
 
-            #toc ol ol li {
-                font-weight: normal;
-            }
-
-            #toc h2 {
-                display: none;
-            }
-
-            #toc .anchor {
-                float: none;
-                margin: 0;
-                color: blue;
-                font-size: 16px;
-                position: inherit;
-            }
-
-            /* =================================================== */
-            /* = Common elements: headings, paragraphs and lines = */
-            /* =================================================== */
-            h1 {
-                font-size: 3em;
-                margin: 1.5em 0;
-                text-align: center;
-                line-height: 1.5em;
-                font-weight: bold;
-            }
-
-            h2 {
-                font-size: 2em;
-                margin: 1.5em 0 0;
-                font-weight: bold;
-                line-height: 1.5em;
-            }
-
-            h3 {
-                font-size: 1.5em;
-                margin: 1.5em 0 0;
-                font-weight: normal;
-                line-height: 1.5em;
-            }
-
-            h4 {
-                font-size: 1em;
-                margin: 1.5em 0 0;
-                line-height: 1.5em;
-            }
-
-            p {
-                margin: 0;
-            }
-
-            /* ======================== */
-            /* = Footnotes and themes = */
-            /* ======================== */
-            .theme-begin {
-                border-left: 0.1em solid #DDDDDD;
-                color: #777;
-                padding: 0 0.5em;
-                width: 7.5em;
-
-                font-style: normal;
-                font-weight: normal;
-                font-variant: normal;
-                letter-spacing: 0;
-                text-transform: none;
-                text-decoration: none;
-
-                font-size: 16px;
-                float: right;
-                margin-right: -9.5em;
-                margin-bottom: 0.5em;
-                clear: both;
-                left: 40em;
-                line-height: 1.5em;
-                text-align: left;
-            }
-
-            .annotation {
-                font-style: normal;
-                font-weight: normal;
-                font-size: 12px;
-                padding-left: 2px;
-                position: relative;
-                top: -4px;
-            }
-
-            #footnotes .annotation {
-                display: block;
-                float: left;
-                width: 2.5em;
-                clear: both;
-            }
-
-            #footnotes div {
-                margin: 1.5em 0 0 0;
-            }
-
-            #footnotes p {
-                margin-left: 2.5em;
-                font-size: 0.875em;
-            }
-
-            blockquote {
-                font-size: 0.875em;
-            }
-
-            /* ============= */
-            /* = Numbering = */
-            /* ============= */
-            .verse, .paragraph {
-                position:relative;
-            }
-            .anchor {
-                position: absolute;
-                margin: -0.25em -0.5em;
-                left: -3em;
-                color: #777;
-                font-size: 12px;
-                width: 2em;
-                text-align: center;
-                padding: 0.25em 0.5em;
-                line-height: 1.5em;
-            }
-
-            .anchor:hover, #book-text .anchor:active {
-                color: #FFF;
-                background-color: #CCC;
-            }
-
-            /* =================== */
-            /* = Custom elements = */
-            /* =================== */
-            span.author {
-                font-size: 0.5em;
-                display: block;
-                line-height: 1.5em;
-                margin-bottom: 0.25em;
-            }
-
-            span.collection {
-                font-size: 0.375em;
-                display: block;
-                line-height: 1.5em;
-                margin-bottom: -0.25em;
-            }
-
-            span.subtitle {
-                font-size: 0.5em;
-                display: block;
-                line-height: 1.5em;
-                margin-top: -0.25em;
-            }
-
-            div.didaskalia {
-                font-style: italic;
-                margin: 0.5em 0 0 1.5em;
-            }
-
-            div.kwestia {
-                margin: 0.5em 0 0;
-            }
-
-            div.stanza {
-                margin: 1.5em 0 0;
-            }
-
-            div.kwestia div.stanza {
-                margin: 0;
-            }
-
-            p.paragraph {
-                text-align: justify;
-                margin: 1.5em 0 0;
-            }
-
-            p.motto {
-                text-align: justify;
-                font-style: italic;
-                margin: 1.5em 0 0;
-            }
-
-            p.motto_podpis {
-                font-size: 0.875em;
-                text-align: right;
-            }
-
-            div.fragment {
-                border-bottom: 0.1em solid #999;
-                padding-bottom: 1.5em;
-            }
-
-            div.note p, div.dedication p, div.note p.paragraph, div.dedication p.paragraph {
-                text-align: right;
-                font-style: italic;
-            }
-
-            hr.spacer {
-                height: 3em;
-                visibility: hidden;
-            }
-
-            hr.spacer-line {
-                margin: 1.5em 0;
-                border: none;
-                border-bottom: 0.1em solid #000;
-            }
-
-            p.spacer-asterisk {
-                padding: 0;
-                margin: 1.5em 0;
-                text-align: center;
-            }
-
-            div.person-list ol {
-                list-style: none;
-                padding: 0 0 0 1.5em;
-            }
-
-            p.place-and-time {
-                font-style: italic;
-            }
-
-            em.math, em.foreign-word, em.book-title, em.didaskalia {
-                font-style: italic;
-            }
-
-            em.author-emphasis {
-                letter-spacing: 0.1em;
-            }
-
-            em.person {
-                font-style: normal;
-                font-variant: small-caps;
-            }
-
-            .verse:after {
-                content: "\feff";
-            }
+                #menu li a.selected {
+                    color: #000;
+                    background: #FFF url(/static/img/arrow-up.png) no-repeat center right;
+                }
+                #menu a.menu-link {
+                    display: block;
+                    float: left;
+                    height: 1.5em;
+                    margin-left: 0.5em;
+                    text-align: center;
+                    color: #FFF;
+                }
+                #menu span {
+                    color: #888;
+                    font-style: italic;
+                    font-size: .75em;
+                    margin-right: 0.5em;
+                }
 
 
-            /* =================================== */
-            /* = Hide some elements for printing = */
-            /* =================================== */
+                #toc, #themes, #nota_red {
+                    position: fixed;
+                    left: 0em;
+                    top: 1.5em;
+                    width: 37em;
+                    padding: 1.5em;
+                    background: #FFF;
+                    border-bottom: 0.25em solid #DDD;
+                    border-right: 0.25em solid #DDD;
+                    display: none;
+                    height: 16em;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                    opacity: 0.9;
+                    z-index: 99;
+                }
 
-            @media print {
-                #menu {display: none;}
-            }
-        </style>
-        <body> -->
-        <div id="book-text">
-            <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
-            <xsl:if test="count(descendant::*[self::pe or self::pa or self::pr or self::pt][not(parent::extra)])">
-                <div id="footnotes">
-                    <h3>Przypisy</h3>
-                    <xsl:for-each select="descendant::*[self::pe or self::pa or self::pr or self::pt][not(parent::extra)]">
-                        <div>
-                            <a name="{concat('footnote-', generate-id(.))}" />
-                            <a href="{concat('#anchor-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt]) + 1" />]</a>
-                            <xsl:choose>
-                                <xsl:when test="count(akap|akap_cd|strofa) = 0">
-                                    <p><xsl:apply-templates select="text()|*" mode="inline" /></p>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:apply-templates select="text()|*" mode="inline" />
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </div>
-                    </xsl:for-each>
-                </div>
-            </xsl:if>
-        </div>
-        <!-- </body>
-    </html> -->
+                #toc ol, #themes ol {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
+
+                #toc ol li {
+                    font-weight: bold;
+                }
+
+                #toc ol ol {
+                    padding: 0 0 1.5em 1.5em;
+                    margin: 0;
+                }
+
+                #toc ol ol li {
+                    font-weight: normal;
+                }
+
+                #toc h2 {
+                    display: none;
+                }
+
+                #toc .anchor {
+                    float: none;
+                    margin: 0;
+                    color: blue;
+                    font-size: 16px;
+                    position: inherit;
+                }
+
+                /* =================================================== */
+                /* = Common elements: headings, paragraphs and lines = */
+                /* =================================================== */
+                h1 {
+                    font-size: 3em;
+                    margin: 1.5em 0;
+                    text-align: center;
+                    line-height: 1.5em;
+                    font-weight: bold;
+                }
+
+                h2 {
+                    font-size: 2em;
+                    margin: 1.5em 0 0;
+                    font-weight: bold;
+                    line-height: 1.5em;
+                }
+
+                h3 {
+                    font-size: 1.5em;
+                    margin: 1.5em 0 0;
+                    font-weight: normal;
+                    line-height: 1.5em;
+                }
+
+                h4 {
+                    font-size: 1em;
+                    margin: 1.5em 0 0;
+                    line-height: 1.5em;
+                }
+
+                p {
+                    margin: 0;
+                }
+
+                /* ======================== */
+                /* = Footnotes and themes = */
+                /* ======================== */
+                .theme-begin {
+                    border-left: 0.1em solid #DDDDDD;
+                    color: #777;
+                    padding: 0 0.5em;
+                    width: 7.5em;
+
+                    font-style: normal;
+                    font-weight: normal;
+                    font-variant: normal;
+                    letter-spacing: 0;
+                    text-transform: none;
+                    text-decoration: none;
+
+                    font-size: 16px;
+                    float: right;
+                    margin-right: -9.5em;
+                    margin-bottom: 0.5em;
+                    clear: both;
+                    left: 40em;
+                    line-height: 1.5em;
+                    text-align: left;
+                }
+
+                .annotation {
+                    font-style: normal;
+                    font-weight: normal;
+                    font-size: 12px;
+                    padding-left: 2px;
+                    position: relative;
+                    top: -4px;
+                }
+
+                #footnotes .annotation {
+                    display: block;
+                    float: left;
+                    width: 2.5em;
+                    clear: both;
+                }
+
+                #footnotes div {
+                    margin: 1.5em 0 0 0;
+                }
+
+                #footnotes p {
+                    margin-left: 2.5em;
+                    font-size: 0.875em;
+                }
+
+                blockquote {
+                    font-size: 0.875em;
+                }
+
+                /* ============= */
+                /* = Numbering = */
+                /* ============= */
+                .verse, .paragraph {
+                    position:relative;
+                }
+                .anchor {
+                    position: absolute;
+                    margin: -0.25em -0.5em;
+                    left: -3em;
+                    color: #777;
+                    font-size: 12px;
+                    width: 2em;
+                    text-align: center;
+                    padding: 0.25em 0.5em;
+                    line-height: 1.5em;
+                }
+
+                .anchor:hover, #book-text .anchor:active {
+                    color: #FFF;
+                    background-color: #CCC;
+                }
+
+                /* =================== */
+                /* = Custom elements = */
+                /* =================== */
+                span.author {
+                    font-size: 0.5em;
+                    display: block;
+                    line-height: 1.5em;
+                    margin-bottom: 0.25em;
+                }
+
+                span.collection {
+                    font-size: 0.375em;
+                    display: block;
+                    line-height: 1.5em;
+                    margin-bottom: -0.25em;
+                }
+
+                span.subtitle {
+                    font-size: 0.5em;
+                    display: block;
+                    line-height: 1.5em;
+                    margin-top: -0.25em;
+                }
+
+                div.didaskalia {
+                    font-style: italic;
+                    margin: 0.5em 0 0 1.5em;
+                }
+
+                div.kwestia {
+                    margin: 0.5em 0 0;
+                }
+
+                div.stanza {
+                    margin: 1.5em 0 0;
+                }
+
+                div.kwestia div.stanza {
+                    margin: 0;
+                }
+
+                p.paragraph {
+                    text-align: justify;
+                    margin: 1.5em 0 0;
+                }
+
+                p.motto {
+                    text-align: justify;
+                    font-style: italic;
+                    margin: 1.5em 0 0;
+                }
+
+                p.motto_podpis {
+                    font-size: 0.875em;
+                    text-align: right;
+                }
+
+                div.fragment {
+                    border-bottom: 0.1em solid #999;
+                    padding-bottom: 1.5em;
+                }
+
+                div.note p, div.dedication p, div.note p.paragraph, div.dedication p.paragraph {
+                    text-align: right;
+                    font-style: italic;
+                }
+
+                hr.spacer {
+                    height: 3em;
+                    visibility: hidden;
+                }
+
+                hr.spacer-line {
+                    margin: 1.5em 0;
+                    border: none;
+                    border-bottom: 0.1em solid #000;
+                }
+
+                p.spacer-asterisk {
+                    padding: 0;
+                    margin: 1.5em 0;
+                    text-align: center;
+                }
+
+                div.person-list ol {
+                    list-style: none;
+                    padding: 0 0 0 1.5em;
+                }
+
+                p.place-and-time {
+                    font-style: italic;
+                }
+
+                em.math, em.foreign-word, em.book-title, em.didaskalia {
+                    font-style: italic;
+                }
+
+                em.author-emphasis {
+                    letter-spacing: 0.1em;
+                }
+
+                em.person {
+                    font-style: normal;
+                    font-variant: small-caps;
+                }
+
+                .verse:after {
+                    content: "\feff";
+                }
+
+
+                /* =================================== */
+                /* = Hide some elements for printing = */
+                /* =================================== */
+
+                @media print {
+                    #menu {display: none;}
+                }
+            </style>
+            <body>
+                <xsl:call-template name="book-text" />
+            </body>
+            </html>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:call-template name="book-text" />
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template name="book-text">
+    <div id="book-text">
+        <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
+        <xsl:if test="count(descendant::*[self::pe or self::pa or self::pr or self::pt][not(parent::extra)])">
+            <div id="footnotes">
+                <h3>Przypisy</h3>
+                <xsl:for-each select="descendant::*[self::pe or self::pa or self::pr or self::pt][not(parent::extra)]">
+                    <div>
+                        <a name="{concat('footnote-', generate-id(.))}" />
+                        <a href="{concat('#anchor-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt]) + 1" />]</a>
+                        <xsl:choose>
+                            <xsl:when test="count(akap|akap_cd|strofa) = 0">
+                                <p><xsl:apply-templates select="text()|*" mode="inline" /></p>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:apply-templates select="text()|*" mode="inline" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </div>
+                </xsl:for-each>
+            </div>
+        </xsl:if>
+    </div>
 </xsl:template>
 
 
@@ -511,16 +522,16 @@
 <xsl:template match="strofa">
     <div class="stanza">
         <xsl:choose>
-            <xsl:when test="count(br) > 0">     
+            <xsl:when test="count(br) > 0">
                 <xsl:call-template name="verse">
                     <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::text() | br[1]/preceding-sibling::node()" />
                     <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd'][1]" />
-                </xsl:call-template>    
+                </xsl:call-template>
                 <xsl:for-each select="br">		
         			<!-- Each BR tag "consumes" text after it -->
                     <xsl:variable name="lnum" select="count(preceding-sibling::br)" />
                     <xsl:call-template name="verse">
-                        <xsl:with-param name="verse-content" 
+                        <xsl:with-param name="verse-content"
                             select="following-sibling::text()[count(preceding-sibling::br) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />
                         <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd')][1]" />
                     </xsl:call-template>
@@ -530,7 +541,7 @@
                 <xsl:call-template name="verse">
                     <xsl:with-param name="verse-content" select="text() | node()" />
                     <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd[1]" />
-                 </xsl:call-template>           
+                 </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
     </div>

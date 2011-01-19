@@ -30,7 +30,7 @@ def html_has_content(text):
     return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)
 
 def transform(input, output_filename=None, is_file=True, \
-    parse_dublincore=True, stylesheet='legacy', options={}):
+    parse_dublincore=True, stylesheet='legacy', options={}, flags=None):
     """Transforms file input_filename in XML to output_filename in XHTML.
 
     If output_filename is None, returns an XML,
@@ -48,6 +48,10 @@ def transform(input, output_filename=None, is_file=True, \
         else:
             document = WLDocument.from_string(input, True, \
                 parse_dublincore=parse_dublincore)
+
+        if flags:
+            for flag in flags:
+                document.edoc.getroot().set(flag, 'yes')
 
         document.clean_ed_note()
 
