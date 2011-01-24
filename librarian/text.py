@@ -55,7 +55,8 @@ def transform(input_file, output_file, parse_dublincore=True, **options):
         else:
             source = ''
 
-        contributors = ', '.join(person.readable() for person in sorted(set(parsed_dc.technical_editors + parsed_dc.editors)))
+        contributors = ', '.join(person.readable() for person in 
+                                 sorted(set(p for p in (parsed_dc.technical_editors + parsed_dc.editors) if p)))
         if contributors:
             contributors = "\n\nOpracowanie redakcyjne i przypisy: %s" % contributors
     else:

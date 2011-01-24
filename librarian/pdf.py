@@ -132,6 +132,8 @@ def parse_creator(doc):
     for person in doc.xpath("|".join('//dc:'+(tag) for tag in (
                     'creator', 'contributor.translator', 'contributor.editor', 'contributor.technical_editor')),
                     namespaces = {'dc': str(DCNS)})[::-1]:
+        if not person.text:
+            continue
         p = Person.from_text(person.text)
         person_parsed = deepcopy(person)
         person_parsed.tag = person.tag + '_parsed'

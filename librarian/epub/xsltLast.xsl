@@ -78,10 +78,10 @@
   </xsl:template>
 
   <xsl:template name="editors">
-    <xsl:if test="//dc:contributor.editor|//dc:contributor.technical_editor">
+    <xsl:if test="//dc:contributor.editor[text()]|//dc:contributor.technical_editor[text()]">
         <p class="info">
             <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
-            <xsl:for-each select="//dc:contributor.editor|//dc:contributor.technical_editor[not(//dc:contributor.editor/text()=text())]">
+            <xsl:for-each select="//dc:contributor.editor[text()]|//dc:contributor.technical_editor[text() and not(//dc:contributor.editor/text()=text())]">
                 <xsl:sort />
                 <xsl:if test="position() != 1">, </xsl:if>
                 <xsl:apply-templates mode="person" />

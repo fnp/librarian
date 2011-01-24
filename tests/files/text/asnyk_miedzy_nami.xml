@@ -6,6 +6,7 @@
 <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Asnyk/Między_nami_nic_nie_było">
 <dc:creator xml:lang="pl">Asnyk, Adam</dc:creator>
 <dc:title xml:lang="pl">Między nami nic nie było</dc:title>
+<dc:contributor.editor xml:lang="pl" />
 <dc:contributor.editor xml:lang="pl">Sekuła, Aleksandra</dc:contributor.editor>
 <dc:contributor.technical_editor xml:lang="pl">Sutkowska, Olga</dc:contributor.technical_editor>
 <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
