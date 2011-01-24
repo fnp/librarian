@@ -340,10 +340,14 @@
 </xsl:template>
 
 <xsl:template name="editors">
-    <xsl:for-each select=".//dc:contributor.editor_parsed|.//dc:contributor.technical_editor_parsed">
-        <xsl:if test="position() != 1">, </xsl:if>
-        <xsl:apply-templates mode="inline" />
-    </xsl:for-each>
+    <xsl:if test="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed">
+        <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
+        <xsl:for-each select="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed[not(//dc:contributor.editor_parsed/text()=text())]">
+            <xsl:sort select="@sortkey" />
+            <xsl:if test="position() != 1">, </xsl:if>
+            <xsl:apply-templates mode="inline" />
+        </xsl:for-each>.
+    </xsl:if>
 </xsl:template>
 
 <xsl:template name="translators">

@@ -81,7 +81,8 @@
     <xsl:if test="//dc:contributor.editor|//dc:contributor.technical_editor">
         <p class="info">
             <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
-            <xsl:for-each select="//dc:contributor.editor|//dc:contributor.technical_editor">
+            <xsl:for-each select="//dc:contributor.editor|//dc:contributor.technical_editor[not(//dc:contributor.editor/text()=text())]">
+                <xsl:sort />
                 <xsl:if test="position() != 1">, </xsl:if>
                 <xsl:apply-templates mode="person" />
             </xsl:for-each>.

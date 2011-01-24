@@ -135,6 +135,7 @@ def parse_creator(doc):
         p = Person.from_text(person.text)
         person_parsed = deepcopy(person)
         person_parsed.tag = person.tag + '_parsed'
+        person_parsed.set('sortkey', person.text)
         person_parsed.text = p.readable()
         person.getparent().insert(0, person_parsed)
 
@@ -288,7 +289,6 @@ def load_including_children(provider, slug=None, uri=None, file_path=None):
         parse_dublincore=True)
 
     f.close()
-    print document.book_info
     for child_uri in document.book_info.parts:
         print child_uri
         child = load_including_children(provider, uri=child_uri)

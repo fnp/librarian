@@ -25,9 +25,7 @@ Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowocz
 
 %(license_description)s.%(source)s
 
-%(description)s
-
-Opracowanie redakcyjne i przypisy: %(contributors)s
+%(description)s%(contributors)s
 """
 
 def transform(input_file, output_file, parse_dublincore=True, **options):
@@ -57,7 +55,9 @@ def transform(input_file, output_file, parse_dublincore=True, **options):
         else:
             source = ''
 
-        contributors = ', '.join(person.readable() for person in (parsed_dc.technical_editors + parsed_dc.editors))
+        contributors = ', '.join(person.readable() for person in sorted(set(parsed_dc.technical_editors + parsed_dc.editors)))
+        if contributors:
+            contributors = "\n\nOpracowanie redakcyjne i przypisy: %s" % contributors
     else:
         description = 'Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).'
         url = '*' * 10

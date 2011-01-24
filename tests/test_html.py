@@ -29,7 +29,7 @@ def test_transform():
 def test_no_dublincore():
     html.transform(
         get_fixture('text', 'asnyk_miedzy_nami_nodc.xml'),
-        get_fixture('text', 'asnyk_miedzy_nami_nodc.html'),
+        get_fixture('text', 'asnyk_miedzy_nami.html'),
     )
 
 

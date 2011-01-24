@@ -1,18 +1,3 @@
-Kodowanie znaków w dokumencie: UTF-8.
------
-Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN. 
-
-Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza, że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać.
-
-Na podstawie: (Asnyk, Adam) El...y (1838-1897), Poezye, t. 3,  Gebethner i Wolff, wyd. nowe poprzedzone słowem wstępnym St. Krzemińskiego, Warszawa, 1898
-
-Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie http://wolnelektury.pl/katalog/lektura/miedzy-nami-nic-nie-bylo.
------
-
-
-
-
-
 Adam Asnyk
 
 Między nami nic nie było
@@ -38,3 +23,20 @@ Prócz tych wspólnych, jasnych zdrojów,
 Z których serce zachwyt piło;
 Prócz pierwiosnków i powojów,—
 Między nami nic nie było!
+
+
+
+
+-----
+Ta lektura, podobnie jak tysiące innych, dostępna jest na stronie wolnelektury.pl.
+Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie http://wolnelektury.pl/katalog/lektura/miedzy-nami-nic-nie-bylo.
+
+Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowoczesna Polska.
+
+Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to te dodatkowe materiały udostępnione są na licencji Creative Commons Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL (http://creativecommons.org/licenses/by-sa/3.0/).
+
+Tekst opracowany na podstawie: (Asnyk, Adam) El...y (1838-1897), Poezye, t. 3,  Gebethner i Wolff, wyd. nowe poprzedzone słowem wstępnym St. Krzemińskiego, Warszawa, 1898
+
+Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.
+
+Opracowanie redakcyjne i przypisy: Aleksandra Sekuła, Olga Sutkowska

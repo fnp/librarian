@@ -18,8 +18,8 @@ def test_transform():
     expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.txt')
 
     text.transform(
-        get_fixture('text', 'asnyk_miedzy_nami.xml'),
-        output_file_path,
+        open(get_fixture('text', 'asnyk_miedzy_nami.xml')),
+        open(output_file_path, 'w'),
     )
 
     assert_equal(file(output_file_path).read(), file(expected_output_file_path).read())
@@ -29,8 +29,8 @@ def test_transform():
 @raises(NoDublinCore)
 def test_no_dublincore():
     text.transform(
-        get_fixture('text', 'asnyk_miedzy_nami_nodc.xml'),
-        get_fixture('text', 'asnyk_miedzy_nami_nodc.txt'),
+        open(get_fixture('text', 'asnyk_miedzy_nami_nodc.xml')),
+        open(get_fixture('text', 'asnyk_miedzy_nami.txt'), 'w'),
     )
 
 
@@ -38,7 +38,7 @@ def test_no_dublincore():
 def test_passing_parse_dublincore_to_transform():
     """Passing parse_dublincore=False to transform omits DublinCore parsing."""
     text.transform(
-        get_fixture('text', 'asnyk_miedzy_nami_nodc.xml'),
-        get_fixture('text', 'asnyk_miedzy_nami.txt'),
+        open(get_fixture('text', 'asnyk_miedzy_nami_nodc.xml')),
+        open(get_fixture('text', 'asnyk_miedzy_nami.txt'), 'w'),
         parse_dublincore=False,
     )

@@ -44,6 +44,11 @@ class Person(object):
     def __eq__(self, right):
         return self.last_name == right.last_name and self.first_names == right.first_names
 
+    def __cmp__(self, other):
+        return cmp((self.last_name, self.first_names), (other.last_name, other.first_names))
+
+    def __hash__(self):
+        return hash((self.last_name, self.first_names))
 
     def __unicode__(self):
         if len(self.first_names) > 0:
