@@ -268,7 +268,8 @@ class BookInfo(object):
                     if len(v) == 0: continue
                     for x in v:
                         e = etree.Element(field.uri)
-                        e.text = unicode(x)
+                        if x is not None:
+                            e.text = unicode(x)
                         description.append(e)
                 else:
                     e = etree.Element(field.uri)
@@ -288,7 +289,7 @@ class BookInfo(object):
             if v is not None:
                 if field.multiple:
                     if len(v) == 0: continue
-                    v = [ unicode(x) for x in v if v is not None ]
+                    v = [ unicode(x) for x in v if x is not None ]
                 else:
                     v = unicode(v)
 
@@ -304,7 +305,7 @@ class BookInfo(object):
             if v is not None:
                 if field.multiple:
                     if len(v) == 0: continue
-                    v = [ unicode(x) for x in v if v is not None ]
+                    v = [ unicode(x) for x in v if x is not None ]
                 else:
                     v = unicode(v)
                 result[field.name] = v
