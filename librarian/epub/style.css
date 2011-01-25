@@ -344,10 +344,11 @@ em.author-emphasis
 	letter-spacing: 0.1em;
 }
 
-em.person
+.person-list em.person
 {
 	font-style: normal;
-	font-variant: small-caps;
+	/*font-variant: small-caps;*/
+	text-transform: uppercase;
 }
 
 p.info
