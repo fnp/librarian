@@ -127,7 +127,13 @@ def extract_fragments(input_filename):
     open_fragments = {}
     closed_fragments = {}
 
-    for event, element in etree.iterparse(input_filename, events=('start', 'end')):
+    # iterparse would die on a HTML document
+    parser = etree.HTMLParser(encoding='utf-8')
+    buf = cStringIO.StringIO()
+    buf.write(etree.tostring(etree.parse(input_filename, parser).getroot()[0][0], encoding='utf-8'))
+    buf.seek(0)
+
+    for event, element in etree.iterparse(buf, events=('start', 'end')):
         # Process begin and end elements
         if element.get('class', '') in ('theme-begin', 'theme-end'):
             if not event == 'end': continue # Process elements only once, on end event
