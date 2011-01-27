@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- 
+
    This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
    Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
-  
+
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:wl="http://wolnelektury.pl/functions"
@@ -152,7 +152,7 @@
     <xsl:apply-templates select="*|text()" mode="inline" />
 </xsl:variable>
 <xsl:text>
-    
+
 / </xsl:text><xsl:value-of select="wl:wrap_words(wl:strip($content), $wrapping)" /><xsl:text> /</xsl:text>
 </xsl:template>
 
@@ -176,16 +176,16 @@
 <xsl:text>
 </xsl:text>
     <xsl:choose>
-        <xsl:when test="count(br) > 0">     
+        <xsl:when test="count(br) > 0">
             <xsl:call-template name="verse">
                 <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::text() | br[1]/preceding-sibling::node()" />
                 <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd'][1]" />
-            </xsl:call-template>    
+            </xsl:call-template>
             <xsl:for-each select="br">		
     			<!-- Each BR tag "consumes" text after it -->
                 <xsl:variable name="lnum" select="count(preceding-sibling::br)" />
                 <xsl:call-template name="verse">
-                    <xsl:with-param name="verse-content" 
+                    <xsl:with-param name="verse-content"
                         select="following-sibling::text()[count(preceding-sibling::br) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />
                     <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd')][1]" />
                 </xsl:call-template>
@@ -195,7 +195,7 @@
             <xsl:call-template name="verse">
                 <xsl:with-param name="verse-content" select="text() | node()" />
                 <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd[1]" />
-             </xsl:call-template>           
+             </xsl:call-template>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>

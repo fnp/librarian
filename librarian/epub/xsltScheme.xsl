@@ -291,7 +291,7 @@
   <xsl:template match="extra" />
 
   <xsl:template match="pe|pa|pr|pt" >
-    <a id="anchor-{.}" class="anchor" href="annotations.html#annotation-{.}" 
+    <a id="anchor-{.}" class="anchor" href="annotations.html#annotation-{.}"
        xmlns="http://www.w3.org/1999/xhtml">[<xsl:apply-templates />]</a>
   </xsl:template>
 

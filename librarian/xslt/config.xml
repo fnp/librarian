@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- 
+
    This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
    Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
-  
+
 -->
 <config>
     <types>
@@ -48,27 +48,27 @@
         <wers_cd />
         <wers_akap />
         <wers_wciety />
-    </paragraph-elements>        
-        
+    </paragraph-elements>
+
     <header-1-elements element="h1" mixed="true">
-        <!-- placeholder -->        
+        <!-- placeholder -->
         <dzielo_nadrzedne />
     </header-1-elements>
-    
+
     <header-2-elements element="h2" mixed="true">
-        <naglowek_akt />        
+        <naglowek_akt />
         <naglowek_czesc />
         <autor_utworu />
         <nazwa_utworu />
         <srodtytul />
     </header-2-elements>
-    
+
     <header-3-elements element="h3" mixed="true">
         <naglowek_scena />
         <naglowek_rozdzial />
         <podtytul />
     </header-3-elements>
-    
+
     <header-4-elements element="h4" mixed="true">
         <naglowek_osoba />
         <naglowek_podrozdzial />
@@ -91,13 +91,13 @@
         <pr />
         <pt />
     </annotations>
-    
+
     <no-show-elements>
         <begin />
         <end />
         <extra />
         <uwaga />
-        <motyw />        
+        <motyw />
         <br />
         <pa />
         <pe />

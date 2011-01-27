@@ -70,7 +70,7 @@ def virtualo_cover(author, title):
           300, 0
           )
 
-def asbis_cover(author, title):
+def prestigio_cover(author, title):
     return cover(author, u"„%s”" % title,
           580, 783, '#fff', get_resource('res/cover-prestigio.png'),
           446, 118, 62, 60, '#fff', ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50), '#000',

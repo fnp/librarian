@@ -2,10 +2,10 @@ License
 -------
 
   ![AGPL Logo](http://www.gnu.org/graphics/agplv3-155x51.png)
-    
+
     Copyright © 2008,2009,2010 Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>
-    
-    For full list of contributors see AUTHORS section at the end. 
+
+    For full list of contributors see AUTHORS section at the end.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -21,10 +21,10 @@ License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-About 
+About
 ------
 
-Librarian converts XML-based markup language used by FNP for writing books to 
+Librarian converts XML-based markup language used by FNP for writing books to
 other formats, which are more suitable for presentation.
 
 Currently we support:
@@ -33,8 +33,8 @@ Currently we support:
  * Plain text
  * EPUB (XHTML based)
  * print-ready PDF
- 
-Other features: 
+
+Other features:
 
  * extract DublinCore meta-data from documents;
  * extract marked "themes" from documents.

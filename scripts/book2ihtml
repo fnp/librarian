@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
 import optparse
@@ -21,7 +21,7 @@ if __name__ == '__main__':
         help='print status messages to stdout')
     parser.add_option('-i', '--ignore-dublin-core', action='store_false', dest='parse_dublincore', default=True,
         help='don\'t try to parse dublin core metadata')
-            
+
     options, input_filenames = parser.parse_args()
 
     if len(input_filenames) < 1:
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     for input_filename in input_filenames:
         if options.verbose:
             print input_filename
-        
+
         output_filename = os.path.splitext(input_filename)[0] + '.html'
         try:
             html.transform(input_filename, output_filename, parse_dublincore=options.parse_dublincore,\

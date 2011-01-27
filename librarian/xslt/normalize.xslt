@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- 
+
    This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
    Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
-  
+
 -->
 <xsl:stylesheet version="1.0"
     xmlns="http://nowoczesnapolska.org.pl/ML/Lektury/1.1"
-        
+
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:wlf="http://wolnelektury.pl/functions"
 
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
 
     exclude-result-prefixes="wlf xsl"
@@ -19,7 +19,7 @@
 
     <!-- Normalization Stylsheet for Wolne Lektury XML -->
     <xsl:output method="xml" encoding="utf-8" indent="yes" />
-     
+
     <xsl:strip-space elements="rdf:RDF rdf:Description meta doc main-text strofa stanza drama-line wlml:*" />
 
     <xsl:param name="normalize-text" select="boolean(1)" />
@@ -38,10 +38,10 @@
             </main-text>
 
             <annotations>
-                <xsl:apply-templates select="//pr|pt|pe|pa" mode="annotations" />              
+                <xsl:apply-templates select="//pr|pt|pe|pa" mode="annotations" />
             </annotations>
         </doc>
-    </xsl:template>    
+    </xsl:template>
 
     <xsl:template match="strofa">
         <xsl:element name="stanza" namespace="http://nowoczesnapolska.org.pl/ML/Lektury/1.1">
@@ -111,7 +111,7 @@
 
     <xsl:template match="akap_dialog">
         <xsl:element name="pd">
-            <xsl:variable name="prolog" select="./text()[1]" />            
+            <xsl:variable name="prolog" select="./text()[1]" />
             <xsl:value-of select="wlf:fix-dialog-line($prolog)" />
             <xsl:apply-templates select="@*|*|text()[. != $prolog]" />
         </xsl:element>
@@ -146,7 +146,7 @@
                 <xsl:when test="starts-with(., '.')">
                     <xsl:attribute name="type">dot</xsl:attribute>
                 </xsl:when>
-            </xsl:choose> 
+            </xsl:choose>
         </xsl:element>
     </xsl:template>
 
@@ -244,7 +244,7 @@
     <xsl:template match="motto">
         <xsl:element name="motto">
             <xsl:apply-templates select="@*|node()" />
-        
+
         <xsl:variable name="sign" select="following-sibling::*[1][name() = 'motto_podpis']" />
         <signature>
             <xsl:apply-templates select="$sign/node()" />
@@ -253,7 +253,7 @@
     </xsl:template>
 
     <xsl:template match="motto_podpis[preceding-sibling::*[1][name() = 'motto']]" />
-        
+
     <xsl:template match="lista_osob">
         <person-list>
             <xsl:apply-templates select="@*|node()" />
@@ -276,7 +276,7 @@
     <xsl:template match="sekcja_swiatlo">
         <vertical-space />
     </xsl:template>
-    
+
     <xsl:template match="sekcja_asterysk">
         <vertical-space type="asterisk" />
     </xsl:template>
@@ -309,7 +309,7 @@
     </xsl:template>
 
     <xsl:template match="naglowek_osoba[following-sibling::*[1][name() = 'kwestia']]" />
-        
+
     <!-- Inne -->
     <xsl:template match="osoba">
         <xsl:element name="person-ref">
@@ -357,7 +357,7 @@
     <!-- Copy attributes -->
     <xsl:template match="@*|comment()">
         <xsl:copy />
-    </xsl:template>    
+    </xsl:template>
 
     <!-- Inside RDF meta-data, leave the text unchanged -->
     <xsl:template match="rdf:RDF//text()">
@@ -378,7 +378,7 @@
 
     <!-- Ignoruj RDF poza meta -->
     <xsl:template match="rdf:*|dc:*" />
-   
+
     <xsl:template match="@*|node()" mode="meta">
         <xsl:copy>
             <xsl:apply-templates match="@*|node()" mode="meta" />
@@ -389,11 +389,11 @@
     <xsl:template match="node()">
         <xsl:message>
             <xsl:text>Nieprzetworzony węzeł:</xsl:text>
-            <xsl:value-of select="." />           
+            <xsl:value-of select="." />
         </xsl:message>
         <unparsed-node>
             <xsl:copy-of select="." />
         </unparsed-node>
     </xsl:template>
-    
+
 </xsl:stylesheet>

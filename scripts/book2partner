@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os.path
 import optparse
@@ -67,7 +67,7 @@ def virtualo(filenames, output_dir, verbose):
             xml.append(product_elem)
 
             cover.virtualo_cover(
-                u' '.join(info.author.first_names + (info.author.last_name,)), 
+                u' '.join(info.author.first_names + (info.author.last_name,)),
                 info.title
                 ).save(os.path.join(outfile_dir, slug+'.jpg'))
             outfile = os.path.join(outfile_dir, '1.epub')
@@ -86,7 +86,7 @@ def virtualo(filenames, output_dir, verbose):
     xml_file.close()
 
 
-def asbis(filenames, output_dir, verbose):
+def prestigio(filenames, output_dir, verbose):
     try:
         for main_input in input_filenames:
             if options.verbose:
@@ -102,7 +102,7 @@ def asbis(filenames, output_dir, verbose):
                     pass
             outfile = os.path.join(output_dir, slug + '.epub')
             epub.transform(provider, file_path=main_input, output_file=outfile,
-                    cover_fn=cover.asbis_cover, flags=('less-advertising',))
+                    cover_fn=cover.prestigio_cover, flags=('less-advertising',))
     except ParseError, e:
         print '%(file)s:%(name)s:%(message)s' % {
             'file': main_input,
@@ -125,8 +125,8 @@ if __name__ == '__main__':
                       help='specifies the directory for output')
     parser.add_option('--virtualo', action='store_true', dest='virtualo', default=False,
                       help='prepare files for Virtualo API')
-    parser.add_option('--asbis', action='store_true', dest='asbis', default=False,
-                      help='prepare files for Asbis')
+    parser.add_option('--prestigio', action='store_true', dest='prestigio', default=False,
+                      help='prepare files for prestigio')
 
     options, input_filenames = parser.parse_args()
 
@@ -136,6 +136,5 @@ if __name__ == '__main__':
 
     if options.virtualo:
         virtualo(input_filenames, options.output_dir, options.verbose)
-    if options.asbis:
-        asbis(input_filenames, options.output_dir, options.verbose)
-        
+    if options.prestigio:
+        prestigio(input_filenames, options.output_dir, options.verbose)

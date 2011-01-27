@@ -45,7 +45,7 @@ def transform(input_file, output_file, parse_dublincore=True, **options):
         license_description = parsed_dc.license_description
         license = parsed_dc.license
         if license:
-            license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (license_description, license)        
+            license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (license_description, license)
         else:
             license_description = u"Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to te dodatkowe materiały udostępnione są na licencji Creative Commons Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL (http://creativecommons.org/licenses/by-sa/3.0/)"
 
@@ -55,7 +55,7 @@ def transform(input_file, output_file, parse_dublincore=True, **options):
         else:
             source = ''
 
-        contributors = ', '.join(person.readable() for person in 
+        contributors = ', '.join(person.readable() for person in
                                  sorted(set(p for p in (parsed_dc.technical_editors + parsed_dc.editors) if p)))
         if contributors:
             contributors = "\n\nOpracowanie redakcyjne i przypisy: %s" % contributors

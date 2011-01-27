@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- 
+
    This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
    Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
-  
+
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:wl="http://wolnelektury.pl/functions"
@@ -169,7 +169,7 @@
 <!-- = (can contain other block tags, paragraph tags, standalone tags and special tags) = -->
 <!-- ==================================================================================== -->
 
-<xsl:template 
+<xsl:template
     match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny|nota|dedykacja|dlugi_cytat|poezja_cyt|motto">
     <cmd>
         <xsl:attribute name="name">
@@ -199,7 +199,7 @@
 <!-- ========================================== -->
 
 <!-- only in root -->
-<xsl:template 
+<xsl:template
     match="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul"
     mode="title">
     <cmd>
@@ -211,7 +211,7 @@
 </xsl:template>
 
 
-<xsl:template 
+<xsl:template
     match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy">
     <cmd>
         <xsl:attribute name="name">

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os.path
 from optparse import OptionParser
@@ -49,9 +49,9 @@ if __name__ == '__main__':
             else:
                 output_dir = path
 
-            pdf.transform(provider, 
-                file_path=main_input, 
-                output_file=output_file, 
+            pdf.transform(provider,
+                file_path=main_input,
+                output_file=output_file,
                 output_dir=output_dir,
                 verbose=options.verbose,
                 make_dir=options.make_dir,

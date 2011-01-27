@@ -14,7 +14,7 @@ def _register_function(f):
     ns[f.__name__] = f
 
 
-def reg_substitute_entities(): 
+def reg_substitute_entities():
     ENTITY_SUBSTITUTIONS = [
         (u'---', u'—'),
         (u'--', u'–'),

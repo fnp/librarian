@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from __future__ import with_statement
 
@@ -33,7 +33,7 @@ def inner_xml(node):
     """
 
     nt = node.text if node.text is not None else ''
-    return ''.join([nt] + [etree.tostring(child) for child in node]) 
+    return ''.join([nt] + [etree.tostring(child) for child in node])
 
 def set_inner_xml(node, text):
     """ sets node's text and children from a string
@@ -467,7 +467,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
     for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-        optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'), 
+        optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
                           get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
         if verbose:
             print "Running font-optimizer"

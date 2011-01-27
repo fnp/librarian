@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- 
+
    This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
    Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
-  
+
 -->
 <xsl:stylesheet
     version="1.0"
-    
+
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"   
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:wl="http://wolnelektury.pl/functions"
 
     exclude-result-prefixes="wl" >
@@ -21,7 +21,7 @@
         indent="yes"
         omit-xml-declaration = "yes" />
 
-    <!--     
+    <!--
         Dokument ten opisuje podstawowe przekształcenia potrzebne
      do zamiany dokumentu WLML 1.0 na poprawnie sformatowany
      dokument XHMTL.
@@ -52,7 +52,7 @@
         <xsl:param name="element" />
         <xsl:param name="mypath" />
         <xsl:param name="mixed" />
-        
+
         <xsl:for-each select="child::node()">
             <xsl:apply-templates select="." mode="element-tag">
                 <xsl:with-param name="offset" select="count(preceding-sibling::*)" />
@@ -61,7 +61,7 @@
             </xsl:apply-templates>
         </xsl:for-each>
     </xsl:template>
-    
+
     <xsl:template name="generic-content">
         <xsl:param name="element" />
         <xsl:param name="mypath" />
@@ -78,7 +78,7 @@
             <xsl:with-param name="mixed" select="$mixed" />
         </xsl:call-template>
     </xsl:template>
-    
+
     <!-- Generyczne szablony -->
     <xsl:template name="generic" >
         <xsl:param name="element" />
@@ -89,12 +89,12 @@
 
         <xsl:variable name="tag" select="name($element)" />
         <xsl:variable name="group" select="$config//types/*[@element and child::*[local-name() = $tag]]" />
-                    
+
         <xsl:choose>
             <!-- ignore namespaced elements -->
             <xsl:when test="namespace-uri()" />
             <xsl:when test="$group/@element">
-            
+
                 <xsl:element name="{$group/@element}" namespace="http://www.w3.org/1999/xhtml">
                     <xsl:apply-templates select="$element" mode="element-content" >
                         <xsl:with-param name="mypath" select="$mypath" />
@@ -113,7 +113,7 @@
 
     <xsl:template match="pr|pa|pe|pt" mode="element-tag">
         <a href="#annotation-{generate-id(.)}"><span class="annotation"/></a><a name="anchor-{generate-id(.)}" />
-    </xsl:template>      
+    </xsl:template>
 
     <xsl:template match="dlugi_cytat|poezja_cyt" mode="element-tag">
         <xsl:param name="offset" />
@@ -228,7 +228,7 @@
 
         <xsl:variable name="mypath"
             select="concat($parent-path, '/', name(), '[',string($offset),']')" />
-       
+
         <xsl:call-template name="generic-descent">
             <xsl:with-param name="element" select="current()" />
             <xsl:with-param name="mypath" select="$mypath" />
@@ -326,12 +326,12 @@
             <xsl:with-param name="mixed" select="$mixed"/>
         </xsl:call-template>
     </xsl:template>
-   
+
     <xsl:template match="text()" mode="element-tag">
         <xsl:param name="mixed" />
 
         <xsl:choose>
-        
+
             <xsl:when test="not($mixed)">
                 <xsl:choose>
                     <xsl:when test="not(normalize-space(.))" />
@@ -345,7 +345,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
-        
+
             <xsl:otherwise>
                 <xsl:value-of select="wl:substitute_entities(.)">
                     <xsl:fallback>
@@ -355,9 +355,9 @@
             </xsl:otherwise>
 
         </xsl:choose>
-        
+
     </xsl:template>
 
     <xsl:template match="node()" />
-    
+
 </xsl:stylesheet>

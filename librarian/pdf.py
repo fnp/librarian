@@ -37,7 +37,7 @@ STYLESHEETS = {
 
 
 def insert_tags(doc, split_re, tagname, exclude=None):
-    """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree 
+    """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree
 
     >>> t = etree.fromstring('<a><b>A-B-C</b>X-Y-Z</a>');
     >>> insert_tags(t, re.compile('-'), 'd');
@@ -67,7 +67,7 @@ def insert_tags(doc, split_re, tagname, exclude=None):
 
 
 def substitute_hyphens(doc):
-    insert_tags(doc, 
+    insert_tags(doc,
                 re.compile("(?<=[^-\s])-(?=[^-\s])"),
                 "dywiz",
                 exclude=[DCNS("identifier.url"), DCNS("rights.license")]
@@ -75,7 +75,7 @@ def substitute_hyphens(doc):
 
 
 def fix_hanging(doc):
-    insert_tags(doc, 
+    insert_tags(doc,
                 re.compile("(?<=\s\w)\s+"),
                 "nbsp",
                 exclude=[DCNS("identifier.url"), DCNS("rights.license")]
@@ -147,7 +147,7 @@ def get_stylesheet(name):
 
 
 def package_available(package, args='', verbose=False):
-    """ check if a verion of a latex package accepting given args is available """  
+    """ check if a verion of a latex package accepting given args is available """
     tempdir = mkdtemp('-wl2pdf-test')
     fpath = os.path.join(tempdir, 'test.tex')
     f = open(fpath, 'w')
@@ -166,7 +166,7 @@ def package_available(package, args='', verbose=False):
     return p == 0
 
 
-def transform(provider, slug=None, file_path=None, 
+def transform(provider, slug=None, file_path=None,
               output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None, morefloats=None):
     """ produces a PDF file with XeLaTeX
 
@@ -271,7 +271,7 @@ def transform(provider, slug=None, file_path=None,
 
 
 def load_including_children(provider, slug=None, uri=None, file_path=None):
-    """ makes one big xml file with children inserted at end 
+    """ makes one big xml file with children inserted at end
     either slug or uri must be provided
     """
 

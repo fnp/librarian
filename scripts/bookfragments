@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.  
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
 import optparse
@@ -14,25 +14,25 @@ if __name__ == '__main__':
     # Parse commandline arguments
     usage = """Usage: %prog [options] SOURCE [SOURCE...]
     Extract theme fragments from SOURCE."""
-    
+
     parser = optparse.OptionParser(usage=usage)
-    
+
     parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
         help='print status messages to stdout')
-    
+
     options, input_filenames = parser.parse_args()
-    
+
     if len(input_filenames) < 1:
         parser.print_help()
         exit(1)
-    
+
     # Do some real work
     for input_filename in input_filenames:
         if options.verbose:
             print input_filename
-    
+
         output_filename = os.path.splitext(input_filename)[0] + '.fragments.html'
-    
+
         closed_fragments, open_fragments = html.extract_fragments(input_filename)
 
         for fragment_id in open_fragments:
