@@ -66,7 +66,7 @@ def virtualo(filenames, output_dir, verbose):
             product_elem[4][0][1].text = utf_trunc(info.author.last_name, 100)
             xml.append(product_elem)
 
-            cover.virtualo_cover(
+            cover.VirtualoCover(
                 u' '.join(info.author.first_names + (info.author.last_name,)),
                 info.title
                 ).save(os.path.join(outfile_dir, slug+'.jpg'))
@@ -102,7 +102,32 @@ def prestigio(filenames, output_dir, verbose):
                     pass
             outfile = os.path.join(output_dir, slug + '.epub')
             epub.transform(provider, file_path=main_input, output_file=outfile,
-                    cover_fn=cover.prestigio_cover, flags=('less-advertising',))
+                    cover=cover.PrestigioCover, flags=('less-advertising',))
+    except ParseError, e:
+        print '%(file)s:%(name)s:%(message)s' % {
+            'file': main_input,
+            'name': e.__class__.__name__,
+            'message': e.message
+        }
+
+
+def bookoteka(filenames, output_dir, verbose):
+    try:
+        for main_input in input_filenames:
+            if options.verbose:
+                print main_input
+            path, fname = os.path.realpath(main_input).rsplit('/', 1)
+            provider = DirDocProvider(path)
+            slug, ext = os.path.splitext(fname)
+
+            if output_dir != '':
+                try:
+                    os.makedirs(output_dir)
+                except:
+                    pass
+            outfile = os.path.join(output_dir, slug + '.epub')
+            epub.transform(provider, file_path=main_input, output_file=outfile,
+                    cover=cover.BookotekaCover)
     except ParseError, e:
         print '%(file)s:%(name)s:%(message)s' % {
             'file': main_input,
@@ -123,10 +148,12 @@ if __name__ == '__main__':
         help='print status messages to stdout')
     parser.add_option('-O', '--output-dir', dest='output_dir', metavar='DIR', default='',
                       help='specifies the directory for output')
+    parser.add_option('--bookoteka', action='store_true', dest='bookoteka', default=False,
+                      help='prepare files for Bookoteka')
     parser.add_option('--virtualo', action='store_true', dest='virtualo', default=False,
                       help='prepare files for Virtualo API')
     parser.add_option('--prestigio', action='store_true', dest='prestigio', default=False,
-                      help='prepare files for prestigio')
+                      help='prepare files for Prestigio')
 
     options, input_filenames = parser.parse_args()
 
@@ -134,6 +161,8 @@ if __name__ == '__main__':
         parser.print_help()
         exit(1)
 
+    if options.bookoteka:
+        bookoteka(input_filenames, options.output_dir, options.verbose)
     if options.virtualo:
         virtualo(input_filenames, options.output_dir, options.verbose)
     if options.prestigio:

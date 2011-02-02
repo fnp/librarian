@@ -17,7 +17,7 @@ from shutil import rmtree
 
 import sys
 
-from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, NoDublinCore
+from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, XHTMLNS, NoDublinCore
 from librarian.dcparser import BookInfo
 
 from librarian import functions, get_resource
@@ -266,7 +266,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
 
 def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False,
-              sample=None, cover_fn=None, flags=None):
+              sample=None, cover=None, flags=None):
     """ produces a EPUB file
 
     provider: a DocProvider
@@ -275,7 +275,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     output_dir: path to directory to save output file to; either this or output_file must be present
     make_dir: writes output to <output_dir>/<author>/<slug>.epub instead of <output_dir>/<slug>.epub
     sample=n: generate sample e-book (with at least n paragraphs)
-    cover_fn: function(author, title) -> cover image
+    cover: a cover.Cover object
     flags: less-advertising,
     """
 
@@ -401,16 +401,23 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     manifest = opf.find('.//' + OPFNS('manifest'))
     spine = opf.find('.//' + OPFNS('spine'))
 
-    if cover_fn:
-        cover = StringIO()
-        cover_fn(book_info.author.readable(), book_info.title).save(cover, format='JPEG')
-        zip.writestr(os.path.join('OPS', 'cover.jpg'), cover.getvalue())
-        del cover
-        zip.writestr('OPS/cover.html', open(get_resource('epub/cover.html')).read())
+    if cover:
+        cover_file = StringIO()
+        c = cover(book_info.author.readable(), book_info.title)
+        c.save(cover_file)
+        c_name = 'cover.%s' % c.ext()
+        zip.writestr(os.path.join('OPS', c_name), cover_file.getvalue())
+        del cover_file
+
+        cover_tree = etree.parse(get_resource('epub/cover.html'))
+        cover_tree.find('//' + XHTMLNS('img')).set('src', c_name)
+        zip.writestr('OPS/cover.html', etree.tostring(
+                        cover_tree, method="html", pretty_print=True))
+
         manifest.append(etree.fromstring(
             '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
         manifest.append(etree.fromstring(
-            '<item id="cover-image" href="cover.jpg" media-type="image/jpeg" />'))
+            '<item id="cover-image" href="%s" media-type="%s" />' % (c_name, c.mime_type())))
         spine.insert(0, etree.fromstring('<itemref idref="cover" />'))
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
         opf.getroot().append(etree.fromstring('<guide><reference href="cover.html" type="cover" title="Okładka"/></guide>'))
