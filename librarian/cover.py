@@ -115,7 +115,7 @@ class Cover(object):
         return self.exts[self.format]
 
     def save(self, *args, **kwargs):
-        return self.image().save(*args, format=self.format, **kwargs)
+        return self.image().save(format=self.format, *args, **kwargs)
 
 
 
