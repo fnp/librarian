@@ -18,7 +18,7 @@
 <!-- = (can contain block tags, paragraph tags, standalone tags and special tags) = -->
 <!-- ============================================================================== -->
 <xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny">
-<xsl:if test="nazwa_utworu">
+<xsl:if test="not (../@raw-text) and nazwa_utworu">
     <xsl:apply-templates select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul" mode="header" />
     <xsl:call-template name="translators" />
     <xsl:text>
