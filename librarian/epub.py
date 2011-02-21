@@ -84,13 +84,10 @@ def replace_characters(node):
                    .replace(",,", u"\u201E")\
                    .replace('"', u"\u201D")\
                    .replace("'", u"\u2019")
-    if node.tag == 'extra':
-        node.clear()
-    else:
-        node.text = replace_chars(node.text)
-        node.tail = replace_chars(node.tail)
-        for child in node:
-            replace_characters(child)
+    node.text = replace_chars(node.text)
+    node.tail = replace_chars(node.tail)
+    for child in node:
+        replace_characters(child)
 
 
 def find_annotations(annotations, source, part_no):
@@ -106,7 +103,7 @@ def find_annotations(annotations, source, part_no):
             child.clear()
             child.tail = tail
             child.text = number
-        if child.tag not in ('extra',):
+        if child.tag not in ('extra', 'uwaga'):
             find_annotations(annotations, child, part_no)
 
 
