@@ -84,6 +84,10 @@ def replace_characters(node):
                    .replace(",,", u"\u201E")\
                    .replace('"', u"\u201D")\
                    .replace("'", u"\u2019")
+    if node.tag in ('uwaga', 'extra'):
+        t = node.tail
+        node.clear()
+        node.tail = t
     node.text = replace_chars(node.text)
     node.tail = replace_chars(node.tail)
     for child in node:

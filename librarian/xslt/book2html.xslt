@@ -416,7 +416,9 @@
                         <a href="{concat('#anchor-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt]) + 1" />]</a>
                         <xsl:choose>
                             <xsl:when test="count(akap|akap_cd|strofa) = 0">
-                                <p><xsl:apply-templates select="text()|*" mode="inline" /></p>
+                                <p><xsl:apply-templates select="text()|*" mode="inline" />
+                                <xsl:if test="name()='pa'"> [przypis autorski]</xsl:if>
+                                </p>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:apply-templates select="text()|*" mode="inline" />

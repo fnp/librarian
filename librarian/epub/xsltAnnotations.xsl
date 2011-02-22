@@ -38,6 +38,7 @@
       </a>
       <p xmlns="http://www.w3.org/1999/xhtml">
         <xsl:apply-templates />
+        <xsl:if test="name()='pa'"> [przypis autorski]</xsl:if>
       </p>
     </div>
   </xsl:template>

@@ -167,7 +167,8 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(provider, slug=None, file_path=None,
-              output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None, morefloats=None):
+              output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None, morefloats=None,
+              cover=None, flags=None):
     """ produces a PDF file with XeLaTeX
 
     provider: a DocProvider
@@ -179,6 +180,8 @@ def transform(provider, slug=None, file_path=None,
     verbose: prints all output from LaTeX
     save_tex: path to save the intermediary LaTeX file to
     morefloats (old/new/none): force specific morefloats
+    cover: a cover.Cover object
+    flags: less-advertising,
     """
 
     # Parse XSLT
@@ -191,6 +194,13 @@ def transform(provider, slug=None, file_path=None,
             if not slug:
                 raise ValueError('either slug or file_path should be specified')
             document = load_including_children(provider, slug=slug)
+
+        if cover:
+            document.edoc.getroot().set('data-cover-width', str(cover.width))
+            document.edoc.getroot().set('data-cover-height', str(cover.height))
+        if flags:
+            for flag in flags:
+                document.edoc.getroot().set('flag-' + flag, 'yes')
 
         # check for LaTeX packages
         if morefloats:
@@ -214,10 +224,17 @@ def transform(provider, slug=None, file_path=None,
         style_filename = get_stylesheet("wl2tex")
         style = etree.parse(style_filename)
         texml = document.transform(style)
-        del document # no longer needed large object :)
 
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
+
+        if cover:
+            c = cover(document.book_info.author.readable(), document.book_info.title)
+            with open(os.path.join(temp, 'cover.png'), 'w') as f:
+                c.save(f)
+
+        del document # no longer needed large object :)
+
         tex_path = os.path.join(temp, 'doc.tex')
         fout = open(tex_path, 'w')
         process(StringIO(texml), fout, 'utf-8')

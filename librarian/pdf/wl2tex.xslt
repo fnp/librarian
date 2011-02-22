@@ -16,6 +16,22 @@
     <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
         <TeXML escape="0">
         \documentclass[a4paper, oneside, 11pt]{book}
+
+        <!-- flags and values set on root -->
+
+        \newif\ifflaglessadvertising
+        <xsl:for-each select="@*[starts-with(name(), 'flag-')]">
+            <cmd>
+                <xsl:attribute name="name"><xsl:value-of select="wl:texcommand(name())" />true</xsl:attribute>
+            </cmd>
+        </xsl:for-each>
+
+        <xsl:for-each select="@*[starts-with(name(), 'data-')]">
+            <TeXML escape="0">
+                \def\<xsl:value-of select="wl:texcommand(name())" />{<TeXML escape="1"><xsl:value-of select="."/></TeXML>}
+            </TeXML>
+        </xsl:for-each>
+
         \usepackage{wl}
         </TeXML>
 
@@ -44,6 +60,12 @@
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='titlepage' />
 
         <env name="document">
+            <xsl:if test="@data-cover-width">
+                <cmd name="makecover">
+                    <parm><xsl:value-of select="210 * @data-cover-width div @data-cover-height" />mm</parm>
+                    <parm>210mm</parm>
+                </cmd>
+            </xsl:if>
             <cmd name="maketitle" />
 
             <cmd name="tytul"><parm>

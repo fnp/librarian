@@ -9,7 +9,7 @@ import optparse
 from copy import deepcopy
 from lxml import etree
 
-from librarian import epub, DirDocProvider, ParseError, cover
+from librarian import epub, pdf, DirDocProvider, ParseError, cover
 from librarian.dcparser import BookInfo
 
 
@@ -111,6 +111,31 @@ def prestigio(filenames, output_dir, verbose):
         }
 
 
+def prestigio_pdf(filenames, output_dir, verbose):
+    try:
+        for main_input in input_filenames:
+            if options.verbose:
+                print main_input
+            path, fname = os.path.realpath(main_input).rsplit('/', 1)
+            provider = DirDocProvider(path)
+            slug, ext = os.path.splitext(fname)
+
+            if output_dir != '':
+                try:
+                    os.makedirs(output_dir)
+                except:
+                    pass
+            outfile = os.path.join(output_dir, slug + '.pdf')
+            pdf.transform(provider, file_path=main_input, output_file=outfile,
+                    cover=cover.PrestigioCover, verbose=options.verbose, flags=('less-advertising',))
+    except ParseError, e:
+        print '%(file)s:%(name)s:%(message)s' % {
+            'file': main_input,
+            'name': e.__class__.__name__,
+            'message': e.message
+        }
+
+
 def bookoteka(filenames, output_dir, verbose):
     try:
         for main_input in input_filenames:
@@ -154,6 +179,8 @@ if __name__ == '__main__':
                       help='prepare files for Virtualo API')
     parser.add_option('--prestigio', action='store_true', dest='prestigio', default=False,
                       help='prepare files for Prestigio')
+    parser.add_option('--prestigio-pdf', action='store_true', dest='prestigio_pdf', default=False,
+                      help='prepare PDF files for Prestigio')
 
     options, input_filenames = parser.parse_args()
 
@@ -167,3 +194,5 @@ if __name__ == '__main__':
         virtualo(input_filenames, options.output_dir, options.verbose)
     if options.prestigio:
         prestigio(input_filenames, options.output_dir, options.verbose)
+    if options.prestigio_pdf:
+        prestigio_pdf(input_filenames, options.output_dir, options.verbose)
