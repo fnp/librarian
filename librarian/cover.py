@@ -124,8 +124,8 @@ class VirtualoCover(Cover):
     height = 730
     author_top = 73
     title_top = 73
-    logo_bottom = 0
-    logo_width = 300
+    logo_bottom = 25
+    logo_width = 250
 
 
 class PrestigioCover(Cover):
@@ -172,4 +172,15 @@ class BookotekaCover(Cover):
     title_color = '#d9d919'
     title_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Regular.ttf'), 140)
 
+    format = 'PNG'
+
+
+class GandalfCover(Cover):
+    width = 600
+    height = 730
+    background_img = get_resource('res/cover-gandalf.png')
+    author_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Regular.ttf'), 30)
+    title_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Regular.ttf'), 40)
+    logo_bottom = 25
+    logo_width = 250
     format = 'PNG'
