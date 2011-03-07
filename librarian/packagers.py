@@ -57,6 +57,9 @@ class PdfPackager(Packager):
 class GandalfEpubPackager(EpubPackager):
     cover = cover.GandalfCover
 
+class GandalfPdfPackager(PdfPackager):
+    cover = cover.GandalfCover
+
 class BookotekaEpubPackager(EpubPackager):
     cover = cover.BookotekaCover
 

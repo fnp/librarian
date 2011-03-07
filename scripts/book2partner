@@ -23,7 +23,9 @@ if __name__ == '__main__':
     parser.add_option('--bookoteka', action='store_true', dest='bookoteka', default=False,
                       help='prepare files for Bookoteka')
     parser.add_option('--gandalf', action='store_true', dest='gandalf', default=False,
-                      help='prepare files for Gandalf')
+                      help='prepare EPUB files for Gandalf')
+    parser.add_option('--gandalf-pdf', action='store_true', dest='gandalf_pdf', default=False,
+                      help='prepare PDF files for Gandalf')
     parser.add_option('--virtualo', action='store_true', dest='virtualo', default=False,
                       help='prepare files for Virtualo API')
     parser.add_option('--prestigio', action='store_true', dest='prestigio', default=False,
@@ -41,6 +43,8 @@ if __name__ == '__main__':
         packagers.BookotekaEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.gandalf:
         packagers.GandalfEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
+    if options.gandalf_pdf:
+        packagers.GandalfPdfPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.virtualo:
         packagers.VirtualoEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.prestigio:
