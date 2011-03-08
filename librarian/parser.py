@@ -61,7 +61,7 @@ class WLDocument(object):
 
         try:
             parser = etree.XMLParser(remove_blank_text=False)
-            tree = etree.parse(StringIO(data), parser)
+            tree = etree.parse(StringIO(data.encode('utf-8')), parser)
 
             if swap_endlines:
                 cls.swap_endlines(tree)
