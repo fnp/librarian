@@ -126,7 +126,7 @@
     <TeXML escape="0">
         \def\authors{<xsl:call-template name="authors" />}
         \author{\authors}
-        \title{<xsl:apply-templates select=".//dc:title" />}
+        \title{<xsl:apply-templates select=".//dc:title" mode="inline" />}
         \def\translatorsline{<xsl:call-template name="translators" />}
 
         \def\bookurl{<xsl:value-of select=".//dc:identifier.url" />}
