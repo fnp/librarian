@@ -45,7 +45,7 @@ if __name__ == '__main__':
             print '%(file)s:%(name)s:%(message)s' % {
                 'file': input_filename,
                 'name': e.__class__.__name__,
-                'message': e.message
+                'message': e
             }
         except IOError, e:
             print '%(file)s:%(name)s:%(message)s' % {
@@ -57,6 +57,6 @@ if __name__ == '__main__':
             print '%(file)s:%(etype)s:%(message)s' % {
                 'file': input_filename,
                 'etype': e.__class__.__name__,
-                'message': e.message,
+                'message': e,
             }
             raise

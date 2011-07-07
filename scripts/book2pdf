@@ -62,5 +62,5 @@ if __name__ == '__main__':
         print '%(file)s:%(name)s:%(message)s; use -v to see more output' % {
             'file': main_input,
             'name': e.__class__.__name__,
-            'message': e.message
+            'message': e
         }

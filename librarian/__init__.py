@@ -6,7 +6,13 @@
 import os
 
 class ParseError(Exception):
-    pass
+    def __str__(self):
+        """ Dirty workaround for Python Unicode handling problems. """
+        return self.message.message
+
+    def __unicode__(self):
+        """ Dirty workaround for Python Unicode handling problems. """
+        return self.message.message
 
 class ValidationError(Exception):
     pass
