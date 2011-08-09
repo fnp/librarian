@@ -26,6 +26,10 @@ if __name__ == '__main__':
                       help='prepare EPUB files for Gandalf')
     parser.add_option('--gandalf-pdf', action='store_true', dest='gandalf_pdf', default=False,
                       help='prepare PDF files for Gandalf')
+    parser.add_option('--artatech', action='store_true', dest='artatech', default=False,
+                      help='prepare EPUB files for Arta-Tech')
+    parser.add_option('--artatech-pdf', action='store_true', dest='artatech_pdf', default=False,
+                      help='prepare PDF files for Arta-Tech')
     parser.add_option('--virtualo', action='store_true', dest='virtualo', default=False,
                       help='prepare files for Virtualo API')
     parser.add_option('--prestigio', action='store_true', dest='prestigio', default=False,
@@ -45,6 +49,10 @@ if __name__ == '__main__':
         packagers.GandalfEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.gandalf_pdf:
         packagers.GandalfPdfPackager.prepare(input_filenames, options.output_dir, options.verbose)
+    if options.artatech:
+        packagers.ArtaTechEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
+    if options.artatech_pdf:
+        packagers.ArtaTechPdfPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.virtualo:
         packagers.VirtualoEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.prestigio:

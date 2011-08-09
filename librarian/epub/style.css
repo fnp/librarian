@@ -46,7 +46,8 @@ a img {
 
 #book-text
 {
-	margin: 2em;
+	/*margin: 2em;*/
+    margin: 5px;
 	/*margin-right: 9em;*/
 }
 
@@ -369,4 +370,13 @@ p.minor {
 }
 p.footer {
     margin-top: 2em;
+}
+
+.ilustr {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.ilustr img {
+    max-width: 100%;
 }

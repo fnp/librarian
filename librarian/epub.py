@@ -5,6 +5,7 @@
 #
 from __future__ import with_statement
 
+from copy import deepcopy
 import os
 import os.path
 import subprocess
@@ -19,6 +20,7 @@ import sys
 
 from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, XHTMLNS, NoDublinCore
 from librarian.dcparser import BookInfo
+from librarian.cover import ImageCover
 
 from librarian import functions, get_resource
 
@@ -277,7 +279,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     make_dir: writes output to <output_dir>/<author>/<slug>.epub instead of <output_dir>/<slug>.epub
     sample=n: generate sample e-book (with at least n paragraphs)
     cover: a cover.Cover object
-    flags: less-advertising,
+    flags: less-advertising, images, not-wl
     """
 
     def transform_file(input_xml, chunk_counter=1, first=True, sample=None):
@@ -382,6 +384,10 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         else:
             output_file = open(os.path.join(output_dir, os.path.splitext(os.path.basename(file_path))[0] + '.epub'), 'w')
 
+    opf = xslt(metadata, get_resource('epub/xsltContent.xsl'))
+    manifest = opf.find('.//' + OPFNS('manifest'))
+    spine = opf.find('.//' + OPFNS('spine'))
+
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
     # write static elements
@@ -396,11 +402,10 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
     zip.write(get_resource('epub/style.css'), os.path.join('OPS', 'style.css'))
-    zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
-
-    opf = xslt(metadata, get_resource('epub/xsltContent.xsl'))
-    manifest = opf.find('.//' + OPFNS('manifest'))
-    spine = opf.find('.//' + OPFNS('spine'))
+    if not flags or 'not-wl' not in flags:
+        manifest.append(etree.fromstring(
+            '<item id="logo_wolnelektury" href="logo_wolnelektury.png" media-type="image/png" />'))
+        zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
 
     if cover:
         cover_file = StringIO()
@@ -423,6 +428,26 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
         opf.getroot().append(etree.fromstring('<guide><reference href="cover.html" type="cover" title="Okładka"/></guide>'))
 
+    if flags and 'images' in flags:
+        for ilustr in input_xml.findall('//ilustr'):
+            src = ilustr.get('src')
+            mime = ImageCover(src)().mime_type()
+            zip.write(src, os.path.join('OPS', src))
+            manifest.append(etree.fromstring(
+                '<item id="%s" href="%s" media-type="%s" />' % (src, src, mime)))
+            # get it up to master
+            after = ilustr
+            while after.getparent().tag not in ['powiesc', 'opowiadanie', 'liryka_l', 'liryka_lp', 'dramat_wierszowany_l', 'dramat_wierszowany_lp', 'dramat_wspolczesny']:
+                after = after.getparent()
+            if not(after is ilustr):
+                moved = deepcopy(ilustr)
+                ilustr.tag = 'extra'
+                ilustr.text = None
+                moved.tail = None
+                after.addnext(moved)
+    else:
+        for ilustr in input_xml.findall('//ilustr'):
+            ilustr.tag = 'extra'
 
     annotations = etree.Element('annotations')
 
@@ -464,7 +489,13 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
         '<itemref idref="last" />'))
-    html_tree = xslt(input_xml, get_resource('epub/xsltLast.xsl'))
+    stopka = input_xml.find('//stopka')
+    if stopka is not None:
+        stopka.tag = 'stopka_'
+        replace_by_verse(stopka)
+        html_tree = xslt(stopka, get_resource('epub/xsltScheme.xsl'))
+    else:
+        html_tree = xslt(input_xml, get_resource('epub/xsltLast.xsl'))
     chars.update(used_chars(html_tree.getroot()))
     zip.writestr('OPS/last.html', etree.tostring(
                         html_tree, method="html", pretty_print=True))

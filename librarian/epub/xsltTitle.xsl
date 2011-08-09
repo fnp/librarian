@@ -36,6 +36,7 @@
 
           <xsl:call-template name="translators" />
 
+      <xsl:if test="not(utwor/@not-wl)">
           <xsl:if test="not(utwor/@less-advertising)">
             <p class="info">
               <a>
@@ -55,6 +56,12 @@
           <p class="footer info">
             <a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a>
           </p>
+      </xsl:if>
+      <!--xsl:if test="utwor/@not-wl">
+          <p class="info">
+            Konwersja wykonana przez<a href="http://www.nowoczesnapolska.org.pl/"> fundację Nowoczesna Polska</a>.
+          </p>
+      </xsl:if-->
         </div>
       </body>
     </html>

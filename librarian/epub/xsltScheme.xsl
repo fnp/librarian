@@ -278,6 +278,18 @@
     <hr class="spacer-line" xmlns="http://www.w3.org/1999/xhtml"></hr>
   </xsl:template>
 
+  <xsl:template match="ilustr">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ilustr">
+      <img xmlns="http://www.w3.org/1999/xhtml" alt="ilustracja">
+        <xsl:attribute name="src">
+          <xsl:value-of select="@src" />
+        </xsl:attribute>
+      </img>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="stopka" />
+
   <!--===========================================================-->
   <!-- Tagi SPECJALNE -->
   <!--===========================================================-->

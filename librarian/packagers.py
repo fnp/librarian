@@ -60,6 +60,12 @@ class GandalfEpubPackager(EpubPackager):
 class GandalfPdfPackager(PdfPackager):
     cover = cover.GandalfCover
 
+class ArtaTechEpubPackager(EpubPackager):
+    cover = cover.ArtaTechCover
+
+class ArtaTechPdfPackager(PdfPackager):
+    cover = cover.ArtaTechCover
+
 class BookotekaEpubPackager(EpubPackager):
     cover = cover.BookotekaCover
 
