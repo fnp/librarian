@@ -246,7 +246,7 @@ class ArtaTechCover(Cover):
     title_font = ImageFont.truetype(get_resource('fonts/EBGaramond-Regular.ttf'), 42)
     title_color = '#222222'
     title_wrap = False
-    format = 'PNG'
+    format = 'JPEG'
 
     def pretty_author(self):
         return self.author.upper()
