@@ -68,7 +68,7 @@
   </xsl:template>
 
   <xsl:template match="text()" >
-    <xsl:value-of select="." disable-output-escaping="yes" />
+    <xsl:value-of select="." />
   </xsl:template>
 
   <xsl:template match="node()" mode="poczatek">
