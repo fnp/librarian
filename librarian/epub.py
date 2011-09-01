@@ -397,6 +397,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                        '</rootfiles></container>')
     zip.write(get_resource('epub/style.css'), os.path.join('OPS', 'style.css'))
     zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
+    zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
 
     opf = xslt(metadata, get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))

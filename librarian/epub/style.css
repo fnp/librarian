@@ -351,13 +351,17 @@ em.author-emphasis
 	text-transform: uppercase;
 }
 
-p.info
+.info
 {
 	text-align: center;
 	margin-bottom: 1em;
 }
+.info div
+{
+    text-align: center;
+}
 
-p.info img
+.info img
 {
 	margin: 0;
 	margin-left: 2em;
