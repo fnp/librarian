@@ -263,3 +263,15 @@ def add_table_of_contents(root):
 
     root.insert(0, toc)
 
+
+def extract_annotations(html_path):
+    """For each annotation, yields a tuple: anchor, text, html."""
+    parser = etree.HTMLParser(encoding='utf-8')
+    tree = etree.parse(html_path, parser)
+    for footnote in tree.find('//*[@id="footnotes"]').findall('div'):
+        anchor = footnote.find('a[@href]').get('href')
+        del footnote[:2]
+        text_str = etree.tostring(footnote, method='text', encoding='utf-8')
+        html_str = etree.tostring(footnote, method='html', encoding='utf-8')
+        yield anchor, text_str, html_str
+
