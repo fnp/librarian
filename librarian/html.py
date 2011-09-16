@@ -271,7 +271,7 @@ def extract_annotations(html_path):
     footnotes = tree.find('//*[@id="footnotes"]')
     if footnotes is not None:
         for footnote in footnotes.findall('div'):
-            anchor = footnote.find('a[@href]').get('href')
+            anchor = footnote.find('a[@name]').get('name')
             del footnote[:2]
             text_str = etree.tostring(footnote, method='text', encoding='utf-8').strip()
             html_str = etree.tostring(footnote, method='html', encoding='utf-8')
