@@ -31,10 +31,6 @@
         <item id="titlePage" href="title.html" media-type="application/xhtml+xml" />
         <item id="logo_wolnelektury" href="logo_wolnelektury.png" media-type="image/png" />
         <item id="jedenprocent" href="jedenprocent.png" media-type="image/png" />
-        <item id="DejaVuSerif.ttf" href="DejaVuSerif.ttf" media-type="font/ttf" />
-        <item id="DejaVuSerif-Bold.ttf" href="DejaVuSerif-Bold.ttf" media-type="font/ttf" />
-        <item id="DejaVuSerif-BoldItalic.ttf" href="DejaVuSerif-BoldItalic.ttf" media-type="font/ttf" />
-        <item id="DejaVuSerif-Italic.ttf" href="DejaVuSerif-Italic.ttf" media-type="font/ttf" />
       </manifest>
       <spine toc="toc">
         <itemref idref="titlePage" />

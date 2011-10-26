@@ -1,55 +1,3 @@
-@font-face {
-    font-family: "DejaVu Serif";
-    font-weight: normal;
-    font-style: normal;
-    src: url(DejaVuSerif.ttf);
-}
-@font-face {
-    font-family: "DejaVu Serif";
-    font-weight: bold;
-    font-style: normal;
-    src: url(DejaVuSerif-Bold.ttf);
-}
-@font-face {
-    font-family: "DejaVu Serif";
-    font-weight: normal;
-    font-style: italic;
-    src: url(DejaVuSerif-Italic.ttf);
-}
-@font-face {
-    font-family: "DejaVu Serif";
-    font-weight: bold;
-    font-style: italic;
-    src: url(DejaVuSerif-BoldItalic.ttf);
-}
-
-body, p, h1, h2, h3, h4 {
-    font-family: "DejaVu Serif", serif;
-}
-
-
-body
-{
-	line-height: 1.5em;
-	margin: 0;
-}
-
-a
-{
-	text-decoration: none;
-	color: #00e;
-}
-
-a img {
-    border: 0;
-}
-
-#book-text
-{
-	margin: 2em;
-	/*margin-right: 9em;*/
-}
-
 /* =================================================== */
 /* = Common elements: headings, paragraphs and lines = */
 /* =================================================== */
@@ -89,23 +37,6 @@ p
 /* ======================== */
 /* = Footnotes and themes = */
 /* ======================== */
-
-.theme-begin
-{
-	border-left: 0.1em solid #DDDDDD;
-	color: #777;
-	padding: 0 0.5em;
-	width: 7.5em;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 0.875em;
-	float: right;
-	margin-right: -9.5em;
-	clear: both;
-	left: 40em;
-	line-height: 1.5em;
-	text-align: left;
-}
 
 .annotation-anchor
 {
@@ -343,8 +274,8 @@ em.author-emphasis
 .person-list em.person
 {
 	font-style: normal;
-	/*font-variant: small-caps;*/
-	text-transform: uppercase;
+	font-variant: small-caps;
+	/*text-transform: uppercase;*/
 }
 
 .info

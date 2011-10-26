@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
+import os.path
+import optparse
+
+from librarian import mobi, DirDocProvider, ParseError
+
+
+if __name__ == '__main__':
+    # Parse commandline arguments
+    usage = """Usage: %prog [options] SOURCE [SOURCE...]
+    Convert SOURCE files to MOBI format."""
+
+    parser = optparse.OptionParser(usage=usage)
+
+    parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
+        help='print status messages to stdout')
+    parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
+                      help='create a directory for author and put the PDF in it')
+    parser.add_option('-o', '--output-file', dest='output_file', metavar='FILE',
+                      help='specifies the output file')
+    parser.add_option('-O', '--output-dir', dest='output_dir', metavar='DIR',
+                      help='specifies the directory for output')
+
+    options, input_filenames = parser.parse_args()
+
+    if len(input_filenames) < 1:
+        parser.print_help()
+        exit(1)
+
+    # Do some real work
+    try:
+        for main_input in input_filenames:
+            if options.verbose:
+                print main_input
+            path, fname = os.path.realpath(main_input).rsplit('/', 1)
+            provider = DirDocProvider(path)
+
+            output_dir = output_file = None
+            if options.output_dir:
+                output_dir = options.output_dir
+            elif options.output_file:
+                output_file = options.output_file
+            else:
+                output_dir = path
+
+            mobi.transform(provider, file_path=main_input, output_dir=output_dir, output_file=output_file, make_dir=options.make_dir)
+    except ParseError, e:
+        print '%(file)s:%(name)s:%(message)s' % {
+            'file': main_input,
+            'name': e.__class__.__name__,
+            'message': e
+        }

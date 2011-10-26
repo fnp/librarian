@@ -267,6 +267,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
 
 def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False,
+              style=None,
               sample=None, cover=None, flags=None):
     """ produces a EPUB file
 
@@ -277,7 +278,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     make_dir: writes output to <output_dir>/<author>/<slug>.epub instead of <output_dir>/<slug>.epub
     sample=n: generate sample e-book (with at least n paragraphs)
     cover: a cover.Cover object
-    flags: less-advertising,
+    flags: less-advertising, without-fonts
     """
 
     def transform_file(input_xml, chunk_counter=1, first=True, sample=None):
@@ -395,9 +396,11 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                        '<rootfiles><rootfile full-path="OPS/content.opf" ' \
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
-    zip.write(get_resource('epub/style.css'), os.path.join('OPS', 'style.css'))
     zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
     zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
+    if not style:
+        style = get_resource('epub/style.css')
+    zip.write(style, os.path.join('OPS', 'style.css'))
 
     opf = xslt(metadata, get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
@@ -470,22 +473,25 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     zip.writestr('OPS/last.html', etree.tostring(
                         html_tree, method="html", pretty_print=True))
 
-    # strip fonts
-    tmpdir = mkdtemp('-librarian-epub')
-    cwd = os.getcwd()
+    if not flags or not 'without-fonts' in flags:
+        # strip fonts
+        tmpdir = mkdtemp('-librarian-epub')
+        cwd = os.getcwd()
 
-    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
-    for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-        optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
-                          get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
-        if verbose:
-            print "Running font-optimizer"
-            subprocess.check_call(optimizer_call)
-        else:
-            subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
-    rmtree(tmpdir)
-    os.chdir(cwd)
+        os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
+        for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
+            optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
+                              get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
+            if verbose:
+                print "Running font-optimizer"
+                subprocess.check_call(optimizer_call)
+            else:
+                subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
+            manifest.append(etree.fromstring(
+                '<item id="%s" href="%s" media-type="font/ttf" />' % (fname, fname)))
+        rmtree(tmpdir)
+        os.chdir(cwd)
 
     zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
     contents = []
