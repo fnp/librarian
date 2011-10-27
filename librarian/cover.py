@@ -118,6 +118,13 @@ class Cover(object):
         return self.image().save(format=self.format, *args, **kwargs)
 
 
+class WLCover(Cover):
+    author_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 40)
+    title_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50)
+    logo_width = 250
+    logo_bottom = 20
+
+
 
 class VirtualoCover(Cover):
     width = 600

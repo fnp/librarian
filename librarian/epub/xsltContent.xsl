@@ -35,6 +35,9 @@
       <spine toc="toc">
         <itemref idref="titlePage" />
       </spine>
+      <guide>
+        <reference type="text" title="Początek" href="part1.html" />
+      </guide>
     </package>
   </xsl:template>
 

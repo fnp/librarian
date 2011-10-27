@@ -158,19 +158,23 @@ def add_to_spine(spine, partno):
 
 
 class TOC(object):
-    def __init__(self, name=None, part_number=None):
+    def __init__(self, name=None, part_href=None):
         self.children = []
         self.name = name
-        self.part_number = part_number
+        self.part_href = part_href
         self.sub_number = None
 
-    def add(self, name, part_number, level=0, is_part=True):
+    def add(self, name, part_href, level=0, is_part=True, index=None):
+        assert level == 0 or index is None
         if level > 0 and self.children:
-            return self.children[-1].add(name, part_number, level-1, is_part)
+            return self.children[-1].add(name, "part%d.html" % part_href, level-1, is_part)
         else:
             t = TOC(name)
-            t.part_number = part_number
-            self.children.append(t)
+            t.part_href = part_href
+            if index is not None:
+                self.children.insert(index, t)
+            else:
+                self.children.append(t)
             if not is_part:
                 t.sub_number = len(self.children) + 1
                 return t.sub_number
@@ -187,7 +191,13 @@ class TOC(object):
         else:
             return 0
 
-    def write_to_xml(self, nav_map, counter):
+    def href(self):
+        src = self.part_href
+        if self.sub_number is not None:
+            src += '#sub%d' % self.sub_number
+        return src
+
+    def write_to_xml(self, nav_map, counter=1):
         for child in self.children:
             nav_point = nav_map.makeelement(NCXNS('navPoint'))
             nav_point.set('id', 'NavPoint-%d' % counter)
@@ -200,14 +210,25 @@ class TOC(object):
             nav_point.append(nav_label)
 
             content = nav_map.makeelement(NCXNS('content'))
-            src = 'part%d.html' % child.part_number
-            if child.sub_number is not None:
-                src += '#sub%d' % child.sub_number
-            content.set('src', src)
+            content.set('src', child.href())
             nav_point.append(content)
             nav_map.append(nav_point)
             counter = child.write_to_xml(nav_point, counter + 1)
         return counter
+
+    def html_part(self, depth=0):
+        texts = []
+        for child in self.children:
+            texts.append(
+                "<div style='margin-left:%dem;'><a href='%s'>%s</a></div>" %
+                (depth, child.href(), child.name))
+            texts.append(child.html_part(depth+1))
+        return "\n".join(texts)
+
+    def html(self):
+        with open(get_resource('epub/toc.html')) as f:
+            t = unicode(f.read(), 'utf-8')
+        return t % self.html_part()
 
 
 def used_chars(element):
@@ -248,9 +269,9 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     toc = TOC()
     for element in chunk_xml[0]:
         if element.tag in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-            toc.add(node_name(element), chunk_no)
+            toc.add(node_name(element), "part%d.html" % chunk_no)
         elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
-            subnumber = toc.add(node_name(element), chunk_no, level=1, is_part=False)
+            subnumber = toc.add(node_name(element), "part%d.html" % chunk_no, level=1, is_part=False)
             element.set('sub', str(subnumber))
     if empty:
         if not _empty_html_static:
@@ -267,7 +288,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
 
 def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False,
-              style=None,
+              style=None, html_toc=False,
               sample=None, cover=None, flags=None):
     """ produces a EPUB file
 
@@ -298,6 +319,8 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
             chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/title.html',
                  etree.tostring(html_tree, method="html", pretty_print=True))
+            # add a title page TOC entry
+            toc.add(u"Strona tytułowa", "title.html")
         elif children:
             # write title page for every parent
             if sample is not None and sample <= 0:
@@ -404,6 +427,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
 
     opf = xslt(metadata, get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
+    guide = opf.find('.//' + OPFNS('guide'))
     spine = opf.find('.//' + OPFNS('spine'))
 
     if cover:
@@ -423,9 +447,9 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
             '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
         manifest.append(etree.fromstring(
             '<item id="cover-image" href="%s" media-type="%s" />' % (c_name, c.mime_type())))
-        spine.insert(0, etree.fromstring('<itemref idref="cover" />'))
+        spine.insert(0, etree.fromstring('<itemref idref="cover" linear="no" />'))
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
-        opf.getroot().append(etree.fromstring('<guide><reference href="cover.html" type="cover" title="Okładka"/></guide>'))
+        guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
 
 
     annotations = etree.Element('annotations')
@@ -434,23 +458,24 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                                '"-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">' \
                                '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" ' \
                                'version="2005-1"><head></head><docTitle></docTitle><navMap>' \
-                               '<navPoint id="NavPoint-1" playOrder="1"><navLabel>' \
-                               '<text>Strona tytułowa</text></navLabel><content src="title.html" />' \
-                               '</navPoint></navMap></ncx>')
+                               '</navMap></ncx>')
     nav_map = toc_file[-1]
+
+    if html_toc:
+        manifest.append(etree.fromstring(
+            '<item id="html_toc" href="toc.html" media-type="application/xhtml+xml" />'))
+        spine.append(etree.fromstring(
+            '<itemref idref="html_toc" />'))
+        guide.append(etree.fromstring('<reference href="toc.html" type="toc" title="Spis treści"/>'))
 
     toc, chunk_counter, chars, sample = transform_file(input_xml, sample=sample)
 
-    if not toc.children:
-        toc.add(u"Początek utworu", 1)
-    toc_counter = toc.write_to_xml(nav_map, 2)
+    if len(toc.children) < 2:
+        toc.add(u"Początek utworu", "part1.html")
 
     # Last modifications in container files and EPUB creation
     if len(annotations) > 0:
-        nav_map.append(etree.fromstring(
-            '<navPoint id="NavPoint-%(i)d" playOrder="%(i)d" ><navLabel><text>Przypisy</text>'\
-            '</navLabel><content src="annotations.html" /></navPoint>' % {'i': toc_counter}))
-        toc_counter += 1
+        toc.add("Przypisy", "annotations.html")
         manifest.append(etree.fromstring(
             '<item id="annotations" href="annotations.html" media-type="application/xhtml+xml" />'))
         spine.append(etree.fromstring(
@@ -461,9 +486,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, method="html", pretty_print=True))
 
-    nav_map.append(etree.fromstring(
-        '<navPoint id="NavPoint-%(i)d" playOrder="%(i)d" ><navLabel><text>Strona redakcyjna</text>'\
-        '</navLabel><content src="last.html" /></navPoint>' % {'i': toc_counter}))
+    toc.add("Strona redakcyjna", "last.html")
     manifest.append(etree.fromstring(
         '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
@@ -505,5 +528,11 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     toc_file[0][0].set('content', ''.join((title, 'WolneLektury.pl')))
     toc_file[0][1].set('content', str(toc.depth()))
     set_inner_xml(toc_file[1], ''.join(('<text>', title, '</text>')))
+
+    # write TOC
+    if html_toc:
+        toc.add(u"Spis treści", "toc.html", index=1)
+        zip.writestr('OPS/toc.html', toc.html().encode('utf-8'))
+    toc.write_to_xml(nav_map)
     zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))
     zip.close()
