@@ -167,7 +167,7 @@ class TOC(object):
     def add(self, name, part_href, level=0, is_part=True, index=None):
         assert level == 0 or index is None
         if level > 0 and self.children:
-            return self.children[-1].add(name, "part%d.html" % part_href, level-1, is_part)
+            return self.children[-1].add(name, part_href, level-1, is_part)
         else:
             t = TOC(name)
             t.part_href = part_href

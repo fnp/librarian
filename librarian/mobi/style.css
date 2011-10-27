@@ -25,13 +25,13 @@
 {
 	font-size: 1em;
     margin: 0;
-    margin-top: 1.5em;
+    margin-top: 1em;
 	line-height: 1.5em;
 }
 
-p
+.paragraph
 {
-	margin: 0;
+    margin-top: 0;
 }
 
 /* ======================== */
@@ -166,10 +166,14 @@ div.kwestia
 	margin-top: 0.5em;
 }
 
-.paragraph
+.stanza
 {
-	text-align: justify;
-	margin-top: 1.5em;
+    margin-bottom: 1em;
+}
+
+.stanza-spacer
+{
+    display: none;
 }
 
 .motto
@@ -274,8 +278,7 @@ em.author-emphasis
 .person-list em.person
 {
 	font-style: normal;
-	font-variant: small-caps;
-	/*text-transform: uppercase;*/
+	text-transform: uppercase;
 }
 
 .info
