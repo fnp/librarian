@@ -311,7 +311,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
 
         # every input file will have a TOC entry,
         # pointing to starting chunk
-        toc = TOC(node_name(input_xml.find('.//'+DCNS('title'))), chunk_counter)
+        toc = TOC(node_name(input_xml.find('.//'+DCNS('title'))), "part%d.html" % chunk_counter)
         chars = set()
         if first:
             # write book title page
