@@ -127,6 +127,8 @@ class BookInfo(object):
         Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
         Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
         Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True),
+        Field( DCNS('audience'), 'audiences', salias='audience', multiple=True,
+                required=False),
         Field( DCNS('date'), 'created_at', as_date),
         Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
         Field( DCNS('contributor.editor'), 'editors', \
