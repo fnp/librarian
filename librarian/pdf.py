@@ -152,7 +152,7 @@ def package_available(package, args='', verbose=False):
     fpath = os.path.join(tempdir, 'test.tex')
     f = open(fpath, 'w')
     f.write(r"""
-        \documentclass{book}
+        \documentclass{wl}
         \usepackage[%s]{%s}
         \begin{document}
         \end{document}
@@ -245,7 +245,7 @@ def transform(provider, slug=None, file_path=None,
             shutil.copy(tex_path, save_tex)
 
         # LaTeX -> PDF
-        shutil.copy(get_resource('pdf/wl.sty'), temp)
+        shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
 
         cwd = os.getcwd()
