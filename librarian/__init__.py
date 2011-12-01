@@ -93,6 +93,7 @@ DEFAULT_BOOKINFO = dcparser.BookInfo(
           DCNS('subject.type'): [u'Unknown'],
           DCNS('subject.genre'): [u'Unknown'],
           DCNS('date'): ['1970-01-01'],
+          DCNS('language'): [u'pol'],
           # DCNS('date'): [creation_date],
           DCNS('publisher'): [u"Fundacja Nowoczesna Polska"],
           DCNS('description'):
