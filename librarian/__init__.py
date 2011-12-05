@@ -8,11 +8,11 @@ import os
 class ParseError(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message.message
+        return self.message
 
     def __unicode__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message.message
+        return self.message
 
 class ValidationError(Exception):
     pass

@@ -1,4 +1,68 @@
 % -*- coding: utf-8 -*-
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{wl}[2011/11/28 wolnelektury.pl book style]
+
+% PDF customizations
+%
+% nofootnotes - disable generation of footnotes
+% nothemes - disable generation of themes
+% onehalfleading - leading of 1.5 (interlinia)
+% doubleleading - double leading (interlinia)
+% a4paper,... - paper size as required by LaTeX
+% nowlfont - don't use customized WL font
+
+\RequirePackage{setspace}
+\RequirePackage{type1cm}
+\DeclareOption{13pt}{%
+\AtEndOfClass{%
+% font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
+\renewcommand\normalsize{%
+   \@setfontsize\normalsize{13pt}{14.5pt}%
+   \abovedisplayskip 12\p@ \@plus3\p@ \@minus7\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6.5\p@ \@plus3.5\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}\normalsize%
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize\@xpt\@xiipt
+   \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 6\p@ \@plus2\p@ \@minus2\p@
+               \parsep 3\p@ \@plus2\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}%
+}%
+}
+
+%% \DeclareOption{14pt}{\renewcommand{\normalsize}{\AtEndOfClass{\fontsize{14}{17}\selectfont}}}
+
+\DeclareOption{doubleleading}{\AtBeginDocument{\doublespacing}}%\setlength{\leading}{1em plus 0.5ex minus 0.2ex}}
+\DeclareOption{onehalfleading}{\AtBeginDocument{\onehalfspacing}}%\setlength{\leading}{1em plus 0.5ex minus 0.2ex}}
+
+%% This does not really work, since dvipdfm(x) will use it's configuration in /etc/texmf/dvipdfm(x) and force a global paper size setting.
+\DeclareOption{a5paper}{%
+      \setlength{\paperheight}{210mm}%
+      \setlength{\paperwidth}{148mm}}
+
+
+\newif\ifshowfootnotes \showfootnotestrue
+\DeclareOption{nofootnotes}{\showfootnotesfalse}
+
+\newif\ifshowthemes \showthemestrue
+\DeclareOption{nothemes}{\showthemesfalse}
+
+\newif\ifenablewlfont \enablewlfonttrue
+\DeclareOption{nowlfont}{\enablewlfontfalse}
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
+\ProcessOptions\relax
+\LoadClass[a4paper,oneside]{book}
+
+
+\usepackage{trace}
 
 \usepackage[MeX]{polski}
 
@@ -11,6 +75,7 @@
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
 
+\ifenablewlfont
 \setmainfont [
 %ExternalLocation,
 UprightFont = JunicodeWL-Regular,
@@ -34,7 +99,7 @@ LetterSpace=-1.0
 
 \defaultfontfeatures{
 SizeFeatures={
-  {Size={-10}, FakeStretch=1.02, LetterSpace=2.0 },
+  {Size={-10.5}, FakeStretch=1.02, LetterSpace=2.0 },
   {Size={10.5-12}, FakeStretch=2.00, LetterSpace=0.0 },
   {Size={12-}, FakeStretch=0.98, LetterSpace=-2.0 }
 }
@@ -43,7 +108,7 @@ SizeFeatures={
 \renewcommand{\textsc}[1]{%
 {\addfontfeature{
 SizeFeatures={
-  {Size={-10}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
+  {Size={-10.5}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
   {Size={10.5-12}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
   {Size={12-}, FakeStretch=1.0, LetterSpace=8.0 }
 },
@@ -51,8 +116,9 @@ Letters={SmallCaps,UppercaseSmallCaps}
 }
 #1}
 }
+\fi% enablewlfont
 
-%{\itshape JunicodeWL-Italic.ttf }
+%{\Itshape JunicodeWL-Italic.ttf }
 %{\bfseries Junicode-Bold.ttf }
 %{\bfseries\itshape Junicode-BoldItalic.ttf }
 
@@ -358,11 +424,17 @@ Letters={Uppercase}
 \hspace*{#1}#2%
 }
 
-
-\newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
-\newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
-\newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
-\newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}
+\ifshowfootnotes
+  \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
+  \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
+  \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
+  \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}
+\else
+  \newcommand{\pa}[1]{}
+  \newcommand{\pe}[1]{}
+  \newcommand{\pr}[1]{}
+  \newcommand{\pt}[1]{}
+\fi
 
 \newcommand{\mat}[1]{$#1$}
 
@@ -401,6 +473,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\motyw}[2][0]{%
+\ifshowthemes
 \mbox{}%
 \marginpar{%
 \vspace{-8pt}%
@@ -409,5 +482,6 @@ Letters={Uppercase}
 \footnotesize{\color{theme}{#2}}}%
 \vspace{\baselineskip}%
 }%
+\fi
 }
 
