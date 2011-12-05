@@ -11,8 +11,7 @@
 % a4paper,... - paper size as required by LaTeX
 % nowlfont - don't use customized WL font
 
-%\usepackage{setspace}
-
+\RequirePackage{setspace}
 \RequirePackage{type1cm}
 \DeclareOption{13pt}{%
 \AtEndOfClass{%
@@ -42,6 +41,12 @@
 
 \DeclareOption{doubleleading}{\AtBeginDocument{\doublespacing}}%\setlength{\leading}{1em plus 0.5ex minus 0.2ex}}
 \DeclareOption{onehalfleading}{\AtBeginDocument{\onehalfspacing}}%\setlength{\leading}{1em plus 0.5ex minus 0.2ex}}
+
+%% This does not really work, since dvipdfm(x) will use it's configuration in /etc/texmf/dvipdfm(x) and force a global paper size setting.
+\DeclareOption{a5paper}{%
+      \setlength{\paperheight}{210mm}%
+      \setlength{\paperwidth}{148mm}}
+
 
 \newif\ifshowfootnotes \showfootnotestrue
 \DeclareOption{nofootnotes}{\showfootnotesfalse}

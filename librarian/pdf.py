@@ -35,6 +35,13 @@ STYLESHEETS = {
     'wl2tex': 'pdf/wl2tex.xslt',
 }
 
+CUSTOMIZATIONS = [
+    'nofootnotes',
+    'nothemes',
+    'onehalfleading',
+    'doubleleading',
+    'nowlfont',
+    ]
 
 def insert_tags(doc, split_re, tagname, exclude=None):
     """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree
@@ -168,7 +175,7 @@ def package_available(package, args='', verbose=False):
 
 def transform(provider, slug=None, file_path=None,
               output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None):
+              cover=None, flags=None, customizations=None):
     """ produces a PDF file with XeLaTeX
 
     provider: a DocProvider
@@ -182,6 +189,7 @@ def transform(provider, slug=None, file_path=None,
     morefloats (old/new/none): force specific morefloats
     cover: a cover.Cover object
     flags: less-advertising,
+    customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
     """
 
     # Parse XSLT
@@ -208,6 +216,10 @@ def transform(provider, slug=None, file_path=None,
         elif package_available('morefloats', 'maxfloats=19'):
             document.edoc.getroot().set('morefloats', 'new')
 
+        # add customizations
+        if customizations is not None:
+            document.edoc.getroot().set('customizations', u','.join(customizations))
+
         # hack the tree
         move_motifs_inside(document.edoc)
         hack_motifs(document.edoc)
@@ -223,6 +235,7 @@ def transform(provider, slug=None, file_path=None,
         # wl -> TeXML
         style_filename = get_stylesheet("wl2tex")
         style = etree.parse(style_filename)
+
         texml = document.transform(style)
 
         # TeXML -> LaTeX

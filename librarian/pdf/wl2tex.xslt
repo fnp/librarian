@@ -15,7 +15,7 @@
 <xsl:template match="utwor">
     <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
         <TeXML escape="0">
-        \documentclass[a4paper, oneside, 11pt]{book}
+        \documentclass[<xsl:value-of select="@customizations"/>]{wl}
 
         <!-- flags and values set on root -->
 
@@ -31,8 +31,6 @@
                 \def\<xsl:value-of select="wl:texcommand(name())" />{<TeXML escape="1"><xsl:value-of select="."/></TeXML>}
             </TeXML>
         </xsl:for-each>
-
-        \usepackage{wl}
         </TeXML>
 
         <xsl:choose>
