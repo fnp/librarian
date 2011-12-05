@@ -6,8 +6,8 @@
 import os
 from copy import deepcopy
 from lxml import etree
-from librarian import epub, pdf, DirDocProvider, ParseError, cover
-from librarian.dcparser import BookInfo
+from librarian import pdf, epub, DirDocProvider, ParseError, cover
+from librarian.parser import WLDocument
 
 
 class Packager(object):
@@ -26,8 +26,11 @@ class Packager(object):
             except:
                 pass
         outfile = os.path.join(output_dir, slug + '.' + cls.ext)
-        cls.converter.transform(provider, file_path=main_input, output_file=outfile,
+
+        doc = WLDocument.from_file(main_input, provider=provider)
+        output_file = cls.converter.transform(doc,
                 cover=cls.cover, flags=cls.flags)
+        doc.save_output_file(output_file, output_path=outfile)
 
 
     @classmethod
@@ -78,7 +81,6 @@ class VirtualoEpubPackager(Packager):
         """ truncates text to at most `limit' bytes in utf-8 """
         if text is None:
             return text
-        orig_text = text
         if len(text.encode('utf-8')) > limit:
             newlimit = limit - 3
             while len(text.encode('utf-8')) > newlimit:
@@ -116,7 +118,8 @@ class VirtualoEpubPackager(Packager):
                 outfile_dir = os.path.join(output_dir, slug)
                 os.makedirs(os.path.join(output_dir, slug))
 
-                info = BookInfo.from_file(main_input)
+                doc = WLDocument.from_file(main_input, provider=provider)
+                info = doc.book_info
 
                 product_elem = deepcopy(product)
                 product_elem[0].text = cls.utf_trunc(slug, 100)
@@ -133,8 +136,10 @@ class VirtualoEpubPackager(Packager):
                     ).save(os.path.join(outfile_dir, slug+'.jpg'))
                 outfile = os.path.join(outfile_dir, '1.epub')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.epub')
-                epub.transform(provider, file_path=main_input, output_file=outfile)
-                epub.transform(provider, file_path=main_input, output_file=outfile_sample, sample=25)
+                doc.save_output_file(epub.transform(doc),
+                        output_path=outfile)
+                doc.save_output_file(epub.transform(doc, sample=25), 
+                        output_path=outfile_sample)
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
                 'file': main_input,

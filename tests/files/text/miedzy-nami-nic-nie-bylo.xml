@@ -3,7 +3,7 @@
   <liryka_lp>
 
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
-<rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Asnyk/Między_nami_nic_nie_było">
+<rdf:Description rdf:about="http://redakcja.wolnelektury.pl/documents/book/miedzy-nami-nic-nie-bylo/">
 <dc:creator xml:lang="pl">Asnyk, Adam</dc:creator>
 <dc:title xml:lang="pl">Między nami nic nie było</dc:title>
 <dc:contributor.editor xml:lang="pl" />

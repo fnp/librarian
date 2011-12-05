@@ -6,7 +6,10 @@
 #
 import os.path
 from optparse import OptionParser
-from librarian import pdf, DirDocProvider, ParseError
+
+from librarian import DirDocProvider, ParseError
+from librarian.parser import WLDocument
+
 
 if __name__ == '__main__':
     usage = """Usage: %prog [options] SOURCE [SOURCE...]
@@ -31,33 +34,25 @@ if __name__ == '__main__':
         parser.print_help()
         exit(1)
 
-    try:
-        if options.output_dir and options.output_file:
-            raise ValueError("Either --output-dir or --output file should be specified")
+    if options.output_dir and options.output_file:
+        raise ValueError("Either --output-dir or --output file should be specified")
 
+    try:
         for main_input in args:
-            if options.verbose:
-                print main_input
             path, fname = os.path.realpath(main_input).rsplit('/', 1)
             provider = DirDocProvider(path)
-
-            output_file = output_dir = None
-            if options.output_dir:
-                output_dir = options.output_dir
-            elif options.output_file:
-                output_file = options.output_file
+            output_file, output_dir = options.output_file, options.output_dir
+            if not (options.output_file or options.output_dir):
+                output_file = os.path.splitext(main_input)[0] + '.pdf'
             else:
-                output_dir = path
+                output_file = None
 
-            pdf.transform(provider,
-                file_path=main_input,
-                output_file=output_file,
-                output_dir=output_dir,
-                verbose=options.verbose,
-                make_dir=options.make_dir,
-                save_tex=options.save_tex,
-                morefloats=options.morefloats
-                )
+            doc = WLDocument.from_file(main_input, provider=provider)
+            pdf = doc.as_pdf(save_tex=options.save_tex,
+                        morefloats=options.morefloats)
+
+            doc.save_output_file(pdf,
+                output_file, options.output_dir, options.make_dir, 'pdf')
     except ParseError, e:
         print '%(file)s:%(name)s:%(message)s; use -v to see more output' % {
             'file': main_input,

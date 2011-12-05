@@ -5,12 +5,10 @@
 #
 import os
 import cStringIO
-import re
 import copy
 
 from lxml import etree
-from librarian.parser import WLDocument
-from librarian import XHTMLNS, ParseError
+from librarian import XHTMLNS, ParseError, OutputFile
 from librarian import functions
 
 from lxml.etree import XMLSyntaxError, XSLTApplyError
@@ -30,9 +28,8 @@ def get_stylesheet(name):
 def html_has_content(text):
     return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)
 
-def transform(input, output_filename=None, is_file=True, \
-    parse_dublincore=True, stylesheet='legacy', options={}, flags=None):
-    """Transforms file input_filename in XML to output_filename in XHTML.
+def transform(wldoc, stylesheet='legacy', options=None, flags=None):
+    """Transforms the WL document to XHTML.
 
     If output_filename is None, returns an XML,
     otherwise returns True if file has been written,False if it hasn't.
@@ -43,12 +40,9 @@ def transform(input, output_filename=None, is_file=True, \
         style_filename = get_stylesheet(stylesheet)
         style = etree.parse(style_filename)
 
-        if is_file:
-            document = WLDocument.from_file(input, True, \
-                parse_dublincore=parse_dublincore)
-        else:
-            document = WLDocument.from_string(input, True, \
-                parse_dublincore=parse_dublincore)
+        document = copy.deepcopy(wldoc)
+        del wldoc
+        document.swap_endlines()
 
         if flags:
             for flag in flags:
@@ -56,6 +50,8 @@ def transform(input, output_filename=None, is_file=True, \
 
         document.clean_ed_note()
 
+        if not options:
+            options = {}
         result = document.transform(style, **options)
         del document # no longer needed large object :)
 
@@ -63,16 +59,10 @@ def transform(input, output_filename=None, is_file=True, \
             add_anchors(result.getroot())
             add_table_of_contents(result.getroot())
 
-            if output_filename is not None:
-                result.write(output_filename, method='html', xml_declaration=False, pretty_print=True, encoding='utf-8')
-            else:
-                return result
-            return True
+            return OutputFile.from_string(etree.tostring(result, method='html',
+                xml_declaration=False, pretty_print=True, encoding='utf-8'))
         else:
-            if output_filename is not None:
-                return False
-            else:
-                return "<empty />"
+            return None
     except KeyError:
         raise ValueError("'%s' is not a valid stylesheet.")
     except (XMLSyntaxError, XSLTApplyError), e:

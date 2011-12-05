@@ -7,7 +7,8 @@
 import os.path
 import optparse
 
-from librarian import epub, DirDocProvider, ParseError
+from librarian import DirDocProvider, ParseError
+from librarian.parser import WLDocument
 
 
 if __name__ == '__main__':
@@ -37,18 +38,20 @@ if __name__ == '__main__':
         for main_input in input_filenames:
             if options.verbose:
                 print main_input
+
             path, fname = os.path.realpath(main_input).rsplit('/', 1)
             provider = DirDocProvider(path)
-
-            output_dir = output_file = None
-            if options.output_dir:
-                output_dir = options.output_dir
-            elif options.output_file:
-                output_file = options.output_file
+            if not (options.output_file or options.output_dir):
+                output_file = os.path.splitext(main_input)[0] + '.epub'
             else:
-                output_dir = path
+                output_file = None
 
-            epub.transform(provider, file_path=main_input, output_dir=output_dir, output_file=output_file, make_dir=options.make_dir)
+            doc = WLDocument.from_file(main_input, provider=provider)
+            epub = doc.as_epub()
+
+            doc.save_output_file(epub,
+                output_file, options.output_dir, options.make_dir, 'epub')
+
     except ParseError, e:
         print '%(file)s:%(name)s:%(message)s' % {
             'file': main_input,

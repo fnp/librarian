@@ -21,10 +21,3 @@ def get_fixture(dir_name, file_name):
 def get_all_fixtures(dir_name, glob_pattern='*'):
     """Returns list of paths for fixtures in directory dir_name matching the glob_pattern."""
     return [get_fixture(dir_name, file_name) for file_name in glob.glob(join(get_fixture_dir(dir_name), glob_pattern))]
-
-
-def remove_output_file(dir_name, file_name):
-    try:
-        os.remove(get_fixture(dir_name, file_name))
-    except:
-        pass

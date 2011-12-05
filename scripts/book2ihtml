@@ -7,7 +7,8 @@
 import os
 import optparse
 
-from librarian import html, ParseError
+from librarian import ParseError
+from librarian.parser import WLDocument
 
 
 if __name__ == '__main__':
@@ -35,8 +36,10 @@ if __name__ == '__main__':
 
         output_filename = os.path.splitext(input_filename)[0] + '.html'
         try:
-            html.transform(input_filename, output_filename, parse_dublincore=options.parse_dublincore,\
-                stylesheet='partial')
+            doc = WLDocument.from_file(input_filename,
+                parse_dublincore=options.parse_dublincore)
+            html = doc.as_html(flags=('full-page',), stylesheet='partial')
+            doc.save_output_file(html, output_path=output_filename)
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
                 'file': input_filename,

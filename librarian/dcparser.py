@@ -7,7 +7,8 @@ from xml.parsers.expat import ExpatError
 from datetime import date
 import time
 
-from librarian import ValidationError, NoDublinCore, ParseError, DCNS, RDFNS
+from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
+                       WLURI)
 
 import lxml.etree as etree # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
@@ -150,7 +151,7 @@ class BookInfo(object):
 
     @property
     def slug(self):
-        return self.url.rsplit('/', 1)[1]
+        return WLURI(self.url).slug
 
     @classmethod
     def from_string(cls, xml):
