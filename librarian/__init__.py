@@ -67,19 +67,59 @@ WLNS = EmptyNamespace()
 
 class WLURI(object):
     """Represents a WL URI. Extracts slug and language from it."""
+    DEFAULT_LANGUAGE = u'pol'
 
     slug = None
     language = None
 
+    example = 'http://wolnelektury.pl/katalog/lektura/template/'
     _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/lektura/'
             '(?P<slug>[-a-z]+)(/(?P<lang>[a-z]{3})/?)?')
 
-    def __init__(self, uri):
-        self.uri = uri
-        match = self._re_wl_uri.match(uri)
-        assert match
-        self.slug = match.group('slug')
-        self.language = match.group('lang')
+    def __init__(self, uri=None):
+        if uri is not None:
+            self.uri = uri
+            match = self._re_wl_uri.match(uri)
+            assert match
+            self.slug = match.group('slug')
+            self.language = match.group('lang') or self.DEFAULT_LANGUAGE
+
+    @classmethod
+    def from_slug_and_lang(cls, slug, lang):
+        """Contructs an URI from slug and language code.
+
+        >>> WLURI.from_slug_and_lang('a-slug', WLURI.DEFAULT_LANGUAGE).uri
+        'http://wolnelektury.pl/katalog/lektura/a-slug/'
+        >>> WLURI.from_slug_and_lang('a-slug', 'deu').uri
+        'http://wolnelektury.pl/katalog/lektura/a-slug/deu/'
+
+        """
+        if lang is None:
+            lang = self.DEFAULT_LANGUAGE
+        uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
+        if lang is not None and lang != cls.DEFAULT_LANGUAGE:
+            uri += lang + '/'
+        instance = cls()
+        instance.slug = slug
+        instance.language = lang
+        instance.uri = uri
+        return instance
+
+    def __unicode__(self):
+        return self.uri
+
+    def __eq__(self, other):
+        return self.slug, self.language == other.slug, other.language
+
+    def filename_stem(self):
+        stem = self.slug
+        if self.language != self.DEFAULT_LANGUAGE:
+            stem += '_' + self.language
+        return stem
+
+    def validate_language(self, language):
+        if language != self.language:
+            raise ValidationError("Incorrect language definition in URI")
 
 
 class DocProvider(object):
@@ -111,7 +151,7 @@ class DirDocProvider(DocProvider):
         return super(DirDocProvider, self).__init__()
 
     def by_slug_and_lang(self, slug, lang=None):
-        fname = "%s%s.xml" % (slug, ".%s" % lang if lang else "")
+        fname = WLURI.from_slug_and_lang(slug, lang).filename_stem() + '.xml'
         return open(os.path.join(self.dir, fname))
 
 
@@ -126,7 +166,7 @@ DEFAULT_BOOKINFO = dcparser.BookInfo(
           DCNS('subject.type'): [u'Unknown'],
           DCNS('subject.genre'): [u'Unknown'],
           DCNS('date'): ['1970-01-01'],
-          DCNS('language'): [u'pol'],
+          DCNS('language'): [WLURI.DEFAULT_LANGUAGE],
           # DCNS('date'): [creation_date],
           DCNS('publisher'): [u"Fundacja Nowoczesna Polska"],
           DCNS('description'):
@@ -134,8 +174,7 @@ DEFAULT_BOOKINFO = dcparser.BookInfo(
              Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa
              wykonana przez Bibliotekę Narodową z egzemplarza
              pochodzącego ze zbiorów BN."""],
-          DCNS('identifier.url'):
-            [u"http://wolnelektury.pl/katalog/lektura/template"],
+          DCNS('identifier.url'): [WLURI.example],
           DCNS('rights'):
             [u"Domena publiczna - zm. [OPIS STANU PRAWNEGO TEKSTU]"] })
 

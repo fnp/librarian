@@ -191,7 +191,8 @@ class WLDocument(object):
             if make_author_dir:
                 save_path = os.path.join(save_path,
                         unicode(self.book_info.author).encode('utf-8'))
-            save_path = os.path.join(save_path, self.book_info.slug)
+            save_path = os.path.join(save_path,
+                                self.book_info.uri.filename_stem())
             if ext:
                 save_path += '.%s' % ext
         else:

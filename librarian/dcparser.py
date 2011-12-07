@@ -141,17 +141,13 @@ class BookInfo(object):
         Field( DCNS('publisher'), 'publisher'),
         Field( DCNS('source'), 'source_name', required=False),
         Field( DCNS('source.URL'), 'source_url', required=False),
-        Field( DCNS('identifier.url'), 'url'),
+        Field( DCNS('identifier.url'), 'url', WLURI),
         Field( DCNS('relation.hasPart'), 'parts', multiple=True, required=False),
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
         Field( DCNS('language'), 'language'),
         Field( DCNS('description'), 'description', required=False),
     )
-
-    @property
-    def slug(self):
-        return WLURI(self.url).slug
 
     @classmethod
     def from_string(cls, xml):
@@ -215,6 +211,11 @@ class BookInfo(object):
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias: self.fmap[field.salias] = field
+
+        self.validate()
+
+    def validate(self):
+        self.url.validate_language(self.language)
 
     def __getattribute__(self, name):
         try:
