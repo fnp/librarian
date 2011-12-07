@@ -142,7 +142,7 @@ class BookInfo(object):
         Field( DCNS('source'), 'source_name', required=False),
         Field( DCNS('source.URL'), 'source_url', required=False),
         Field( DCNS('identifier.url'), 'url', WLURI),
-        Field( DCNS('relation.hasPart'), 'parts', multiple=True, required=False),
+        Field( DCNS('relation.hasPart'), 'parts', WLURI, multiple=True, required=False),
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
         Field( DCNS('language'), 'language'),

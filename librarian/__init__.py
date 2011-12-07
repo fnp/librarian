@@ -74,13 +74,16 @@ class WLURI(object):
 
     example = 'http://wolnelektury.pl/katalog/lektura/template/'
     _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/lektura/'
-            '(?P<slug>[-a-z]+)(/(?P<lang>[a-z]{3})/?)?')
+            '(?P<slug>[-a-z0-9]+)(/(?P<lang>[a-z]{3}))?/?$')
 
     def __init__(self, uri=None):
         if uri is not None:
+            uri = unicode(uri)
             self.uri = uri
             match = self._re_wl_uri.match(uri)
-            assert match
+            if not match:
+                raise ValueError('Supplied URI (%s) does not match '
+                        'the WL document URI template.' % uri)
             self.slug = match.group('slug')
             self.language = match.group('lang') or self.DEFAULT_LANGUAGE
 
@@ -95,17 +98,16 @@ class WLURI(object):
 
         """
         if lang is None:
-            lang = self.DEFAULT_LANGUAGE
+            lang = cls.DEFAULT_LANGUAGE
         uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
         if lang is not None and lang != cls.DEFAULT_LANGUAGE:
             uri += lang + '/'
-        instance = cls()
-        instance.slug = slug
-        instance.language = lang
-        instance.uri = uri
-        return instance
+        return cls(uri)
 
     def __unicode__(self):
+        return self.uri
+
+    def __str__(self):
         return self.uri
 
     def __eq__(self, other):
