@@ -92,9 +92,9 @@ class WLURI(object):
         """Contructs an URI from slug and language code.
 
         >>> WLURI.from_slug_and_lang('a-slug', WLURI.DEFAULT_LANGUAGE).uri
-        'http://wolnelektury.pl/katalog/lektura/a-slug/'
+        u'http://wolnelektury.pl/katalog/lektura/a-slug/'
         >>> WLURI.from_slug_and_lang('a-slug', 'deu').uri
-        'http://wolnelektury.pl/katalog/lektura/a-slug/deu/'
+        u'http://wolnelektury.pl/katalog/lektura/a-slug/deu/'
 
         """
         if lang is None:
