@@ -244,6 +244,9 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
     \editors
 
+    \vspace{.6em}
+    \coverby
+
     \color{black}
   }
   \end{figure}

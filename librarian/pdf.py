@@ -21,6 +21,7 @@ from librarian.dcparser import Person
 from librarian.parser import WLDocument
 from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
+from librarian.cover import WLCover
 
 
 functions.reg_substitute_entities()
@@ -189,8 +190,15 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         document = load_including_children(wldoc)
 
         if cover:
+            if cover is True:
+                cover = WLCover
             document.edoc.getroot().set('data-cover-width', str(cover.width))
             document.edoc.getroot().set('data-cover-height', str(cover.height))
+            if cover.uses_dc_cover:
+                if document.book_info.cover_by:
+                    document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
+                if document.book_info.cover_source:
+                    document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
         if flags:
             for flag in flags:
                 document.edoc.getroot().set('flag-' + flag, 'yes')
@@ -222,7 +230,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         temp = mkdtemp('-wl2pdf')
 
         if cover:
-            c = cover(document.book_info.author.readable(), document.book_info.title)
+            c = cover(document.book_info)
             with open(os.path.join(temp, 'cover.png'), 'w') as f:
                 c.save(f)
 

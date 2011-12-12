@@ -130,10 +130,7 @@ class VirtualoEpubPackager(Packager):
                 product_elem[4][0][1].text = cls.utf_trunc(info.author.last_name, 100)
                 xml.append(product_elem)
 
-                cover.VirtualoCover(
-                    u' '.join(info.author.first_names + (info.author.last_name,)),
-                    info.title
-                    ).save(os.path.join(outfile_dir, slug+'.jpg'))
+                cover.VirtualoCover(info).save(os.path.join(outfile_dir, slug+'.jpg'))
                 outfile = os.path.join(outfile_dir, '1.epub')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.epub')
                 doc.save_output_file(epub.transform(doc),

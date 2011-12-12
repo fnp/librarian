@@ -147,6 +147,9 @@ class BookInfo(object):
         Field( DCNS('rights'), 'license_description'),
         Field( DCNS('language'), 'language'),
         Field( DCNS('description'), 'description', required=False),
+        Field( DCNS('relation.cover_image.url'), 'cover_url', required=False),
+        Field( DCNS('relation.cover_image.attribution'), 'cover_by', required=False),
+        Field( DCNS('relation.cover_image.source'), 'cover_source', required=False),
     )
 
     @classmethod

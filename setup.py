@@ -39,6 +39,7 @@ setup(
              'scripts/book2mobi',
              'scripts/book2pdf',
              'scripts/book2partner',
+             'scripts/book2cover',
              'scripts/bookfragments',
              'scripts/genslugs'],
     tests_require=['nose>=0.11', 'coverage>=3.0.1'],

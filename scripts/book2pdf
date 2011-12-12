@@ -18,6 +18,8 @@ if __name__ == '__main__':
     parser = OptionParser(usage)
     parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
                       help='make lots of noise and revert to default interaction in LaTeX')
+    parser.add_option('-c', '--with-cover', action='store_true', dest='with_cover', default=False,
+                      help='create default cover')
     parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
                       help='create a directory for author and put the PDF in it')
     parser.add_option('-t', '--save-tex', dest='save_tex', metavar='FILE',
@@ -49,6 +51,7 @@ if __name__ == '__main__':
 
             doc = WLDocument.from_file(main_input, provider=provider)
             pdf = doc.as_pdf(save_tex=options.save_tex,
+                        cover=options.with_cover,
                         morefloats=options.morefloats)
 
             doc.save_output_file(pdf,

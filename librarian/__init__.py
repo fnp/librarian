@@ -150,7 +150,6 @@ class DirDocProvider(DocProvider):
     def __init__(self, dir_):
         self.dir = dir_
         self.files = {}
-        return super(DirDocProvider, self).__init__()
 
     def by_slug_and_lang(self, slug, lang=None):
         fname = WLURI.from_slug_and_lang(slug, lang).filename_stem() + '.xml'

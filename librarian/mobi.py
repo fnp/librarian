@@ -3,6 +3,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from copy import deepcopy
 import os
 import subprocess
 from tempfile import NamedTemporaryFile
@@ -22,19 +23,27 @@ def transform(wldoc, verbose=False,
     flags: less-advertising,
     """
 
-    book_info = wldoc.book_info
+    document = deepcopy(wldoc)
+    del wldoc
+    book_info = document.book_info
 
     # provide a cover by default
     if not cover:
         cover = WLCover
     cover_file = NamedTemporaryFile(suffix='.png', delete=False)
-    c = cover(book_info.author.readable(), book_info.title)
+    c = cover(book_info)
     c.save(cover_file)
+
+    if cover.uses_dc_cover:
+        if document.book_info.cover_by:
+            document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
+        if document.book_info.cover_source:
+            document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
 
     if not flags:
         flags = []
     flags = list(flags) + ['without-fonts']
-    epub = wldoc.as_epub(verbose=verbose, sample=sample, html_toc=True,
+    epub = document.as_epub(verbose=verbose, sample=sample, html_toc=True,
             flags=flags, style=get_resource('mobi/style.css'))
 
     if verbose:

@@ -16,6 +16,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
 from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
+from librarian.cover import WLCover
 
 from librarian import functions, get_resource
 
@@ -290,7 +291,7 @@ def transform(wldoc, verbose=False,
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
-    cover: a cover.Cover object
+    cover: a cover.Cover object or True for default
     flags: less-advertising, without-fonts
     """
 
@@ -392,10 +393,17 @@ def transform(wldoc, verbose=False,
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))
 
-
     if cover:
+        if cover is True:
+            cover = WLCover
+        if cover.uses_dc_cover:
+            if document.book_info.cover_by:
+                document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
+            if document.book_info.cover_source:
+                document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
+
         cover_file = StringIO()
-        c = cover(document.book_info.author.readable(), document.book_info.title)
+        c = cover(document.book_info)
         c.save(cover_file)
         c_name = 'cover.%s' % c.ext()
         zip.writestr(os.path.join('OPS', c_name), cover_file.getvalue())
