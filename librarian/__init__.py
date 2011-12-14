@@ -138,9 +138,9 @@ class DocProvider(object):
         """Should return a file-like object with a WL document XML."""
         return self.by_slug_and_lang(slug)
 
-    def by_uri(self, uri):
+    def by_uri(self, uri, wluri=WLURI):
         """Should return a file-like object with a WL document XML."""
-        wluri = WLURI(uri)
+        wluri = wluri(uri)
         return self.by_slug_and_lang(wluri.slug, wluri.language)
 
 
