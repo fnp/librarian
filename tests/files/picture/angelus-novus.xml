@@ -1,0 +1,36 @@
+<picture>
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Andersen/Brzydkie_kaczątko">
+      <dc:creator xml:lang="pl">Klee, Paul</dc:creator>
+      <dc:title xml:lang="la">Angelus Novus</dc:title>
+      <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+      <dc:subject.period xml:lang="pl">Modernizm</dc:subject.period>
+      <dc:subject.type xml:lang="pl">Obraz</dc:subject.type>
+      <dc:subject.genre xml:lang="pl">Akwarela</dc:subject.genre>
+      <dc:description xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.</dc:description>
+      <dc:identifier.url xml:lang="pl">http://wolnelektury.pl/katalog/obraz/angelus-novus</dc:identifier.url>
+      <dc:source.URL xml:lang="pl">http://katilifox.files.wordpress.com/2011/04/1190051611_angelus-novus.jpg</dc:source.URL>
+      <dc:source xml:lang="pl"></dc:source>
+      <dc:rights xml:lang="pl">Domena publiczna - Paul Klee zm. 1940</dc:rights>
+      <dc:date.pd xml:lang="pl">1940</dc:date.pd>
+      <dc:type>Image</dc:type>
+      <dc:format xml:lang="pl">image/png</dc:format>
+      <dc:format.dimensions.digital xml:lang="pl">1645 x 2000 px</dc:format.dimensions.digital>
+      <dc:format.dimensions.original xml:lang="pl">31.8 × 24.2 cm</dc:format.dimensions.original>
+      <dc:format.physical xml:lang="pl">Akwarela na papierze</dc:format.physical>
+      <dc:date xml:lang="pl">1920</dc:date>
+    </rdf:Description>
+  </rdf:RDF>
+
+  <sem type="motif" motif="anioł historii">
+    <div type="area" x1="462" y1="212" x2="1283" y2="1730"/>
+  </sem>
+  <sem type="motif" motif="spojrzenie">
+    <div type="area" x1="688" y1="500" x2="1054" y2="618"/>
+  </sem>
+  <sem type="motif" motif="skrzydło">
+    <div type="area" x1="468" y1="741" x2="694" y2="1027"/>
+    <div type="area" x1="1044" y1="762" x2="1260" y2="1041"/>
+  </sem>
+ 
+</picture>

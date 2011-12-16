@@ -118,39 +118,48 @@ class Field(object):
 
         return self.validate_value(f)
 
+    def __eq__(self, other):
+        if isinstance(other, Field) and other.name == self.name:
+            return True
+        return False
 
 
+class DCInfo(type):
+    def __new__(meta, classname, bases, class_dict):
+        fields = class_dict['FIELDS']
 
-class BookInfo(object):
+        for base in bases[::-1]:
+            if hasattr(base, 'FIELDS'):
+                for field in base.FIELDS[::-1]:
+                    try:
+                        fields.index(field)
+                    except ValueError:
+                        fields = (field,) + fields
+
+        class_dict['FIELDS'] = fields
+        return super(DCInfo, meta).__new__(meta, classname, bases, class_dict)
+
+
+class WorkInfo(object):
+    __metaclass__ = DCInfo
+
     FIELDS = (
         Field( DCNS('creator'), 'author', as_person),
         Field( DCNS('title'), 'title'),
+        Field( DCNS('type'), 'type', required=False, multiple=True),
+
         Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
         Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
         Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True),
-        Field( DCNS('audience'), 'audiences', salias='audience', multiple=True,
-                required=False),
+
         Field( DCNS('date'), 'created_at', as_date),
         Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
-        Field( DCNS('contributor.editor'), 'editors', \
-            as_person, salias='editor', multiple=True, default=[]),
-        Field( DCNS('contributor.translator'), 'translators', \
-            as_person,  salias='translator', multiple=True, default=[]),
-        Field( DCNS('contributor.technical_editor'), 'technical_editors',
-            as_person, salias='technical_editor', multiple=True, default=[]),
         Field( DCNS('publisher'), 'publisher'),
+
         Field( DCNS('source'), 'source_name', required=False),
         Field( DCNS('source.URL'), 'source_url', required=False),
         Field( DCNS('identifier.url'), 'url', WLURI),
-        Field( DCNS('relation.hasPart'), 'parts', WLURI, multiple=True, required=False),
-        Field( DCNS('rights.license'), 'license', required=False),
-        Field( DCNS('rights'), 'license_description'),
-        Field( DCNS('language'), 'language'),
-        Field( DCNS('description'), 'description', required=False),
-        Field( DCNS('relation.cover_image.url'), 'cover_url', required=False),
-        Field( DCNS('relation.cover_image.attribution'), 'cover_by', required=False),
-        Field( DCNS('relation.cover_image.source'), 'cover_source', required=False),
-    )
+        )
 
     @classmethod
     def from_string(cls, xml):
@@ -189,7 +198,7 @@ class BookInfo(object):
     def from_element(cls, rdf_tag):
         # the tree is already parsed, so we don't need to worry about Expat errors
         field_dict = {}
-        desc = rdf_tag.find(".//" + RDFNS('Description') )
+        desc = rdf_tag.find(".//" + RDFNS('Description'))
 
         if desc is None:
             raise NoDublinCore("No DublinCore section found.")
@@ -199,7 +208,7 @@ class BookInfo(object):
             fv.append(e.text)
             field_dict[e.tag] = fv
 
-        return cls( desc.attrib, field_dict )
+        return cls(desc.attrib, field_dict)
 
     def __init__(self, rdf_attrs, dc_fields):
         """rdf_attrs should be a dictionary-like object with any attributes of the RDF:Description.
@@ -286,7 +295,6 @@ class BookInfo(object):
 
         return root
 
-
     def serialize(self):
         rdf = {}
         rdf['about'] = { 'uri': RDFNS('about'), 'value': self.about }
@@ -324,5 +332,27 @@ class BookInfo(object):
 
         return result
 
-def parse(file_name):
-    return BookInfo.from_file(file_name)
+
+class BookInfo(WorkInfo):
+    FIELDS = (
+        Field( DCNS('audience'), 'audiences', salias='audience', multiple=True,
+                required=False),
+        Field( DCNS('contributor.editor'), 'editors', \
+            as_person, salias='editor', multiple=True, default=[]),
+        Field( DCNS('contributor.translator'), 'translators', \
+            as_person,  salias='translator', multiple=True, default=[]),
+        Field( DCNS('contributor.technical_editor'), 'technical_editors',
+            as_person, salias='technical_editor', multiple=True, default=[]),
+        Field( DCNS('relation.hasPart'), 'parts', WLURI, multiple=True, required=False),
+        Field( DCNS('rights.license'), 'license', required=False),
+        Field( DCNS('rights'), 'license_description'),
+        Field( DCNS('language'), 'language'),
+        Field( DCNS('description'), 'description', required=False),
+        Field( DCNS('relation.cover_image.url'), 'cover_url', required=False),
+        Field( DCNS('relation.cover_image.attribution'), 'cover_by', required=False),
+        Field( DCNS('relation.cover_image.source'), 'cover_source', required=False),
+    )
+
+
+def parse(file_name, cls=BookInfo):
+    return cls.from_file(file_name)
