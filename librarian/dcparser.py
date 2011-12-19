@@ -148,17 +148,25 @@ class WorkInfo(object):
         Field( DCNS('title'), 'title'),
         Field( DCNS('type'), 'type', required=False, multiple=True),
 
-        Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
-        Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
-        Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True),
+        Field( DCNS('contributor.editor'), 'editors', \
+            as_person, salias='editor', multiple=True, default=[]),
+        Field( DCNS('contributor.technical_editor'), 'technical_editors',
+            as_person, salias='technical_editor', multiple=True, default=[]),
 
         Field( DCNS('date'), 'created_at', as_date),
         Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
         Field( DCNS('publisher'), 'publisher'),
 
+        Field( DCNS('language'), 'language'),
+        Field( DCNS('description'), 'description', required=False),
+
         Field( DCNS('source'), 'source_name', required=False),
         Field( DCNS('source.URL'), 'source_url', required=False),
         Field( DCNS('identifier.url'), 'url', WLURI),
+
+        Field( DCNS('rights.license'), 'license', required=False),
+        Field( DCNS('rights'), 'license_description'),
+
         )
 
     @classmethod
@@ -208,6 +216,7 @@ class WorkInfo(object):
             fv.append(e.text)
             field_dict[e.tag] = fv
 
+        print field_dict
         return cls(desc.attrib, field_dict)
 
     def __init__(self, rdf_attrs, dc_fields):
@@ -337,17 +346,14 @@ class BookInfo(WorkInfo):
     FIELDS = (
         Field( DCNS('audience'), 'audiences', salias='audience', multiple=True,
                 required=False),
-        Field( DCNS('contributor.editor'), 'editors', \
-            as_person, salias='editor', multiple=True, default=[]),
+
+        Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
+        Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
+        Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True),
+                
         Field( DCNS('contributor.translator'), 'translators', \
             as_person,  salias='translator', multiple=True, default=[]),
-        Field( DCNS('contributor.technical_editor'), 'technical_editors',
-            as_person, salias='technical_editor', multiple=True, default=[]),
         Field( DCNS('relation.hasPart'), 'parts', WLURI, multiple=True, required=False),
-        Field( DCNS('rights.license'), 'license', required=False),
-        Field( DCNS('rights'), 'license_description'),
-        Field( DCNS('language'), 'language'),
-        Field( DCNS('description'), 'description', required=False),
     )
 
 

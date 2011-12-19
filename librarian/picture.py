@@ -30,9 +30,13 @@ class PictureInfo(WorkInfo):
     Dublin core metadata for a picture
     """
     FIELDS = (
-        Field(DCNS('format.dimensions.digital'), 'dimensions', required=False),
-        Field(DCNS('format.dimensions.original'), 'dimensions_original', required=False),
-        Field(DCNS('format.physical'), 'physical', required=False),
+        Field(DCNS('language'), 'language', required=False),
+        Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
+        Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
+
+        Field(DCNS('format.dimensions'), 'dimensions', required=False),
+        Field(DCNS('description.medium'), 'medium', required=False),
+        Field(DCNS('description.dimensions'), 'original_dimensions', required=False),
         Field(DCNS('format'), 'mime_type', required=False),
         Field(DCNS('identifier.url'), 'url', WLPictureURI),
         )
@@ -42,7 +46,7 @@ class PictureInfo(WorkInfo):
         WorkInfo has a language validation code only, which we do not need.
         """
         pass
-    
+
 
 class ImageStore(object):
     EXT = ['gif', 'jpeg', 'png', 'swf', 'psd', 'bmp'
