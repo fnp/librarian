@@ -21,7 +21,7 @@
       <dc:format xml:lang="pl">image/png</dc:format>
       <dc:format.dimensions.digital xml:lang="pl">1645 x 2000 px</dc:format.dimensions.digital>
       <dc:date xml:lang="pl">1920</dc:date>
-      <dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"></dc:language>
+      <dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">lat</dc:language>
     </rdf:Description>
   </rdf:RDF>
 
