@@ -118,7 +118,7 @@ class Cover(object):
         }
 
     def __init__(self, book_info):
-        self.author = book_info.author.readable()
+        self.author = ", ".join(auth.readable() for auth in book_info.authors)
         self.title = book_info.title
 
     def pretty_author(self):

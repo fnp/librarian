@@ -144,7 +144,7 @@ class WorkInfo(object):
     __metaclass__ = DCInfo
 
     FIELDS = (
-        Field( DCNS('creator'), 'author', as_person),
+        Field( DCNS('creator'), 'authors', as_person, salias='author', multiple=True),
         Field( DCNS('title'), 'title'),
         Field( DCNS('type'), 'type', required=False, multiple=True),
 
@@ -163,7 +163,6 @@ class WorkInfo(object):
         Field( DCNS('source'), 'source_name', required=False),
         Field( DCNS('source.URL'), 'source_url', required=False),
         Field( DCNS('identifier.url'), 'url', WLURI),
-
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
     )
@@ -357,7 +356,6 @@ class BookInfo(WorkInfo):
         Field( DCNS('relation.cover_image.url'), 'cover_url', required=False),
         Field( DCNS('relation.cover_image.attribution'), 'cover_by', required=False),
         Field( DCNS('relation.cover_image.source'), 'cover_source', required=False),
-
     )
 
 
