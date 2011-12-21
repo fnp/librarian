@@ -24,14 +24,16 @@
       <dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">lat</dc:language>
     </rdf:Description>
   </rdf:RDF>
-
-  <sem type="motif" motif="anioł historii">
+  <sem type="object" object="obraz cały">
+    <div type="whole"/>
+  </sem>
+  <sem type="theme" theme="anioł historii">
     <div type="area" x1="462" y1="212" x2="1283" y2="1730"/>
   </sem>
-  <sem type="motif" motif="spojrzenie">
+  <sem type="theme" theme="spojrzenie">
     <div type="area" x1="688" y1="500" x2="1054" y2="618"/>
   </sem>
-  <sem type="object" name="skrzydło">
+  <sem type="object" object="skrzydło">
     <div type="area" x1="468" y1="741" x2="694" y2="1027"/>
     <div type="area" x1="1044" y1="762" x2="1260" y2="1041"/>
   </sem>

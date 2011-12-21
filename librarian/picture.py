@@ -153,3 +153,28 @@ class WLPicture(object):
 
     def image_file(self, *args, **kwargs):
         return open(self.image_path, *args, **kwargs)
+
+    def partiter(self):
+        """
+        Iterates the parts of this picture and returns them and their metadata
+        """
+        for part in self.edoc.iter("div"):
+            pd = {}
+            pd['type'] = part.get('type')
+            if pd['type'] == 'area':
+                pd['coords'] = ((int(part.get('x1')), int(part.get('y1'))),
+                                (int(part.get('x2')), int(part.get('y2'))))
+
+            pd['themes'] = []
+            pd['object'] = None
+            parent = part
+            while True:
+                parent = parent.getparent()
+                if parent is None:
+                    break
+                if parent.tag == 'sem':
+                    if parent.get('type') == 'theme':
+                        pd['themes'] += map(unicode.strip, unicode(parent.get('theme')).split(','))
+                    elif parent.get('type') == 'object' and not pd['object']:
+                        pd['object'] = parent.get('name')
+            yield pd

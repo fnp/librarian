@@ -38,3 +38,22 @@ def test_wlpicture():
     
     f = wlp.image_file('r')
     f.close()
+
+def test_picture_parts():
+    wlp = picture.WLPicture.from_file(open(get_fixture('picture', 'angelus-novus.xml')))
+    parts = list(wlp.partiter())
+    assert len(parts) == 5, "there should be %d parts of the picture" % 5
+    motifs = set()
+    names = set()
+    
+    for p in parts:
+        for m in p['motifs']:
+            motifs.add(m)
+    for p in parts:
+        if p['object']:
+            names.add(p['object'])
+
+    assert motifs == set([u'anioł historii', u'spojrzenie']), "missing motifs, got: %s" % motifs
+    assert names == set([u'obraz cały', u'skrzydło']), 'missing objects, got: %s' % names
+    
+        
