@@ -214,7 +214,6 @@ class WorkInfo(object):
             fv.append(e.text)
             field_dict[e.tag] = fv
 
-        print field_dict
         return cls(desc.attrib, field_dict)
 
     def __init__(self, rdf_attrs, dc_fields):
