@@ -126,7 +126,7 @@ class Field(object):
 
 class DCInfo(type):
     def __new__(meta, classname, bases, class_dict):
-        fields = class_dict['FIELDS']
+        fields = list(class_dict['FIELDS'])
 
         for base in bases[::-1]:
             if hasattr(base, 'FIELDS'):
@@ -136,7 +136,7 @@ class DCInfo(type):
                     except ValueError:
                         fields = (field,) + fields
 
-        class_dict['FIELDS'] = fields
+        class_dict['FIELDS'] = tuple(fields)
         return super(DCInfo, meta).__new__(meta, classname, bases, class_dict)
 
 
