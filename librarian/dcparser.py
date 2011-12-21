@@ -134,7 +134,7 @@ class DCInfo(type):
                     try:
                         fields.index(field)
                     except ValueError:
-                        fields = (field,) + fields
+                        fields.insert(0, field)
 
         class_dict['FIELDS'] = tuple(fields)
         return super(DCInfo, meta).__new__(meta, classname, bases, class_dict)
