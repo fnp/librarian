@@ -19,7 +19,8 @@
       <dc:date.pd xml:lang="pl">1940</dc:date.pd>
       <dc:type>Image</dc:type>
       <dc:format xml:lang="pl">image/png</dc:format>
-      <dc:format.dimensions.digital xml:lang="pl">1645 x 2000 px</dc:format.dimensions.digital>
+      <dc:format.dimensions xml:lang="pl">1645 x 2000 px</dc:format.dimensions>
+      <dc:format.checksum.sha1 xml:lang="pl">d9ead48f3442ac4e1add602aacdffa4638ae8e21</dc:format.checksum.sha1>
       <dc:date xml:lang="pl">1920</dc:date>
       <dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">lat</dc:language>
     </rdf:Description>

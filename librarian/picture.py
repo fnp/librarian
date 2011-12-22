@@ -176,6 +176,6 @@ class WLPicture(object):
                 if parent.tag == 'sem':
                     if parent.get('type') == 'theme':
                         pd['themes'] += map(unicode.strip, unicode(parent.get('theme')).split(','))
-                    elif parent.get('type') == 'object' and not pd['object']:
-                        pd['object'] = parent.get('name')
+                    elif parent.get('type') == 'object' and pd['object'] is None:
+                        pd['object'] = parent.get('object')
             yield pd

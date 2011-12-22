@@ -45,9 +45,10 @@ def test_picture_parts():
     assert len(parts) == 5, "there should be %d parts of the picture" % 5
     motifs = set()
     names = set()
-    
+
+    print parts
     for p in parts:
-        for m in p['motifs']:
+        for m in p['themes']:
             motifs.add(m)
     for p in parts:
         if p['object']:
