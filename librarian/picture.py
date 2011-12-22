@@ -35,6 +35,7 @@ class PictureInfo(WorkInfo):
         Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
 
         Field(DCNS('format.dimensions'), 'dimensions', required=False),
+        Field(DCNS('format.checksum.sha1'), 'sha1', required=True),
         Field(DCNS('description.medium'), 'medium', required=False),
         Field(DCNS('description.dimensions'), 'original_dimensions', required=False),
         Field(DCNS('format'), 'mime_type', required=False),
