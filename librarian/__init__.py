@@ -66,42 +66,35 @@ WLNS = EmptyNamespace()
 
 
 class WLURI(object):
-    """Represents a WL URI. Extracts slug and language from it."""
-    DEFAULT_LANGUAGE = u'pol'
-
+    """Represents a WL URI. Extracts slug from it."""
     slug = None
-    language = None
 
     example = 'http://wolnelektury.pl/katalog/lektura/template/'
     _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/lektura/'
-            '(?P<slug>[-a-z0-9]+)(/(?P<lang>[a-z]{3}))?/?$')
+            '(?P<slug>[-a-z0-9]+)/?$')
 
-    def __init__(self, uri=None):
-        if uri is not None:
-            uri = unicode(uri)
-            self.uri = uri
-            match = self._re_wl_uri.match(uri)
-            if not match:
-                raise ValueError('Supplied URI (%s) does not match '
-                        'the WL document URI template.' % uri)
-            self.slug = match.group('slug')
-            self.language = match.group('lang') or self.DEFAULT_LANGUAGE
+    def __init__(self, uri):
+        uri = unicode(uri)
+        self.uri = uri
+        self.slug = uri.rstrip('/').rsplit('/', 1)[-1]
 
     @classmethod
-    def from_slug_and_lang(cls, slug, lang):
-        """Contructs an URI from slug and language code.
+    def strict(cls, uri):
+        match = cls._re_wl_uri.match(uri)
+        if not match:
+            raise ValueError('Supplied URI (%s) does not match '
+                'the template: %s.' % (uri, cls._re_wl_uri))
+        return cls(uri)
 
-        >>> WLURI.from_slug_and_lang('a-slug', WLURI.DEFAULT_LANGUAGE).uri
+    @classmethod
+    def from_slug(cls, slug):
+        """Contructs an URI from slug.
+
+        >>> WLURI.from_slug('a-slug').uri
         u'http://wolnelektury.pl/katalog/lektura/a-slug/'
-        >>> WLURI.from_slug_and_lang('a-slug', 'deu').uri
-        u'http://wolnelektury.pl/katalog/lektura/a-slug/deu/'
 
         """
-        if lang is None:
-            lang = cls.DEFAULT_LANGUAGE
         uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
-        if lang is not None and lang != cls.DEFAULT_LANGUAGE:
-            uri += lang + '/'
         return cls(uri)
 
     def __unicode__(self):
@@ -111,17 +104,7 @@ class WLURI(object):
         return self.uri
 
     def __eq__(self, other):
-        return self.slug, self.language == other.slug, other.language
-
-    def filename_stem(self):
-        stem = self.slug
-        if self.language != self.DEFAULT_LANGUAGE:
-            stem += '_' + self.language
-        return stem
-
-    def validate_language(self, language):
-        if language != self.language:
-            raise ValidationError("Incorrect language definition in URI")
+        return self.slug == other.slug
 
 
 class DocProvider(object):
@@ -130,18 +113,14 @@ class DocProvider(object):
     Used for generating joined files, like EPUBs.
     """
 
-    def by_slug_and_lang(self, slug, lang=None):
-        """Should return a file-like object with a WL document XML."""
-        raise NotImplementedError
-
     def by_slug(self, slug):
         """Should return a file-like object with a WL document XML."""
-        return self.by_slug_and_lang(slug)
+        raise NotImplementedError
 
     def by_uri(self, uri, wluri=WLURI):
         """Should return a file-like object with a WL document XML."""
         wluri = wluri(uri)
-        return self.by_slug_and_lang(wluri.slug, wluri.language)
+        return self.by_slug(wluri.slug)
 
 
 class DirDocProvider(DocProvider):
@@ -151,8 +130,8 @@ class DirDocProvider(DocProvider):
         self.dir = dir_
         self.files = {}
 
-    def by_slug_and_lang(self, slug, lang=None):
-        fname = WLURI.from_slug_and_lang(slug, lang).filename_stem() + '.xml'
+    def by_slug(self, slug):
+        fname = slug + '.xml'
         return open(os.path.join(self.dir, fname))
 
 
@@ -167,7 +146,7 @@ DEFAULT_BOOKINFO = dcparser.BookInfo(
           DCNS('subject.type'): [u'Unknown'],
           DCNS('subject.genre'): [u'Unknown'],
           DCNS('date'): ['1970-01-01'],
-          DCNS('language'): [WLURI.DEFAULT_LANGUAGE],
+          DCNS('language'): [u'pol'],
           # DCNS('date'): [creation_date],
           DCNS('publisher'): [u"Fundacja Nowoczesna Polska"],
           DCNS('description'):

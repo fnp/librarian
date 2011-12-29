@@ -19,7 +19,7 @@ class WLDocument(object):
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
 
-    def __init__(self, edoc, parse_dublincore=True, provider=None):
+    def __init__(self, edoc, parse_dublincore=True, provider=None, strict=False):
         self.edoc = edoc
         self.provider = provider
 
@@ -36,7 +36,8 @@ class WLDocument(object):
             if self.rdf_elem is None:
                 raise NoDublinCore('Document has no DublinCore - which is required.')
 
-            self.book_info = dcparser.BookInfo.from_element(self.rdf_elem)
+            self.book_info = dcparser.BookInfo.from_element(
+                    self.rdf_elem, strict=strict)
         else:
             self.book_info = None
 
@@ -192,7 +193,7 @@ class WLDocument(object):
                 save_path = os.path.join(save_path,
                         unicode(self.book_info.author).encode('utf-8'))
             save_path = os.path.join(save_path,
-                                self.book_info.uri.filename_stem())
+                                self.book_info.uri.slug)
             if ext:
                 save_path += '.%s' % ext
         else:

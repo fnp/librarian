@@ -70,8 +70,7 @@ def as_date(text):
     except ValueError, e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
-def as_person(text):
-    return Person.from_text(text)
+as_person = Person.from_text
 
 def as_unicode(text):
     if isinstance(text, unicode):
@@ -80,34 +79,39 @@ def as_unicode(text):
         return text.decode('utf-8')
 
 class Field(object):
-    def __init__(self, uri, attr_name, type=as_unicode, multiple=False, salias=None, **kwargs):
+    def __init__(self, uri, attr_name, validator=as_unicode, strict=None, multiple=False, salias=None, **kwargs):
         self.uri = uri
         self.name = attr_name
-        self.validator = type
+        self.validator = lambda x: validator(x)
+        self.strict = lambda x: strict(x)
         self.multiple = multiple
         self.salias = salias
 
         self.required = kwargs.get('required', True) and not kwargs.has_key('default')
         self.default = kwargs.get('default', [] if multiple else [None])
 
-    def validate_value(self, val):
+    def validate_value(self, val, strict=False):
+        if strict and self.strict is not None:
+            validator = self.strict
+        else:
+            validator = self.validator
         try:
             if self.multiple:
-                if self.validator is None:
+                if validator is None:
                     return val
-                return [ self.validator(v) if v is not None else v for v in val ]
+                return [ validator(v) if v is not None else v for v in val ]
             elif len(val) > 1:
                 raise ValidationError("Multiple values not allowed for field '%s'" % self.uri)
             elif len(val) == 0:
                 raise ValidationError("Field %s has no value to assign. Check your defaults." % self.uri)
             else:
-                if self.validator is None or val[0] is None:
+                if validator is None or val[0] is None:
                     return val[0]
-                return self.validator(val[0])
+                return validator(val[0])
         except ValueError, e:
             raise ValidationError("Field '%s' - invald value: %s" % (self.uri, e.message))
 
-    def validate(self, fdict):
+    def validate(self, fdict, strict=False):
         if not fdict.has_key(self.uri):
             if not self.required:
                 f = self.default
@@ -116,7 +120,7 @@ class Field(object):
         else:
             f = fdict[self.uri]
 
-        return self.validate_value(f)
+        return self.validate_value(f, strict=strict)
 
     def __eq__(self, other):
         if isinstance(other, Field) and other.name == self.name:
@@ -162,18 +166,18 @@ class WorkInfo(object):
 
         Field( DCNS('source'), 'source_name', required=False),
         Field( DCNS('source.URL'), 'source_url', required=False),
-        Field( DCNS('identifier.url'), 'url', WLURI),
+        Field( DCNS('identifier.url'), 'url', WLURI, strict=WLURI.strict),
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
     )
 
     @classmethod
-    def from_string(cls, xml):
+    def from_string(cls, xml, *args, **kwargs):
         from StringIO import StringIO
-        return cls.from_file(StringIO(xml))
+        return cls.from_file(StringIO(xml), *args, **kwargs)
 
     @classmethod
-    def from_file(cls, xmlfile):
+    def from_file(cls, xmlfile, *args, **kwargs):
         desc_tag = None
         try:
             iter = etree.iterparse(xmlfile, ['start', 'end'])
@@ -194,14 +198,14 @@ class WorkInfo(object):
             # if there is no end, Expat should yell at us with an ExpatError
 
             # extract data from the element and make the info
-            return cls.from_element(desc_tag)
+            return cls.from_element(desc_tag, *args, **kwargs)
         except XMLSyntaxError, e:
             raise ParseError(e)
         except ExpatError, e:
             raise ParseError(e)
 
     @classmethod
-    def from_element(cls, rdf_tag):
+    def from_element(cls, rdf_tag, *args, **kwargs):
         # the tree is already parsed, so we don't need to worry about Expat errors
         field_dict = {}
         desc = rdf_tag.find(".//" + RDFNS('Description'))
@@ -214,9 +218,9 @@ class WorkInfo(object):
             fv.append(e.text)
             field_dict[e.tag] = fv
 
-        return cls(desc.attrib, field_dict)
+        return cls(desc.attrib, field_dict, *args, **kwargs)
 
-    def __init__(self, rdf_attrs, dc_fields):
+    def __init__(self, rdf_attrs, dc_fields, strict=False):
         """rdf_attrs should be a dictionary-like object with any attributes of the RDF:Description.
         dc_fields - dictionary mapping DC fields (with namespace) to list of text values for the
         given field. """
@@ -225,15 +229,10 @@ class WorkInfo(object):
         self.fmap = {}
 
         for field in self.FIELDS:
-            value = field.validate( dc_fields )
+            value = field.validate(dc_fields, strict=strict)
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias: self.fmap[field.salias] = field
-
-        self.validate()
-
-    def validate(self):
-        self.url.validate_language(self.language)
 
     def __getattribute__(self, name):
         try:
@@ -350,7 +349,10 @@ class BookInfo(WorkInfo):
                 
         Field( DCNS('contributor.translator'), 'translators', \
             as_person,  salias='translator', multiple=True, default=[]),
-        Field( DCNS('relation.hasPart'), 'parts', WLURI, multiple=True, required=False),
+        Field( DCNS('relation.hasPart'), 'parts', 
+            WLURI, strict=WLURI.strict, multiple=True, required=False),
+        Field( DCNS('relation.isVariantOf'), 'variant_of', 
+            WLURI, strict=WLURI.strict, required=False),
 
         Field( DCNS('relation.cover_image.url'), 'cover_url', required=False),
         Field( DCNS('relation.cover_image.attribution'), 'cover_by', required=False),

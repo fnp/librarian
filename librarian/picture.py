@@ -11,18 +11,12 @@ import re
 
 class WLPictureURI(WLURI):
     _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/obraz/'
-            '(?P<slug>[-a-z0-9]+)(/(?P<lang>[a-z]{3}))?/?$')
-
-    def __init__(self, *args, **kw):
-        super(WLPictureURI, self).__init__(*args, **kw)
+            '(?P<slug>[-a-z0-9]+)/?$')
 
     @classmethod
-    def from_slug_and_lang(cls, slug, lang):
+    def from_slug(cls, slug):
         uri = 'http://wolnelektury.pl/katalog/obraz/%s/' % slug
         return cls(uri)
-
-    def filename_stem(self):
-        return self.slug
 
 
 class PictureInfo(WorkInfo):
@@ -39,14 +33,8 @@ class PictureInfo(WorkInfo):
         Field(DCNS('description.medium'), 'medium', required=False),
         Field(DCNS('description.dimensions'), 'original_dimensions', required=False),
         Field(DCNS('format'), 'mime_type', required=False),
-        Field(DCNS('identifier.url'), 'url', WLPictureURI),
+        Field(DCNS('identifier.url'), 'url', WLPictureURI, strict=WLPictureURI.strict),
         )
-
-    def validate(self):
-        """
-        WorkInfo has a language validation code only, which we do not need.
-        """
-        pass
 
 
 class ImageStore(object):
