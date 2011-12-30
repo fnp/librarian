@@ -70,7 +70,8 @@ def as_date(text):
     except ValueError, e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
-as_person = Person.from_text
+def as_person(text):
+    return Person.from_text(text)
 
 def as_unicode(text):
     if isinstance(text, unicode):
@@ -78,12 +79,15 @@ def as_unicode(text):
     else:
         return text.decode('utf-8')
 
+def as_wluri_strict(text):
+    return WLURI.strict(text)
+
 class Field(object):
     def __init__(self, uri, attr_name, validator=as_unicode, strict=None, multiple=False, salias=None, **kwargs):
         self.uri = uri
         self.name = attr_name
-        self.validator = lambda x: validator(x)
-        self.strict = lambda x: strict(x)
+        self.validator = validator
+        self.strict = strict
         self.multiple = multiple
         self.salias = salias
 
@@ -166,7 +170,7 @@ class WorkInfo(object):
 
         Field( DCNS('source'), 'source_name', required=False),
         Field( DCNS('source.URL'), 'source_url', required=False),
-        Field( DCNS('identifier.url'), 'url', WLURI, strict=WLURI.strict),
+        Field( DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
     )
@@ -350,9 +354,9 @@ class BookInfo(WorkInfo):
         Field( DCNS('contributor.translator'), 'translators', \
             as_person,  salias='translator', multiple=True, default=[]),
         Field( DCNS('relation.hasPart'), 'parts', 
-            WLURI, strict=WLURI.strict, multiple=True, required=False),
+            WLURI, strict=as_wluri_strict, multiple=True, required=False),
         Field( DCNS('relation.isVariantOf'), 'variant_of', 
-            WLURI, strict=WLURI.strict, required=False),
+            WLURI, strict=as_wluri_strict, required=False),
 
         Field( DCNS('relation.cover_image.url'), 'cover_url', required=False),
         Field( DCNS('relation.cover_image.attribution'), 'cover_by', required=False),

@@ -18,6 +18,9 @@ class WLPictureURI(WLURI):
         uri = 'http://wolnelektury.pl/katalog/obraz/%s/' % slug
         return cls(uri)
 
+def as_wlpictureuri_strict(text):
+    return WLPictureURI.strict(text)
+
 
 class PictureInfo(WorkInfo):
     """
@@ -33,7 +36,8 @@ class PictureInfo(WorkInfo):
         Field(DCNS('description.medium'), 'medium', required=False),
         Field(DCNS('description.dimensions'), 'original_dimensions', required=False),
         Field(DCNS('format'), 'mime_type', required=False),
-        Field(DCNS('identifier.url'), 'url', WLPictureURI, strict=WLPictureURI.strict),
+        Field(DCNS('identifier.url'), 'url', WLPictureURI,
+            strict=as_wlpictureuri_strict),
         )
 
 
