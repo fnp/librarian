@@ -228,10 +228,12 @@ def add_table_of_contents(root):
             if any_ancestor(element, lambda e: e.get('id') in ('footnotes',) or e.get('class') in ('person-list',)):
                 continue
 
+            element_text = etree.tostring(element, method='text',
+                    encoding=unicode).strip()
             if element.tag == 'h3' and len(sections) and sections[-1][1] == 'h2':
-                sections[-1][3].append((counter, element.tag, ''.join(element.xpath('text()')), []))
+                sections[-1][3].append((counter, element.tag, element_text, []))
             else:
-                sections.append((counter, element.tag, ''.join(element.xpath('text()')), []))
+                sections.append((counter, element.tag, element_text, []))
             add_anchor(element, "s%d" % counter, with_link=False)
             counter += 1
 
