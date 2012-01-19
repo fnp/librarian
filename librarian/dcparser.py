@@ -347,9 +347,12 @@ class BookInfo(WorkInfo):
         Field( DCNS('audience'), 'audiences', salias='audience', multiple=True,
                 required=False),
 
-        Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
-        Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
-        Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True),
+        Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True,
+                required=False),
+        Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True,
+                required=False),
+        Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True,
+                required=False),
                 
         Field( DCNS('contributor.translator'), 'translators', \
             as_person,  salias='translator', multiple=True, default=[]),
@@ -358,9 +361,9 @@ class BookInfo(WorkInfo):
         Field( DCNS('relation.isVariantOf'), 'variant_of', 
             WLURI, strict=as_wluri_strict, required=False),
 
-        Field( DCNS('relation.cover_image.url'), 'cover_url', required=False),
-        Field( DCNS('relation.cover_image.attribution'), 'cover_by', required=False),
-        Field( DCNS('relation.cover_image.source'), 'cover_source', required=False),
+        Field( DCNS('relation.coverImage.url'), 'cover_url', required=False),
+        Field( DCNS('relation.coverImage.attribution'), 'cover_by', required=False),
+        Field( DCNS('relation.coverImage.source'), 'cover_source', required=False),
     )
 
 
