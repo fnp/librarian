@@ -13,14 +13,11 @@ from StringIO import StringIO
 from copy import deepcopy
 from lxml import etree
 import zipfile
-from tempfile import mkdtemp
+from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
-import sys
-
-from librarian import XMLNamespace, RDFNS, DCNS, WLNS, NCXNS, OPFNS, XHTMLNS, NoDublinCore
-from librarian.dcparser import BookInfo
-from librarian.cover import ImageCover
+from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
+from librarian.cover import WLCover
 
 from librarian import functions, get_resource
 
@@ -160,19 +157,23 @@ def add_to_spine(spine, partno):
 
 
 class TOC(object):
-    def __init__(self, name=None, part_number=None):
+    def __init__(self, name=None, part_href=None):
         self.children = []
         self.name = name
-        self.part_number = part_number
+        self.part_href = part_href
         self.sub_number = None
 
-    def add(self, name, part_number, level=0, is_part=True):
+    def add(self, name, part_href, level=0, is_part=True, index=None):
+        assert level == 0 or index is None
         if level > 0 and self.children:
-            return self.children[-1].add(name, part_number, level-1, is_part)
+            return self.children[-1].add(name, part_href, level-1, is_part)
         else:
             t = TOC(name)
-            t.part_number = part_number
-            self.children.append(t)
+            t.part_href = part_href
+            if index is not None:
+                self.children.insert(index, t)
+            else:
+                self.children.append(t)
             if not is_part:
                 t.sub_number = len(self.children) + 1
                 return t.sub_number
@@ -189,7 +190,13 @@ class TOC(object):
         else:
             return 0
 
-    def write_to_xml(self, nav_map, counter):
+    def href(self):
+        src = self.part_href
+        if self.sub_number is not None:
+            src += '#sub%d' % self.sub_number
+        return src
+
+    def write_to_xml(self, nav_map, counter=1):
         for child in self.children:
             nav_point = nav_map.makeelement(NCXNS('navPoint'))
             nav_point.set('id', 'NavPoint-%d' % counter)
@@ -202,14 +209,25 @@ class TOC(object):
             nav_point.append(nav_label)
 
             content = nav_map.makeelement(NCXNS('content'))
-            src = 'part%d.html' % child.part_number
-            if child.sub_number is not None:
-                src += '#sub%d' % child.sub_number
-            content.set('src', src)
+            content.set('src', child.href())
             nav_point.append(content)
             nav_map.append(nav_point)
             counter = child.write_to_xml(nav_point, counter + 1)
         return counter
+
+    def html_part(self, depth=0):
+        texts = []
+        for child in self.children:
+            texts.append(
+                "<div style='margin-left:%dem;'><a href='%s'>%s</a></div>" %
+                (depth, child.href(), child.name))
+            texts.append(child.html_part(depth+1))
+        return "\n".join(texts)
+
+    def html(self):
+        with open(get_resource('epub/toc.html')) as f:
+            t = unicode(f.read(), 'utf-8')
+        return t % self.html_part()
 
 
 def used_chars(element):
@@ -250,9 +268,9 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     toc = TOC()
     for element in chunk_xml[0]:
         if element.tag in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-            toc.add(node_name(element), chunk_no)
+            toc.add(node_name(element), "part%d.html" % chunk_no)
         elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
-            subnumber = toc.add(node_name(element), chunk_no, level=1, is_part=False)
+            subnumber = toc.add(node_name(element), "part%d.html" % chunk_no, level=1, is_part=False)
             element.set('sub', str(subnumber))
     if empty:
         if not _empty_html_static:
@@ -268,44 +286,40 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     return output_html, toc, chars
 
 
-def transform(provider, slug=None, file_path=None, output_file=None, output_dir=None, make_dir=False, verbose=False,
+def transform(wldoc, verbose=False,
+              style=None, html_toc=False,
               sample=None, cover=None, flags=None):
     """ produces a EPUB file
 
-    provider: a DocProvider
-    slug: slug of file to process, available by provider
-    output_file: file-like object or path to output file
-    output_dir: path to directory to save output file to; either this or output_file must be present
-    make_dir: writes output to <output_dir>/<author>/<slug>.epub instead of <output_dir>/<slug>.epub
     sample=n: generate sample e-book (with at least n paragraphs)
-    cover: a cover.Cover object
-    flags: less-advertising, images, not-wl
+    cover: a cover.Cover object or True for default
+    flags: less-advertising, without-fonts, images, not-wl
     """
 
-    def transform_file(input_xml, chunk_counter=1, first=True, sample=None):
+    def transform_file(wldoc, chunk_counter=1, first=True, sample=None):
         """ processes one input file and proceeds to its children """
 
-        replace_characters(input_xml.getroot())
-
-        children = [child.text for child in input_xml.findall('.//'+DCNS('relation.hasPart'))]
+        replace_characters(wldoc.edoc.getroot())
 
         # every input file will have a TOC entry,
         # pointing to starting chunk
-        toc = TOC(node_name(input_xml.find('.//'+DCNS('title'))), chunk_counter)
+        toc = TOC(wldoc.book_info.title, "part%d.html" % chunk_counter)
         chars = set()
         if first:
             # write book title page
-            html_tree = xslt(input_xml, get_resource('epub/xsltTitle.xsl'))
+            html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'))
             chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/title.html',
                  etree.tostring(html_tree, method="html", pretty_print=True))
-        elif children:
+            # add a title page TOC entry
+            toc.add(u"Strona tytułowa", "title.html")
+        elif wldoc.book_info.parts:
             # write title page for every parent
             if sample is not None and sample <= 0:
                 chars = set()
                 html_string = open(get_resource('epub/emptyChunk.html')).read()
             else:
-                html_tree = xslt(input_xml, get_resource('epub/xsltChunkTitle.xsl'))
+                html_tree = xslt(wldoc.edoc, get_resource('epub/xsltChunkTitle.xsl'))
                 chars = used_chars(html_tree.getroot())
                 html_string = etree.tostring(html_tree, method="html", pretty_print=True)
             zip.writestr('OPS/part%d.html' % chunk_counter, html_string)
@@ -313,12 +327,12 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
             add_to_spine(spine, chunk_counter)
             chunk_counter += 1
 
-        if len(input_xml.getroot()) > 1:
+        if len(wldoc.edoc.getroot()) > 1:
             # rdf before style master
-            main_text = input_xml.getroot()[1]
+            main_text = wldoc.edoc.getroot()[1]
         else:
             # rdf in style master
-            main_text = input_xml.getroot()[0]
+            main_text = wldoc.edoc.getroot()[0]
             if main_text.tag == RDFNS('RDF'):
                 main_text = None
 
@@ -339,54 +353,28 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                 add_to_spine(spine, chunk_counter)
                 chunk_counter += 1
 
-        if children:
-            for child in children:
-                child_xml = etree.parse(provider.by_uri(child))
-                child_toc, chunk_counter, chunk_chars, sample = transform_file(child_xml, chunk_counter, first=False, sample=sample)
-                toc.append(child_toc)
-                chars = chars.union(chunk_chars)
+        for child in wldoc.parts():
+            child_toc, chunk_counter, chunk_chars, sample = transform_file(
+                child, chunk_counter, first=False, sample=sample)
+            toc.append(child_toc)
+            chars = chars.union(chunk_chars)
 
         return toc, chunk_counter, chars, sample
 
-    # read metadata from the first file
-    if file_path:
-        if slug:
-            raise ValueError('slug or file_path should be specified, not both')
-        f = open(file_path, 'r')
-        input_xml = etree.parse(f)
-        f.close()
-    else:
-        if not slug:
-            raise ValueError('either slug or file_path should be specified')
-        input_xml = etree.parse(provider[slug])
+
+    document = deepcopy(wldoc)
+    del wldoc
 
     if flags:
         for flag in flags:
-            input_xml.getroot().set(flag, 'yes')
+            document.edoc.getroot().set(flag, 'yes')
 
-    metadata = input_xml.find('.//'+RDFNS('Description'))
-    if metadata is None:
-        raise NoDublinCore('Document has no DublinCore - which is required.')
-    book_info = BookInfo.from_element(input_xml)
-    metadata = etree.ElementTree(metadata)
-
-    # if output to dir, create the file
-    if output_dir is not None:
-        if make_dir:
-            author = unicode(book_info.author)
-            output_dir = os.path.join(output_dir, author)
-            try:
-                os.makedirs(output_dir)
-            except OSError:
-                pass
-        if slug:
-            output_file = open(os.path.join(output_dir, '%s.epub' % slug), 'w')
-        else:
-            output_file = open(os.path.join(output_dir, os.path.splitext(os.path.basename(file_path))[0] + '.epub'), 'w')
-
-    opf = xslt(metadata, get_resource('epub/xsltContent.xsl'))
+    opf = xslt(document.book_info.to_etree(), get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
+    guide = opf.find('.//' + OPFNS('guide'))
     spine = opf.find('.//' + OPFNS('spine'))
+
+    output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub', delete=False)
 
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
@@ -401,15 +389,29 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                        '<rootfiles><rootfile full-path="OPS/content.opf" ' \
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
-    zip.write(get_resource('epub/style.css'), os.path.join('OPS', 'style.css'))
     if not flags or 'not-wl' not in flags:
         manifest.append(etree.fromstring(
             '<item id="logo_wolnelektury" href="logo_wolnelektury.png" media-type="image/png" />'))
+        manifest.append(etree.fromstring(
+            '<item id="jedenprocent" href="jedenprocent.png" media-type="image/png" />'))
         zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
+        zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
+
+    if not style:
+        style = get_resource('epub/style.css')
+    zip.write(style, os.path.join('OPS', 'style.css'))
 
     if cover:
+        if cover is True:
+            cover = WLCover
+        if cover.uses_dc_cover:
+            if document.book_info.cover_by:
+                document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
+            if document.book_info.cover_source:
+                document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
+
         cover_file = StringIO()
-        c = cover(book_info.author.readable(), book_info.title)
+        c = cover(document.book_info)
         c.save(cover_file)
         c_name = 'cover.%s' % c.ext()
         zip.writestr(os.path.join('OPS', c_name), cover_file.getvalue())
@@ -424,12 +426,12 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
             '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
         manifest.append(etree.fromstring(
             '<item id="cover-image" href="%s" media-type="%s" />' % (c_name, c.mime_type())))
-        spine.insert(0, etree.fromstring('<itemref idref="cover" />'))
+        spine.insert(0, etree.fromstring('<itemref idref="cover" linear="no" />'))
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
-        opf.getroot().append(etree.fromstring('<guide><reference href="cover.html" type="cover" title="Okładka"/></guide>'))
+        guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
 
     if flags and 'images' in flags:
-        for ilustr in input_xml.findall('//ilustr'):
+        for ilustr in document.edoc.findall('//ilustr'):
             src = ilustr.get('src')
             mime = ImageCover(src)().mime_type()
             zip.write(src, os.path.join('OPS', src))
@@ -446,7 +448,7 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                 moved.tail = None
                 after.addnext(moved)
     else:
-        for ilustr in input_xml.findall('//ilustr'):
+        for ilustr in document.edoc.findall('//ilustr'):
             ilustr.tag = 'extra'
 
     annotations = etree.Element('annotations')
@@ -455,23 +457,24 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
                                '"-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">' \
                                '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" ' \
                                'version="2005-1"><head></head><docTitle></docTitle><navMap>' \
-                               '<navPoint id="NavPoint-1" playOrder="1"><navLabel>' \
-                               '<text>Strona tytułowa</text></navLabel><content src="title.html" />' \
-                               '</navPoint></navMap></ncx>')
+                               '</navMap></ncx>')
     nav_map = toc_file[-1]
 
-    toc, chunk_counter, chars, sample = transform_file(input_xml, sample=sample)
+    if html_toc:
+        manifest.append(etree.fromstring(
+            '<item id="html_toc" href="toc.html" media-type="application/xhtml+xml" />'))
+        spine.append(etree.fromstring(
+            '<itemref idref="html_toc" />'))
+        guide.append(etree.fromstring('<reference href="toc.html" type="toc" title="Spis treści"/>'))
 
-    if not toc.children:
-        toc.add(u"Początek utworu", 1)
-    toc_counter = toc.write_to_xml(nav_map, 2)
+    toc, chunk_counter, chars, sample = transform_file(document, sample=sample)
+
+    if len(toc.children) < 2:
+        toc.add(u"Początek utworu", "part1.html")
 
     # Last modifications in container files and EPUB creation
     if len(annotations) > 0:
-        nav_map.append(etree.fromstring(
-            '<navPoint id="NavPoint-%(i)d" playOrder="%(i)d" ><navLabel><text>Przypisy</text>'\
-            '</navLabel><content src="annotations.html" /></navPoint>' % {'i': toc_counter}))
-        toc_counter += 1
+        toc.add("Przypisy", "annotations.html")
         manifest.append(etree.fromstring(
             '<item id="annotations" href="annotations.html" media-type="application/xhtml+xml" />'))
         spine.append(etree.fromstring(
@@ -482,44 +485,44 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, method="html", pretty_print=True))
 
-    nav_map.append(etree.fromstring(
-        '<navPoint id="NavPoint-%(i)d" playOrder="%(i)d" ><navLabel><text>Strona redakcyjna</text>'\
-        '</navLabel><content src="last.html" /></navPoint>' % {'i': toc_counter}))
+    toc.add("Strona redakcyjna", "last.html")
     manifest.append(etree.fromstring(
         '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
         '<itemref idref="last" />'))
-    stopka = input_xml.find('//stopka')
+    stopka = document.edoc.find('//stopka')
     if stopka is not None:
         stopka.tag = 'stopka_'
         replace_by_verse(stopka)
         html_tree = xslt(stopka, get_resource('epub/xsltScheme.xsl'))
     else:
-        html_tree = xslt(input_xml, get_resource('epub/xsltLast.xsl'))
+        html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'))
     chars.update(used_chars(html_tree.getroot()))
     zip.writestr('OPS/last.html', etree.tostring(
                         html_tree, method="html", pretty_print=True))
 
-    # strip fonts
-    tmpdir = mkdtemp('-librarian-epub')
-    cwd = os.getcwd()
+    if not flags or not 'without-fonts' in flags:
+        # strip fonts
+        tmpdir = mkdtemp('-librarian-epub')
+        cwd = os.getcwd()
 
-    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
-    for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-        optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
-                          get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
-        if verbose:
-            print "Running font-optimizer"
-            subprocess.check_call(optimizer_call)
-        else:
-            subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
-    rmtree(tmpdir)
-    os.chdir(cwd)
+        os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
+        for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
+            optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
+                              get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
+            if verbose:
+                print "Running font-optimizer"
+                subprocess.check_call(optimizer_call)
+            else:
+                subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
+            manifest.append(etree.fromstring(
+                '<item id="%s" href="%s" media-type="font/ttf" />' % (fname, fname)))
+        rmtree(tmpdir)
+        os.chdir(cwd)
 
     zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
-    contents = []
-    title = node_name(etree.ETXPath('.//'+DCNS('title'))(input_xml)[0])
+    title = document.book_info.title
     attributes = "dtb:uid", "dtb:depth", "dtb:totalPageCount", "dtb:maxPageNumber"
     for st in attributes:
         meta = toc_file.makeelement(NCXNS('meta'))
@@ -529,5 +532,13 @@ def transform(provider, slug=None, file_path=None, output_file=None, output_dir=
     toc_file[0][0].set('content', ''.join((title, 'WolneLektury.pl')))
     toc_file[0][1].set('content', str(toc.depth()))
     set_inner_xml(toc_file[1], ''.join(('<text>', title, '</text>')))
+
+    # write TOC
+    if html_toc:
+        toc.add(u"Spis treści", "toc.html", index=1)
+        zip.writestr('OPS/toc.html', toc.html().encode('utf-8'))
+    toc.write_to_xml(nav_map)
     zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))
     zip.close()
+
+    return OutputFile.from_filename(output_file.name)

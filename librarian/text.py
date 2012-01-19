@@ -3,7 +3,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from librarian import dcparser, parser, functions
+import copy
+from librarian import functions, OutputFile
 from lxml import etree
 import os
 
@@ -28,7 +29,7 @@ Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowocz
 %(description)s%(contributors)s
 """
 
-def transform(input_file, output_file, parse_dublincore=True, flags=None, **options):
+def transform(wldoc, flags=None, **options):
     """
     Transforms input_file in XML to output_file in TXT.
     possible flags: raw-text,
@@ -37,7 +38,9 @@ def transform(input_file, output_file, parse_dublincore=True, flags=None, **opti
     style_filename = os.path.join(os.path.dirname(__file__), 'xslt/book2txt.xslt')
     style = etree.parse(style_filename)
 
-    document = parser.WLDocument.from_file(input_file, True, parse_dublincore=parse_dublincore)
+    document = copy.deepcopy(wldoc)
+    del wldoc
+    document.swap_endlines()
 
     if flags:
         for flag in flags:
@@ -46,10 +49,10 @@ def transform(input_file, output_file, parse_dublincore=True, flags=None, **opti
     result = document.transform(style, **options)
 
     if not flags or 'raw-text' not in flags:
-        if parse_dublincore:
-            parsed_dc = dcparser.BookInfo.from_element(document.edoc)
+        if document.book_info:
+            parsed_dc = document.book_info
             description = parsed_dc.description
-            url = parsed_dc.url
+            url = document.book_info.url
     
             license_description = parsed_dc.license_description
             license = parsed_dc.license
@@ -75,7 +78,7 @@ def transform(input_file, output_file, parse_dublincore=True, flags=None, **opti
             license_description = ""
             source = ""
             contributors = ""
-        output_file.write((TEMPLATE % {
+        return OutputFile.from_string((TEMPLATE % {
             'description': description,
             'url': url,
             'license_description': license_description,
@@ -84,5 +87,5 @@ def transform(input_file, output_file, parse_dublincore=True, flags=None, **opti
             'contributors': contributors,
         }).encode('utf-8'))
     else:
-        output_file.write(unicode(result).encode('utf-8'))
+        return OutputFile.from_string(unicode(result).encode('utf-8'))
 

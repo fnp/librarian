@@ -168,7 +168,7 @@
   <xsl:template match="strofa">
     <div class="stanza" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
-    </div><div xmlns="http://www.w3.org/1999/xhtml">&#160;</div>
+    </div><div class='stanza-spacer' xmlns="http://www.w3.org/1999/xhtml">&#160;</div>
   </xsl:template>
 
   <xsl:template match="wers_normalny">
@@ -319,11 +319,11 @@
   <!--===========================================================-->
 
   <xsl:template match="text()"  >
-    <xsl:value-of select="."/>
+    <xsl:value-of select="." />
   </xsl:template>
 
   <xsl:template match="text()" >
-    <xsl:value-of select="."/>
+    <xsl:value-of select="." />
   </xsl:template>
 
 </xsl:stylesheet>

@@ -9,7 +9,7 @@
   <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
   <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
 
-  <xsl:template match="/">
+  <xsl:template match="utwor">
     <html>
       <head>
         <link rel="stylesheet" href="style.css" type="text/css" />
@@ -62,6 +62,31 @@
           </xsl:if>
 
           <xsl:call-template name="editors" />
+
+          <xsl:if test="@data-cover-by">
+            <p class="info">Okładka na podstawie: 
+            <xsl:choose>
+            <xsl:when test="@data-cover-source">
+                <a>
+                <xsl:attribute name="href">
+                  <xsl:value-of select="@data-cover-source" />
+                </xsl:attribute>
+                <xsl:value-of select="@data-cover-by" />
+                </a>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="@data-cover-by" />
+            </xsl:otherwise>
+            </xsl:choose>
+            </p>
+          </xsl:if>
+
+          <div class="info">
+          <img src="jedenprocent.png" alt="Logo 1%" />
+          <div>Przekaż 1% podatku na rozwój Wolnych Lektur.</div>
+          <div>Nazwa organizacji: Fundacja Nowoczesna Polska</div>
+          <div>KRS 0000070056</div>
+          </div>
 
           <p class="info">&#160;</p>
           <p class="minor info">

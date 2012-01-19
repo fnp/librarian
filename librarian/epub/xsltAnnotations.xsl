@@ -31,12 +31,12 @@
   </xsl:template>
 
   <xsl:template match="pa|pe|pr|pt" mode="przypis">
-    <div xmlns="http://www.w3.org/1999/xhtml">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="annotation">
       <p id="annotation-{@number}" xmlns="http://www.w3.org/1999/xhtml"></p>
-      <a class="annotation" href="part{@part}.html#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml">
+      <a class="annotation-anchor" href="part{@part}.html#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml">
         [<xsl:value-of select="@number" />]
       </a>
-      <p xmlns="http://www.w3.org/1999/xhtml">
+      <p class="annotation-body" xmlns="http://www.w3.org/1999/xhtml">
         <xsl:apply-templates />
         <xsl:if test="name()='pa'"> [przypis autorski]</xsl:if>
       </p>

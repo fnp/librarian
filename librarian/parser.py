@@ -3,7 +3,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from librarian import ValidationError, NoDublinCore,  ParseError
+from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS
 from librarian import dcparser
 
@@ -11,14 +11,17 @@ from xml.parsers.expat import ExpatError
 from lxml import etree
 from lxml.etree import XMLSyntaxError, XSLTApplyError
 
+import os
 import re
 from StringIO import StringIO
 
 class WLDocument(object):
-    LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE);
+    LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
+    provider = None
 
-    def __init__(self, edoc, parse_dublincore=True):
+    def __init__(self, edoc, parse_dublincore=True, provider=None, strict=False):
         self.edoc = edoc
+        self.provider = provider
 
         root_elem = edoc.getroot()
 
@@ -33,7 +36,8 @@ class WLDocument(object):
             if self.rdf_elem is None:
                 raise NoDublinCore('Document has no DublinCore - which is required.')
 
-            self.book_info = dcparser.BookInfo.from_element(self.rdf_elem)
+            self.book_info = dcparser.BookInfo.from_element(
+                    self.rdf_elem, strict=strict)
         else:
             self.book_info = None
 
@@ -42,7 +46,7 @@ class WLDocument(object):
         return cls.from_file(StringIO(xml), *args, **kwargs)
 
     @classmethod
-    def from_file(cls, xmlfile, swap_endlines=False, parse_dublincore=True):
+    def from_file(cls, xmlfile, parse_dublincore=True, provider=None):
 
         # first, prepare for parsing
         if isinstance(xmlfile, basestring):
@@ -63,20 +67,17 @@ class WLDocument(object):
             parser = etree.XMLParser(remove_blank_text=False)
             tree = etree.parse(StringIO(data.encode('utf-8')), parser)
 
-            if swap_endlines:
-                cls.swap_endlines(tree)
-
-            return cls(tree, parse_dublincore=parse_dublincore)
+            return cls(tree, parse_dublincore=parse_dublincore, provider=provider)
         except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
             raise ParseError(e)
 
-    @classmethod
-    def swap_endlines(cls, tree):
+    def swap_endlines(self):
+        """Converts line breaks in stanzas into <br/> tags."""
         # only swap inside stanzas
-        for elem in tree.iter('strofa'):
+        for elem in self.edoc.iter('strofa'):
             for child in list(elem):
                 if child.tail:
-                    chunks = cls.LINE_SWAP_EXPR.split(child.tail)
+                    chunks = self.LINE_SWAP_EXPR.split(child.tail)
                     ins_index = elem.index(child) + 1
                     while len(chunks) > 1:
                         ins = etree.Element('br')
@@ -84,12 +85,21 @@ class WLDocument(object):
                         elem.insert(ins_index, ins)
                     child.tail = chunks.pop(0)
             if elem.text:
-                chunks = cls.LINE_SWAP_EXPR.split(elem.text)
+                chunks = self.LINE_SWAP_EXPR.split(elem.text)
                 while len(chunks) > 1:
                     ins = etree.Element('br')
                     ins.tail = chunks.pop()
                     elem.insert(0, ins)
                 elem.text = chunks.pop(0)
+
+    def parts(self):
+        if self.provider is None:
+            raise NoProvider('No document provider supplied.')
+        if self.book_info is None:
+            raise NoDublinCore('No Dublin Core in document.')
+        for part_uri in self.book_info.parts:
+            yield self.from_file(self.provider.by_uri(part_uri),
+                    provider=self.provider)
 
     def chunk(self, path):
         # convert the path to XPath
@@ -152,3 +162,41 @@ class WLDocument(object):
             node.clear()
             node.tag = 'span'
             node.tail = tail
+
+    # Converters
+
+    def as_html(self, *args, **kwargs):
+        from librarian import html
+        return html.transform(self, *args, **kwargs)
+
+    def as_text(self, *args, **kwargs):
+        from librarian import text
+        return text.transform(self, *args, **kwargs)
+
+    def as_epub(self, *args, **kwargs):
+        from librarian import epub
+        return epub.transform(self, *args, **kwargs)
+
+    def as_pdf(self, *args, **kwargs):
+        from librarian import pdf
+        return pdf.transform(self, *args, **kwargs)
+
+    def as_mobi(self, *args, **kwargs):
+        from librarian import mobi
+        return mobi.transform(self, *args, **kwargs)
+
+    def save_output_file(self, output_file, output_path=None,
+            output_dir_path=None, make_author_dir=False, ext=None):
+        if output_dir_path:
+            save_path = output_dir_path
+            if make_author_dir:
+                save_path = os.path.join(save_path,
+                        unicode(self.book_info.author).encode('utf-8'))
+            save_path = os.path.join(save_path,
+                                self.book_info.uri.slug)
+            if ext:
+                save_path += '.%s' % ext
+        else:
+            save_path = output_path
+
+        output_file.save_as(save_path)

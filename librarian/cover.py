@@ -7,7 +7,110 @@ import Image, ImageFont, ImageDraw, ImageFilter
 from librarian import get_resource
 
 
+class TextBox(object):
+    """Creates an Image with a series of centered strings."""
+
+    SHADOW_X = 3
+    SHADOW_Y = 3
+    SHADOW_BLUR = 3
+
+    def __init__(self, max_width, max_height, padding_x=None, padding_y=None):
+        if padding_x is None:
+            padding_x = self.SHADOW_X + self.SHADOW_BLUR
+        if padding_y is None:
+            padding_y = self.SHADOW_Y + self.SHADOW_BLUR
+
+        self.max_width = max_width
+        self.max_text_width = max_width - 2 * padding_x
+        self.padding_y = padding_y
+        self.height = padding_y
+        self.img = Image.new('RGBA', (max_width, max_height))
+        self.draw = ImageDraw.Draw(self.img)
+        self.shadow_img = None
+        self.shadow_draw = None
+
+    def skip(self, height):
+        """Skips some vertical space."""
+        self.height += height
+
+    def text(self, text, color='#000', font=None, line_height=20, 
+             shadow_color=None, shortener=None):
+        """Writes some centered text."""
+        if shadow_color:
+            if not self.shadow_img:
+                self.shadow_img = Image.new('RGBA', self.img.size)
+                self.shadow_draw = ImageDraw.Draw(self.shadow_img)
+        while text:
+            if shortener:
+                for line in shortener(text):
+                    if text_draw.textsize(line, font=font)[0] <= self.max_text_width:
+                        break
+                text = ''
+            else:
+                line = text
+                line_width = self.draw.textsize(line, font=font)[0]
+                while line_width > self.max_text_width:
+                    parts = line.rsplit(' ', 1)
+                    if len(parts) == 1:
+                        line_width = self.max_text_width
+                        break
+                    line = parts[0]
+                    line_width = self.draw.textsize(line, font=font)[0]
+
+            line = line.strip() + ' '
+
+            pos_x = (self.max_width - line_width) / 2
+
+            if shadow_color:
+                self.shadow_draw.text(
+                        (pos_x + self.SHADOW_X, self.height + self.SHADOW_Y),
+                        line, font=font, fill=shadow_color
+                )
+
+            self.draw.text((pos_x, self.height), line, font=font, fill=color)
+            self.height += line_height
+            # go to next line
+            text = text[len(line):]
+
+    @staticmethod
+    def person_shortener(text):
+        yield text
+        chunks = text.split()
+        n_chunks = len(chunks)
+        # make initials from given names, starting from last
+        for i in range(n_chunks - 2, -1, -1):
+            chunks[i] = chunks[i][0] + '.'
+            yield " ".join(chunks)
+        # remove given names initials, starting from last
+        while len(chunks) > 2:
+            del chunks[1]
+            yield " ".join(chunks)
+
+    @staticmethod
+    def title_shortener(text):
+        yield text
+        chunks = text.split()
+        n_chunks = len(chunks)
+        # remove words, starting from last one
+        while len(chunks) > 1:
+            del chunks[-1]
+            yield " ".join(chunks) + u'…'
+
+    def image(self):
+        """Creates the actual Image object."""
+        image = Image.new('RGBA', (self.max_width,
+                                   self.height + self.padding_y))
+        if self.shadow_img:
+            shadow = self.shadow_img.filter(ImageFilter.BLUR)
+            image.paste(shadow, (0, 0), shadow)
+            image.paste(self.img, (0, 0), self.img)
+        else:
+            image.paste(self.img, (0, 0))
+        return image
+
+
 class Cover(object):
+    """Abstract base class for cover images generator."""
     width = 600
     height = 800
     background_color = '#fff'
@@ -35,9 +138,9 @@ class Cover(object):
 
     logo_bottom = None
     logo_width = None
+    uses_dc_cover = False
 
     format = 'JPEG'
-
 
     exts = {
         'JPEG': 'jpg',
@@ -49,75 +152,16 @@ class Cover(object):
         'PNG': 'image/png',
         }
 
-    @staticmethod
-    def person_shortener(text):
-        yield text
-        chunks = text.split()
-        n_chunks = len(chunks)
-        # make initials from given names, starting from last
-        for i in range(n_chunks - 2, -1, -1):
-            chunks[i] = chunks[i][0] + '.'
-            yield " ".join(chunks)
-        # remove given names initials, starting from last
-        while len(chunks) > 2:
-            del chunks[1]
-            yield " ".join(chunks)
-
-    @staticmethod
-    def title_shortener(text):
-        yield text
-        chunks = text.split()
-        n_chunks = len(chunks)
-        # remove words, starting from last one
-        while len(chunks) > 1:
-            del chunks[-1]
-            yield " ".join(chunks) + u'…'
-
-    @staticmethod
-    def draw_text(text, img, font, align, shortener, margin_left, width, pos_y, lineskip, color, shadow_color):
-        if shadow_color:
-            shadow_img = Image.new('RGBA', img.size)
-            shadow_draw = ImageDraw.Draw(shadow_img)
-        text_img = Image.new('RGBA', img.size)
-        text_draw = ImageDraw.Draw(text_img)
-        while text:
-            if shortener:
-                for line in shortener(text):
-                    if text_draw.textsize(line, font=font)[0] <= width:
-                        break
-                text = ''
-            else:
-                line = text
-                while text_draw.textsize(line, font=font)[0] > width:
-                    try:
-                        line, ext = line.rsplit(' ', 1)
-                    except:
-                        break
-                text = text[len(line)+1:]
-            pos_x = margin_left
-            if align == 'c':
-                pos_x += (width - text_draw.textsize(line, font=font)[0]) / 2
-            elif align == 'r':
-                pos_x += (width - text_draw.textsize(line, font=font)[0])
-            if shadow_color:
-                shadow_draw.text((pos_x + 3, pos_y + 3), line, font=font, fill=shadow_color)
-            text_draw.text((pos_x, pos_y), line, font=font, fill=color)
-            pos_y += lineskip
-        if shadow_color:
-            shadow_img = shadow_img.filter(ImageFilter.BLUR)
-            img.paste(shadow_img, None, shadow_img)
-        img.paste(text_img, None, text_img)
-        return pos_y
-
-
-    def __init__(self, author='', title=''):
-        self.author = author
-        self.title = title
+    def __init__(self, book_info):
+        self.author = ", ".join(auth.readable() for auth in book_info.authors)
+        self.title = book_info.title
 
     def pretty_author(self):
+        """Allows for decorating author's name."""
         return self.author
 
     def pretty_title(self):
+        """Allows for decorating title."""
         return self.title
 
     def image(self):
@@ -137,16 +181,31 @@ class Cover(object):
             logo = logo.resize((self.logo_width, logo.size[1] * self.logo_width / logo.size[0]))
             img.paste(logo, ((self.width - self.logo_width) / 2, img.size[1] - logo.size[1] - self.logo_bottom))
 
-        author_font = self.author_font or ImageFont.truetype(get_resource('fonts/DejaVuSerif.ttf'), 30)
-        author_shortener = None if self.author_wrap else self.person_shortener 
-        title_y = self.draw_text(self.pretty_author(), img, author_font, self.author_align, author_shortener,
-                    self.author_margin_left, self.width - self.author_margin_left - self.author_margin_right, self.author_top,
-                    self.author_lineskip, self.author_color, self.author_shadow) + self.title_top
-        title_shortener = None if self.title_wrap else self.title_shortener 
-        title_font = self.title_font or ImageFont.truetype(get_resource('fonts/DejaVuSerif.ttf'), 40)
-        self.draw_text(self.pretty_title(), img, title_font, self.title_align, title_shortener,
-                    self.title_margin_left, self.width - self.title_margin_left - self.title_margin_right, title_y,
-                    self.title_lineskip, self.title_color, self.title_shadow)
+        top = self.author_top
+        tbox = TextBox(
+            self.width - self.author_margin_left - self.author_margin_right,
+            self.height - top,
+            )
+        author_font = self.author_font or ImageFont.truetype(
+            get_resource('fonts/DejaVuSerif.ttf'), 30)
+        author_shortener = None if self.author_wrap else TextBox.person_shortener 
+        tbox.text(self.pretty_author(), self.author_color, author_font,
+            self.author_lineskip, self.author_shadow, author_shortener)
+        text_img = tbox.image()
+        img.paste(text_img, (self.author_margin_left, top), text_img)
+        
+        top += text_img.size[1] + self.title_top
+        tbox = TextBox(
+            self.width - self.title_margin_left - self.title_margin_right,
+            self.height - top,
+            )
+        title_font = self.author_font or ImageFont.truetype(
+            get_resource('fonts/DejaVuSerif.ttf'), 40)
+        title_shortener = None if self.title_wrap else TextBox.title_shortener 
+        tbox.text(self.pretty_title(), self.title_color, title_font,
+            self.title_lineskip, self.title_shadow, title_shortener)
+        text_img = tbox.image()
+        img.paste(text_img, (self.title_margin_left, top), text_img)
 
         return img
 
@@ -158,6 +217,125 @@ class Cover(object):
 
     def save(self, *args, **kwargs):
         return self.image().save(format=self.format, *args, **kwargs)
+
+
+class WLCover(Cover):
+    """Default Wolne Lektury cover generator."""
+    uses_dc_cover = True
+    author_font = ImageFont.truetype(
+        get_resource('fonts/JunicodeWL-Regular.ttf'), 20)
+    author_lineskip = 30
+    title_font = ImageFont.truetype(
+        get_resource('fonts/DejaVuSerif-Bold.ttf'), 30)
+    title_lineskip = 40
+    title_box_width = 350
+    bar_width = 35
+    background_color = '#444'
+    author_color = '#444'
+
+    epochs = {
+        u'Starożytność': 0,
+        u'Średniowiecze': 30,
+        u'Renesans': 60,
+        u'Barok': 90,
+        u'Oświecenie': 120,
+        u'Romantyzm': 150,
+        u'Pozytywizm': 180,
+        u'Modernizm': 210,
+        u'Dwudziestolecie międzywojenne': 240,
+        u'Współczesność': 270,
+    }
+
+    def __init__(self, book_info):
+        super(WLCover, self).__init__(book_info)
+        self.kind = book_info.kind
+        self.epoch = book_info.epoch
+        if book_info.cover_url:
+            from urllib2 import urlopen
+            from StringIO import StringIO
+
+            bg_src = urlopen(book_info.cover_url)
+            self.background_img = StringIO(bg_src.read())
+            bg_src.close()
+
+    def pretty_author(self):
+        return self.author.upper()
+
+    def image(self):
+        from colorsys import hsv_to_rgb
+
+        img = Image.new('RGB', (self.width, self.height), self.background_color)
+        draw = ImageDraw.Draw(img)
+
+        if self.epoch in self.epochs:
+            epoch_color = tuple(int(255 * c) for c in hsv_to_rgb(
+                    float(self.epochs[self.epoch]) / 360, .7, .7))
+        else:
+            epoch_color = '#000'
+        draw.rectangle((0, 0, self.bar_width, self.height), fill=epoch_color)
+
+        if self.background_img:
+            src = Image.open(self.background_img)
+            trg_size = (self.width - self.bar_width, self.height)
+            if src.size[0] * trg_size[1] < src.size[1] * trg_size[0]:
+                resized = (
+                    trg_size[0],
+                    src.size[1] * trg_size[0] / src.size[0]
+                )
+                cut = (resized[1] - trg_size[1]) / 2
+                src = src.resize(resized)
+                src = src.crop((0, cut, src.size[0], src.size[1] - cut))
+            else:
+                resized = (
+                    src.size[0] * trg_size[1] / src.size[1],
+                    trg_size[1],
+                )
+                cut = (resized[0] - trg_size[0]) / 2
+                src = src.resize(resized)
+                src = src.crop((cut, 0, src.size[0] - cut, src.size[1]))
+            
+            img.paste(src, (self.bar_width, 0))
+            del src
+
+        box = TextBox(self.title_box_width, self.height, padding_y=20)
+        box.text(self.pretty_author(), 
+                 font=self.author_font,
+                 line_height=self.author_lineskip,
+                 color=self.author_color,
+                 shadow_color=self.author_shadow,
+                )
+
+        box.skip(10)
+        box.draw.line((75, box.height, 275, box.height), 
+                fill=self.author_color, width=2)
+        box.skip(15)
+
+        box.text(self.pretty_title(),
+                 line_height=self.title_lineskip,
+                 font=self.title_font,
+                 color=epoch_color,
+                 shadow_color=self.title_shadow,
+                )
+        box_img = box.image()
+
+        if self.kind == 'Liryka':
+            # top
+            box_top = 100
+        elif self.kind == 'Epika':
+            # bottom
+            box_top = self.height - 100 - box_img.size[1]
+        else:
+            # center
+            box_top = (self.height - box_img.size[1]) / 2
+
+        box_left = self.bar_width + (self.width - self.bar_width - 
+                        box_img.size[0]) / 2
+        draw.rectangle((box_left, box_top, 
+            box_left + box_img.size[0], box_top + box_img.size[1]),
+            fill='#fff')
+        img.paste(box_img, (box_left, box_top), box_img)
+
+        return img
 
 
 

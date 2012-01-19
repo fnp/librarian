@@ -21,7 +21,7 @@ def whole_tree(prefix, path):
 
 setup(
     name='librarian',
-    version='1.3',
+    version='1.4.1',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
@@ -29,15 +29,17 @@ setup(
     maintainer_email='radek.czajka@gmail.com',
     url='http://github.com/fnp/librarian',
     packages=['librarian'],
-    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'pdf/*', 'fonts/*', 'res/*'] +
+    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fonts/*', 'res/*'] +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer')},
     include_package_data=True,
     install_requires=['lxml>=2.2'],
     scripts=['scripts/book2html',
              'scripts/book2txt',
              'scripts/book2epub',
+             'scripts/book2mobi',
              'scripts/book2pdf',
              'scripts/book2partner',
+             'scripts/book2cover',
              'scripts/bookfragments',
              'scripts/genslugs'],
     tests_require=['nose>=0.11', 'coverage>=3.0.1'],

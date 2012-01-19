@@ -5,12 +5,10 @@
 #
 import os
 import cStringIO
-import re
 import copy
 
 from lxml import etree
-from librarian.parser import WLDocument
-from librarian import XHTMLNS, ParseError
+from librarian import XHTMLNS, ParseError, OutputFile
 from librarian import functions
 
 from lxml.etree import XMLSyntaxError, XSLTApplyError
@@ -30,9 +28,8 @@ def get_stylesheet(name):
 def html_has_content(text):
     return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)
 
-def transform(input, output_filename=None, is_file=True, \
-    parse_dublincore=True, stylesheet='legacy', options={}, flags=None):
-    """Transforms file input_filename in XML to output_filename in XHTML.
+def transform(wldoc, stylesheet='legacy', options=None, flags=None):
+    """Transforms the WL document to XHTML.
 
     If output_filename is None, returns an XML,
     otherwise returns True if file has been written,False if it hasn't.
@@ -43,12 +40,9 @@ def transform(input, output_filename=None, is_file=True, \
         style_filename = get_stylesheet(stylesheet)
         style = etree.parse(style_filename)
 
-        if is_file:
-            document = WLDocument.from_file(input, True, \
-                parse_dublincore=parse_dublincore)
-        else:
-            document = WLDocument.from_string(input, True, \
-                parse_dublincore=parse_dublincore)
+        document = copy.deepcopy(wldoc)
+        del wldoc
+        document.swap_endlines()
 
         if flags:
             for flag in flags:
@@ -56,6 +50,8 @@ def transform(input, output_filename=None, is_file=True, \
 
         document.clean_ed_note()
 
+        if not options:
+            options = {}
         result = document.transform(style, **options)
         del document # no longer needed large object :)
 
@@ -63,16 +59,10 @@ def transform(input, output_filename=None, is_file=True, \
             add_anchors(result.getroot())
             add_table_of_contents(result.getroot())
 
-            if output_filename is not None:
-                result.write(output_filename, method='html', xml_declaration=False, pretty_print=True, encoding='utf-8')
-            else:
-                return result
-            return True
+            return OutputFile.from_string(etree.tostring(result, method='html',
+                xml_declaration=False, pretty_print=True, encoding='utf-8'))
         else:
-            if output_filename is not None:
-                return False
-            else:
-                return "<empty />"
+            return None
     except KeyError:
         raise ValueError("'%s' is not a valid stylesheet.")
     except (XMLSyntaxError, XSLTApplyError), e:
@@ -238,10 +228,12 @@ def add_table_of_contents(root):
             if any_ancestor(element, lambda e: e.get('id') in ('footnotes',) or e.get('class') in ('person-list',)):
                 continue
 
+            element_text = etree.tostring(element, method='text',
+                    encoding=unicode).strip()
             if element.tag == 'h3' and len(sections) and sections[-1][1] == 'h2':
-                sections[-1][3].append((counter, element.tag, ''.join(element.xpath('text()')), []))
+                sections[-1][3].append((counter, element.tag, element_text, []))
             else:
-                sections.append((counter, element.tag, ''.join(element.xpath('text()')), []))
+                sections.append((counter, element.tag, element_text, []))
             add_anchor(element, "s%d" % counter, with_link=False)
             counter += 1
 
@@ -262,4 +254,18 @@ def add_table_of_contents(root):
                 add_anchor(subsection_element, "s%d" % n, with_target=False, link_text=text)
 
     root.insert(0, toc)
+
+
+def extract_annotations(html_path):
+    """For each annotation, yields a tuple: anchor, text, html."""
+    parser = etree.HTMLParser(encoding='utf-8')
+    tree = etree.parse(html_path, parser)
+    footnotes = tree.find('//*[@id="footnotes"]')
+    if footnotes is not None:
+        for footnote in footnotes.findall('div'):
+            anchor = footnote.find('a[@name]').get('name')
+            del footnote[:2]
+            text_str = etree.tostring(footnote, method='text', encoding='utf-8').strip()
+            html_str = etree.tostring(footnote, method='html', encoding='utf-8')
+            yield anchor, text_str, html_str
 

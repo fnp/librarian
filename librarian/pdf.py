@@ -8,12 +8,10 @@ import os
 import os.path
 import shutil
 from StringIO import StringIO
-from tempfile import mkdtemp
+from tempfile import mkdtemp, NamedTemporaryFile
 import re
 from copy import deepcopy
 from subprocess import call, PIPE
-
-import sys
 
 from Texml.processor import process
 from lxml import etree
@@ -21,8 +19,9 @@ from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
-from librarian import ParseError, DCNS, get_resource
+from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
+from librarian.cover import WLCover
 
 
 functions.reg_substitute_entities()
@@ -35,6 +34,13 @@ STYLESHEETS = {
     'wl2tex': 'pdf/wl2tex.xslt',
 }
 
+CUSTOMIZATIONS = [
+    'nofootnotes',
+    'nothemes',
+    'onehalfleading',
+    'doubleleading',
+    'nowlfont',
+    ]
 
 def insert_tags(doc, split_re, tagname, exclude=None):
     """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree
@@ -152,7 +158,7 @@ def package_available(package, args='', verbose=False):
     fpath = os.path.join(tempdir, 'test.tex')
     f = open(fpath, 'w')
     f.write(r"""
-        \documentclass{book}
+        \documentclass{wl}
         \usepackage[%s]{%s}
         \begin{document}
         \end{document}
@@ -166,38 +172,33 @@ def package_available(package, args='', verbose=False):
     return p == 0
 
 
-def transform(provider, slug=None, file_path=None,
-              output_file=None, output_dir=None, make_dir=False, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None):
+def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
+              cover=None, flags=None, customizations=None):
     """ produces a PDF file with XeLaTeX
 
-    provider: a DocProvider
-    slug: slug of file to process, available by provider
-    file_path can be provided instead of a slug
-    output_file: file-like object or path to output file
-    output_dir: path to directory to save output file to; either this or output_file must be present
-    make_dir: writes output to <output_dir>/<author>/<slug>.pdf istead of <output_dir>/<slug>.pdf
+    wldoc: a WLDocument
     verbose: prints all output from LaTeX
     save_tex: path to save the intermediary LaTeX file to
     morefloats (old/new/none): force specific morefloats
     cover: a cover.Cover object
     flags: less-advertising,
+    customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
     """
 
     # Parse XSLT
     try:
-        if file_path:
-            if slug:
-                raise ValueError('slug or file_path should be specified, not both')
-            document = load_including_children(provider, file_path=file_path)
-        else:
-            if not slug:
-                raise ValueError('either slug or file_path should be specified')
-            document = load_including_children(provider, slug=slug)
+        document = load_including_children(wldoc)
 
         if cover:
+            if cover is True:
+                cover = WLCover
             document.edoc.getroot().set('data-cover-width', str(cover.width))
             document.edoc.getroot().set('data-cover-height', str(cover.height))
+            if cover.uses_dc_cover:
+                if document.book_info.cover_by:
+                    document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
+                if document.book_info.cover_source:
+                    document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
         if flags:
             for flag in flags:
                 document.edoc.getroot().set('flag-' + flag, 'yes')
@@ -208,6 +209,10 @@ def transform(provider, slug=None, file_path=None,
         elif package_available('morefloats', 'maxfloats=19'):
             document.edoc.getroot().set('morefloats', 'new')
 
+        # add customizations
+        if customizations is not None:
+            document.edoc.getroot().set('customizations', u','.join(customizations))
+
         # hack the tree
         move_motifs_inside(document.edoc)
         hack_motifs(document.edoc)
@@ -215,21 +220,17 @@ def transform(provider, slug=None, file_path=None,
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
 
-        # find output dir
-        if make_dir and output_dir is not None:
-            author = unicode(document.book_info.author)
-            output_dir = os.path.join(output_dir, author)
-
         # wl -> TeXML
         style_filename = get_stylesheet("wl2tex")
         style = etree.parse(style_filename)
+
         texml = document.transform(style)
 
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
 
         if cover:
-            c = cover(document.book_info.author.readable(), document.book_info.title)
+            c = cover(document.book_info)
             with open(os.path.join(temp, 'cover.png'), 'w') as f:
                 c.save(f)
 
@@ -245,7 +246,7 @@ def transform(provider, slug=None, file_path=None,
             shutil.copy(tex_path, save_tex)
 
         # LaTeX -> PDF
-        shutil.copy(get_resource('pdf/wl.sty'), temp)
+        shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
 
         cwd = os.getcwd()
@@ -260,56 +261,38 @@ def transform(provider, slug=None, file_path=None,
 
         os.chdir(cwd)
 
-        # save the PDF
+        output_file = NamedTemporaryFile(prefix='librarian', suffix='.pdf', delete=False)
         pdf_path = os.path.join(temp, 'doc.pdf')
-        if output_dir is not None:
-            try:
-                os.makedirs(output_dir)
-            except OSError:
-                pass
-            if slug:
-                output_path = os.path.join(output_dir, '%s.pdf' % slug)
-            else:
-                output_path = os.path.join(output_dir, os.path.splitext(os.path.basename(file_path))[0] + '.pdf')
-            shutil.move(pdf_path, output_path)
-        else:
-            if hasattr(output_file, 'write'):
-                # file-like object
-                with open(pdf_path) as f:
-                    output_file.write(f.read())
-                output_file.close()
-            else:
-                # path to output file
-                shutil.copy(pdf_path, output_file)
+        shutil.move(pdf_path, output_file.name)
         shutil.rmtree(temp)
+        return OutputFile.from_filename(output_file.name)
 
     except (XMLSyntaxError, XSLTApplyError), e:
         raise ParseError(e)
 
 
-def load_including_children(provider, slug=None, uri=None, file_path=None):
-    """ makes one big xml file with children inserted at end
-    either slug or uri must be provided
+def load_including_children(wldoc=None, provider=None, uri=None):
+    """ Makes one big xml file with children inserted at end.
+    
+    Either wldoc or provider and URI must be provided.
     """
 
-    if uri:
+    if uri and provider:
         f = provider.by_uri(uri)
-    elif slug:
-        f = provider[slug]
-    elif file_path:
-        f = open(file_path, 'r')
+        text = f.read().decode('utf-8')
+        f.close()
+    elif wldoc is not None:
+        text = etree.tostring(wldoc.edoc, encoding=unicode)
+        provider = wldoc.provider
     else:
-        raise ValueError('Neither slug, URI nor file path provided for a book.')
+        raise ValueError('Neither a WLDocument, nor provider and URI were provided.')
 
-    text = f.read().decode('utf-8')
     text = re.sub(ur"([\u0400-\u04ff]+)", ur"<alien>\1</alien>", text)
 
-    document = WLDocument.from_string(text, True,
-        parse_dublincore=True)
+    document = WLDocument.from_string(text, parse_dublincore=True)
+    document.swap_endlines()
 
-    f.close()
     for child_uri in document.book_info.parts:
-        print child_uri
-        child = load_including_children(provider, uri=child_uri)
+        child = load_including_children(provider=provider, uri=child_uri)
         document.edoc.getroot().append(child.edoc.getroot())
     return document

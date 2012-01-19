@@ -15,7 +15,7 @@
 <xsl:template match="utwor">
     <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
         <TeXML escape="0">
-        \documentclass[a4paper, oneside, 11pt]{book}
+        \documentclass[<xsl:value-of select="@customizations"/>]{wl}
 
         <!-- flags and values set on root -->
 
@@ -31,8 +31,6 @@
                 \def\<xsl:value-of select="wl:texcommand(name())" />{<TeXML escape="1"><xsl:value-of select="."/></TeXML>}
             </TeXML>
         </xsl:for-each>
-
-        \usepackage{wl}
         </TeXML>
 
         <xsl:choose>
@@ -88,6 +86,22 @@
             </parm></cmd>
             <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
             <xsl:apply-templates select="utwor" mode="part" />
+
+            <TeXML escape="0">
+                \def\coverby{
+                <xsl:if test="@data-cover-by">Okładka na podstawie: 
+                    <xsl:choose>
+                    <xsl:when test="@data-cover-source">
+                        \href{\datacoversource}{\datacoverby}
+                    </xsl:when>
+                    <xsl:otherwise>
+                        \datacoverby{}
+                    </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:if>
+                }
+            </TeXML>
+
             <cmd name="editorialsection" />
         </env>
     </TeXML>

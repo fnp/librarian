@@ -108,28 +108,24 @@ p
 	text-align: left;
 }
 
-.annotation
+.annotation-anchor
 {
 	font-style: normal;
 	font-weight: normal;
 	font-size: 0.875em;
-}
-
-#footnotes .annotation
-{
 	display: block;
 	float: left;
 	width: 2.5em;
 	clear: both;
 }
 
-#footnotes div
+.annotation
 {
     margin: 0;
     margin-top: 1.5em;
 }
 
-#footnotes p
+.annotation-body
 {
 	margin-left: 2.5em;
 	font-size: 0.875em;
@@ -352,13 +348,17 @@ em.author-emphasis
 	text-transform: uppercase;
 }
 
-p.info
+.info
 {
 	text-align: center;
 	margin-bottom: 1em;
 }
+.info div
+{
+    text-align: center;
+}
 
-p.info img
+.info img
 {
 	margin: 0;
 	margin-left: 2em;

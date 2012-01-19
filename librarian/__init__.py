@@ -3,21 +3,30 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import with_statement
+
 import os
+import re
+import shutil
 
 class ParseError(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message.message
+        return self.message
 
     def __unicode__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message.message
+        return self.message
 
 class ValidationError(Exception):
     pass
 
 class NoDublinCore(ValidationError):
+    """There's no DublinCore section, and it's required."""
+    pass
+
+class NoProvider(Exception):
+    """There's no DocProvider specified, and it's needed."""
     pass
 
 class XMLNamespace(object):
@@ -56,43 +65,88 @@ OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
 WLNS = EmptyNamespace()
 
 
+class WLURI(object):
+    """Represents a WL URI. Extracts slug from it."""
+    slug = None
+
+    example = 'http://wolnelektury.pl/katalog/lektura/template/'
+    _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/lektura/'
+            '(?P<slug>[-a-z0-9]+)/?$')
+
+    def __init__(self, uri):
+        uri = unicode(uri)
+        self.uri = uri
+        self.slug = uri.rstrip('/').rsplit('/', 1)[-1]
+
+    @classmethod
+    def strict(cls, uri):
+        match = cls._re_wl_uri.match(uri)
+        if not match:
+            raise ValueError('Supplied URI (%s) does not match '
+                'the template: %s.' % (uri, cls._re_wl_uri))
+        return cls(uri)
+
+    @classmethod
+    def from_slug(cls, slug):
+        """Contructs an URI from slug.
+
+        >>> WLURI.from_slug('a-slug').uri
+        u'http://wolnelektury.pl/katalog/lektura/a-slug/'
+
+        """
+        uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
+        return cls(uri)
+
+    def __unicode__(self):
+        return self.uri
+
+    def __str__(self):
+        return self.uri
+
+    def __eq__(self, other):
+        return self.slug == other.slug
+
+
 class DocProvider(object):
-    """ Base class for a repository of XML files.
-        Used for generating joined files, like EPUBs
+    """Base class for a repository of XML files.
+
+    Used for generating joined files, like EPUBs.
     """
 
     def by_slug(self, slug):
-        raise NotImplemented
+        """Should return a file-like object with a WL document XML."""
+        raise NotImplementedError
 
-    def __getitem__(self, slug):
-        return self.by_slug(slug)
-
-    def by_uri(self, uri):
-        return self.by_slug(uri.rsplit('/', 1)[1])
+    def by_uri(self, uri, wluri=WLURI):
+        """Should return a file-like object with a WL document XML."""
+        wluri = wluri(uri)
+        return self.by_slug(wluri.slug)
 
 
 class DirDocProvider(DocProvider):
     """ Serve docs from a directory of files in form <slug>.xml """
 
-    def __init__(self, dir):
-        self.dir = dir
+    def __init__(self, dir_):
+        self.dir = dir_
         self.files = {}
 
     def by_slug(self, slug):
-        return open(os.path.join(self.dir, '%s.xml' % slug))
+        fname = slug + '.xml'
+        return open(os.path.join(self.dir, fname))
 
 
 import lxml.etree as etree
 import dcparser
 
 DEFAULT_BOOKINFO = dcparser.BookInfo(
-        { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'}, \
+        { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'},
         { DCNS('creator'): [u'Some, Author'],
           DCNS('title'): [u'Some Title'],
           DCNS('subject.period'): [u'Unknown'],
           DCNS('subject.type'): [u'Unknown'],
           DCNS('subject.genre'): [u'Unknown'],
           DCNS('date'): ['1970-01-01'],
+          DCNS('language'): [u'pol'],
           # DCNS('date'): [creation_date],
           DCNS('publisher'): [u"Fundacja Nowoczesna Polska"],
           DCNS('description'):
@@ -100,8 +154,7 @@ DEFAULT_BOOKINFO = dcparser.BookInfo(
              Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa
              wykonana przez Bibliotekę Narodową z egzemplarza
              pochodzącego ze zbiorów BN."""],
-          DCNS('identifier.url'):
-            [u"http://wolnelektury.pl/katalog/lektura/template"],
+          DCNS('identifier.url'): [WLURI.example],
           DCNS('rights'):
             [u"Domena publiczna - zm. [OPIS STANU PRAWNEGO TEKSTU]"] })
 
@@ -118,14 +171,15 @@ def wrap_text(ocrtext, creation_date, bookinfo=DEFAULT_BOOKINFO):
         method='xml', encoding=unicode, pretty_print=True)
 
     return u'<utwor>\n' + dcstring + u'\n<plain-text>\n' + ocrtext + \
-        u'\n</plain-text>\n</utwor>';
+        u'\n</plain-text>\n</utwor>'
 
 
 def serialize_raw(element):
     b = u'' + (element.text or '')
 
     for child in element.iterchildren():
-        e = etree.tostring(child, method='xml', encoding=unicode, pretty_print=True)
+        e = etree.tostring(child, method='xml', encoding=unicode,
+                pretty_print=True)
         b += e
 
     return b
@@ -140,3 +194,73 @@ def serialize_children(element, format='raw'):
 def get_resource(path):
     return os.path.join(os.path.dirname(__file__), path)
 
+
+class OutputFile(object):
+    """Represents a file returned by one of the converters."""
+
+    _string = None
+    _filename = None
+
+    def __del__(self):
+        if self._filename:
+            os.unlink(self._filename)
+
+    def __nonzero__(self):
+        return self._string is not None or self._filename is not None
+
+    @classmethod
+    def from_string(cls, string):
+        """Converter returns contents of a file as a string."""
+
+        instance = cls()
+        instance._string = string
+        return instance
+
+    @classmethod
+    def from_filename(cls, filename):
+        """Converter returns contents of a file as a named file."""
+
+        instance = cls()
+        instance._filename = filename
+        return instance
+
+    def get_string(self):
+        """Get file's contents as a string."""
+
+        if self._filename is not None:
+            with open(self._filename) as f:
+                return f.read()
+        else:
+            return self._string
+
+    def get_file(self):
+        """Get file as a file-like object."""
+
+        if self._string is not None:
+            from StringIO import StringIO
+            return StringIO(self._string)
+        elif self._filename is not None:
+            return open(self._filename)
+
+    def get_filename(self):
+        """Get file as a fs path."""
+
+        if self._filename is not None:
+            return self._filename
+        elif self._string is not None:
+            from tempfile import NamedTemporaryFile
+            temp = NamedTemporaryFile(prefix='librarian-', delete=False)
+            temp.write(self._string)
+            temp.close()
+            self._filename = temp.name
+            return self._filename
+        else:
+            return None
+
+    def save_as(self, path):
+        """Save file to a path. Create directories, if necessary."""
+
+        dirname = os.path.dirname(os.path.abspath(path))
+        if not os.path.isdir(dirname):
+            os.makedirs(dirname)
+        shutil.copy(self.get_filename(), path)

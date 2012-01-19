@@ -29,14 +29,13 @@
         <item id="toc" href="toc.ncx" media-type="application/x-dtbncx+xml" />
         <item id="style" href="style.css" media-type="text/css" />
         <item id="titlePage" href="title.html" media-type="application/xhtml+xml" />
-        <item id="DejaVuSerif.ttf" href="DejaVuSerif.ttf" media-type="font/ttf" />
-        <item id="DejaVuSerif-Bold.ttf" href="DejaVuSerif-Bold.ttf" media-type="font/ttf" />
-        <item id="DejaVuSerif-BoldItalic.ttf" href="DejaVuSerif-BoldItalic.ttf" media-type="font/ttf" />
-        <item id="DejaVuSerif-Italic.ttf" href="DejaVuSerif-Italic.ttf" media-type="font/ttf" />
       </manifest>
       <spine toc="toc">
         <itemref idref="titlePage" />
       </spine>
+      <guide>
+        <reference type="text" title="Początek" href="part1.html" />
+      </guide>
     </package>
   </xsl:template>
 

@@ -14,4 +14,6 @@
     'genre': u'Baśń',
     'technical_editors': [u'Gałecki, Dariusz'],
     'license_description': u'Domena publiczna - tłumacz Cecylia Niewiadomska zm. 1925',
+    'audiences': [u'SP1'],
+    'language': u'pol',
 }

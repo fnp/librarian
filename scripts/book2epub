@@ -7,8 +7,9 @@
 import os.path
 import optparse
 
-from librarian import epub, DirDocProvider, ParseError
+from librarian import DirDocProvider, ParseError
 from librarian.cover import ImageCover
+from librarian.parser import WLDocument
 
 
 if __name__ == '__main__':
@@ -20,6 +21,8 @@ if __name__ == '__main__':
 
     parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
         help='print status messages to stdout')
+    parser.add_option('-c', '--with-cover', action='store_true', dest='with_cover', default=False,
+                      help='create default cover')
     parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
                       help='create a directory for author and put the PDF in it')
     parser.add_option('-o', '--output-file', dest='output_file', metavar='FILE',
@@ -32,7 +35,7 @@ if __name__ == '__main__':
                       help='less advertising, for commercial purposes')
     parser.add_option('-W', '--not-wl', action='store_true', dest='not_wl', default=False,
                       help='not a WolneLektury book')
-    parser.add_option('-c', '--cover', dest='cover', metavar='FILE',
+    parser.add_option('--cover', dest='cover', metavar='FILE',
                       help='specifies the cover file')
 
     options, input_filenames = parser.parse_args()
@@ -46,20 +49,20 @@ if __name__ == '__main__':
         for main_input in input_filenames:
             if options.verbose:
                 print main_input
+
             path, fname = os.path.realpath(main_input).rsplit('/', 1)
             provider = DirDocProvider(path)
-
-            output_dir = output_file = None
-            if options.output_dir:
-                output_dir = options.output_dir
-            elif options.output_file:
-                output_file = options.output_file
+            if not (options.output_file or options.output_dir):
+                output_file = os.path.splitext(main_input)[0] + '.epub'
             else:
-                output_dir = path
+                output_file = None
 
-            cover = None
+            doc = WLDocument.from_file(main_input, provider=provider)
+
             if options.cover:
                 cover = ImageCover(options.cover)
+            else:
+                cover = options.with_cover
 
             flags = []
             if options.images:
@@ -69,8 +72,11 @@ if __name__ == '__main__':
             if options.not_wl:
                 flags.append('not-wl')
 
-            epub.transform(provider, file_path=main_input, output_dir=output_dir, output_file=output_file, make_dir=options.make_dir,
-                cover=cover, flags=flags)
+            epub = doc.as_epub(cover=cover, flags=flags)
+
+            doc.save_output_file(epub,
+                output_file, options.output_dir, options.make_dir, 'epub')
+
     except ParseError, e:
         print '%(file)s:%(name)s:%(message)s' % {
             'file': main_input,
