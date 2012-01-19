@@ -248,7 +248,7 @@ class WorkInfo(object):
                 if not field.multiple:
                     raise "OUCH!! for field %s" % name
 
-                return value[0]
+                return value[0] if value else None
         except (KeyError, AttributeError):
             return object.__getattribute__(self, name)
 
