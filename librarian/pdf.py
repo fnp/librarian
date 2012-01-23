@@ -180,10 +180,11 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
     verbose: prints all output from LaTeX
     save_tex: path to save the intermediary LaTeX file to
     morefloats (old/new/none): force specific morefloats
-    cover: a cover.Cover object
-    flags: less-advertising,
+    cover: a cover.Cover object or True for default
+    flags: less-advertising, not-wl, images
     customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
     """
+    # TODO: images
 
     # Parse XSLT
     try:

@@ -8,6 +8,7 @@ import os.path
 from optparse import OptionParser
 
 from librarian import DirDocProvider, ParseError
+from librarian.cover import ImageCover
 from librarian.parser import WLDocument
 
 
@@ -30,6 +31,16 @@ if __name__ == '__main__':
                       help='specifies the directory for output')
     parser.add_option('-m', '--morefloats', dest='morefloats', metavar='old/new/none',
                       help='force morefloats in old (<1.0c), new (>=1.0c) or none')
+
+    parser.add_option('-i', '--with-images', action='store_true', dest='images', default=False,
+                      help='add images with <ilustr src="..."/>')
+    parser.add_option('-A', '--less-advertising', action='store_true', dest='less_advertising', default=False,
+                      help='less advertising, for commercial purposes')
+    parser.add_option('-W', '--not-wl', action='store_true', dest='not_wl', default=False,
+                      help='not a WolneLektury book')
+    parser.add_option('--cover', dest='cover', metavar='FILE',
+                      help='specifies the cover file')
+
     (options, args) = parser.parse_args()
 
     if len(args) < 1:
@@ -50,9 +61,26 @@ if __name__ == '__main__':
                 output_file = None
 
             doc = WLDocument.from_file(main_input, provider=provider)
+
+            if options.cover:
+                cover = ImageCover(options.cover)
+            else:
+                cover = options.with_cover
+
+            flags = []
+            if options.images:
+                flags.append('images')
+            if options.less_advertising:
+                flags.append('less-advertising')
+            if options.not_wl:
+                flags.append('not-wl')
+
             pdf = doc.as_pdf(save_tex=options.save_tex,
-                        cover=options.with_cover,
-                        morefloats=options.morefloats)
+                        cover=cover,
+                        flags=flags,
+                        morefloats=options.morefloats,
+                        verbose=options.verbose
+                    )
 
             doc.save_output_file(pdf,
                 output_file, options.output_dir, options.make_dir, 'pdf')

@@ -197,30 +197,32 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \renewcommand{\maketitle}{
     {
-    \thispagestyle{empty}
-    \footnotesize
-    \color{theme}
-
-    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
-        \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
-    \end{minipage}
-    \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
-
-    \ifflaglessadvertising
+    \ifflagnotwl
     \else
-        \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
-        \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
-        \vspace{.5em}
+        \thispagestyle{empty}
+        \footnotesize
+        \color{theme}
+        \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
+            \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
+        \end{minipage}
+        \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
+
+        \ifflaglessadvertising
+        \else
+            \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
+            \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
+            \vspace{.5em}
+        \fi
+
+        Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
+        przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
+
+        \end{minipage}
+        \noindent \rule{\linewidth}{0.4pt}
+
+        \vspace{.6em}
+        \color{black}
     \fi
-
-    Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
-    przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
-
-    \end{minipage}
-    \noindent \rule{\linewidth}{0.4pt}
-
-    \vspace{.6em}
-    \color{black}
     }
 }
 
@@ -234,7 +236,10 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \rightsinfo
     \vspace{.6em}
 
-    Źródło: \href{\bookurl}{\bookurl}
+    \ifflagnotwl
+    \else
+        Źródło: \href{\bookurl}{\bookurl}
+    \fi
 
     \vspace{.6em}
     \sourceinfo
@@ -254,7 +259,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 
 \newcommand{\typosubsubsection}[1]{%
-{\textsc{#1}}
+%{\textsc{#1}}
+#1
 }
 
 \newcommand{\typosubsection}[1]{%

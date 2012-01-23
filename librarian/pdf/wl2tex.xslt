@@ -20,6 +20,7 @@
         <!-- flags and values set on root -->
 
         \newif\ifflaglessadvertising
+        \newif\ifflagnotwl
         <xsl:for-each select="@*[starts-with(name(), 'flag-')]">
             <cmd>
                 <xsl:attribute name="name"><xsl:value-of select="wl:texcommand(name())" />true</xsl:attribute>
@@ -377,7 +378,7 @@
 
 <xsl:template name="editors">
     <xsl:if test="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed">
-        <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
+        <xsl:text>Opracowanie redakcyjne: </xsl:text>
         <xsl:for-each select="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed[not(//dc:contributor.editor_parsed/text()=text())]">
             <xsl:sort select="@sortkey" />
             <xsl:if test="position() != 1">, </xsl:if>
