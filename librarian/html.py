@@ -163,7 +163,8 @@ def extract_fragments(input_filename):
         # Process all elements except begin and end
         else:
             # Omit annotation tags
-            if len(element.get('name', '')) or element.get('class', '') == 'annotation':
+            if (len(element.get('name', '')) or 
+                    element.get('class', '') in ('annotation', 'anchor')):
                 if event == 'end' and element.tail:
                     for fragment_id in open_fragments:
                         open_fragments[fragment_id].append('text', element.tail)
