@@ -192,7 +192,7 @@ class WLCover(Cover):
     bar_width = 35
     background_color = '#444'
     author_color = '#444'
-    default_background = get_resource('res/background.jpg')
+    default_background = get_resource('res/shaireproductions-4945819544-cc-by.jpg')
     format = 'JPEG'
 
     epochs = {
