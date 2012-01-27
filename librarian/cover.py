@@ -192,6 +192,8 @@ class WLCover(Cover):
     bar_width = 35
     background_color = '#444'
     author_color = '#444'
+    default_background = get_resource('res/background.jpg')
+    format = 'JPEG'
 
     epochs = {
         u'Starożytność': 0,
@@ -217,6 +219,8 @@ class WLCover(Cover):
             bg_src = urlopen(book_info.cover_url)
             self.background_img = StringIO(bg_src.read())
             bg_src.close()
+        else:
+            self.background_img = self.default_background
 
     def pretty_author(self):
         return self.author.upper()
