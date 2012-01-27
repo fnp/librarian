@@ -198,6 +198,22 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \renewcommand{\maketitle}{
     {
     \ifflagnotwl
+        \thispagestyle{empty}
+        \footnotesize
+        \color{theme}
+        \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
+            \href{http://ofop.eu}{\xbox{\includegraphics[width=\textwidth]{ofop-logo.png}}}
+        \end{minipage}
+        \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
+	    Utwór został zdigitalizowany w ramach projektu ,,Demokracja to partycypacja" sfinansowanego z PO FIO.
+
+            \xbox{\includegraphics[width=.2\textwidth]{logo-fio.jpg}}
+
+        \end{minipage}
+        \noindent \rule{\linewidth}{0.4pt}
+
+        \vspace{.6em}
+        \color{black}
     \else
         \thispagestyle{empty}
         \footnotesize
@@ -239,12 +255,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \ifflagnotwl
     \else
         Źródło: \href{\bookurl}{\bookurl}
-    \fi
 
     \vspace{.6em}
+    \fi
     \sourceinfo
 
     \description
+
+Utwór został zdigitalizowany w ramach projektu ,,Demokracja to partycypacja" sfinansowanego z PO FIO.
     \vspace{.6em}
 
     \editors

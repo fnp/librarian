@@ -188,7 +188,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
     # Parse XSLT
     try:
-        document = load_including_children(wldoc)
+        document = load_including_children(wldoc)        
 
         if cover:
             if cover is True:
@@ -249,6 +249,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
+
+        # FIXME: temporary
+        shutil.copy(get_resource('res/ofop-logo.png'), temp)
+        shutil.copy(get_resource('res/logo-fio.jpg'), temp)
 
         cwd = os.getcwd()
         os.chdir(temp)
