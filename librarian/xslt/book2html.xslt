@@ -10,6 +10,7 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/" >
 
 <xsl:output encoding="utf-8" indent="yes" omit-xml-declaration = "yes" version="2.0" />
+<xsl:strip-space  elements="opowiadanie powiesc dramat_wierszowany_l dramat_wierszowany_lp dramat_wspolczesny liryka_l liryka_lp wywiad"/>
 <xsl:template match="utwor">
     <xsl:choose>
         <xsl:when test="@full-page">
@@ -532,11 +533,15 @@
 </xsl:template>
 
 <xsl:template match="akap|akap_dialog|akap_cd">
-    <p class="paragraph"><xsl:apply-templates mode="inline" /></p>
+    <p class="paragraph">
+        <a name="{concat('sect', position())}" />
+	<xsl:apply-templates mode="inline" />
+    </p>
 </xsl:template>
 
 <xsl:template match="strofa">
     <div class="stanza">
+      <a name="{concat('sect', position())}" />
         <xsl:choose>
             <xsl:when test="count(br) > 0">
                 <xsl:call-template name="verse">
