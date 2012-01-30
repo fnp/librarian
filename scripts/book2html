@@ -22,6 +22,8 @@ if __name__ == '__main__':
         help='print status messages to stdout')
     parser.add_option('-i', '--ignore-dublin-core', action='store_false', dest='parse_dublincore', default=True,
         help='don\'t try to parse dublin core metadata')
+    parser.add_option('-r', '--raw', action='store_false', dest='full_page', default=True,
+        help='outpu raw text for use in templates')
 
     options, input_filenames = parser.parse_args()
 
@@ -38,7 +40,8 @@ if __name__ == '__main__':
         try:
             doc = WLDocument.from_file(input_filename,
                 parse_dublincore=options.parse_dublincore)
-            html = doc.as_html(flags=('full-page',))
+            flags = ('full-page',) if options.full_page else None
+            html = doc.as_html(flags=flags)
             doc.save_output_file(html, output_path=output_filename)
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
