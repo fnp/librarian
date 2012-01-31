@@ -648,6 +648,22 @@
     <hr class="spacer-line" />
 </xsl:template>
 
+<xsl:template match="ilustr">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ilustr">
+      <img xmlns="http://www.w3.org/1999/xhtml" alt="ilustracja">
+        <xsl:attribute name="src">
+          <xsl:value-of select="@src" />
+        </xsl:attribute>
+        <xsl:attribute name="alt">
+          <xsl:apply-templates mode="inline" />
+        </xsl:attribute>
+        <xsl:attribute name="title">
+          <xsl:apply-templates mode="inline" />
+        </xsl:attribute>
+      </img>
+    </div>
+</xsl:template>
+
 
 <!-- ================ -->
 <!-- = SPECIAL TAGS = -->

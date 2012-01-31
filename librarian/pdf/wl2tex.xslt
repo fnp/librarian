@@ -348,6 +348,16 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="ilustr">
+    <cmd>
+        <xsl:attribute name="name">
+            <xsl:value-of select="wl:texcommand(name())" />
+        </xsl:attribute>
+		<parm><xsl:value-of select="@src" /></parm>
+        <parm><xsl:apply-templates mode="inline" /></parm>
+    </cmd>
+</xsl:template>
+
 
 <!-- ================ -->
 <!-- = SPECIAL TAGS = -->

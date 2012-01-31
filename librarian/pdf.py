@@ -235,6 +235,9 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             with open(os.path.join(temp, 'cover.png'), 'w') as f:
                 c.save(f)
 
+        for img in document.edoc.findall('//ilustr'):
+            shutil.copy(img.get('src'), temp)
+
         del document # no longer needed large object :)
 
         tex_path = os.path.join(temp, 'doc.tex')
