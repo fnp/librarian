@@ -15,7 +15,7 @@
         <xsl:when test="@full-page">
             <html>
             <head>
-                <title>Książka z serwisu WolneLektury.pl</title>
+                <title><xsl:apply-templates mode="inline" select="//nazwa_utworu" /></title>
                 <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
             </head>
             <style>
