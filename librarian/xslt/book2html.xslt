@@ -45,6 +45,7 @@
 
                 img {
                     border: none;
+                    max-width: 100%;
                 }
 
 
