@@ -192,7 +192,7 @@ class WLCover(Cover):
     bar_width = 35
     background_color = '#444'
     author_color = '#444'
-    default_background = get_resource('res/webtreatsetc-5647576127-ccby.png')
+    default_background = get_resource('res/cover.png')
     format = 'JPEG'
 
     epochs = {
