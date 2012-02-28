@@ -145,16 +145,29 @@
         \def\translatorsline{<xsl:call-template name="translators" />}
 
         \def\bookurl{<xsl:value-of select=".//dc:identifier.url" />}
+        <xsl:choose>
+        	<xsl:when test=".//dc:date.pd">
+		        \def\rightsinfo{Ten utwór nie jest chroniony prawem autorskim i~znajduje się w~domenie
+		            publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
+		            i~rozpowszechniać. 
+		            %Jeśli utwór opatrzony jest dodatkowymi materiałami
+		            %(przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
+		            %te dodatkowe materiały udostępnione są na licencji
+		            %\href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
+		            %Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.
+		            }
+        	</xsl:when>
+        	<xsl:when test=".//dc:rights.license">
+	            \def\rightsinfo{Ten utwór jest udostepniony na licencji
+    	        \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
+        	</xsl:when>
+        	<xsl:otherwise>
+	        	\def\rightsinfo{<xsl:value-of select=".//dc:rights" />}
+        	</xsl:otherwise>
+        </xsl:choose>
 
-        \def\rightsinfo{Ten utwór nie jest chroniony prawem autorskim i~znajduje się w~domenie
-            publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
-            i~rozpowszechniać. 
-            %Jeśli utwór opatrzony jest dodatkowymi materiałami
-            %(przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
-            %te dodatkowe materiały udostępnione są na licencji
-            %\href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
-            %Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.
-            }
+        <xsl:if test=".//dc:rights.license">
+        </xsl:if>
         <xsl:if test=".//dc:rights.license">
             \def\rightsinfo{Ten utwór jest udostepniony na licencji
             \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
