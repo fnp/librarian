@@ -221,6 +221,14 @@ def add_anchors(root):
             counter += 1
 
 
+def raw_printable_text(element):
+    working = copy.deepcopy(element)
+    for e in working.findall('a'):
+        if e.get('class') == 'annotation':
+            e.text = ''
+    return etree.tostring(working, method='text', encoding=unicode).strip()
+
+
 def add_table_of_contents(root):
     sections = []
     counter = 1
@@ -229,8 +237,7 @@ def add_table_of_contents(root):
             if any_ancestor(element, lambda e: e.get('id') in ('footnotes',) or e.get('class') in ('person-list',)):
                 continue
 
-            element_text = etree.tostring(element, method='text',
-                    encoding=unicode).strip()
+            element_text = raw_printable_text(element)
             if element.tag == 'h3' and len(sections) and sections[-1][1] == 'h2':
                 sections[-1][3].append((counter, element.tag, element_text, []))
             else:
