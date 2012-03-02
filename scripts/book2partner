@@ -54,7 +54,7 @@ if __name__ == '__main__':
     if options.artatech_pdf:
         packagers.ArtaTechPdfPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.virtualo:
-        packagers.VirtualoEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
+        packagers.VirtualoPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.prestigio:
         packagers.PrestigioEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
     if options.prestigio_pdf:

@@ -81,7 +81,7 @@ class PrestigioPdfPackager(PdfPackager):
     flags = ('less-advertising',)
 
 
-class VirtualoEpubPackager(Packager):
+class VirtualoPackager(Packager):
     @staticmethod
     def utf_trunc(text, limit):
         """ truncates text to at most `limit' bytes in utf-8 """
@@ -139,9 +139,16 @@ class VirtualoEpubPackager(Packager):
                 cover.VirtualoCover(info).save(os.path.join(outfile_dir, slug+'.jpg'))
                 outfile = os.path.join(outfile_dir, '1.epub')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.epub')
-                doc.save_output_file(epub.transform(doc),
+                doc.save_output_file(doc.as_epub(),
                         output_path=outfile)
-                doc.save_output_file(epub.transform(doc, sample=25), 
+                doc.save_output_file(doc.as_epub(doc, sample=25), 
+                        output_path=outfile_sample)
+                outfile = os.path.join(outfile_dir, '1.mobi')
+                outfile_sample = os.path.join(outfile_dir, '1.sample.mobi')
+                doc.save_output_file(doc.as_mobi(cover=cover.VirtualoCover),
+                        output_path=outfile)
+                doc.save_output_file(
+                        doc.as_mobi(doc, cover=cover.VirtualoCover, sample=25), 
                         output_path=outfile_sample)
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {

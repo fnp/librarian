@@ -10,6 +10,7 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/" >
 
 <xsl:output encoding="utf-8" indent="yes" omit-xml-declaration = "yes" version="2.0" />
+<xsl:strip-space  elements="opowiadanie powiesc dramat_wierszowany_l dramat_wierszowany_lp dramat_wspolczesny liryka_l liryka_lp wywiad"/>
 <xsl:template match="utwor">
     <xsl:choose>
         <xsl:when test="@full-page">
@@ -508,23 +509,28 @@
 
 <!-- Section headers (included in index)-->
 <xsl:template match="naglowek_akt|naglowek_czesc|srodtytul">
+  <xsl:call-template name="section-anchor"/>
     <h2><xsl:apply-templates mode="inline" /></h2>
 </xsl:template>
 
 <xsl:template match="naglowek_scena|naglowek_rozdzial">
+    <xsl:call-template name="section-anchor"/>
     <h3><xsl:apply-templates mode="inline" /></h3>
 </xsl:template>
 
 <xsl:template match="naglowek_osoba|naglowek_podrozdzial">
+      <xsl:call-template name="section-anchor"/>
     <h4><xsl:apply-templates mode="inline" /></h4>
 </xsl:template>
 
 <!-- Other paragraph tags -->
 <xsl:template match="miejsce_czas">
+      <xsl:call-template name="section-anchor"/>
     <p class="place-and-time"><xsl:apply-templates mode="inline" /></p>
 </xsl:template>
 
 <xsl:template match="didaskalia">
+      <xsl:call-template name="section-anchor"/>
     <div class="didaskalia"><xsl:apply-templates mode="inline" /></div>
 </xsl:template>
 
@@ -533,11 +539,15 @@
 </xsl:template>
 
 <xsl:template match="akap|akap_dialog|akap_cd">
-    <p class="paragraph"><xsl:apply-templates mode="inline" /></p>
+    <p class="paragraph">
+      <xsl:call-template name="section-anchor"/>
+	<xsl:apply-templates mode="inline" />
+    </p>
 </xsl:template>
 
 <xsl:template match="strofa">
     <div class="stanza">
+      <xsl:call-template name="section-anchor"/>
         <xsl:choose>
             <xsl:when test="count(br) > 0">
                 <xsl:call-template name="verse">
@@ -728,5 +738,19 @@
     <xsl:value-of select="wl:substitute_entities(.)" />
 </xsl:template>
 
+<!-- ========= -->
+<!-- = utils = -->
+<!-- ========= -->
+<xsl:template name="section-anchor">
+  <!-- 
+       this formula works as follows:
+       - get all ancestors including self
+       - choose the header (third one from root): utwor/book-type/header
+       - get all preceding siblings
+       - count them
+       - create an <a name="sec123"/> tag.
+  -->
+        <a name="{concat('sec', count(ancestor-or-self::*[last()-2]/preceding-sibling::*) + 1)}" />
+</xsl:template>
 
 </xsl:stylesheet>

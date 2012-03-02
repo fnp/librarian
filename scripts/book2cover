@@ -33,7 +33,7 @@ if __name__ == '__main__':
         if options.verbose:
             print input_filename
 
-        output_filename = os.path.splitext(input_filename)[0] + '.png'
+        output_filename = os.path.splitext(input_filename)[0] + '.jpg'
 
         doc = WLDocument.from_file(input_filename)
         WLCover(doc.book_info).save(output_filename)
