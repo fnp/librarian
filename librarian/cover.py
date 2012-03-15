@@ -33,7 +33,7 @@ class TextBox(object):
         """Skips some vertical space."""
         self.height += height
 
-    def text(self, text, color='#000', font=None, line_height=20, 
+    def text(self, text, color='#000', font=None, line_height=20,
              shadow_color=None):
         """Writes some centered text."""
         if shadow_color:
@@ -154,7 +154,7 @@ class Cover(object):
             self.author_lineskip, self.author_shadow)
         text_img = tbox.image()
         img.paste(text_img, (self.author_margin_left, top), text_img)
-        
+
         top += text_img.size[1] + self.title_top
         tbox = TextBox(
             self.width - self.title_margin_left - self.title_margin_right,
@@ -195,17 +195,17 @@ class WLCover(Cover):
     default_background = get_resource('res/cover.png')
     format = 'JPEG'
 
-    epochs = {
-        u'Starożytność': 0,
-        u'Średniowiecze': 30,
-        u'Renesans': 60,
-        u'Barok': 90,
-        u'Oświecenie': 120,
-        u'Romantyzm': 150,
-        u'Pozytywizm': 180,
-        u'Modernizm': 210,
-        u'Dwudziestolecie międzywojenne': 240,
-        u'Współczesność': 270,
+    epoch_colors = {
+        u'Starożytność': '#9e3610',
+        u'Średniowiecze': '#564c09',
+        u'Renesans': '#8ca629',
+        u'Barok': '#a6820a',
+        u'Oświecenie': '#f2802e',
+        u'Romantyzm': '#db4b16',
+        u'Pozytywizm': '#961060',
+        u'Modernizm': '#7784e0',
+        u'Dwudziestolecie międzywojenne': '#3044cf',
+        u'Współczesność': '#06393d',
     }
 
     def __init__(self, book_info):
@@ -226,14 +226,11 @@ class WLCover(Cover):
         return self.author.upper()
 
     def image(self):
-        from colorsys import hsv_to_rgb
-
         img = Image.new('RGB', (self.width, self.height), self.background_color)
         draw = ImageDraw.Draw(img)
 
-        if self.epoch in self.epochs:
-            epoch_color = tuple(int(255 * c) for c in hsv_to_rgb(
-                    float(self.epochs[self.epoch]) / 360, .7, .7))
+        if self.epoch in self.epoch_colors:
+            epoch_color = self.epoch_colors[self.epoch]
         else:
             epoch_color = '#000'
         draw.rectangle((0, 0, self.bar_width, self.height), fill=epoch_color)
@@ -257,12 +254,12 @@ class WLCover(Cover):
                 cut = (resized[0] - trg_size[0]) / 2
                 src = src.resize(resized)
                 src = src.crop((cut, 0, src.size[0] - cut, src.size[1]))
-            
+
             img.paste(src, (self.bar_width, 0))
             del src
 
         box = TextBox(self.title_box_width, self.height, padding_y=20)
-        box.text(self.pretty_author(), 
+        box.text(self.pretty_author(),
                  font=self.author_font,
                  line_height=self.author_lineskip,
                  color=self.author_color,
@@ -270,7 +267,7 @@ class WLCover(Cover):
                 )
 
         box.skip(10)
-        box.draw.line((75, box.height, 275, box.height), 
+        box.draw.line((75, box.height, 275, box.height),
                 fill=self.author_color, width=2)
         box.skip(15)
 
@@ -292,9 +289,9 @@ class WLCover(Cover):
             # center
             box_top = (self.height - box_img.size[1]) / 2
 
-        box_left = self.bar_width + (self.width - self.bar_width - 
+        box_left = self.bar_width + (self.width - self.bar_width -
                         box_img.size[0]) / 2
-        draw.rectangle((box_left, box_top, 
+        draw.rectangle((box_left, box_top,
             box_left + box_img.size[0], box_top + box_img.size[1]),
             fill='#fff')
         img.paste(box_img, (box_left, box_top), box_img)
