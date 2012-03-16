@@ -18,8 +18,7 @@
             <head>
                 <title><xsl:apply-templates mode="inline" select="//nazwa_utworu" /></title>
                 <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
-            </head>
-            <style>
+                <style>
                 body {
                     font-size: 16px;
                     font: Georgia, "Times New Roman", serif;
@@ -394,7 +393,8 @@
                 @media print {
                     #menu {display: none;}
                 }
-            </style>
+                </style>
+            </head>
             <body>
                 <xsl:call-template name="book-text" />
             </body>

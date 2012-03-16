@@ -261,7 +261,11 @@ def add_table_of_contents(root):
                 subsection_element = etree.SubElement(subsection_list, 'li')
                 add_anchor(subsection_element, "s%d" % n, with_target=False, link_text=text)
 
+    if root.tag == 'html':
+        # in case of full-page output
+        root = root[-1][0]
     root.insert(0, toc)
+    
 
 
 def extract_annotations(html_path):
