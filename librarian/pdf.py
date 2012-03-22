@@ -34,13 +34,14 @@ STYLESHEETS = {
     'wl2tex': 'pdf/wl2tex.xslt',
 }
 
-CUSTOMIZATIONS = [
-    'nofootnotes',
-    'nothemes',
-    'onehalfleading',
-    'doubleleading',
-    'nowlfont',
-    ]
+#CUSTOMIZATIONS = [
+#    'nofootnotes',
+#    'nothemes',
+#    'defaultleading',
+#    'onehalfleading',
+#    'doubleleading',
+#    'nowlfont',
+#    ]
 
 def insert_tags(doc, split_re, tagname, exclude=None):
     """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree

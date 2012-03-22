@@ -6,6 +6,7 @@
 %
 % nofootnotes - disable generation of footnotes
 % nothemes - disable generation of themes
+% defaultleading - default leading
 % onehalfleading - leading of 1.5 (interlinia)
 % doubleleading - double leading (interlinia)
 % a4paper,... - paper size as required by LaTeX
@@ -39,6 +40,7 @@
 
 %% \DeclareOption{14pt}{\renewcommand{\normalsize}{\AtEndOfClass{\fontsize{14}{17}\selectfont}}}
 
+\DeclareOption{defaultleading}{}
 \DeclareOption{doubleleading}{\AtBeginDocument{\doublespacing}}%\setlength{\leading}{1em plus 0.5ex minus 0.2ex}}
 \DeclareOption{onehalfleading}{\AtBeginDocument{\onehalfspacing}}%\setlength{\leading}{1em plus 0.5ex minus 0.2ex}}
 
