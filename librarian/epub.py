@@ -292,7 +292,7 @@ def transform(wldoc, verbose=False,
 
     sample=n: generate sample e-book (with at least n paragraphs)
     cover: a cover.Cover object or True for default
-    flags: less-advertising, without-fonts
+    flags: less-advertising, without-fonts, working-copy
     """
 
     def transform_file(wldoc, chunk_counter=1, first=True, sample=None):

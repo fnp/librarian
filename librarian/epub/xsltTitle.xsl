@@ -36,6 +36,10 @@
 
           <xsl:call-template name="translators" />
 
+          <xsl:if test="utwor/@working-copy">
+            <p class="info">[Kopia robocza]</p>
+          </xsl:if>
+
           <xsl:if test="not(utwor/@less-advertising)">
             <p class="info">
               <a>
