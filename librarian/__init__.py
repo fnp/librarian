@@ -9,7 +9,7 @@ import os
 import re
 import shutil
 
-class ParseError(Exception):
+class UnicodeException(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
         return self.message
@@ -18,14 +18,17 @@ class ParseError(Exception):
         """ Dirty workaround for Python Unicode handling problems. """
         return self.message
 
-class ValidationError(Exception):
+class ParseError(UnicodeException):
+    pass
+
+class ValidationError(UnicodeException):
     pass
 
 class NoDublinCore(ValidationError):
     """There's no DublinCore section, and it's required."""
     pass
 
-class NoProvider(Exception):
+class NoProvider(UnicodeException):
     """There's no DocProvider specified, and it's needed."""
     pass
 
@@ -70,7 +73,7 @@ class WLURI(object):
     slug = None
 
     example = 'http://wolnelektury.pl/katalog/lektura/template/'
-    _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/lektura/'
+    _re_wl_uri = re.compile(r'http://(www\.)?wolnelektury.pl/katalog/lektura/'
             '(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):
@@ -82,8 +85,8 @@ class WLURI(object):
     def strict(cls, uri):
         match = cls._re_wl_uri.match(uri)
         if not match:
-            raise ValueError('Supplied URI (%s) does not match '
-                'the template: %s.' % (uri, cls._re_wl_uri))
+            raise ValidationError(u'Invalid URI (%s). Should match: %s' % (
+                        uri, cls._re_wl_uri.pattern))
         return cls(uri)
 
     @classmethod
