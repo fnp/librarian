@@ -3,6 +3,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+import re
 import Image, ImageFont, ImageDraw, ImageFilter
 from librarian import get_resource
 
@@ -36,6 +37,7 @@ class TextBox(object):
     def text(self, text, color='#000', font=None, line_height=20,
              shadow_color=None):
         """Writes some centered text."""
+        text = re.sub(r'\s+', ' ', text)
         if shadow_color:
             if not self.shadow_img:
                 self.shadow_img = Image.new('RGBA', self.img.size)
