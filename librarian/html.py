@@ -234,7 +234,7 @@ def add_table_of_contents(root):
     counter = 1
     for element in root.iterdescendants():
         if element.tag in ('h2', 'h3'):
-            if any_ancestor(element, lambda e: e.get('id') in ('footnotes',) or e.get('class') in ('person-list',)):
+            if any_ancestor(element, lambda e: e.get('id') in ('footnotes', 'nota_red') or e.get('class') in ('person-list',)):
                 continue
 
             element_text = raw_printable_text(element)
