@@ -183,6 +183,8 @@ class Cover(object):
 
 class WLCover(Cover):
     """Default Wolne Lektury cover generator."""
+    width = 600
+    height = 833
     uses_dc_cover = True
     author_font = ImageFont.truetype(
         get_resource('fonts/JunicodeWL-Regular.ttf'), 20)
