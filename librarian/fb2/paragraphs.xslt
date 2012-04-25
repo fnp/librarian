@@ -13,18 +13,12 @@
 
 	<!-- in paragraph mode -->
 
-	<xsl:template mode="para" match="autor_utworu|nazwa_utworu|akap|akap_dialog">
+	<xsl:template mode="para" match="akap|akap_dialog">
 		<!-- paragraphs & similar -->
 
 		<p><xsl:apply-templates mode="inline"/></p>
 	</xsl:template>
 
-	<!-- in global scope -->
-
-	<xsl:template mode="sections" match="akap|akap_dialog">
-		<!-- paragraphs & similar -->
-
-		<p><xsl:apply-templates mode="inline"/></p>
-	</xsl:template>
-	<xsl:template mode="sections" match="autor_utworu|nazwa_utworu"/>
+	<xsl:template mode="para" match="*"/>
+	<xsl:template mode="sections" match="*"/>
 </xsl:stylesheet>

@@ -37,12 +37,25 @@
 		<body> <!-- main body for main book flow -->
 			<xsl:if test="autor_utworu or nazwa_utworu">
 				<title>
-					<xsl:apply-templates mode="para"
+					<xsl:apply-templates mode="title"
 						select="autor_utworu|nazwa_utworu"/>
 				</title>
 			</xsl:if>
 
+			<xsl:variable name="sections" select="count(naglowek_rozdzial)"/>
+			<section>
+				<xsl:apply-templates mode="para"
+					select="*[count(following-sibling::naglowek_rozdzial)
+						= $sections]"/>
+			</section>
+
 			<xsl:apply-templates mode="sections"/>
 		</body>
+	</xsl:template>
+
+	<xsl:template mode="title" match="autor_utworu|nazwa_utworu">
+		<!-- title -->
+
+		<p><xsl:apply-templates mode="inline"/></p>
 	</xsl:template>
 </xsl:stylesheet>
