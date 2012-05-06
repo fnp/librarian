@@ -14,24 +14,16 @@
 	<!-- poems -->
 
 	<!-- match poem citations -->
-	<xsl:template mode="paras" match="poezja_cyt">
+	<xsl:template mode="para" match="poezja_cyt">
 		<cite>
 			<poem>
-				<xsl:apply-templates mode="poem"/>
+				<xsl:apply-templates mode="para"/>
 			</poem>
 		</cite>
 	</xsl:template>
-	<!-- / XXX: fb2 doesn't allow <poem/> inside <p/> /
-	<xsl:template mode="inline" match="poezja_cyt">
-
-		<poem>
-			<xsl:apply-templates mode="poem"/>
-		</poem>
-	</xsl:template>
-	-->
 
 	<!-- regular poem elements -->
-	<xsl:template mode="poem" match="strofa">
+	<xsl:template mode="para" match="strofa">
 		<stanza>
 			<xsl:call-template name="split-poem">
 				<xsl:with-param name="list" select="."/>
@@ -58,6 +50,4 @@
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
-
-	<xsl:template match="text()" mode="poem"/>
 </xsl:stylesheet>

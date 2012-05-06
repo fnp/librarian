@@ -48,7 +48,7 @@
 				<xsl:choose>
 					<xsl:when test="local-name() = 'liryka_l'">
 						<poem>
-							<xsl:apply-templates mode="poem"/>
+							<xsl:apply-templates mode="para"/>
 						</poem>
 					</xsl:when>
 
