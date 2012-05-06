@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser.add_option('-c', '--with-cover', action='store_true', dest='with_cover', default=False,
                       help='create default cover')
     parser.add_option('-w', '--working-copy', action='store_true', dest='working_copy', default=False,
-                      help='specifies the directory for output')
+                      help='mark the output as a working copy')
     parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
                       help='create a directory for author and put the PDF in it')
     parser.add_option('-o', '--output-file', dest='output_file', metavar='FILE',
