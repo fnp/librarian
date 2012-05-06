@@ -32,4 +32,7 @@
 	<xsl:template match="text()" mode="inline">
 		<xsl:value-of select="wl:substitute_entities(.)"/>
 	</xsl:template>
+
+	<xsl:template match="uwaga" mode="inline"/>
+	<xsl:template match="extra" mode="inline"/>
 </xsl:stylesheet>

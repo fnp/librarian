@@ -58,4 +58,6 @@
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
+
+	<xsl:template match="text()" mode="poem"/>
 </xsl:stylesheet>

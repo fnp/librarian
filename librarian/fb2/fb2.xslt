@@ -33,29 +33,46 @@
 	<xsl:template match="dc:*" mode="outer">
 	</xsl:template>
 
+	<!-- we can't handle lyrics nicely yet -->
 	<xsl:template match="powiesc|opowiadanie" mode="outer">
 		<body> <!-- main body for main book flow -->
 			<xsl:if test="autor_utworu or nazwa_utworu">
 				<title>
 					<xsl:apply-templates mode="title"
-						select="autor_utworu|nazwa_utworu"/>
+						select="autor_utworu|dzielo_nadrzedne|nazwa_utworu"/>
 				</title>
 			</xsl:if>
 
 			<xsl:variable name="sections" select="count(naglowek_rozdzial)"/>
 			<section>
-				<xsl:apply-templates mode="para"
-					select="*[count(following-sibling::naglowek_rozdzial)
-						= $sections]"/>
+				<xsl:choose>
+					<xsl:when test="local-name() = 'liryka_l'">
+						<poem>
+							<xsl:apply-templates mode="poem"/>
+						</poem>
+					</xsl:when>
+
+					<xsl:otherwise>
+						<xsl:apply-templates mode="para"
+							select="*[count(following-sibling::naglowek_rozdzial)
+							= $sections]"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</section>
 
 			<xsl:apply-templates mode="sections"/>
 		</body>
 	</xsl:template>
 
-	<xsl:template mode="title" match="autor_utworu|nazwa_utworu">
+	<xsl:template match="uwaga" mode="outer"/>
+	<xsl:template match="extra" mode="outer"/>
+
+	<xsl:template mode="title" match="*">
 		<!-- title -->
 
 		<p><xsl:apply-templates mode="inline"/></p>
 	</xsl:template>
+
+	<xsl:template match="uwaga" mode="title"/>
+	<xsl:template match="extra" mode="title"/>
 </xsl:stylesheet>

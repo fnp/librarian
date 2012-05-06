@@ -12,9 +12,10 @@
 	xmlns:l="http://www.w3.org/1999/xlink">
 
 	<!-- a nice epigraph section -->
-	<xsl:template match="nota_red" mode="sections">
+	<xsl:template match="dedykacja|nota|nota_red" mode="sections">
 		<epigraph>
 			<xsl:apply-templates mode="para"/>
+			<!-- XXX: <strofa/> can be here as well -->
 		</epigraph>
 	</xsl:template>
 
