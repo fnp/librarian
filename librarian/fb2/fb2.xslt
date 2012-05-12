@@ -7,10 +7,10 @@
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:wl="http://wolnelektury.pl/functions"
-	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns="http://www.gribuser.ru/xml/fictionbook/2.0"
 	xmlns:l="http://www.w3.org/1999/xlink">
 
+	<xsl:include href="description.xslt"/>
 	<xsl:include href="footnotes.xslt"/>
 	<xsl:include href="inline.xslt"/>
 	<xsl:include href="paragraphs.xslt"/>
@@ -30,11 +30,8 @@
 		</FictionBook>
 	</xsl:template>
 
-	<xsl:template match="dc:*" mode="outer">
-	</xsl:template>
-
 	<!-- we can't handle lyrics nicely yet -->
-	<xsl:template match="powiesc|opowiadanie" mode="outer">
+	<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp" mode="outer">
 		<body> <!-- main body for main book flow -->
 			<xsl:if test="autor_utworu or nazwa_utworu">
 				<title>
