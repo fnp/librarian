@@ -40,6 +40,15 @@
 				</title>
 			</xsl:if>
 
+			<epigraph>
+				<p>
+					Utwór opracowany został w&#160;ramach projektu
+						<a l:href="http://www.wolnelektury.pl/">Wolne Lektury</a>
+					przez <a l:href="http://www.nowoczesnapolska.org.pl/">fundację
+						Nowoczesna Polska</a>.
+				</p>
+			</epigraph>
+
 			<xsl:variable name="sections" select="count(naglowek_rozdzial)"/>
 			<section>
 				<xsl:choose>
