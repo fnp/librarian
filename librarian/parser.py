@@ -185,6 +185,10 @@ class WLDocument(object):
         from librarian import mobi
         return mobi.transform(self, *args, **kwargs)
 
+    def as_fb2(self, *args, **kwargs):
+        from librarian import fb2
+        return fb2.transform(self, *args, **kwargs)
+
     def save_output_file(self, output_file, output_path=None,
             output_dir_path=None, make_author_dir=False, ext=None):
         if output_dir_path:
