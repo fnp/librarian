@@ -31,7 +31,9 @@
 			<xsl:attribute name="type">note</xsl:attribute>
 			<xsl:attribute name="l:href">#fn<xsl:value-of select="$n"/></xsl:attribute>
 
-			[<xsl:value-of select="$n"/>]
+			<xsl:text>[</xsl:text>
+			<xsl:value-of select="$n"/>
+			<xsl:text>]</xsl:text>
 		</xsl:element>
 	</xsl:template>
 </xsl:stylesheet>
