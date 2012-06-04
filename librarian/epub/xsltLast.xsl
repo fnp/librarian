@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="style.css" type="text/css" />
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <title>
-          <xsl:text>Strona redakcyjna</xsl:text>
+          <xsl:text>Editorial page</xsl:text>
         </title>
       </head>
       <body>
@@ -23,13 +23,13 @@
           <p class="info">
               <xsl:choose>
                   <xsl:when test="//dc:rights.license">
-                      Ten utwór jest udostepniony na licencji
+                      This book is available under the terms of
                       <a>
                           <xsl:attribute name="href">
                               <xsl:value-of select="//dc:rights.license" />
                           </xsl:attribute>
                           <xsl:value-of select="//dc:rights" />
-                      </a>
+                      </a>.
                   </xsl:when>
                   <xsl:otherwise>
                     Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie
@@ -43,28 +43,12 @@
               </xsl:choose>
           </p>
 
-          <p class="info">Źródło: <a>
-              <xsl:attribute name="href">
-                  <xsl:value-of select="//dc:identifier.url" />
-              </xsl:attribute>
-              <xsl:attribute name="title">
-                  <xsl:value-of select="wl:person_name(//dc:creator/text())" />, <xsl:value-of select="//dc:title" />
-              </xsl:attribute>
-              <xsl:value-of select="//dc:identifier.url" />
-          </a></p>
-
-          <xsl:if test="//dc:source" >
-            <p class="info">Tekst opracowany na podstawie: <xsl:value-of select="//dc:source" /></p>
-          </xsl:if>
-
-          <xsl:if test="//dc:description" >
-            <p class="info"><xsl:value-of select="//dc:description" /></p>
-          </xsl:if>
+          <p class="info">Published by <a href="http://nowoczesnapolska.org.pl">Modern Poland Foundation</a>, 2012.</p>
 
           <xsl:call-template name="editors" />
 
           <xsl:if test="@data-cover-by">
-            <p class="info">Okładka na podstawie: 
+            <p class="info">Cover image: 
             <xsl:choose>
             <xsl:when test="@data-cover-source">
                 <a>
@@ -80,19 +64,6 @@
             </xsl:choose>
             </p>
           </xsl:if>
-
-          <div class="info">
-          <img src="jedenprocent.png" alt="Logo 1%" />
-          <div>Przekaż 1% podatku na rozwój Wolnych Lektur.</div>
-          <div>Nazwa organizacji: Fundacja Nowoczesna Polska</div>
-          <div>KRS 0000070056</div>
-          </div>
-
-          <p class="info">&#160;</p>
-          <p class="minor info">
-              Plik wygenerowany dnia <span id="file_date"><xsl:value-of select="substring(date:date(), 1, 10)" /></span>.
-          </p>
-
         </div>
       </body>
     </html>
@@ -105,7 +76,7 @@
   <xsl:template name="editors">
     <xsl:if test="//dc:contributor.editor[text()]|//dc:contributor.technical_editor[text()]">
         <p class="info">
-            <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
+            <xsl:text>Technical editors: </xsl:text>
             <xsl:for-each select="//dc:contributor.editor[text()]|//dc:contributor.technical_editor[text() and not(//dc:contributor.editor/text()=text())]">
                 <xsl:sort />
                 <xsl:if test="position() != 1">, </xsl:if>

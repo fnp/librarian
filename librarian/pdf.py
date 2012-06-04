@@ -21,7 +21,7 @@ from librarian.dcparser import Person
 from librarian.parser import WLDocument
 from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
-from librarian.cover import WLCover
+from librarian.cover import ImageCover as WLCover
 
 
 functions.reg_substitute_entities()
@@ -193,9 +193,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         if cover:
             if cover is True:
                 cover = WLCover
-            document.edoc.getroot().set('data-cover-width', str(cover.width))
-            document.edoc.getroot().set('data-cover-height', str(cover.height))
-            if cover.uses_dc_cover:
+            the_cover = cover(document.book_info)
+            document.edoc.getroot().set('data-cover-width', str(the_cover.width))
+            document.edoc.getroot().set('data-cover-height', str(the_cover.height))
+            if the_cover.uses_dc_cover:
                 if document.book_info.cover_by:
                     document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
                 if document.book_info.cover_source:
@@ -215,10 +216,11 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             document.edoc.getroot().set('customizations', u','.join(customizations))
 
         # hack the tree
-        move_motifs_inside(document.edoc)
-        hack_motifs(document.edoc)
+        #move_motifs_inside(document.edoc)
+        #hack_motifs(document.edoc)
         parse_creator(document.edoc)
-        substitute_hyphens(document.edoc)
+        if document.book_info.language == 'pol':
+            substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
 
         # wl -> TeXML
@@ -231,9 +233,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         temp = mkdtemp('-wl2pdf')
 
         if cover:
-            c = cover(document.book_info)
-            with open(os.path.join(temp, 'cover.png'), 'w') as f:
-                c.save(f)
+            with open(os.path.join(temp, 'cover.jpg'), 'w') as f:
+                the_cover.save(f)
 
         del document # no longer needed large object :)
 
@@ -249,6 +250,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
+        shutil.copy('logo.eps', temp)
 
         cwd = os.getcwd()
         os.chdir(temp)

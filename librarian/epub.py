@@ -16,7 +16,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
 from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
-from librarian.cover import WLCover
+from librarian.cover import ImageCover as WLCover
 
 from librarian import functions, get_resource
 
@@ -79,7 +79,7 @@ def replace_characters(node):
         return text.replace(u"\ufeff", u"")\
                    .replace("---", u"\u2014")\
                    .replace("--", u"\u2013")\
-                   .replace(",,", u"\u201E")\
+                   .replace(",,", u"“")\
                    .replace('"', u"\u201D")\
                    .replace("'", u"\u2019")
     if node.tag in ('uwaga', 'extra'):
@@ -248,14 +248,15 @@ def chop(main_text):
     last_node_part = False
     for one_part in main_text:
         name = one_part.tag
-        if name == 'naglowek_czesc':
-            yield part_xml
-            last_node_part = True
-            main_xml_part[:] = [deepcopy(one_part)]
-        elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-            yield part_xml
-            main_xml_part[:] = [deepcopy(one_part)]
-        else:
+        #if name == 'naglowek_czesc':
+        #    yield part_xml
+        #    last_node_part = True
+        #    main_xml_part[:] = [deepcopy(one_part)]
+        #elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+        #    yield part_xml
+        #    main_xml_part[:] = [deepcopy(one_part)]
+        #else:
+        if True:
             main_xml_part.append(deepcopy(one_part))
             last_node_part = False
     yield part_xml
@@ -265,21 +266,24 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     """ transforms one chunk, returns a HTML string, a TOC object and a set of used characters """
 
     toc = TOC()
-    for element in chunk_xml[0]:
-        if element.tag in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-            toc.add(node_name(element), "part%d.html" % chunk_no)
-        elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
-            subnumber = toc.add(node_name(element), "part%d.html" % chunk_no, level=1, is_part=False)
-            element.set('sub', str(subnumber))
+    #for element in chunk_xml[0]:
+    #    if element.tag in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+    #        toc.add(node_name(element), "part%d.html" % chunk_no)
+    #    elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
+    #        subnumber = toc.add(node_name(element), "part%d.html" % chunk_no, level=1, is_part=False)
+    #        element.set('sub', str(subnumber))
     if empty:
         if not _empty_html_static:
             _empty_html_static.append(open(get_resource('epub/emptyChunk.html')).read())
         chars = set()
         output_html = _empty_html_static[0]
     else:
-        find_annotations(annotations, chunk_xml, chunk_no)
-        replace_by_verse(chunk_xml)
-        html_tree = xslt(chunk_xml, get_resource('epub/xsltScheme.xsl'))
+        if chunk_no == 1:
+            html_tree = xslt(chunk_xml, get_resource('epub/xsltScheme-FoC.xsl'))
+        else:
+            find_annotations(annotations, chunk_xml, chunk_no)
+            replace_by_verse(chunk_xml)
+            html_tree = xslt(chunk_xml, get_resource('epub/xsltScheme.xsl'))
         chars = used_chars(html_tree.getroot())
         output_html = etree.tostring(html_tree, method="html", pretty_print=True)
     return output_html, toc, chars
@@ -302,7 +306,16 @@ def transform(wldoc, verbose=False,
 
         # every input file will have a TOC entry,
         # pointing to starting chunk
-        toc = TOC(wldoc.book_info.title, "part%d.html" % chunk_counter)
+
+        # hack for FoC:
+        if wldoc.book_info.author is not None:
+            toc_title = "%s, %s" % (wldoc.book_info.author.readable(), wldoc.book_info.title)
+            note = wldoc.edoc.find('//dzielo_nadrzedne')
+            if note is not None:
+                toc_title += " (%s)" % note.text
+        else:
+            toc_title = wldoc.book_info.title
+        toc = TOC(toc_title, "part%d.html" % chunk_counter)
         chars = set()
         if first:
             # write book title page
@@ -311,7 +324,8 @@ def transform(wldoc, verbose=False,
             zip.writestr('OPS/title.html',
                  etree.tostring(html_tree, method="html", pretty_print=True))
             # add a title page TOC entry
-            toc.add(u"Strona tytułowa", "title.html")
+            toc.add(u"Title page", "title.html")
+            toc.add(u"Dear readers!", "part1.html")
         elif wldoc.book_info.parts:
             # write title page for every parent
             if sample is not None and sample <= 0:
@@ -387,8 +401,9 @@ def transform(wldoc, verbose=False,
                        '<rootfiles><rootfile full-path="OPS/content.opf" ' \
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
-    zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
-    zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
+    #zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
+    #zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
+    zip.write('logo.png', os.path.join('OPS', 'logo.png'))
     if not style:
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))
@@ -404,6 +419,9 @@ def transform(wldoc, verbose=False,
 
         cover_file = StringIO()
         c = cover(document.book_info)
+        import Image
+        c.im = Image.open('cover.jpg')
+        c.ext = lambda: 'jpg'
         c.save(cover_file)
         c_name = 'cover.%s' % c.ext()
         zip.writestr(os.path.join('OPS', c_name), cover_file.getvalue())
@@ -437,7 +455,7 @@ def transform(wldoc, verbose=False,
             '<item id="html_toc" href="toc.html" media-type="application/xhtml+xml" />'))
         spine.append(etree.fromstring(
             '<itemref idref="html_toc" />'))
-        guide.append(etree.fromstring('<reference href="toc.html" type="toc" title="Spis treści"/>'))
+        guide.append(etree.fromstring('<reference href="toc.html" type="toc" title="Table of Contents"/>'))
 
     toc, chunk_counter, chars, sample = transform_file(document, sample=sample)
 
@@ -457,7 +475,7 @@ def transform(wldoc, verbose=False,
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, method="html", pretty_print=True))
 
-    toc.add("Strona redakcyjna", "last.html")
+    toc.add("Editorial page", "last.html")
     manifest.append(etree.fromstring(
         '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
@@ -501,7 +519,7 @@ def transform(wldoc, verbose=False,
 
     # write TOC
     if html_toc:
-        toc.add(u"Spis treści", "toc.html", index=1)
+        toc.add(u"Table of Contents", "toc.html", index=1)
         zip.writestr('OPS/toc.html', toc.html().encode('utf-8'))
     toc.write_to_xml(nav_map)
     zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))

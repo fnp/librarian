@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="style.css" type="text/css" />
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <title>
-          WolneLektury.pl
+          Future of Copyright
         </title>
       </xsl:element>
       <xsl:element name="body" xmlns="http://www.w3.org/1999/xhtml">
@@ -18,8 +18,10 @@
           <xsl:attribute name="id">book-text</xsl:attribute>
           <xsl:if test="//nazwa_utworu">
             <!--h1 xmlns="http://www.w3.org/1999/xhtml"-->
-              <xsl:apply-templates select=" //nazwa_utworu" mode="poczatek"/>
-              <xsl:apply-templates select=" //podtytul" mode="poczatek"/>
+              <xsl:apply-templates select="//dzielo_nadrzedne" mode="poczatek"/>
+              <xsl:apply-templates select="//autor_utworu" mode="poczatek"/>
+              <xsl:apply-templates select="//nazwa_utworu" mode="poczatek"/>
+              <xsl:apply-templates select="//podtytul" mode="poczatek"/>
             <!--/h1-->
           </xsl:if>
           <xsl:apply-templates />
@@ -122,14 +124,14 @@
   </xsl:template>
 
   <xsl:template match="naglowek_scena">
-    <a id="sub{@sub}" xmlns="http://www.w3.org/1999/xhtml"></a>
+    <a xmlns="http://www.w3.org/1999/xhtml"></a>
     <h2 class="h3" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
   </xsl:template>
 
   <xsl:template match="naglowek_podrozdzial">
-    <a id="sub{@sub}" xmlns="http://www.w3.org/1999/xhtml"></a>
+    <a xmlns="http://www.w3.org/1999/xhtml"></a>
     <h2 class="h4" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>

@@ -52,7 +52,7 @@ if __name__ == '__main__':
             doc = WLDocument.from_file(main_input, provider=provider)
             pdf = doc.as_pdf(save_tex=options.save_tex,
                         cover=options.with_cover,
-                        morefloats=options.morefloats)
+                        morefloats=options.morefloats, verbose=options.verbose)
 
             doc.save_output_file(pdf,
                 output_file, options.output_dir, options.make_dir, 'pdf')

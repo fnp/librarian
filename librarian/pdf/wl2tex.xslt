@@ -58,44 +58,51 @@
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='titlepage' />
 
         <env name="document">
+            <TeXML escape="0">
+                \def\thankyou{%
+                <xsl:choose>
+                <xsl:when test="//dc:contributor">Thank you for your contribution, <xsl:value-of select="//dc:contributor"/>!</xsl:when>
+                <xsl:otherwise>Thank you for all your contributions!</xsl:otherwise>
+                </xsl:choose>
+                }
+            </TeXML>
+
             <xsl:if test="@data-cover-width">
                 <cmd name="makecover">
-                    <parm><xsl:value-of select="210 * @data-cover-width div @data-cover-height" />mm</parm>
                     <parm>210mm</parm>
+                    <parm><xsl:value-of select="210 * @data-cover-height div @data-cover-width" />mm</parm>
                 </cmd>
             </xsl:if>
-            <cmd name="maketitle" />
+            <!--cmd name="maketitle" /-->
 
-            <cmd name="tytul"><parm>
+            <!--cmd name="tytul"><parm>
               <xsl:choose>
                 <xsl:when test="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu">
-                    <!-- title in master -->
+                    <!- title in master ->
                     <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/autor_utworu" mode="title" />
                     <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/dzielo_nadrzedne" mode="title" />
                     <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu" mode="title" />
                     <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/podtytul" mode="title" />
-                    <!-- dc in master or not -->
+                    <!- dc in master or not ->
                     <cmd name="translatorsline" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <!-- look for author title in dc -->
+                    <!- look for author title in dc ->
                     <xsl:apply-templates select="rdf:RDF" mode="firstdctitle" />
                     <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='firstdctitle' />
                 </xsl:otherwise>
               </xsl:choose>
-            </parm></cmd>
-            <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
-            <xsl:apply-templates select="utwor" mode="part" />
+            </parm></cmd-->
 
             <TeXML escape="0">
                 \def\coverby{
-                <xsl:if test="@data-cover-by">Okładka na podstawie: 
+                <xsl:if test="@data-cover-by">Cover image:
                     <xsl:choose>
                     <xsl:when test="@data-cover-source">
-                        \href{\datacoversource}{\datacoverby}
+                        \href{\datacoversource}{\datacoverby}.
                     </xsl:when>
                     <xsl:otherwise>
-                        \datacoverby{}
+                        \datacoverby{}.
                     </xsl:otherwise>
                     </xsl:choose>
                 </xsl:if>
@@ -103,15 +110,25 @@
             </TeXML>
 
             <cmd name="editorialsection" />
+
+            <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
+            <xsl:apply-templates select="utwor" mode="part" />
         </env>
     </TeXML>
 </xsl:template>
 
 <xsl:template match="utwor" mode="part">
+    <cmd name="newpage" />
     <cmd name="tytul"><parm>
+
+    <!-- Dirty! -->
+    <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/motyw" mode="inline"/>
+
       <xsl:choose>
         <xsl:when test="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu">
             <!-- title in master -->
+            <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/dzielo_nadrzedne" mode="title" />
+            <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/autor_utworu" mode="title" />
             <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu" mode="title" />
             <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/podtytul" mode="title" />
         </xsl:when>
@@ -153,7 +170,7 @@
             \href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
             Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
         <xsl:if test=".//dc:rights.license">
-            \def\rightsinfo{Ten utwór jest udostepniony na licencji
+            \def\rightsinfo{This book is available under the terms of
             \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
         </xsl:if>
 
@@ -376,10 +393,10 @@
 </xsl:template>
 
 <xsl:template name="editors">
-    <xsl:if test="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed">
-        <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
-        <xsl:for-each select="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed[not(//dc:contributor.editor_parsed/text()=text())]">
-            <xsl:sort select="@sortkey" />
+    <xsl:if test=".//dc:contributor.editor_parsed|.//dc:contributor.technical_editor_parsed">
+        <xsl:text>Technical editors: </xsl:text>
+        <xsl:for-each select=".//dc:contributor.editor_parsed|.//dc:contributor.technical_editor_parsed[not(.//dc:contributor.editor_parsed/text()=text())]">
+            <!--xsl:sort select="@sortkey" /-->
             <xsl:if test="position() != 1">, </xsl:if>
             <xsl:apply-templates mode="inline" />
         </xsl:for-each>.

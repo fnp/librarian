@@ -16,7 +16,10 @@
       <body>
         <div id="book-text" xmlns="http://www.w3.org/1999/xhtml">
           <div class='title-page'>
-            <xsl:apply-templates select="//dc:title" mode="poczatek"/>
+            <xsl:apply-templates select="//dzielo_nadrzedne"  mode="poczatek"/>
+            <xsl:apply-templates select="//autor_utworu"  mode="poczatek"/>
+            <xsl:apply-templates select="//nazwa_utworu"  mode="poczatek"/>
+            <!--xsl:apply-templates select="//dc:title" mode="poczatek"/-->
           </div>
         </div>
       </body>
@@ -36,5 +39,25 @@
       <xsl:apply-templates />
     </h1>
   </xsl:template>
+
+  <xsl:template match="autor_utworu" mode="poczatek">
+    <h2 class="author" >
+      <xsl:apply-templates />
+    </h2>
+  </xsl:template>
+
+  <xsl:template match="dzielo_nadrzedne" mode="poczatek">
+    <h2 class="collection" >
+      <xsl:apply-templates />
+    </h2>
+  </xsl:template>
+
+  <xsl:template match="nazwa_utworu" mode="poczatek" >
+    <h1 class="title" >
+      <xsl:apply-templates />
+    </h1>
+  </xsl:template>
+
+
 
 </xsl:stylesheet>

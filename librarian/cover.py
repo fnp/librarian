@@ -120,7 +120,7 @@ class Cover(object):
         }
 
     def __init__(self, book_info):
-        self.author = ", ".join(auth.readable() for auth in book_info.authors)
+        #self.author = ", ".join(auth.readable() for auth in book_info.authors)
         self.title = book_info.title
 
     def pretty_author(self):
@@ -216,6 +216,7 @@ class WLCover(Cover):
         super(WLCover, self).__init__(book_info)
         self.kind = book_info.kind
         self.epoch = book_info.epoch
+        print book_info.cover_url
         if book_info.cover_url:
             from urllib2 import urlopen
             from StringIO import StringIO
@@ -369,3 +370,13 @@ class GandalfCover(Cover):
     logo_bottom = 25
     logo_width = 250
     format = 'PNG'
+
+class ImageCover(WLCover):
+    format = 'JPEG'
+    def __init__(self, *args, **kwargs):
+        super(ImageCover, self).__init__(*args, **kwargs)
+        self.im = Image.open(self.background_img)
+        self.width, self.height = self.im.size
+
+    def image(self):
+        return self.im

@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="style.css" type="text/css" />
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <title>
-          <xsl:text>Strona tytułowa</xsl:text>
+          <xsl:text>Title page</xsl:text>
         </title>
       </head>
       <body>
@@ -40,7 +40,7 @@
             <p class="info">[Kopia robocza]</p>
           </xsl:if>
 
-          <xsl:if test="not(utwor/@less-advertising)">
+          <!--xsl:if test="not(utwor/@less-advertising)">
             <p class="info">
               <a>
                   <xsl:attribute name="href">
@@ -50,15 +50,24 @@
               podobnie jak tysiące innych, jest dostępna on-line na stronie
               <a href="http://www.wolnelektury.pl/">wolnelektury.pl</a>.
             </p>
-          </xsl:if>
+          </xsl:if-->
 
           <p class="info">
+          <xsl:choose>
+          <xsl:when test="//dc:contributor">Thank you for your contribution, <xsl:value-of select="//dc:contributor"/>!</xsl:when>
+          <xsl:otherwise>Thank you for all your contributions!</xsl:otherwise>
+          </xsl:choose>
+          <br/>You made this book possible.
+          </p>
+
+
+          <!--p class="info">
             Utwór opracowany został w&#160;ramach projektu<a href="http://www.wolnelektury.pl/"> Wolne Lektury</a> przez<a href="http://www.nowoczesnapolska.org.pl/"> fundację Nowoczesna Polska</a>.
           </p>
 
           <p class="footer info">
             <a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a>
-          </p>
+          </p-->
         </div>
       </body>
     </html>

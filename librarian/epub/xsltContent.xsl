@@ -15,9 +15,9 @@
         <dc:subject>
           <xsl:apply-templates select="//dc:identifier.url" />
         </dc:subject>
-        <dc:creator>
+        <!--dc:creator>
           <xsl:apply-templates select="//dc:creator" />
-        </dc:creator>
+        </dc:creator-->
         <dc:publisher>
           <xsl:apply-templates select="//dc:publisher" />
         </dc:publisher>
@@ -26,11 +26,10 @@
         </dc:date>
       </metadata>
       <manifest>
+        <item id="logo" href="logo.png" media-type="image/png" />
         <item id="toc" href="toc.ncx" media-type="application/x-dtbncx+xml" />
         <item id="style" href="style.css" media-type="text/css" />
         <item id="titlePage" href="title.html" media-type="application/xhtml+xml" />
-        <item id="logo_wolnelektury" href="logo_wolnelektury.png" media-type="image/png" />
-        <item id="jedenprocent" href="jedenprocent.png" media-type="image/png" />
       </manifest>
       <spine toc="toc">
         <itemref idref="titlePage" />

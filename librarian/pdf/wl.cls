@@ -61,12 +61,12 @@
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
-\LoadClass[a4paper,oneside]{book}
+\LoadClass[a4paper]{book}
 
 
 \usepackage{trace}
 
-\usepackage[MeX]{polski}
+%\usepackage[MeX]{polski}
 
 \usepackage[xetex]{graphicx}
 \usepackage{fontspec}
@@ -138,7 +138,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \setlength{\marginparsep}{2em}
 \setlength{\marginparwidth}{8.5em}
-\setlength{\oddsidemargin}{0pt}
+\setlength{\oddsidemargin}{36mm}
+\setlength{\evensidemargin}{0pt}
 \setlength{\voffset}{0pt}
 \setlength{\topmargin}{0pt}
 \setlength{\headheight}{0pt}
@@ -149,9 +150,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
+%\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
 \cfoot{}
-\rfoot{{\footnotesize \thepage}}
+%\rfoot{{\footnotesize \thepage}}
+\fancyfoot[LO,RE]{{\footnotesize \textsc{\@author} \emph{\@title}}}
+\fancyfoot[LE,RO]{{\footnotesize \thepage}}
 
 \clubpenalty=100000
 \widowpenalty=100000
@@ -169,8 +172,9 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
 
 \newcommand{\makecover}[2]{
-        \pdfpagewidth=#1
-        \pdfpageheight=#2
+
+        %\pdfpagewidth=#1
+        %\pdfpageheight=#2
 
         \thispagestyle{empty}
         \newlength{\PictHOffset}
@@ -185,15 +189,34 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \addtolength{\PictVOffset}{\headheight}
         \addtolength{\PictVOffset}{\headsep}
         \addtolength{\PictVOffset}{\topskip}
-        \addtolength{\PictVOffset}{-\pdfpageheight}
+        \addtolength{\PictVOffset}{-#2}
 
         \noindent\hspace*{-\PictHOffset}%
         \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
-            \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.png}}}
-        \clearpage
+            \includegraphics[height=#2,width=#1]{cover.jpg}}}
+        %\clearpage
+        \vspace{#2}
 
-        \setlength{\pdfpagewidth}{210mm}
-        \setlength{\pdfpageheight}{297mm}
+        \hspace{-36mm}\parbox{16cm}{
+        {\addfontfeature{LetterSpace=-4.0}\emph{\scalefont{4}%
+            \noindent Future of Copyright Anthology
+        }}
+
+        \vspace{2em}
+        {\addfontfeature{LetterSpace=-4.0}{\scalefont{1.5}%
+            A collection of texts from a crowd-funded contest.
+        }}
+
+
+        \vspace{8em}
+
+\emph{\thankyou}\\
+\indent\emph{You made this book possible.}
+        }
+
+
+        %\setlength{\pdfpagewidth}{210mm}
+        %\setlength{\pdfpageheight}{297mm}
 }
 
 
@@ -226,7 +249,53 @@ Letters={SmallCaps,UppercaseSmallCaps}
     }
 }
 
+\usepackage{printlen}
+
 \newcommand{\editorialsection}{
+\clearpage
+
+%\set\textwidth=450pt
+%\printlength\textwidth
+
+
+{\scalefont{1.5}Dear readers!}
+
+
+
+\vspace{1em}
+It is our great pleasure to present you the “Future of Copyright 
+Anthology”, a collection of 10 best short stories sent in for the “Future 
+of Copyright” contest organized by Modern Poland Foundation. These works 
+have been selected by our jury – Prof. Michael Geist, Piotr Czerski and 
+Jarosław Lipszyc.
+
+The main prize in this contest was founded by you, the readers, on the 
+Indiegogo crowdfunding platform. We are proud to announce that this 
+prize goes to Aymeric Mansoux, author of “Morphology of a copyright 
+tale”, in appreciation of the originality, power and the strong message 
+of this work. Moreover, the jury decided to grant an honorable mention 
+to Togi, author of the work “Give”.
+
+We would like to thank you for your crowdfunding support and a high
+standard of the submitted works. We were pleasantly surprised by the
+interest shown in the competition, and we have decided to hold
+its second edition next 
+year. We hope that with your help it will be even more successful and 
+the collected works will provide a strong voice in the debate on the future 
+of copyright law and system.
+
+\vspace{1em}
+Modern Poland Foundation Team
+
+\vspace{4em}
+\includegraphics[scale=.2]{logo.eps}
+\vspace{1em}
+
+\href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
+
+%\vspace{4em}
+%\box{\tableofcontents}
+
   \begin{figure}[b!]
   {
     \footnotesize
@@ -236,17 +305,19 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \rightsinfo
     \vspace{.6em}
 
-    Źródło: \href{\bookurl}{\bookurl}
+    %Źródło: \href{\bookurl}{\bookurl}
 
-    \vspace{.6em}
-    \sourceinfo
+    %\vspace{.6em}
+    %\sourceinfo
 
-    \description
-    \vspace{.6em}
+    %\description
+    %\vspace{.6em}
+
+    Published by \href{http://nowoczesnapolska.org.pl}{Modern Poland Foundation}, 2012.
 
     \editors
 
-    \vspace{.6em}
+    %\vspace{.6em}
     \coverby
 
     \color{black}
@@ -276,10 +347,13 @@ Letters={Uppercase}
 %{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
 }
 
-
 \newcommand{\tytul}[1]{%
 #1%
-\vspace{1em}%
+%\vspace{1em}%
+}
+
+\newcommand{\autorpodutworu}[1]{%
+\section*{\typosection{#1}}%
 }
 
 \newcommand{\nazwapodutworu}[1]{%
@@ -287,6 +361,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\autorutworu}[1]{%
+\addcontentsline{toc}{part}{???}
 \subsection*{\typosubsection{#1}}%
 }
 
@@ -302,10 +377,13 @@ Letters={Uppercase}
 \subsection*{\typosubsubsection{#1}}%
 }
 
+\newcommand{\podtytulpodutworu}[1]{%
+\subsection*{\typosubsubsection{#1}}%
+}
+
 \newcommand{\translator}[1]{%
 \subsection*{\typosubsubsection{tłum. #1}}%
 }
-
 
 \newcommand{\powiesc}[1]{#1}
 \newcommand{\opowiadanie}[1]{#1}
@@ -316,7 +394,9 @@ Letters={Uppercase}
 \newcommand{\dramatwspolczesny}[1]{#1}
 
 \newcommand{\nota}[1]{%
-\par{#1}%
+\begin{quotation}%
+#1%
+\end{quotation}%
 }
 
 \newcommand{\dedykacja}[1]{%
@@ -367,7 +447,7 @@ Letters={Uppercase}
 \subsection*{\typosubsection{#1}}%
 }
 \newcommand{\naglowekczesc}[1]{%
-\pagebreak
+%\pagebreak
 \subsection*{\typosubsection{#1}}%
 }
 \newcommand{\srodtytul}[1]{%
@@ -469,6 +549,7 @@ Letters={Uppercase}
 \begin{center}%
 \par{*}%
 \end{center}%
+\noindent%
 }
 
 \newcommand{\separatorlinia}{%
