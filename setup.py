@@ -21,12 +21,12 @@ def whole_tree(prefix, path):
 
 setup(
     name='librarian',
-    version='1.4.2a',
+    version='1.5',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
     maintainer='Radek Czajka',
-    maintainer_email='radek.czajka@gmail.com',
+    maintainer_email='radoslaw.czajka@nowoczesnapolska.org.pl',
     url='http://github.com/fnp/librarian',
     packages=['librarian'],
     package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fonts/*', 'res/*'] +

@@ -4,36 +4,23 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import os
-import optparse
+from StringIO import StringIO
+from librarian import OutputFile
+from librarian.book2anything import Book2Anything, Option
 
-from librarian import ParseError
-from librarian.parser import WLDocument
-from librarian.cover import WLCover
+
+class Book2Cover(Book2Anything):
+    format_name = "JPEG"
+    ext = "jpg"
+    uses_cover = True
+    cover_optional = False
+
+    @staticmethod
+    def transform(wldoc, cover):
+        output = StringIO()
+        cover(wldoc.book_info).save(output)
+        return OutputFile.from_string(output.getvalue())
 
 
 if __name__ == '__main__':
-    # Parse commandline arguments
-    usage = """Usage: %prog [options] SOURCE [SOURCE...]
-    Create cover images for SOURCE files."""
-
-    parser = optparse.OptionParser(usage=usage)
-
-    parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
-        help='print status messages to stdout')
-
-    options, input_filenames = parser.parse_args()
-
-    if len(input_filenames) < 1:
-        parser.print_help()
-        exit(1)
-
-    # Do some real work
-    for input_filename in input_filenames:
-        if options.verbose:
-            print input_filename
-
-        output_filename = os.path.splitext(input_filename)[0] + '.jpg'
-
-        doc = WLDocument.from_file(input_filename)
-        WLCover(doc.book_info).save(output_filename)
+    Book2Cover.run()

@@ -181,7 +181,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
     verbose: prints all output from LaTeX
     save_tex: path to save the intermediary LaTeX file to
     morefloats (old/new/none): force specific morefloats
-    cover: a cover.Cover object
+    cover: a cover.Cover factory or True for default
     flags: less-advertising,
     customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
     """
@@ -193,9 +193,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         if cover:
             if cover is True:
                 cover = WLCover
-            document.edoc.getroot().set('data-cover-width', str(cover.width))
-            document.edoc.getroot().set('data-cover-height', str(cover.height))
-            if cover.uses_dc_cover:
+            bound_cover = cover(document.book_info)
+            document.edoc.getroot().set('data-cover-width', str(bound_cover.width))
+            document.edoc.getroot().set('data-cover-height', str(bound_cover.height))
+            if bound_cover.uses_dc_cover:
                 if document.book_info.cover_by:
                     document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
                 if document.book_info.cover_source:
@@ -231,9 +232,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         temp = mkdtemp('-wl2pdf')
 
         if cover:
-            c = cover(document.book_info)
             with open(os.path.join(temp, 'cover.png'), 'w') as f:
-                c.save(f)
+                bound_cover.save(f)
 
         del document # no longer needed large object :)
 

@@ -4,61 +4,21 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import os.path
-from optparse import OptionParser
+from librarian.book2anything import Book2Anything, Option
 
-from librarian import DirDocProvider, ParseError
-from librarian.parser import WLDocument
+
+class Book2Pdf(Book2Anything):
+    format_name = "PDF"
+    ext = "pdf"
+    uses_cover = True
+    uses_provider = True
+    transform_args = [
+        Option('-t', '--save-tex', dest='save_tex', metavar='FILE',
+                help='path to save the intermediary LaTeX file to'),
+        Option('-m', '--morefloats', dest='morefloats', metavar='old/new/none',
+                help='force morefloats in old (<1.0c), new (>=1.0c) or none')
+    ]
 
 
 if __name__ == '__main__':
-    usage = """Usage: %prog [options] SOURCE [SOURCE...]
-    Convert SOURCE files to PDF format."""
-
-    parser = OptionParser(usage)
-    parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
-                      help='make lots of noise and revert to default interaction in LaTeX')
-    parser.add_option('-c', '--with-cover', action='store_true', dest='with_cover', default=False,
-                      help='create default cover')
-    parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
-                      help='create a directory for author and put the PDF in it')
-    parser.add_option('-t', '--save-tex', dest='save_tex', metavar='FILE',
-                      help='path to save the intermediary LaTeX file to')
-    parser.add_option('-o', '--output-file', dest='output_file', metavar='FILE',
-                      help='specifies the output file')
-    parser.add_option('-O', '--output-dir', dest='output_dir', metavar='DIR',
-                      help='specifies the directory for output')
-    parser.add_option('-m', '--morefloats', dest='morefloats', metavar='old/new/none',
-                      help='force morefloats in old (<1.0c), new (>=1.0c) or none')
-    (options, args) = parser.parse_args()
-
-    if len(args) < 1:
-        parser.print_help()
-        exit(1)
-
-    if options.output_dir and options.output_file:
-        raise ValueError("Either --output-dir or --output file should be specified")
-
-    try:
-        for main_input in args:
-            path, fname = os.path.realpath(main_input).rsplit('/', 1)
-            provider = DirDocProvider(path)
-            output_file, output_dir = options.output_file, options.output_dir
-            if not (options.output_file or options.output_dir):
-                output_file = os.path.splitext(main_input)[0] + '.pdf'
-            else:
-                output_file = None
-
-            doc = WLDocument.from_file(main_input, provider=provider)
-            pdf = doc.as_pdf(save_tex=options.save_tex,
-                        cover=options.with_cover,
-                        morefloats=options.morefloats)
-
-            doc.save_output_file(pdf,
-                output_file, options.output_dir, options.make_dir, 'pdf')
-    except ParseError, e:
-        print '%(file)s:%(name)s:%(message)s; use -v to see more output' % {
-            'file': main_input,
-            'name': e.__class__.__name__,
-            'message': e
-        }
+    Book2Pdf.run()

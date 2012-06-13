@@ -4,60 +4,24 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import os
-import optparse
+from librarian.book2anything import Book2Anything, Option
 
-from librarian import ParseError
-from librarian.parser import WLDocument
+
+class Book2Txt(Book2Anything):
+    format_name = "TXT"
+    ext = "txt"
+    uses_cover = False
+    uses_provider = False
+    parser_args = [
+        Option('-i', '--ignore-dublin-core', dest='parse_dublincore', 
+                action='store_false', default=True,
+                help='don\'t try to parse dublin core metadata')
+    ]
+    transform_args = [
+        Option('-w', '--wrap', action='store', type='int', dest='wrapping', default=0,
+                help='set line wrap column')
+    ]
 
 
 if __name__ == '__main__':
-    # Parse commandline arguments
-    usage = """Usage: %prog [options] SOURCE [SOURCE...]
-    Convert SOURCE files to TXT format."""
-
-    parser = optparse.OptionParser(usage=usage)
-
-    parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
-        help='print status messages to stdout')
-    parser.add_option('-w', '--wrap', action='store', type='int', dest='wrapping', default=0,
-        help='set line wrap column')
-    parser.add_option('-i', '--ignore-dublin-core', action='store_false', dest='parse_dublincore', default=True,
-        help='don\'t try to parse dublin core metadata')
-
-    options, input_filenames = parser.parse_args()
-
-    if len(input_filenames) < 1:
-        parser.print_help()
-        exit(1)
-
-    # Do some real work
-    for input_filename in input_filenames:
-        if options.verbose:
-            print input_filename
-
-        output_filename = os.path.splitext(input_filename)[0] + '.txt'
-        try:
-            doc = WLDocument.from_file(input_filename,
-                parse_dublincore=options.parse_dublincore)
-            html = doc.as_text(wrapping=str(options.wrapping))
-            doc.save_output_file(html, output_path=output_filename)
-        except ParseError, e:
-            print '%(file)s:%(name)s:%(message)s' % {
-                'file': input_filename,
-                'name': e.__class__.__name__,
-                'message': e
-            }
-        except IOError, e:
-            print '%(file)s:%(name)s:%(message)s' % {
-                'file': input_filename,
-                'name': e.__class__.__name__,
-                'message': e.strerror,
-            }
-        except BaseException, e:
-            print '%(file)s:%(etype)s:%(message)s' % {
-                'file': input_filename,
-                'etype': e.__class__.__name__,
-                'message': e,
-            }
-            raise
+    Book2Txt.run()

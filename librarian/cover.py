@@ -212,7 +212,7 @@ class WLCover(Cover):
         u'Współczesność': '#06393d',
     }
 
-    def __init__(self, book_info):
+    def __init__(self, book_info, image_cache=None):
         super(WLCover, self).__init__(book_info)
         self.kind = book_info.kind
         self.epoch = book_info.epoch
@@ -220,7 +220,16 @@ class WLCover(Cover):
             from urllib2 import urlopen
             from StringIO import StringIO
 
-            bg_src = urlopen(book_info.cover_url)
+            url = book_info.cover_url
+            bg_src = None
+            if image_cache:
+                from urllib import quote
+                try:
+                    bg_src = urlopen(image_cache + quote(url, safe=""))
+                except:
+                    pass
+            if bg_src is None:
+                bg_src = urlopen(url)
             self.background_img = StringIO(bg_src.read())
             bg_src.close()
         else:

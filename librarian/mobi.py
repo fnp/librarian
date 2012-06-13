@@ -19,7 +19,7 @@ def transform(wldoc, verbose=False,
 
     wldoc: a WLDocument
     sample=n: generate sample e-book (with at least n paragraphs)
-    cover: a cover.Cover object
+    cover: a cover.Cover factory overriding default
     flags: less-advertising,
     """
 
@@ -31,10 +31,10 @@ def transform(wldoc, verbose=False,
     if not cover:
         cover = WLCover
     cover_file = NamedTemporaryFile(suffix='.png', delete=False)
-    c = cover(book_info)
-    c.save(cover_file)
+    bound_cover = cover(book_info)
+    bound_cover.save(cover_file)
 
-    if cover.uses_dc_cover:
+    if bound_cover.uses_dc_cover:
         if document.book_info.cover_by:
             document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
         if document.book_info.cover_source:

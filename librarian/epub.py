@@ -291,7 +291,7 @@ def transform(wldoc, verbose=False,
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
-    cover: a cover.Cover object or True for default
+    cover: a cover.Cover factory or True for default
     flags: less-advertising, without-fonts, working-copy
     """
 
@@ -396,28 +396,29 @@ def transform(wldoc, verbose=False,
     if cover:
         if cover is True:
             cover = WLCover
-        if cover.uses_dc_cover:
+
+        cover_file = StringIO()
+        bound_cover = cover(document.book_info)
+        bound_cover.save(cover_file)
+        cover_name = 'cover.%s' % bound_cover.ext()
+        zip.writestr(os.path.join('OPS', cover_name), cover_file.getvalue())
+        del cover_file
+
+        cover_tree = etree.parse(get_resource('epub/cover.html'))
+        cover_tree.find('//' + XHTMLNS('img')).set('src', cover_name)
+        zip.writestr('OPS/cover.html', etree.tostring(
+                        cover_tree, method="html", pretty_print=True))
+
+        if bound_cover.uses_dc_cover:
             if document.book_info.cover_by:
                 document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
             if document.book_info.cover_source:
                 document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
 
-        cover_file = StringIO()
-        c = cover(document.book_info)
-        c.save(cover_file)
-        c_name = 'cover.%s' % c.ext()
-        zip.writestr(os.path.join('OPS', c_name), cover_file.getvalue())
-        del cover_file
-
-        cover_tree = etree.parse(get_resource('epub/cover.html'))
-        cover_tree.find('//' + XHTMLNS('img')).set('src', c_name)
-        zip.writestr('OPS/cover.html', etree.tostring(
-                        cover_tree, method="html", pretty_print=True))
-
         manifest.append(etree.fromstring(
             '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
         manifest.append(etree.fromstring(
-            '<item id="cover-image" href="%s" media-type="%s" />' % (c_name, c.mime_type())))
+            '<item id="cover-image" href="%s" media-type="%s" />' % (cover_name, bound_cover.mime_type())))
         spine.insert(0, etree.fromstring('<itemref idref="cover" linear="no" />'))
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
         guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
