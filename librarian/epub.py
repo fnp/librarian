@@ -471,7 +471,10 @@ def transform(wldoc, verbose=False,
     if not flags or not 'without-fonts' in flags:
         # strip fonts
         tmpdir = mkdtemp('-librarian-epub')
-        cwd = os.getcwd()
+        try:
+            cwd = os.getcwd()
+        except OSError:
+            cwd = None
 
         os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
         for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
@@ -486,7 +489,8 @@ def transform(wldoc, verbose=False,
             manifest.append(etree.fromstring(
                 '<item id="%s" href="%s" media-type="font/ttf" />' % (fname, fname)))
         rmtree(tmpdir)
-        os.chdir(cwd)
+        if cwd is not None:
+            os.chdir(cwd)
 
     zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
     title = document.book_info.title

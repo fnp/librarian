@@ -250,7 +250,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
 
-        cwd = os.getcwd()
+        try:
+            cwd = os.getcwd()
+        except OSError:
+            cwd = None
         os.chdir(temp)
 
         if verbose:
@@ -260,7 +263,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         if p:
             raise ParseError("Error parsing .tex file")
 
-        os.chdir(cwd)
+        if cwd is not None:
+            os.chdir(cwd)
 
         output_file = NamedTemporaryFile(prefix='librarian', suffix='.pdf', delete=False)
         pdf_path = os.path.join(temp, 'doc.pdf')
