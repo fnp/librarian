@@ -115,10 +115,21 @@ class Field(object):
         except ValueError, e:
             raise ValidationError("Field '%s' - invald value: %s" % (self.uri, e.message))
 
-    def validate(self, fdict, strict=False):
+    def validate(self, fdict, fallbacks=None, strict=False):
+        if fallbacks is None:
+            fallbacks = {}
         if not fdict.has_key(self.uri):
             if not self.required:
-                f = self.default
+                # Accept single value for single fields and saliases.
+                if self.name in fallbacks:
+                    if self.multiple:
+                        f = fallbacks[self.name]
+                    else:
+                        f = [fallbacks[self.name]]
+                elif self.salias and self.salias in fallbacks:
+                    f = [fallbacks[self.salias]]
+                else:
+                    f = self.default
             else:
                 raise ValidationError("Required field %s not found" % self.uri)
         else:
@@ -224,7 +235,7 @@ class WorkInfo(object):
 
         return cls(desc.attrib, field_dict, *args, **kwargs)
 
-    def __init__(self, rdf_attrs, dc_fields, strict=False):
+    def __init__(self, rdf_attrs, dc_fields, fallbacks=None, strict=False):
         """rdf_attrs should be a dictionary-like object with any attributes of the RDF:Description.
         dc_fields - dictionary mapping DC fields (with namespace) to list of text values for the
         given field. """
@@ -233,7 +244,8 @@ class WorkInfo(object):
         self.fmap = {}
 
         for field in self.FIELDS:
-            value = field.validate(dc_fields, strict=strict)
+            value = field.validate(dc_fields, fallbacks=fallbacks,
+                            strict=strict)
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias: self.fmap[field.salias] = field

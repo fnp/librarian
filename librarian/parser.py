@@ -19,7 +19,8 @@ class WLDocument(object):
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
 
-    def __init__(self, edoc, parse_dublincore=True, provider=None, strict=False):
+    def __init__(self, edoc, parse_dublincore=True, provider=None, 
+                    strict=False, meta_fallbacks=None):
         self.edoc = edoc
         self.provider = provider
 
@@ -37,7 +38,7 @@ class WLDocument(object):
                 raise NoDublinCore('Document has no DublinCore - which is required.')
 
             self.book_info = dcparser.BookInfo.from_element(
-                    self.rdf_elem, strict=strict)
+                    self.rdf_elem, fallbacks=meta_fallbacks, strict=strict)
         else:
             self.book_info = None
 
@@ -46,7 +47,7 @@ class WLDocument(object):
         return cls.from_file(StringIO(xml), *args, **kwargs)
 
     @classmethod
-    def from_file(cls, xmlfile, parse_dublincore=True, provider=None):
+    def from_file(cls, xmlfile, *args, **kwargs):
 
         # first, prepare for parsing
         if isinstance(xmlfile, basestring):
@@ -67,7 +68,7 @@ class WLDocument(object):
             parser = etree.XMLParser(remove_blank_text=False)
             tree = etree.parse(StringIO(data.encode('utf-8')), parser)
 
-            return cls(tree, parse_dublincore=parse_dublincore, provider=provider)
+            return cls(tree, *args, **kwargs)
         except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
             raise ParseError(e)
 
