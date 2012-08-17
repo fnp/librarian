@@ -9,9 +9,11 @@
 <dc:subject.period xml:lang="pl">Pozytywizm</dc:subject.period>
 <dc:subject.type xml:lang="pl">Liryka</dc:subject.type>
 <dc:subject.genre xml:lang="pl">Wiersz</dc:subject.genre>
+<dc:contributor.technical_editor xml:lang="pl">Fikcyjny, Adam</dc:contributor.technical_editor>
 <dc:description xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.</dc:description>
 <dc:identifier.url xml:lang="pl">http://wolnelektury.pl/katalog/lektura/poezye</dc:identifier.url>
 <dc:relation.hasPart xml:lang="pl">http://wolnelektury.pl/katalog/lektura/miedzy-nami-nic-nie-bylo</dc:relation.hasPart>
+<dc:relation.hasPart xml:lang="pl">http://wolnelektury.pl/katalog/lektura/do-mlodych</dc:relation.hasPart>
 <dc:source.URL xml:lang="pl">http://www.polona.pl/Content/5164</dc:source.URL>
 <dc:source xml:lang="pl">(Asnyk, Adam) El...y (1838-1897), Poezye, t. 3,  Gebethner i Wolff, wyd. nowe poprzedzone słowem wstępnym St. Krzemińskiego, Warszawa, 1898</dc:source>
 <dc:rights xml:lang="pl">Domena publiczna - Adam Asnyk zm. 1897</dc:rights>

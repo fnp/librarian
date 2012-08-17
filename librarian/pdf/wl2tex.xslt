@@ -100,9 +100,11 @@
                     </xsl:choose>
                 </xsl:if>
                 }
+                \def\editors{<xsl:call-template name="editors" />}
             </TeXML>
 
             <cmd name="editorialsection" />
+
         </env>
     </TeXML>
 </xsl:template>
@@ -163,7 +165,6 @@
                 \vspace{.6em}
             </xsl:if>}
         \def\description{<xsl:apply-templates select=".//dc:description" mode="inline" />}
-        \def\editors{<xsl:call-template name="editors" />}
     </TeXML>
 </xsl:template>
 
@@ -376,13 +377,10 @@
 </xsl:template>
 
 <xsl:template name="editors">
-    <xsl:if test="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed">
+    <xsl:if test="@editors">
         <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
-        <xsl:for-each select="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed[not(//dc:contributor.editor_parsed/text()=text())]">
-            <xsl:sort select="@sortkey" />
-            <xsl:if test="position() != 1">, </xsl:if>
-            <xsl:apply-templates mode="inline" />
-        </xsl:for-each>.
+        <xsl:value-of select="@editors" />
+        <xsl:text>.</xsl:text>
     </xsl:if>
 </xsl:template>
 

@@ -368,6 +368,10 @@ def transform(wldoc, verbose=False,
         for flag in flags:
             document.edoc.getroot().set(flag, 'yes')
 
+    # add editors info
+    document.edoc.getroot().set('editors', u', '.join(sorted(
+        editor.readable() for editor in document.editors())))
+
     opf = xslt(document.book_info.to_etree(), get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
     guide = opf.find('.//' + OPFNS('guide'))

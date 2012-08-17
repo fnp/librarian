@@ -147,7 +147,7 @@ class WLDocument(object):
                 xpath = self.path_to_xpath(key)
                 node = self.edoc.xpath(xpath)[0]
                 repl = etree.fromstring(u"<%s>%s</%s>" %(node.tag, data, node.tag) )
-                node.getparent().replace(node, repl);
+                node.getparent().replace(node, repl)
             except Exception, e:
                 unmerged.append( repr( (key, xpath, e) ) )
 
@@ -162,6 +162,21 @@ class WLDocument(object):
             node.clear()
             node.tag = 'span'
             node.tail = tail
+
+    def editors(self):
+        """Returns a set of all editors for book and its children.
+
+        :returns: set of dcparser.Person objects
+        """
+        if self.book_info is None:
+            raise NoDublinCore('No Dublin Core in document.')
+        persons = set(self.book_info.editors +
+                        self.book_info.technical_editors)
+        for child in self.parts():
+            persons.update(child.editors())
+        if None in persons:
+            persons.remove(None)
+        return persons
 
     # Converters
 

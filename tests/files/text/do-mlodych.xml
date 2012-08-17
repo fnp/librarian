@@ -1,0 +1,70 @@
+<utwor><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<rdf:Description rdf:about="http://redakcja.wolnelektury.pl/documents/book/do-mlodych/">
+<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Asnyk, Adam</dc:creator>
+<dc:title xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Do młodych</dc:title>
+<dc:contributor.editor xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Sekuła, Aleksandra</dc:contributor.editor>
+<dc:contributor.technical_editor xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Sutkowska, Olga</dc:contributor.technical_editor>
+<dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+<dc:subject.period xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Pozytywizm</dc:subject.period>
+<dc:subject.type xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Liryka</dc:subject.type>
+<dc:subject.genre xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Wiersz</dc:subject.genre>
+<dc:description xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.</dc:description>
+<dc:identifier.url xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">http://wolnelektury.pl/katalog/lektura/do-mlodych</dc:identifier.url>
+<dc:source.URL xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">http://www.polona.pl/Content/8616</dc:source.URL>
+<dc:source xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">El...y (Adam Asnyk), Poezye, t. 3,  Gebethner i Wolff, wyd. nowe poprzedzone słowem wstępnym St. Krzemińskiego, Warszawa 1898</dc:source>
+<dc:rights xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">Domena publiczna - Adam Asnyk zm. 1897</dc:rights>
+<dc:date.pd xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">1897</dc:date.pd>
+<dc:format xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">xml</dc:format>
+<dc:type xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">text</dc:type>
+<dc:type xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="en">text</dc:type>
+<dc:date xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">2009-04-07</dc:date>
+<dc:audience xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">L</dc:audience>
+<dc:language xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="pl">pol</dc:language>
+<dc:relation.coverImage.url xmlns:dc="http://purl.org/dc/elements/1.1/">http://redakcja.wolnelektury.pl/media/dynamic/cover/image/35.jpg</dc:relation.coverImage.url>
+<dc:relation.coverImage.attribution xmlns:dc="http://purl.org/dc/elements/1.1/">leboski@Flickr, CC BY 2.0</dc:relation.coverImage.attribution>
+<dc:relation.coverImage.source xmlns:dc="http://purl.org/dc/elements/1.1/">http://redakcja.wolnelektury.pl/cover/image/35</dc:relation.coverImage.source>
+</rdf:Description>
+</rdf:RDF><liryka_l>
+
+<autor_utworu>Adam Asnyk</autor_utworu>
+
+<nazwa_utworu>Do młodych</nazwa_utworu>
+
+
+
+
+<strofa>Szukajcie prawdy jasnego płomienia,/
+Szukajcie nowych, nieodkrytych dróg!/
+Za każdym krokiem w tajniki stworzenia/
+Coraz się dusza ludzka rozprzestrzenia/
+I większym staje się Bóg!</strofa>
+
+
+<strofa>Choć otrząśniecie kwiaty barwnych mitów,/
+Choć rozproszycie legendowy mrok,/
+Choć mgłę urojeń zedrzecie z błękitów, ---/
+Ludziom niebiańskich nie zbraknie zachwytów,/
+Lecz dalej sięgnie ich wzrok.</strofa>
+
+
+<strofa><begin id="b1238764684390"/><motyw id="m1238764684390">Czas, Kondycja ludzka, Przemijanie</motyw>Każda epoka ma swe własne cele/
+I zapomina o wczorajszych snach:/
+Nieście więc wiedzy pochodnię na czele/
+I nowy udział bierzcie w wieków dziele,---/
+Przyszłości podnoście gmach!</strofa>
+
+
+<strofa>Ale nie depczcie przeszłości ołtarzy,/
+Choć macie sami doskonalsze wznieść:/
+Na nich się jeszcze święty ogień żarzy,/
+I miłość ludzka stoi tam na straży,/
+I wy winniście im cześć!</strofa>
+
+
+<strofa>Ze światem, który w ciemność już zachodzi/
+Wraz z całą tęczą idealnych snów,/
+Prawdziwa mądrość niechaj was pogodzi:/
+I wasze gwiazdy, o zdobywcy młodzi,/
+W ciemnościach pogasną znów!<end id="e1238764684390"/></strofa>
+
+</liryka_l></utwor>
