@@ -5,7 +5,8 @@
 #
 import re
 import Image, ImageFont, ImageDraw, ImageFilter
-from librarian import get_resource
+from StringIO import StringIO
+from librarian import get_resource, OutputFile
 
 
 class TextBox(object):
@@ -119,9 +120,11 @@ class Cover(object):
         'PNG': 'image/png',
         }
 
-    def __init__(self, book_info):
+    def __init__(self, book_info, format=None):
         self.author = ", ".join(auth.readable() for auth in book_info.authors)
         self.title = book_info.title
+        if format is not None:
+            self.format = format
 
     def pretty_author(self):
         """Allows for decorating author's name."""
@@ -180,6 +183,11 @@ class Cover(object):
     def save(self, *args, **kwargs):
         return self.image().save(format=self.format, *args, **kwargs)
 
+    def output_file(self, *args, **kwargs):
+        imgstr = StringIO()
+        self.save(imgstr, *args, **kwargs)
+        return OutputFile.from_string(imgstr.getvalue())
+
 
 class WLCover(Cover):
     """Default Wolne Lektury cover generator."""
@@ -212,8 +220,8 @@ class WLCover(Cover):
         u'Współczesność': '#06393d',
     }
 
-    def __init__(self, book_info, image_cache=None):
-        super(WLCover, self).__init__(book_info)
+    def __init__(self, book_info, format=None, image_cache=None):
+        super(WLCover, self).__init__(book_info, format=format)
         self.kind = book_info.kind
         self.epoch = book_info.epoch
         if book_info.cover_url:

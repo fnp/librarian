@@ -5,6 +5,7 @@
 #
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS
+from librarian.cover import WLCover
 from librarian import dcparser
 
 from xml.parsers.expat import ExpatError
@@ -204,6 +205,11 @@ class WLDocument(object):
     def as_fb2(self, *args, **kwargs):
         from librarian import fb2
         return fb2.transform(self, *args, **kwargs)
+
+    def as_cover(self, cover_class=None, *args, **kwargs):
+        if cover_class is None:
+            cover_class = WLCover
+        return cover_class(self.book_info, *args, **kwargs).output_file()
 
     def save_output_file(self, output_file, output_path=None,
             output_dir_path=None, make_author_dir=False, ext=None):

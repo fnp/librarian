@@ -17,9 +17,7 @@ class Book2Cover(Book2Anything):
 
     @staticmethod
     def transform(wldoc, cover):
-        output = StringIO()
-        cover(wldoc.book_info).save(output)
-        return OutputFile.from_string(output.getvalue())
+        return wldoc.as_cover(cover_class=cover)
 
 
 if __name__ == '__main__':
