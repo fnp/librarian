@@ -198,21 +198,22 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
     # Parse XSLT
     try:
+        book_info = wldoc.book_info
         document = load_including_children(wldoc)
         root = document.edoc.getroot()
 
         if cover:
             if cover is True:
                 cover = WLCover
-            bound_cover = cover(document.book_info)
+            bound_cover = cover(book_info)
             root.set('data-cover-width', str(bound_cover.width))
             root.set('data-cover-height', str(bound_cover.height))
             if bound_cover.uses_dc_cover:
-                if document.book_info.cover_by:
-                    root.set('data-cover-by', document.book_info.cover_by)
-                if document.book_info.cover_source:
+                if book_info.cover_by:
+                    root.set('data-cover-by', book_info.cover_by)
+                if book_info.cover_source:
                     root.set('data-cover-source',
-                            document.book_info.cover_source)
+                            book_info.cover_source)
         if flags:
             for flag in flags:
                 root.set('flag-' + flag, 'yes')
