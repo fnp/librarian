@@ -8,6 +8,8 @@ from __future__ import with_statement
 import os
 import re
 import shutil
+import urllib
+
 
 class UnicodeException(Exception):
     def __str__(self):
@@ -272,3 +274,8 @@ class OutputFile(object):
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
         shutil.copy(self.get_filename(), path)
+
+
+class URLOpener(urllib.FancyURLopener):
+    version = 'FNP Librarian (http://github.com/fnp/librarian)'
+urllib._urlopener = URLOpener()

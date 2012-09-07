@@ -6,7 +6,7 @@
 import re
 import Image, ImageFont, ImageDraw, ImageFilter
 from StringIO import StringIO
-from librarian import get_resource, OutputFile
+from librarian import get_resource, OutputFile, URLOpener
 
 
 class TextBox(object):
@@ -225,19 +225,16 @@ class WLCover(Cover):
         self.kind = book_info.kind
         self.epoch = book_info.epoch
         if book_info.cover_url:
-            from urllib2 import urlopen
-            from StringIO import StringIO
-
             url = book_info.cover_url
             bg_src = None
             if image_cache:
                 from urllib import quote
                 try:
-                    bg_src = urlopen(image_cache + quote(url, safe=""))
+                    bg_src = URLOpener().open(image_cache + quote(url, safe=""))
                 except:
                     pass
             if bg_src is None:
-                bg_src = urlopen(url)
+                bg_src = URLOpener().open(url)
             self.background_img = StringIO(bg_src.read())
             bg_src.close()
         else:
