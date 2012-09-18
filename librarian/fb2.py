@@ -8,6 +8,7 @@ from copy import deepcopy
 from lxml import etree
 
 from librarian import functions, OutputFile
+from .epub import replace_by_verse
 
 
 functions.reg_substitute_entities()
@@ -30,6 +31,10 @@ def transform(wldoc, verbose=False,
     style_filename = os.path.join(os.path.dirname(__file__), 'fb2/fb2.xslt')
     style = etree.parse(style_filename)
 
+    replace_by_verse(document.edoc)
+
     result = document.transform(style)
 
     return OutputFile.from_string(unicode(result).encode('utf-8'))
+
+# vim:et
