@@ -362,6 +362,37 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="ilustr">
+    <cmd>
+        <xsl:attribute name="name">
+            <xsl:value-of select="wl:texcommand(name())" />
+        </xsl:attribute>
+		<parm><xsl:value-of select="@src" /></parm>
+        <parm><xsl:apply-templates mode="inline" /></parm>
+    </cmd>
+</xsl:template>
+
+<xsl:template match="@*|node()" mode="identity">
+  <xsl:copy>
+    <xsl:apply-templates select="@*|node()" mode="identity"/>
+  </xsl:copy>
+</xsl:template>
+
+
+
+<xsl:template match="dmath">
+  <dmath>
+    <xsl:apply-templates mode="identity"/>
+  </dmath>
+</xsl:template>
+
+<xsl:template match="math" mode="inline">
+  <math>
+    <xsl:apply-templates mode="identity"/>
+  </math>
+</xsl:template>
+
+
 
 <!-- ================ -->
 <!-- = SPECIAL TAGS = -->

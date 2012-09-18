@@ -571,3 +571,11 @@ Letters={Uppercase}
 \fi
 }
 
+\newcommand{\ilustr}[2]{
+
+\vspace{1em}%
+\begin{center}%
+\par{\includegraphics[width=\textwidth]{#1}\\#2}%
+\end{center}%
+\vspace{1em}%
+}

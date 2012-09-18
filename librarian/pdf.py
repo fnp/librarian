@@ -174,7 +174,8 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None):
+              cover=None, flags=None, customizations=None,
+              imgdir=""):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
@@ -228,13 +229,17 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         style = etree.parse(style_filename)
 
         texml = document.transform(style)
-
+        etree.dump(texml.getroot())
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
 
         if cover:
             with open(os.path.join(temp, 'cover.jpg'), 'w') as f:
                 the_cover.save(f)
+
+        for img in document.edoc.findall('//ilustr'):
+            shutil.copy(os.path.join(imgdir, img.get('src')), temp)
+
 
         del document # no longer needed large object :)
 
@@ -271,6 +276,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         return OutputFile.from_filename(output_file.name)
 
     except (XMLSyntaxError, XSLTApplyError), e:
+        print e
         raise ParseError(e)
 
 
