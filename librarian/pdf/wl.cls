@@ -67,13 +67,15 @@
 
 
 \usepackage{trace}
-
-%\usepackage[MeX]{polski}
-
+\usepackage{caption}
+\usepackage{tabularx}
+\usepackage[MeX]{polski}
+\usepackage{icomma}
 \usepackage[xetex]{graphicx}
 \usepackage{fontspec}
 \usepackage{xunicode}
 \usepackage{xltxtra}
+
 
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
@@ -152,11 +154,20 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
+<<<<<<< HEAD
 %\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
 \cfoot{}
 %\rfoot{{\footnotesize \thepage}}
 \fancyfoot[LO,RE]{{\footnotesize \textsc{\@author} \emph{\@title}}}
 \fancyfoot[LE,RO]{{\footnotesize \thepage}}
+=======
+%\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}} %1
+\cfoot{}
+%\rfoot{{\footnotesize \thepage}}  %1
+\fancyfoot[LO,RE]{{\footnotesize \textsc{\@author} \emph{\@title}}}
+\fancyfoot[LE,RO]{{\footnotesize \thepage}}
+
+>>>>>>> 4531d8a... nicer tables
 
 \clubpenalty=100000
 \widowpenalty=100000
@@ -174,9 +185,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
 
 \newcommand{\makecover}[2]{
+<<<<<<< HEAD
 
         %\pdfpagewidth=#1
         %\pdfpageheight=#2
+=======
+%        \pdfpagewidth=#1
+%        \pdfpageheight=#2
+>>>>>>> 4531d8a... nicer tables
 
         \thispagestyle{empty}
         \newlength{\PictHOffset}
@@ -191,12 +207,21 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \addtolength{\PictVOffset}{\headheight}
         \addtolength{\PictVOffset}{\headsep}
         \addtolength{\PictVOffset}{\topskip}
+<<<<<<< HEAD
         \addtolength{\PictVOffset}{-#2}
 
         \noindent\hspace*{-\PictHOffset}%
         \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
             \includegraphics[height=#2,width=#1]{cover.jpg}}}
         %\clearpage
+=======
+        \addtolength{\PictVOffset}{-#2} %1 \pdfpageheight}
+
+        \noindent\hspace*{-\PictHOffset}%
+        \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
+            \includegraphics[height=#2,width=#1]{cover.png}}}
+%        \clearpage
+>>>>>>> 4531d8a... nicer tables
         \vspace{#2}
 
         \hspace{-36mm}\parbox{16cm}{
@@ -209,6 +234,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
             A collection of texts from a crowd-funded contest.
         }}
 
+<<<<<<< HEAD
 
         \vspace{8em}
 
@@ -219,6 +245,18 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
         %\setlength{\pdfpagewidth}{210mm}
         %\setlength{\pdfpageheight}{297mm}
+=======
+
+        \vspace{8em}
+
+\emph{\thankyou}\\
+\indent\emph{You made this book possible.}
+        }
+
+
+%        \setlength{\pdfpagewidth}{210mm}
+%        \setlength{\pdfpageheight}{297mm}
+>>>>>>> 4531d8a... nicer tables
 }
 
 
@@ -251,6 +289,13 @@ Letters={SmallCaps,UppercaseSmallCaps}
     }
 }
 
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> 4531d8a... nicer tables
 \usepackage{printlen}
 
 \newcommand{\editorialsection}{
@@ -295,9 +340,12 @@ Modern Poland Foundation Team
 
 \href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
 
+<<<<<<< HEAD
 %\vspace{4em}
 %\box{\tableofcontents}
 
+=======
+>>>>>>> 4531d8a... nicer tables
   \begin{figure}[b!]
   {
     \footnotesize

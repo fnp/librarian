@@ -392,11 +392,26 @@
   </math>
 </xsl:template>
 
+<xsl:template match="tablewrap">
+  <cmd name="begin"><parm>table</parm><opt>h!</opt></cmd>
+  <xsl:apply-templates select="table"/>
+
+  <cmd name="caption*"><parm>
+    <xsl:apply-templates select="akap"/>
+  </parm></cmd>
+  <cmd name="end"><parm>table</parm></cmd>
+</xsl:template>
+
 <xsl:template match="table">
-    <xsl:if test="@caption">
-        <group><cmd name="Large"/><xsl:value-of select="@caption"/></group><cmd name="newline"/>
+  <xsl:if test="@caption">
+
+      <cmd name="caption*"><parm>
+
+	<cmd name="Large"/><xsl:value-of select="@caption"/>
+      </parm></cmd>
     </xsl:if>
-    <env name="tabular">
+    <env name="tabularx">
+      <parm><cmd name="textwidth"/></parm>
         <parm><xsl:value-of select="@spec"/></parm>
         <xsl:apply-templates />
     </env>
@@ -404,10 +419,10 @@
 
 <xsl:template match="r">
     <xsl:apply-templates />
-    <spec cat="esc"/>
-    <spec cat="esc"/>
+    <spec cat="esc"/><spec cat="esc"/>
 </xsl:template>
 <xsl:template match="c">
+    <cmd name="footnotesize"/>
     <xsl:apply-templates mode="inline"/>
     <xsl:if test="position() &lt; last()-1">
     <spec cat="align"/>
