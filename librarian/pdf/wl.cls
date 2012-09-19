@@ -206,19 +206,19 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
         \hspace{-36mm}\parbox{16cm}{
         {\addfontfeature{LetterSpace=-4.0}\emph{\scalefont{4}%
-            \noindent Future of Copyright Anthology
+            \noindent Philippe Aigrain
         }}
 
         \vspace{2em}
-        {\addfontfeature{LetterSpace=-4.0}{\scalefont{1.5}%
-            A collection of texts from a crowd-funded contest.
+        {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
+            Dzielenie się
         }}
 
 
         \vspace{8em}
 
-\emph{\thankyou}\\
-\indent\emph{You made this book possible.}
+%\emph{\thankyou}\\
+%\indent\emph{You made this book possible.}
         }
 
 
@@ -265,34 +265,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
 %\printlength\textwidth
 
 
-{\scalefont{1.5}Dear readers!}
+{\scalefont{1.5}Drogi czytelniku!}
 
 
 
 \vspace{1em}
-It is our great pleasure to present you the “Future of Copyright 
-Anthology”, a collection of 10 best short stories sent in for the “Future 
-of Copyright” contest organized by Modern Poland Foundation. These works 
-have been selected by our jury – Prof. Michael Geist, Piotr Czerski and 
-Jarosław Lipszyc.
-
-The main prize in this contest was founded by you, the readers, on the 
-Indiegogo crowdfunding platform. We are proud to announce that this 
-prize goes to Aymeric Mansoux, author of “Morphology of a copyright 
-tale”, in appreciation of the originality, power and the strong message 
-of this work. Moreover, the jury decided to grant an honorable mention 
-to Togi, author of the work “Give”.
-
-We would like to thank you for your crowdfunding support and a high
-standard of the submitted works. We were pleasantly surprised by the
-interest shown in the competition, and we have decided to hold
-its second edition next 
-year. We hope that with your help it will be even more successful and 
-the collected works will provide a strong voice in the debate on the future 
-of copyright law and system.
 
 \vspace{1em}
-Modern Poland Foundation Team
+Zespół Fundacji Nowoczesna Polska
 
 \vspace{4em}
 \includegraphics[scale=.2]{logo.eps}
@@ -320,7 +300,7 @@ Modern Poland Foundation Team
     %\description
     %\vspace{.6em}
 
-    Published by \href{http://nowoczesnapolska.org.pl}{Modern Poland Foundation}, 2012.
+    Opublikowano przez \href{http://nowoczesnapolska.org.pl}{Fundację Nowoczesna Polska}, 2012.
 
     \editors
 
