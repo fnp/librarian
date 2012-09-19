@@ -96,7 +96,7 @@
 
             <TeXML escape="0">
                 \def\coverby{
-                <xsl:if test="@data-cover-by">Cover image:
+                <xsl:if test="@data-cover-by">Obraz na okładce:
                     <xsl:choose>
                     <xsl:when test="@data-cover-source">
                         \href{\datacoversource}{\datacoverby}.
@@ -170,7 +170,7 @@
             \href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
             Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
         <xsl:if test=".//dc:rights.license">
-            \def\rightsinfo{This book is available under the terms of
+            \def\rightsinfo{Ta książka jest udostpęniona na licencji
             \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
         </xsl:if>
 
@@ -463,7 +463,7 @@
 
 <xsl:template name="editors">
     <xsl:if test=".//dc:contributor.editor_parsed|.//dc:contributor.technical_editor_parsed">
-        <xsl:text>Technical editors: </xsl:text>
+        <xsl:text>Redakcja techniczna: </xsl:text>
         <xsl:for-each select=".//dc:contributor.editor_parsed|.//dc:contributor.technical_editor_parsed[not(.//dc:contributor.editor_parsed/text()=text())]">
             <!--xsl:sort select="@sortkey" /-->
             <xsl:if test="position() != 1">, </xsl:if>

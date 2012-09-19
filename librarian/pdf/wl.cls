@@ -253,6 +253,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
     \vspace{.6em}
     \color{black}
+    
     }
 }
 
@@ -265,14 +266,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
 %\printlength\textwidth
 
 
-{\scalefont{1.5}Drogi czytelniku!}
+%% {\scalefont{1.5}Drogi czytelniku!}
 
 
 
-\vspace{1em}
+%% \vspace{1em}
 
-\vspace{1em}
-Zespół Fundacji Nowoczesna Polska
+%% \vspace{1em}
+%% Zespół Fundacji Nowoczesna Polska
 
 \vspace{4em}
 \includegraphics[scale=.2]{logo.eps}
@@ -306,8 +307,9 @@ Zespół Fundacji Nowoczesna Polska
 
     %\vspace{.6em}
     \coverby
-
+    
     \color{black}
+    \clearpage
   }
   \end{figure}
 }
@@ -437,22 +439,22 @@ Letters={Uppercase}
 %\pagebreak
 \subsection*{\typosubsection{#1}}%
 }
-\newcommand{\srodtytul}[1]{%
+\newcommand{\naglowekrozdzial}[1]{%
 \subsection*{\typosubsection{#1}}%
 }
 
 \newcommand{\naglowekscena}[1]{%
 \subsubsection*{\typosubsubsection{#1}}%
 }
-\newcommand{\naglowekrozdzial}[1]{%
+\newcommand{\naglowekpodrozdzial}[1]{%
 \subsubsection*{\typosubsubsection{#1}}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
 \par{\textsc{#1}}\nopagebreak%
 }
-\newcommand{\naglowekpodrozdzial}[1]{%
-\par{#1}\nopagebreak%
+\newcommand{\srodtytul}[1]{%
+\vskip 1em \par{\large \it \noindent #1}\vskip .5em\nopagebreak%
 }
 
 \newcommand{\miejsceczas}[1]{%
