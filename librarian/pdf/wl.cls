@@ -217,6 +217,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
         \vspace{8em}
 
+        {\addfontfeature{LetterSpace=-4.0}{\scalefont{2}%
+        Tłumaczenie Wojciech Pędzich
+        }}
+
+
 %\emph{\thankyou}\\
 %\indent\emph{You made this book possible.}
         }
@@ -272,14 +277,25 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 %% \vspace{1em}
 
-%% \vspace{1em}
-%% Zespół Fundacji Nowoczesna Polska
+\vspace{1em}
 
-\vspace{4em}
+Tłumaczenie książki powstało w ramach projektu "Przyszłość prawa autorskiego" finansowanego przez {\it Trust for Civil Society in Central and Eastern Europe}.
+
+\vspace{1em}
+
+\includegraphics[scale=.4]{cce_trust.eps}
+
+\vspace{1em}
+
+Wydawca: Fundacja Nowoczesna Polska, Warszawa 2012
+
+\vspace{1em}
 \includegraphics[scale=.2]{logo.eps}
 \vspace{1em}
 
 \href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
+
+
 
 %\vspace{4em}
 %\box{\tableofcontents}
@@ -291,7 +307,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \noindent \rule{\linewidth}{0.4pt}
 
     \rightsinfo
-    \vspace{.6em}
+%    \vspace{.6em}
 
     %Źródło: \href{\bookurl}{\bookurl}
 
@@ -309,9 +325,9 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \coverby
     
     \color{black}
-    \clearpage
   }
   \end{figure}
+\clearpage
 }
 
 

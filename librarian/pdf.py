@@ -237,6 +237,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             with open(os.path.join(temp, 'cover.jpg'), 'w') as f:
                 the_cover.save(f)
 
+        shutil.copy("cce_trust.eps", temp)
         shutil.copy("logo.eps", temp)
         for img in document.edoc.findall('//ilustr'):
             shutil.copy(os.path.join(imgdir, img.get('src')), temp)
