@@ -392,7 +392,30 @@
   </math>
 </xsl:template>
 
+<xsl:template match="table">
+    <xsl:if test="@caption">
+        <group><cmd name="Large"/><xsl:value-of select="@caption"/></group><cmd name="newline"/>
+    </xsl:if>
+    <env name="tabular">
+        <parm><xsl:value-of select="@spec"/></parm>
+        <xsl:apply-templates />
+    </env>
+</xsl:template>
 
+<xsl:template match="r">
+    <xsl:apply-templates />
+    <spec cat="esc"/>
+    <spec cat="esc"/>
+</xsl:template>
+<xsl:template match="c">
+    <xsl:apply-templates mode="inline"/>
+    <xsl:if test="position() &lt; last()-1">
+    <spec cat="align"/>
+    </xsl:if>
+</xsl:template>
+<xsl:template match="hr">
+  <cmd name="hline"/>
+</xsl:template>
 
 <!-- ================ -->
 <!-- = SPECIAL TAGS = -->

@@ -14,6 +14,8 @@
 
 \RequirePackage{setspace}
 \RequirePackage{type1cm}
+\RequirePackage{amssymb}
+\RequirePackage{amsmath}
 \DeclareOption{13pt}{%
 \AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
