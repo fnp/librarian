@@ -229,7 +229,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         style = etree.parse(style_filename)
 
         texml = document.transform(style)
-        etree.dump(texml.getroot())
+        #        etree.dump(texml.getroot())
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
 
@@ -240,7 +240,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         shutil.copy("cce_trust.eps", temp)
         shutil.copy("logo.eps", temp)
         for img in document.edoc.findall('//ilustr'):
-            print "--->> %s %s %s" % (imgdir, img, img.get('src'))
+            #            print "--->> %s %s %s" % (imgdir, img, img.get('src'))
             shutil.copy(os.path.join(imgdir, img.get('src')), temp)
 
 

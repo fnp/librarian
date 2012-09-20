@@ -16,7 +16,6 @@
 \RequirePackage{type1cm}
 \RequirePackage{amssymb}
 \RequirePackage{amsmath}
-\RequirePackage{geometry}
 
 \DeclareOption{13pt}{%
 \AtEndOfClass{%
@@ -273,25 +272,27 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \clearpage
 
 \vspace{2em}
-\begin{center}
+      \hspace{10mm}\parbox{16cm}{
+\centering
       {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
            Dzielenie się
       }}
+
   \vspace{2em}
          {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
              Kultura i gospodarka epoki internetu
          }}
-
-
-\end{center}
+}
 
 \clearpage
 \clearpage
 
 %\parbox{10cm}{
 %  \centering
-\newgeometry{oneside}
-\begin{center}
+
+  \hspace{-24mm}\parbox{16cm}{
+\centering
+
   {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
       \noindent Philippe Aigrain
   }}
@@ -315,11 +316,12 @@ Letters={SmallCaps,UppercaseSmallCaps}
              Z języka angielskiego przełożył \\
              \emph{Wojciech Pędzich}
          }}
-\vspace{8em}
-\includegraphics[scale=.2]{logo.eps}
-\end{center}
 
-\restoregeometry
+\vspace{16em}
+
+\includegraphics[scale=.2]{logo.eps}
+}
+
 
 \clearpage
 
