@@ -272,7 +272,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \clearpage
 
 \vspace{2em}
-      \hspace{10mm}\parbox{16cm}{
+      \hspace{0mm}\parbox{16cm}{
 \centering
       {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
            Dzielenie się
@@ -290,7 +290,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 %\parbox{10cm}{
 %  \centering
 
-  \hspace{-24mm}\parbox{16cm}{
+  \hspace{-36mm}\parbox{16cm}{
 \centering
 
   {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
@@ -317,7 +317,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
              \emph{Wojciech Pędzich}
          }}
 
-\vspace{16em}
+\vspace{22em}
 
 \includegraphics[scale=.2]{logo.eps}
 }
@@ -333,10 +333,12 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \noindent \editors
 
+\vspace{1em}
+
+
 \noindent \rightsinfo
 
-\noindent Fundacja Nowoczesna Polska
-
+\vspace{1em}
 
 \noindent \coverby
 
@@ -364,7 +366,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \noindent Wydawca: Fundacja Nowoczesna Polska, Warszawa 2012
 
 \vspace{1em}
-\noindent \includegraphics[scale=.2]{logo.eps}
+\includegraphics[scale=.2]{logo.eps}
 \vspace{1em}
 
 \noindent \href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
