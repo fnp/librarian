@@ -330,6 +330,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 
 \clearpage
+        \thispagestyle{empty}
 
 \noindent Tytuł oryginału
 
