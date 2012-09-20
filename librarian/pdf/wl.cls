@@ -268,8 +268,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \newcommand{\editorialsection}{
 \clearpage
+        \thispagestyle{empty}
+
 % Pusta strona 
 \clearpage
+        \thispagestyle{empty}
 
 \vspace{2em}
       \hspace{0mm}\parbox{16cm}{
@@ -285,7 +288,10 @@ Letters={SmallCaps,UppercaseSmallCaps}
 }
 
 \clearpage
+        \thispagestyle{empty}
+
 \clearpage
+        \thispagestyle{empty}
 
 %\parbox{10cm}{
 %  \centering
