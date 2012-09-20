@@ -16,6 +16,8 @@
 \RequirePackage{type1cm}
 \RequirePackage{amssymb}
 \RequirePackage{amsmath}
+\RequirePackage{geometry}
+
 \DeclareOption{13pt}{%
 \AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
@@ -205,22 +207,23 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \vspace{#2}
 
         \hspace{-36mm}\parbox{16cm}{
-        {\addfontfeature{LetterSpace=-4.0}\emph{\scalefont{4}%
-            \noindent Philippe Aigrain
+        {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
+            \noindent Philippe Aigrain}}
+
+       {\addfontfeature{LetterSpace=-4.0}{\scalefont{2.5}%
+            przy współpracy Suzanne Aigrain
         }}
 
         \vspace{2em}
         {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
             Dzielenie się
         }}
-
-
-        \vspace{8em}
-
-        {\addfontfeature{LetterSpace=-4.0}{\scalefont{2}%
-        Tłumaczenie Wojciech Pędzich
+        
+        \vspace{2em}
+        {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
+            Kultura i gospodarka epoki internetu
         }}
-
+        
 
 %\emph{\thankyou}\\
 %\indent\emph{You made this book possible.}
@@ -266,6 +269,75 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \newcommand{\editorialsection}{
 \clearpage
+% Pusta strona 
+\clearpage
+
+\vspace{2em}
+\begin{center}
+      {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
+           Dzielenie się
+      }}
+  \vspace{2em}
+         {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
+             Kultura i gospodarka epoki internetu
+         }}
+
+
+\end{center}
+
+\clearpage
+\clearpage
+
+%\parbox{10cm}{
+%  \centering
+\newgeometry{oneside}
+\begin{center}
+  {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
+      \noindent Philippe Aigrain
+  }}
+
+  {\addfontfeature{LetterSpace=-4.0}{\scalefont{2.5}%
+      przy współpracy Suzanne Aigrain
+  }}
+  
+  \vspace{2em}
+         {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
+             Dzielenie się
+         }}
+         
+  \vspace{2em}
+         {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
+             Kultura i gospodarka epoki internetu
+         }}
+
+  \vspace{2em}
+         {\addfontfeature{LetterSpace=-4.0}{\scalefont{2}%
+             Z języka angielskiego przełożył \\
+             \emph{Wojciech Pędzich}
+         }}
+\vspace{8em}
+\includegraphics[scale=.2]{logo.eps}
+\end{center}
+
+\restoregeometry
+
+\clearpage
+
+\noindent Tytuł oryginału
+
+\noindent \emph{Sharing. Culture and the Economy in the Internet Age}
+
+\vspace{1em}
+
+\noindent \editors
+
+\noindent \rightsinfo
+
+\noindent Fundacja Nowoczesna Polska
+
+
+\noindent \coverby
+
 
 %\set\textwidth=450pt
 %\printlength\textwidth
@@ -279,54 +351,54 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \vspace{1em}
 
-Tłumaczenie książki powstało w ramach projektu "Przyszłość prawa autorskiego" finansowanego przez {\it Trust for Civil Society in Central and Eastern Europe}.
+\noindent Tłumaczenie książki powstało w ramach projektu "Przyszłość prawa autorskiego" finansowanego przez {\it Trust for Civil Society in Central and Eastern Europe}.
 
 \vspace{1em}
 
-\includegraphics[scale=.4]{cce_trust.eps}
+\noindent \includegraphics[scale=.4]{cce_trust.eps}
 
 \vspace{1em}
 
-Wydawca: Fundacja Nowoczesna Polska, Warszawa 2012
+\noindent Wydawca: Fundacja Nowoczesna Polska, Warszawa 2012
 
 \vspace{1em}
-\includegraphics[scale=.2]{logo.eps}
+\noindent \includegraphics[scale=.2]{logo.eps}
 \vspace{1em}
 
-\href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
+\noindent \href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
 
 
 
 %\vspace{4em}
 %\box{\tableofcontents}
 
-  \begin{figure}[b!]
-  {
-    \footnotesize
-    \color{theme}
-    \noindent \rule{\linewidth}{0.4pt}
+%%   \begin{figure}[b!]
+%%   {
+%%     \footnotesize
+%%     \color{theme}
+%%     \noindent \rule{\linewidth}{0.4pt}
 
-    \rightsinfo
-%    \vspace{.6em}
+%%     \rightsinfo
+%% %    \vspace{.6em}
 
-    %Źródło: \href{\bookurl}{\bookurl}
+%%     %Źródło: \href{\bookurl}{\bookurl}
 
-    %\vspace{.6em}
-    %\sourceinfo
+%%     %\vspace{.6em}
+%%     %\sourceinfo
 
-    %\description
-    %\vspace{.6em}
+%%     %\description
+%%     %\vspace{.6em}
 
-    Opublikowano przez \href{http://nowoczesnapolska.org.pl}{Fundację Nowoczesna Polska}, 2012.
+%%     Opublikowano przez \href{http://nowoczesnapolska.org.pl}{Fundację Nowoczesna Polska}, 2012.
 
-    \editors
+%%     \editors
 
-    %\vspace{.6em}
-    \coverby
+%%     %\vspace{.6em}
+%%     \coverby
     
-    \color{black}
-  }
-  \end{figure}
+%%     \color{black}
+%%   }
+%%   \end{figure}
 \clearpage
 }
 

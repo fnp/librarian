@@ -240,6 +240,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         shutil.copy("cce_trust.eps", temp)
         shutil.copy("logo.eps", temp)
         for img in document.edoc.findall('//ilustr'):
+            print "--->> %s %s %s" % (imgdir, img, img.get('src'))
             shutil.copy(os.path.join(imgdir, img.get('src')), temp)
 
 
