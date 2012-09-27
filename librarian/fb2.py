@@ -12,6 +12,28 @@ from .epub import replace_by_verse
 
 
 functions.reg_substitute_entities()
+functions.reg_person_name()
+
+
+def sectionify(tree):
+    """Finds section headers and adds a tree of _section tags."""
+    sections = ['naglowek_czesc',
+            'naglowek_akt', 'naglowek_rozdzial', 'naglowek_scena',
+            'naglowek_podrozdzial']
+    section_level = dict((v,k) for (k,v) in enumerate(sections))
+
+    # We can assume there are just subelements an no text at section level.
+    for level, section_name in reversed(list(enumerate(sections))):
+        for header in tree.findall('//' + section_name):
+            section = header.makeelement("_section")
+            header.addprevious(section)
+            section.append(header)
+            sibling = section.getnext()
+            while (sibling is not None and
+                    section_level.get(sibling.tag, 1000) > level):
+                section.append(sibling)
+                sibling = section.getnext()
+
 
 def transform(wldoc, verbose=False,
               cover=None, flags=None):
@@ -32,6 +54,7 @@ def transform(wldoc, verbose=False,
     style = etree.parse(style_filename)
 
     replace_by_verse(document.edoc)
+    sectionify(document.edoc)
 
     result = document.transform(style)
 

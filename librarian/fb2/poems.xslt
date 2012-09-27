@@ -33,7 +33,7 @@
 		puts it here -->
 	<xsl:template match="motyw" mode="poem"/>
 
-	<xsl:template mode="poem" match="wers_normalny">
+	<xsl:template mode="poem" match="wers_normalny|wers_cd|wers_wciety|wers_akap">
 		<v><xsl:apply-templates mode="inline"/></v>
 	</xsl:template>
 </xsl:stylesheet>

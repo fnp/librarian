@@ -13,11 +13,33 @@
 
 	<!-- in paragraph mode -->
 
-	<xsl:template mode="para" match="akap|akap_dialog">
+	<xsl:template mode="para" match="akap|akap_dialog|akap_cd|motto_podpis">
 		<!-- paragraphs & similar -->
 
 		<p><xsl:apply-templates mode="inline"/></p>
 	</xsl:template>
+
+	<xsl:template mode="para" match="dlugi_cytat|motto|dedykacja|nota">
+		<cite><xsl:apply-templates mode="para"/></cite>
+	</xsl:template>
+
+	<xsl:template mode="para" match="srodtytul">
+		<p><strong><xsl:apply-templates mode="inline"/></strong></p>
+	</xsl:template>
+
+	<xsl:template mode="para" match="sekcja_swiatlo">
+		<empty-line/><empty-line/><empty-line/>
+	</xsl:template>
+
+	<xsl:template mode="para" match="sekcja_asterysk">
+		<empty-line/><p>*</p><empty-line/>
+	</xsl:template>
+
+	<xsl:template mode="para" match="separator_linia">
+		<empty-line/><p>————————</p><empty-line/>
+	</xsl:template>
+
+
 
 	<xsl:template mode="para" match="*"/>
 	<xsl:template mode="sections" match="*"/>
