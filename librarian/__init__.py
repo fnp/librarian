@@ -79,8 +79,8 @@ class WLURI(object):
     """Represents a WL URI. Extracts slug from it."""
     slug = None
 
-    example = 'http://wolnelektury.pl/katalog/lektura/template/'
-    _re_wl_uri = re.compile(r'http://(www\.)?wolnelektury.pl/katalog/lektura/'
+    example = 'http://prawokultury.pl/publikacje/'
+    _re_wl_uri = re.compile(r'http://(www\.)?prawokultury.pl/publikacje/'
             '(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):
@@ -104,7 +104,7 @@ class WLURI(object):
         u'http://wolnelektury.pl/katalog/lektura/a-slug/'
 
         """
-        uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
+        uri = 'http://prawokultury.pl/publikacje/%s/' % slug
         return cls(uri)
 
     def __unicode__(self):
