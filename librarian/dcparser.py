@@ -163,7 +163,9 @@ class WorkInfo(object):
     __metaclass__ = DCInfo
 
     FIELDS = (
-        Field( DCNS('creator'), 'authors', as_person, salias='author', multiple=True),
+        Field( DCNS('creator.expert'), 'authors', as_person, salias='author', multiple=True),
+        Field( DCNS('creator.scenario'), 'authors', as_person, salias='author', multiple=True),
+        Field( DCNS('creator.textbook'), 'authors', as_person, salias='author', multiple=True),
         Field( DCNS('title'), 'title'),
         Field( DCNS('type'), 'type', required=False, multiple=True),
 

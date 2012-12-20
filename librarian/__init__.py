@@ -150,7 +150,10 @@ import dcparser
 
 DEFAULT_BOOKINFO = dcparser.BookInfo(
         { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'},
-        { DCNS('creator'): [u'Some, Author'],
+        { 
+          DCNS('creator.export'): [u'Some, Author'],
+          DCNS('creator.scenario'): [u'Some, Author'],
+          DCNS('creator.textbook'): [u'Some, Author'],
           DCNS('title'): [u'Some Title'],
           DCNS('subject.period'): [u'Unknown'],
           DCNS('subject.type'): [u'Unknown'],
