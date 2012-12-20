@@ -183,7 +183,7 @@ class WLDocument(object):
     # Converters
 
     def as_html(self, *args, **kwargs):
-        from librarian import html
+        from librarian import pyhtml as html
         return html.transform(self, *args, **kwargs)
 
     def as_text(self, *args, **kwargs):
