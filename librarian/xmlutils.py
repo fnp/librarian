@@ -94,8 +94,7 @@ class Xmill(object):
                     return []
                 else:
                     if not isinstance(vals, tuple):
-                        pre = [vals]
-                        post = []
+                        return [vals]
                     else:
                         pre = [vals[0], element.text]
                         post = [vals[1]]
