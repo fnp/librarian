@@ -193,7 +193,7 @@ class Wybor(Excercise):
 """ % locals(), u"</li>"
 
         else:
-            return super(Wybor, self).handle_punkt(self, element)
+            return super(Wybor, self).handle_punkt(element)
 
 
 class Uporzadkuj(Excercise):
