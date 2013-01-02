@@ -1,0 +1,333 @@
+This is a dry run, to really fix something, run with --seriously
+gim_1.2 Sekrety wyszukiwarek
+---------------------------------------------------
+<uwaga>
+<akap>Powy&#380;sze wygl&#261;da jak uwaga na marginesie pozostawiona przez autora modu&#322;u. Czy nie jest do wyci&#281;cia? Red.AS.</akap>
+
+
+</uwaga>
+  
+
+<uwaga>S&#261;dz&#281;, &#380;e lepiej by&#322;oby, gdyby pojawia&#322; si&#281; punkt (kropa) po ,,Zadaj pytanie".</uwaga>
+  
+gim_1.3 zdublowana pozycja ---- skasować
+---------------------------------------------------
+<uwaga>
+<akap>To jest powt&#243;rzone [http://redakcja.cyfrowaprzyszlosc.pl/editor/edit/gdzie-szukac-informacji/#VisualPerspective], ta wersja jest gorzej zredagowana; A.S.</akap>
+
+
+</uwaga>
+
+
+<uwaga>Metody i materia&#322;y w innych cz&#281;&#347;ciach s&#261; gdzie indziej. A.S.</uwaga>
+
+<uwaga>listy wypunktowane w tej cz&#281;&#347;ci?</uwaga>
+
+
+<uwaga>dwustopniowa lista?</uwaga>
+
+gim_1.5 Zapanuj nad informacjami
+---------------------------------------------------
+<uwaga>
+<akap>mo&#380;emy poprosi&#263;, &#380;eby czytelnicy polecili nam jakie&#347; dobre &#378;r&#243;d&#322;o</akap>
+
+
+</uwaga>
+gim_1 synteza
+---------------------------------------------------
+<uwaga>
+<akap>[P]??? - brak nazwy modu&#322;u</akap>
+
+
+</uwaga>
+gim_2.1 Wizerunek w siec
+---------------------------------------------------
+<uwaga>
+<akap>[?]</akap>
+
+
+</uwaga>
+<uwaga>
+<akap>??</akap>
+
+
+</uwaga>
+gim_2.3 W sieciowej społeczności
+---------------------------------------------------
+<uwaga>
+<akap>jako ilustracja (na prawie cytatu)  <link url="http://networkeddigital.files.wordpress.com/2010/05/podzial-social-media.jpg?w=590&amp;h=590">http://networkeddigital.files.wordpress.com/2010/05/podzial-social-media.jpg?w=590&amp;h=590</link></akap>
+
+
+</uwaga>
+
+<uwaga>
+<akap>- co o tym powiecie? dla mnie fajne :)</akap>
+
+
+</uwaga>
+gim_2 Kim jestem w internecie?
+---------------------------------------------------
+<uwaga>
+<akap>Ten sam materia&#322;, nieco inaczej opracowany jest w cz&#281;&#347;ci ,,Wizerunek w sieci". Zredagowane oba - do decyzji autor&#243;w.</akap>
+
+
+</uwaga>
+
+gim_3.1 Podróże po hipertekście
+---------------------------------------------------
+<uwaga>
+<akap>Poniewa&#380; definicja by&#322;a wyj&#261;tkowo niezgrabnie zredagowana po polsku, poprawi&#322;am redakcj&#281; tekstu w Wikipedii. Je&#347;li zmiany zostan&#261; zaakceptowane, nale&#380;y poprawi&#263; zacytowany powy&#380;ej tekst i link (dat&#281; dost&#281;pu).</akap>
+
+
+</uwaga>
+
+gim_3.3 Zmiany w mediach - zmiany świata
+---------------------------------------------------
+<uwaga>
+<akap>Uwaga! do uzupe&#322;nienia</akap>
+
+
+</uwaga>
+
+<uwaga>
+<akap>to nieprawda, sa takie gad&#380;ety: http://www.spodlady.com/prod_265_Reksio_stojacy_maskotka__.html; http://www.spodlady.com/prod_18151_Figurki_Bolek_i_Lolek_.html - MN</akap>
+
+
+</uwaga> jak seria opowie&#347;ci o Harrym Potterze czy 
+gim_3.7 Mowa bez słów
+---------------------------------------------------
+<uwaga>
+<akap>tu powinien wy&#347;wietlac si&#281; ten wykres</akap>
+
+
+</uwaga>
+gim_4.1 Sieciowa współpraca
+---------------------------------------------------
+<uwaga>
+<akap>Mo&#380;e warto r&#243;wnie&#380; w innych modu&#322;ach uwzgl&#281;dni&#263; genderowy savoir vivre?</akap>
+
+
+</uwaga>
+
+gim_4.2 Digitalizacja
+---------------------------------------------------
+<uwaga>
+<akap>W innych modu&#322;ach w tym miejscu: ,,Uczestnik:".</akap>
+
+
+</uwaga>
+
+gim_4.3 Remiks - nie tylko w muzyce
+---------------------------------------------------
+<uwaga><akap>V zadania sprawdzaj&#261;ce &#8211; co to znaczy &#8222;&#380;eby remiks by&#322; warto&#347;ciowy&#8221;? Takie podej&#347;cie to moim zdaniem zaprzeczenie zaj&#281;&#263; o remiksie. Dzieci powinny si&#281; dowiedzie&#263;, &#380;e remiksowanie mo&#380;e by&#263; warto&#347;ciowe, ale na zaj&#281;ciach, gdzie si&#281; o remiksie dowiaduj&#261;, nie musz&#261; ustala&#263; kryteri&#243;w. To moim zdaniem tylko szansa na blokad&#281; u nich &#8211; nie r&#243;bcie remiks&#243;w, bo mo&#380;ecie je zrobi&#263; &#378;le. A czy mo&#380;na zrobi&#263; &#378;le remiks? poprawione</akap>
+
+<akap>&#8222;Widz&#261; warto&#347;&#263; w tworzeniu przemy&#347;lanych i warto&#347;ciowych remiks&#243;w?&#8221; - Nie s&#261;dzicie, &#380;e powinni przede wszystkim wiedzie&#263;, co to remiks, umie&#263; doceni&#263; tego typu utwory i cieszy&#263; si&#281; z miksowania (je&#347;li sami si&#281; tym zajm&#261; &#8211; brak praktycznych &#263;wicze&#324;, albo dodatkowego scenariusza na d&#322;u&#380;sze zaj&#281;cia warsztatowe to moim zdaniem ogromna wada tego materia&#322;u), zw&#322;aszcza, &#380;e dopiero si&#281; o tym dowiaduj&#261;, albo rozmawiaj&#261; na forum klasy? Tego typu stwierdzenia zostawmy ekspertom, uczniowie niech widz&#261; warto&#347;&#263; w r&#243;&#380;nych remiksach, zw&#322;aszcza w&#322;asnych, bo dzi&#281;ki nim si&#281; czego&#347; ucz&#261;. Kalkowanie ocen z obszaru &#8222;kultury wysokiej&#8221; do remiks&#243;w jest troch&#281; bez sensu.poprawione</akap>
+<akap>&#8222;Mie&#263; licencj&#281; do wszystkich materia&#322;&#243;w...&#8221; - mo&#380;e lepiej &#8222;zgod&#281;&#8221;? Przecie&#380; mo&#380;na mie&#263; ustn&#261; zgod&#281; od kole&#380;anki lub kolegi, czy to jest licencja (ja sam nie wiem tego na pewno). Poza tym co z wykorzystaniem w utworach, w pe&#322;ni legalnie, np. cytat&#243;w? Przecie&#380; ustawa nie zmusza do uzyskiwania licencji na cytowanie, to w pe&#322;ni dozwolone.zmienilem</akap></uwaga>
+
+gim_4 Twórczość ery cyfrowej
+---------------------------------------------------
+<uwaga>
+<akap>Materia&#322; jest bardzo podobny i nieznacznie inaczej opracowany ni&#380; ten zawarty w cz&#281;&#347;ci ,,Prezentowanie naszych dzie&#322;"; obie cz&#281;&#347;ci zosta&#322;y zredagowane - do wyboru; AS.</akap>
+
+
+</uwaga>
+
+gim_6.1 Jak bezpiecznie działać w sieci?
+---------------------------------------------------
+<uwaga>
+<akap>To samo nieco inaczej jest w rozdziale ,,Twoje bezpiecze&#324;stwo w internecie"; obie zredagowane, do wyboru; AS.</akap>
+
+
+</uwaga>
+
+<uwaga>
+<akap>Gdzie indziej ten nag&#322;&#243;wek brzmi inaczej: ,,Uczestnicy i uczestniczki", ,,Uczestnik:" AS.</akap>
+
+
+</uwaga>
+
+gim_6.2 Incognito w internecie
+---------------------------------------------------
+<uwaga>
+<akap>Gdzie indziej ten nag&#322;&#243;wek brzmi inaczej: ,,Uczestnicy i uczestniczki", ,,Uczestnik:" AS.</akap>
+
+
+</uwaga>
+
+gim_6.3 Korzyści i szkody z nadzorowania sieci
+---------------------------------------------------
+<uwaga>
+<akap>Dwa powy&#380;sze elementy do usuni&#281;cia po uzupe&#322;nieniu; AS.</akap>
+
+
+</uwaga>
+
+<uwaga>
+<akap>Ten nag&#322;&#243;wek inaczej w innych cz&#281;&#347;ciach. Do ujednolicenia? AS.</akap>
+
+
+</uwaga>
+
+gim_6.5 Zakupy on-line
+---------------------------------------------------
+<uwaga>
+<akap>jest i wersja polska:)</akap>
+
+
+</uwaga>: 
+gim_6 Twoje bezpieczeństwo w internecie
+---------------------------------------------------
+<uwaga>
+<akap>To samo nieco inaczej jest w rozdziale ,,Jak bezpiecznie dzia&#322;a&#263; w sieci?"; obie zredagowane, do wyboru; AS.</akap>
+
+
+</uwaga>
+
+<uwaga>
+<akap>(wersja dla syntezy!)</akap>
+
+
+</uwaga>
+<uwaga>
+<akap>nie podano</akap>
+
+
+</uwaga>
+Can't parse gim_7.10 Radiofonia i telewizja: Unescaped '<' not allowed in attributes values, line 201, column 1
+gim_7.12 Dostępność
+---------------------------------------------------
+<uwaga>
+<akap>[do znalezienia]</akap>
+
+
+</uwaga>, komputer z rzutnikiem
+gim_7.7 Domena publiczna
+---------------------------------------------------
+<uwaga>
+<akap>(do zredagowania)Asia m&#243;wi&#322;a, &#380;e zerknie na to.</akap>
+
+
+</uwaga>
+gim_7.8 Dozwolony użytek
+---------------------------------------------------
+<uwaga><akap>ramka: cytat --- 1708 parlament brytyjski odno&#347;nie drukarzy --&gt; co z tym?</akap></uwaga>
+
+gim_7 synteza
+---------------------------------------------------
+<uwaga>
+<akap>brak nazwy tej syntezy</akap>
+
+
+</uwaga>
+
+gim_8.1 Rynek mediów (na przykładzie radiofonii i telewizji)
+---------------------------------------------------
+<uwaga>
+<akap>Co z tym? W innych modu&#322;ach inaczej to zapisywano. A.S.</akap>
+
+
+</uwaga>
+
+gim_8.3 Informacja jako dobro
+---------------------------------------------------
+<uwaga><akap>uwagi:</akap>
+  <akap> ost. pytanie - tu albo podpowied&#378;, albo rozwin&#261;&#263; ten temat w pigu&#322;ce</akap>
+  <akap>super &#263;wiczenie, bardzo po&#380;yteczne i wa&#380;ne, ale czy nie wymaga fachowej wiedzy producenckiej? my&#347;l&#281;, &#380;e nie - to nie b&#281;dzie pe&#322;na lista, ale jakie&#347; pomys&#322;y na pewno padn&#261;</akap></uwaga>
+  
+
+<uwaga><akap>mam te&#380; problem z informacj&#261;, jako komunikacj&#261; - jak to rozumiesz? komunikacja z czat&#243;w, for&#243;w internetowych</akap>
+<akap>ale ka&#380;da informacja jest jako&#347; komunikowana - dopiero wtedy nabiera sensu...</akap></uwaga>
+
+
+<uwaga>
+<akap>,,czysty akt komunikacji"? (np. b&#281;d&#281; pod kinem o 19:30); A.S.</akap>
+
+
+</uwaga>
+
+<uwaga>
+<akap>wola&#322;abym nie dawa&#263; tego po angielsku
+na pewno potrzebujemy jeszcze innych propozycji!
+w takim razie proponuj&#281;:
+zapowied&#378;:</akap>
+
+
+</uwaga>
+<uwaga>
+<akap>Oczami samych wydawc&#243;w</akap>
+
+
+</uwaga>
+<uwaga>
+<akap>i krytyczne spojrzenie:</akap>
+
+
+</uwaga>
+gim_8.4 Ekonomia uwagi
+---------------------------------------------------
+<uwaga>
+<akap>--&gt; mo&#380;e damy inny tytu&#322;? bo to sformu&#322;owanie nie pojawia si&#281; w tek&#347;cie (to plus!)</akap>
+
+
+</uwaga>
+<uwaga>
+<akap>mo&#380;e doda&#263; za co</akap>
+
+
+</uwaga>
+<uwaga>--&gt;  nie dawa&#322;abym tego tekstu, nie wnosi praktycznie &#380;adnej nowej wiedzy, a  od strony j&#281;zykowej (zw&#322;aszcza z perspektywy nauczyciela) jest bardzo  ci&#281;&#380;kostrawny ci&#281;&#380;kostrawnym b&#281;dzie dla uczni&#243;w z kolei tejst Filiciaka,  ale nie upieram si&#281;.
+Teraz jestem na  bie&#380;&#261;co z Aigrain, wi&#281;c mo&#380;e zaproponujemy 3 rozdzia&#322;? np. s. 18-21, 22  (specjalnie pomin&#281;&#322;am fragmenty dotycz&#261;ce specyfiki dzielenia si&#281;  plikami?</uwaga>
+
+lic_7.11 Dostępność
+---------------------------------------------------
+<uwaga>
+<akap>Co z tym zrobi&#263;? Zostawi&#263;? Usuna&#263;? A.S.</akap>
+
+
+</uwaga>
+  
+lic_7.13 Informacje o nas w sieci
+---------------------------------------------------
+<uwaga>
+<akap>W innych modu&#322;ach w nazwach kategorii (w tagach) nie ma polskich znak&#243;w diakrytycznych. Poni&#380;sze kategorie mo&#380;na opisa&#263; kr&#243;cej w tagu. Czy mam to zrobi&#263;?</akap>
+
+
+</uwaga>
+ 
+lic_7.14 Ochrona danych osobowych
+---------------------------------------------------
+<uwaga>
+<akap>tytu&#322; i autor&#243;w wstawi&#322;am z pada --- PC</akap>
+
+
+</uwaga>
+
+<uwaga>
+<akap>- czy tre&#347;ci na stronie GIODO mo&#380;na w ramach dozwolonego u&#380;ytku??</akap>
+</uwaga>
+<uwaga>
+<akap>- czy tre&#347;ci na stronie GIODO mo&#380;na w ramach dozwolonego u&#380;ytku?? je&#347;li tak, to z tego dokumenty id&#261; strony 8 i 9</akap>
+</uwaga>
+lic_7.3 Zawieranie umów
+---------------------------------------------------
+<uwaga>
+<akap>wchodzimy tu na du&#380;ym poziom szczeg&#243;&#322;u. czym si&#281; r&#243;&#380;ni umowa zawarta pod przymusem, a ta pod wp&#322;ywem gro&#378;by? potrzebuj&#281; przyk&#322;ad&#243;w na przymus, b&#322;&#261;d, podst&#281;p i gro&#378;b&#281;.</akap>
+</uwaga>
+  
+lic_7.4 Prawa obywatela
+---------------------------------------------------
+<uwaga>
+<akap>tutaj proponuj&#281; dodatkowy d&#322;u&#380;szy materia&#322;, mo&#380;e informacje z wikipedii o tych instytucjach (czy wiarygodne?), albo Asia je&#347;li ty mo&#380;esz przygotowa&#263; d&#322;u&#380;sz&#261; wersj&#281; wiedzy w pigu&#322;ce?</akap>
+
+
+</uwaga>
+  
+
+lic_7 synteza
+---------------------------------------------------
+<uwaga>
+<akap>brak nazwy syntezy</akap>
+
+
+</uwaga>
+

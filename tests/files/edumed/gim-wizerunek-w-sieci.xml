@@ -1,0 +1,298 @@
+<utwor>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<rdf:Description rdf:about="http://redakcja.cyfrowaprzyszlosc.pl/documents/">
+<dc:creator.expert xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Muszyński, Damian</dc:creator.expert>
+<dc:creator.scenario xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Wysocki, Michał</dc:creator.scenario>
+<dc:creator.textbook xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Dobrowolska, Urszula</dc:creator.textbook>
+<dc:title xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Wizerunek w sieci</dc:title>
+<dc:relation.isPartOf xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+<dc:publisher xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Fundacja Nowoczesna Polska</dc:publisher>
+<dc:subject.competence xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">[uzupełnimy na końcu]</dc:subject.competence>
+<dc:subject.curriculum xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">[uzupełnimy na końcu]</dc:subject.curriculum>
+<dc:subject xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/"/>
+<dc:description xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Publikacja zrealizowana w ramach projektu Cyfrowa Przyszłość (http://cyfrowaprzyszlosc.pl).</dc:description>
+<dc:description.material xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">linki do załączników</dc:description.material>
+<dc:relation xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">moduły powiązane linki</dc:relation>
+<dc:identifier.url xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">http://cyfrowaprzyszlosc.pl/wizerunek-w-sieci</dc:identifier.url>
+<dc:rights xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Creative Commons Uznanie autorstwa - Na tych samych warunkach 3.0</dc:rights>
+<dc:rights.license xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">http://creativecommons.org/licenses/by-sa/3.0/</dc:rights.license>
+<dc:format xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">xml</dc:format>
+<dc:type xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">text</dc:type>
+<dc:date xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">2012-11-09</dc:date>
+<dc:audience xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">gimnazjum</dc:audience>
+<dc:language xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">pol</dc:language>
+</rdf:Description>
+</rdf:RDF>
+<powiesc>
+<nazwa_utworu>Wizerunek w sieci</nazwa_utworu>
+<akap><!-- Numer porządkowy: 2.1 --></akap>
+<naglowek_rozdzial>Informacje</naglowek_rozdzial>
+
+
+<naglowek_podrozdzial>Cele operacyjne</naglowek_podrozdzial>
+<akap>Uczestnik:</akap>
+<lista typ="punkt">
+<punkt>rozumie, że podejmowane przez niego aktywności w internecie są obserwowane i oceniane przez innych;</punkt>
+<punkt>wie, że jego wizerunek w sieci zależy nie tylko od informacji zamieszczonych na portalach społecznościowych, ale również m.in. od sposobu, w jaki pisze e-maile;</punkt>
+<punkt>rozumie szanse i zagrożenia związane z kreowaniem swojego wizerunku w sieci;</punkt>
+<punkt>potrafi krytycznie analizować wizerunki kreowane przez inne osoby;</punkt>
+<punkt>wie, w jaki sposób można modyfikować swój wizerunek w sieci;</punkt>
+<punkt>jest świadomy niebezpieczeństw związanych z zamieszczaniem prywatnych informacji w sieci, w tym zwłaszcza zdjęć i danych osobowych.</punkt>
+</lista>
+
+
+
+<naglowek_rozdzial>Wiedza w pigułce</naglowek_rozdzial>
+
+<akap>Zwykle przejmujemy się tym, co myślą o nas inni. Opinia na nasz temat zależy od wielu czynników. Może mieć na nią wpływ nasze zachowanie, ubiór czy zainteresowania. Wszystko to składa się na nasz wizerunek.</akap>
+<akap>We współczesnym świecie internet stał się ważną przestrzenią tworzenia naszego wizerunku. Nasze aktywności w sieci mają na niego duży wpływ. </akap>
+<akap>Na internautach leży odpowiedzialność za to, co udostępnią. Nawet po usunięciu pewnych treści, w sieci pozostaje po nich ślad, np. na serwerach wyszukiwarek albo jeśli ktoś wcześniej je skopiuje.</akap>
+<akap>Dlatego też powinieneś zwracać szczególną uwagę na to, co i jak mówisz w internecie. Na twój wizerunek w sieci wpływają m. in.:</akap>
+<lista typ="punkt">
+<punkt>twój sposób wyrażania się --- to, czy piszesz zgodnie z zasadami poprawnej polszczyzny, czy przeklinasz, jak dużym zasobem słownictwa się posługujesz;</punkt>
+<punkt>profile na portalach społecznościowych, a w szczególności:</punkt><uwaga>Poniższe wyliczenie to podpunkty do tego punktu, co nie jest uwzględnione w zapisie graficznym. AS.</uwaga>
+<punkt>zdjęcia, na których jesteś i które udostępniasz,</punkt>
+<punkt>informacje ,,o mnie",</punkt>
+<punkt>twoje statusy,</punkt>
+<punkt>strony, które ,,lubimy",</punkt>
+<punkt>nasze komentarze pod artykułami i wypowiedzi na forach,</punkt>
+<punkt>forma adresu mailowego i sposób pisania maili.</punkt>
+</lista>
+
+<akap>Jak widzisz, problem wizerunku w internecie nie ogranicza się tylko do portali społecznościowych. Trudnym zadaniem jest np. zadbanie o dobrą opinię na forum tematycznym. Jego użytkownicy nie wiedzą, kim jesteś prywatnie. Mogą oceniać tylko wypowiedzi podpisane określonym nickiem. W tym przypadku respekt możemy zapewnić sobie pokazywaniem swojej wiedzy, pomocą w rozwiązywaniu problemów innych czy kulturalnym zachowaniem.</akap>
+<akap>Nie mamy pełnej kontroli nad naszym wizerunkiem w sieci. Inni internauci również mają na niego wpływ. Mogą oznaczyć cię na zdjęciach i otagować w swoich statusach. Warto więc uważnie dostosować ustawienia profilów na serwisach społecznościowych.</akap>
+<akap>Pamiętaj, że wizerunek innych osób zależy także od ciebie. Udostępnianie kompromitujących dla innych treści jest nieetyczne. Jeśli czujesz, że dany materiał może zaszkodzić innym --- nie udostęniaj go. Do sieci mają przecież dostęp nie tylko znajomi, lecz także nauczyciele czy rodzina. Ich reakcja może całkowicie różnić się od tej, jaką chciałeś wywołać. Szkodząc innym, szkodzisz również swojemu wizerunkowi --- mógłbyś zostać uznany za nielojalnego i złośliwego.</akap>
+<naglowek_rozdzial>Pomysł na lekcję</naglowek_rozdzial>
+
+
+<akap>Tak samo jak z łatwością możemy sprawdzić informacje na temat nowo poznanej osoby, tak i inni mogą wyszukać materiały dotyczące nas samych. Wizerunek w sieci to nie tylko portale społecznościowe. Od zamieszczonych przez nas zdjęć, przez blogi i komentarze innych na nasz temat, po Google i usługi lokalizacyjne różnych aplikacji --- w wielu miejscach odnajdziemy treści dotyczące tego, co robimy i kim jesteśmy.</akap>
+
+<naglowek_podrozdzial>Przebieg zajęć</naglowek_podrozdzial>
+<aktywnosc>
+  <opis>
+  <akap> Przeanalizuj wraz z uczestnikami zajęć profile z portalu społecznościowego zamieszczone w <link slug="">karcie pracy ,,Wizerunek"</link>. Poproś uczestników, aby wyobrazili sobie, że są to profile osób, które niebawem dołączą do ich klasy, przeprowadzając się z innego miasta. </akap>
+</opis>
+  <wskazowki>
+  <akap>Zadaj pytanie: ,,Jakie informacje możemy zdobyć dzięki analizie czyjegoś profilu w mediach społecznościowych?".</akap>
+  <akap>Zadaj pytanie: ,,Jaki wizerunek siebie stworzyli Małgosia i Michał?".</akap>
+  
+  <akap>Jako pytania pomocnicze rozważ:</akap>
+  <lista typ="punkt">
+<punkt>czy Małgosia i Michał świadomie kreują swój wizerunek w sieci?</punkt>
+<punkt>które informacje zamieszczone na profilach Małgosi i Michała wydają się nie pasować, do wizerunku, który próbują stworzyć?</punkt>
+<punkt>czy zamieszczone przez nich informacje tworzą spójny wizerunek?</punkt>
+<punkt>co należałoby zmienić w zaprezentowanych profilach, aby uczynić je bardziej spójnymi i przekonującymi dla rówieśników?</punkt>
+<punkt>czy są jakieś informacje zamieszczone przez Małgosię i Michała, które można różnie interpretować? (np. w sposób dla nich niekorzystny)</punkt>
+<punkt>jakie ryzyko wiąże się z zamieszczaniem na swoim profilu zdjęć innych osób? W jaki sposób można to ryzyko minimalizować? </punkt>
+<punkt>jakie ryzyko wiąże się z zamieszczaniem na swoim profilu danych osobowych? W jaki sposób można to ryzyko minimalizować? </punkt>
+<punkt>czy da się całkowicie usunąć z internetu niechciane treści na nasz temat, np. zdjęcia lub opinie innych osób? </punkt>
+</lista>
+
+  
+  <akap>W szczególności zwróć uwagę uczestników na następujące elementy:</akap>
+  <lista typ="punkt">
+<punkt>należy zadbać o odpowiednie ustawienia prywatności w portalach społecznościowych --- czy chcesz, aby wszyscy mieli dostęp do wszystkich zdjęć?</punkt>
+<punkt>Twój adres mailowy to Twoja wizytówka --- czy jest odpowiedni, aby podać go nauczycielowi przy całej klasie?</punkt>
+<punkt>nie zamieszczaj zdjęć, które zawierają kompromitujące treści --- zdjęcia zamieszczone w sieci błyskawicznie się rozprzestrzeniają, ale nigdy nie da się ich całkowicie usunąć!</punkt>
+<punkt>nie zamieszczaj materiałów, które za jakiś czas okażą się niewygodne --- często zmieniamy zdjęcia i modyfikujemy wpisy w portalach społecznościowych. Teraz ich głównym odbiorcą są koledzy z gimnazjum, ale warto pamiętać, że niebawem będą to znajomi z liceum, studiów, a nawet przyszli pracodawcy. Może się zdarzyć, że obecne materiały będziemy chcieli kiedyś usunąć tak samo jak te, które zamieszczaliśmy w szkole podstawowej. </punkt>
+<punkt>dbaj o jakość zamieszczanych komentarzy i opinii</punkt>
+<punkt>instytucje służące ochronie danych osobowych nie zawsze mogą szybko zareagować. O wizerunek powinniśmy w pierwszej kolejności zadbać sami. Możemy domagać się od znajomych usuwania wpisów na nasz temat, a przede wszystkim dbać o te materiały, które zamieszczamy sami.  </punkt>
+</lista>
+
+  
+</wskazowki>
+<pomoce>komputer, rzutnik multimedialny, <link slug="">karta pracy ,,Wizerunek"</link></pomoce>
+  <forma>dyskusja</forma>
+  <czas>20</czas>
+</aktywnosc>
+
+<aktywnosc>
+  <opis>
+  <akap>Zadaj pytanie: ,,Za pomocą jakich działań kreujemy nasz wizerunek w sieci?".</akap>
+</opis>
+  <wskazowki>
+  <akap>Wybrane 6--7 odpowiedzi zapisz na tablicy.</akap>
+  
+  <akap>Jako pytania pomocnicze rozważ:</akap>
+  <lista typ="punkt">
+<punkt>Czego inni mogą się o nas dowiedzieć na podstawie naszych profili w portalach społecznościowych?</punkt>
+<punkt>Czy tylko zdjęcia decydują o naszym wizerunku? Jakie jeszcze inne elementy są brane pod uwagę?</punkt>
+<punkt>Czy wizerunek tworzymy tylko za pomocą portali społecznościowcych? Jakie inne aktywności podejmowane w sieci decydują o opinii innych na nasz temat?</punkt>
+</lista>
+
+  
+  <akap>Wśród odpowiedzi znaleźć powinny się m.in.:</akap>
+  <lista typ="punkt">
+<punkt>zdjęcia --- zamieszczane na portalach społecznościowych</punkt>
+<punkt>komentarze --- zamieszczane w grupach dyskusyjnych i na portalach społecznościowych</punkt>
+<punkt>zainteresowania zadeklarowane na portalach społecznościowych</punkt>
+<punkt>blogi i własne strony internetowe</punkt>
+<punkt>język, za pomocą którego komunikujemy się z innymi w sieci  --- w tym ortografia </punkt>
+<punkt>maile --- sposób, w jaki je piszemy, w tym zwłaszcza ortografia, zwroty grzecznościowe, przejrzysta konstrukcja, ale i sam adres mailowy, którym się posługujemy (np. sloneczko@buziaczek.pl nie jest odpowiednim adresem do kontaktów z nauczycielem)</punkt>
+<punkt>strony internetowe, które odwiedzamy (historia w przeglądarce internetowej, zapamiętane zapytania w wyszukiwarkach internetowych)</punkt>
+</lista>
+
+</wskazowki>
+  <pomoce>tablica, kreda lub marker</pomoce>
+  <forma>dyskusja</forma>
+  <czas>5</czas>
+</aktywnosc>
+
+<aktywnosc>
+  <opis>
+  <akap> Podziel uczestników zajęć na 5 grup. Poproś każdy z zespołów o przygotowanie katalogu porad odnośnie sposobu, w jaki należy kreować swój wizerunek na portalach społecznościowych. </akap>
+</opis>
+  <wskazowki>
+  <akap>Katalog powinien zostać stworzony w 7--8 punktach.</akap>
+  
+</wskazowki>
+
+  <forma>praca w grupach</forma>
+  <czas>10</czas>
+</aktywnosc>
+
+
+<aktywnosc>
+  <opis>
+  <akap>Poproś grupy o krótkie prezentacje. Zachęć pozostałych uczestników zajęć do wygłaszania komentarzy i opinii.</akap>
+</opis>
+  <wskazowki>
+  
+</wskazowki>
+
+  <forma>dyskusja</forma>
+  <czas>10</czas>
+</aktywnosc>
+
+<naglowek_podrozdzial>Ewaluacja</naglowek_podrozdzial>
+<akap>Czy po przeprowadzeniu zajęć ich uczestnicy:</akap>
+<lista typ="punkt">
+<punkt>rozumieją, że o ich wizerunku w sieci decydują różne działania, a nie tylko informacje zamieszczone w portalach społecznościowych? (--> rozważ realizację <link slug="">modułu 2.2 ,,Relacje"</link>)</punkt>
+<punkt>potrafią świadomie kreować i modyfikować swój wizerunek w portalach społecznościowych?</punkt>
+<punkt>znają zagrożenia związane z zamieszczaniem danych osobowych w sieci?</punkt>
+<punkt>wiedzą, że o ich wizerunku decydują nie tylko zamieszczone przez nich informacje, ale również sposób, w jaki zostaną one odebrane i zinterpretowane przez innych?</punkt>
+</lista>
+
+<naglowek_podrozdzial>Opcje dodatkowe</naglowek_podrozdzial>
+<akap>Zajęcia mogą zostać rozbudowane o pracę w grupach. Podziel uczestników na 5 grup, każdy zespół powinien otrzymać jedno z poniższych zadań:</akap>
+<lista typ="punkt">
+<punkt>Napisz e-mail do portalu internetowego FOTKA.pl, który bez twojej zgody opublikował zdjęcie w kompromitującej cię pozie. Poproś o usunięcie fotografii.</punkt>
+<punkt>Napisz e-mail do kolegi, który po raz kolejny zamieścił na swoim profilu twoje zdjęcie z ostatniej imprezy ze złośliwym komentarzem. Poproś, aby kolega usunął twoje zdjęcia i na przyszłość nie zamieszczał ich bez twojej zgody.</punkt>
+<punkt>Napisz e-mail do autora bloga ,,Podróże wakacyjne", który bez twojej zgody zamieścił w opublikowanym przez siebie wpisie długi fragment tekstu z twojego bloga poświęconego wakacjom we Włoszech.</punkt>
+<punkt>Napisz e-mail do administratora forum dyskusyjnego poświęconego sztukom walki z prośbą o odblokowanie twojego konta. Konto zostało zablokowane pomyłkowo, jesteś użytkownikiem serwisu od przeszło 2 lat, nigdy nie naruszyłeś regulaminu forum.</punkt>
+<punkt>Napisz e-mail z prośbą o sprostowanie do portalu NOTKA.pl, który zamieścił w artykule na temat szkoły, do której uczęszczasz, twoją wypowiedź. Zacytowany fragment został skrócony, w efekcie czego twoje słowa krytykują szkołę, co nie było twoim zamiarem.</punkt>
+</lista>
+
+<naglowek_rozdzial>Materiały</naglowek_rozdzial>
+<akap><link slug="">karta pracy ,,Wizerunek"</link></akap>
+<naglowek_rozdzial>Zadania sprawdzające</naglowek_rozdzial>
+<akap>Profile w portalach społecznościowych z reguły posiadamy po kilka lat. Często codziennie je aktualizujemy lub oznaczamy nowe linki i zmieniamy zainteresowania. Nasze gusta i upodobania zmieniają się jednak z biegiem lat. W efekcie tego, po upływie pewnego czasu, nasze profile mogą zawierać elementy niespójne z wizerunkiem, który staramy się aktualnie tworzyć. Niektóre z nich mogą zwyczajnie nas ośmieszać w oczach znajomych. Często dzieje się tak w przypadku zdjęć, które zamieściliśmy jeszcze w szkole podstawowej, zadeklarowanych wówczas hobby i grup tematycznych, do których dołączyliśmy.</akap>
+
+<akap>Zakładając, że poniższe osoby świadomie kreują pewien obraz samych siebie, wskaż te informacje, które wydają się zaskakiwać w poszczególnych profilach oraz sprawiają, że ich właściciele stają się mało wiarygodni. Postaraj się ,,wczuć" w kolejne postacie, pomyśl, na jakim wizerunku może im zależeć, a które informacje sprawiają, że jego osiągnięcie nie jest możliwe.</akap>
+
+
+<cwiczenie typ="wybor">
+
+<pytanie typ="wybor" rozw="3, 4, 7, 12, 16">
+<opis><akap>Przypadek A: Anka</akap>
+<akap>Wiek: 13</akap></opis>
+
+<lista typ="num">
+<akap>O sobie:</akap>
+<punkt nazwa="1"> uwielbiam  zakupy, szczególnie jak mam kupić kosmetyki, mogę siedzieć w sklepie  godzinami i wypróbowywać wszystkie. Poza tym siedzę w domu i oglądam  seriale (<tytul_dziela>House, my love!</tytul_dziela>), trochę gram na kompie i siedzę na fejsie.</punkt>
+<akap>Zainteresowania:</akap>
+<punkt nazwa="2">nowe marki kosmetyków</punkt>
+<punkt nazwa="3">rowery górskie</punkt>
+<punkt nazwa="4">teatr</punkt>
+<punkt nazwa="5">shopping, shopping, shopping!</punkt>
+<akap>Ulubione cytaty:</akap>
+<punkt nazwa="6">Pieniądze szczęścia nie dają. Dopiero zakupy. (Marilyn Monroe)</punkt>
+<punkt nazwa="7">Komuniści  są jak krokodyle, które kiedy otwierają paszcze, nie wiemy ---  uśmiechają się, czy chcą nas pożreć. (Winston Churchill)</punkt>
+<akap>Autorytety:</akap>
+<punkt nazwa="8">Coco Chanel </punkt>
+<punkt nazwa="9">Naomi Klein</punkt>
+<akap>Muzyka:</akap>
+<punkt nazwa="10">Lady Gaga</punkt>
+<punkt nazwa="11">Shakira</punkt>
+<punkt nazwa="12">Behemot </punkt>
+<akap>Polecane strony:</akap>
+<punkt nazwa="13">www.nowinki-kosmetyczne.pl</punkt>
+<punkt nazwa="14">www.perfekcyjnymakeup.com</punkt>
+<punkt nazwa="15">www.gry-online.pl</punkt>
+<punkt nazwa="16">www.portalhistoryczny.pl</punkt></lista>
+</pytanie>
+
+<pytanie typ="wybor" rozw="4, 6, 10, 12, 15">
+<opis><akap>Przypadek B: Wuwoooo</akap>
+<akap>Wiek: 14</akap></opis>
+
+<lista typ="num">
+<akap>O sobie: </akap>
+<punkt nazwa="1">Nic wam nie powiem. Kto mnie zna, wie kim jestem. Kto mnie nie zna, ten się nie dowie. Jedno słowo wystarczy: hardkorrrrr!</punkt>
+<akap>Zainteresowania:</akap>
+<punkt nazwa="2">ostra muza</punkt>
+<punkt nazwa="3">jazda bez trzymanki!!!</punkt>
+<punkt nazwa="4">spanie</punkt>
+<punkt nazwa="5">szybkie fury</punkt>
+<akap>Ulubione cytaty:</akap>
+<punkt nazwa="6">Zakochaj  się, a każdy wszędzie, wszystkie rzeczy, wszystkie słowa oznaczać będą  ,,miłość". To samo dzieje się, kiedy kogoś utracisz. (Jonathan Caroll)</punkt>
+<punkt nazwa="7">Lepiej skrócić o głowę niewinnego niż zawahać się podczas wojny. (Józef Stalin)</punkt>
+<akap>Autorytety:</akap>
+<punkt nazwa="8">Robert Kubica</punkt>
+<punkt nazwa="9">Krzysztof Hołowczyc</punkt>
+<akap>Muzyka:</akap>
+<punkt nazwa="10">Kasia Nosowska </punkt>
+<punkt nazwa="11">AC/DC</punkt>
+<punkt nazwa="12">Britney Spears </punkt>
+<akap>Polecane strony:</akap>
+<punkt nazwa="13">www.szybkiewozy.pl</punkt>
+<punkt nazwa="14">www.adrenalina.com</punkt>
+<punkt nazwa="15">www.najslodszepieskinaswiecie.pl</punkt>
+<punkt nazwa="16">www.rajdy-w-polsce.pl</punkt></lista>
+</pytanie>
+
+<pytanie typ="wybor" rozw="5, 7, 11, 15, 16">
+<opis><akap>Przypadek C: Alicja</akap>
+<akap>Wiek: xxxxxx</akap></opis>
+
+<lista typ="num">
+<akap>O sobie: </akap>
+<punkt nazwa="1">piszę...  dużo... najczęściej do szuflady... ale może kiedyś, ktoś znajdzie te  moje okruszki... lubię siedzieć z kubkiem gorącej czekolady (koniecznie z  cynamonem!) i gapić się w okno... mam za oknem świerk, który z każdym  rokiem rośnie... zaraz nie będę widzieć słońca...</punkt>
+<akap>Zainteresowania: </akap>
+<punkt nazwa="2">czekolada</punkt>
+<punkt nazwa="3">cisza</punkt>
+<punkt nazwa="4">książki --- im starsze, tym lepsze</punkt>
+<punkt nazwa="5">rajdy motocyklowe</punkt>
+<akap>Ulubione cytaty:</akap>
+<punkt nazwa="6">Wiesz... gdy się jest bardzo smutnym, lubi się zachody słońca... (Antoine de Saint-Exupéry)</punkt>
+<punkt nazwa="7">Jestem  mężczyzną --- to znaczy ślepcem. Jak wszyscy przede mną, tak i ja  zwaliłem się do dołu na łeb, na szyję. Ożeniłem się. (Nikos Kazantzakis)</punkt>
+<akap>Autorytety:</akap>
+<punkt nazwa="8">Maria Pawlikowska-Jasnorzewska</punkt>
+<punkt nazwa="9">Budda</punkt>
+<akap>Muzyka:</akap>
+<punkt nazwa="10">Grzegorz Turnau</punkt>
+<punkt nazwa="11">Metallica</punkt>
+<punkt nazwa="12">Stare Dobre Małżeństwo</punkt>
+<akap>Polecane strony:</akap>
+<punkt nazwa="13">www.biuroliterackie.pl</punkt>
+<punkt nazwa="14">www.cytaty.pl</punkt>
+<punkt nazwa="15">www.kwejk.pl</punkt>
+<punkt nazwa="16">www.plotek.pl</punkt></lista>
+</pytanie>
+</cwiczenie>
+
+
+
+<naglowek_rozdzial>Słowniczek</naglowek_rozdzial>
+<lista typ="slowniczek">
+<punkt><definiendum>media społecznościowe</definiendum><definiens/></punkt>
+<punkt><definiendum>wizerunek</definiendum><definiens/></punkt>
+</lista>
+
+<naglowek_rozdzial>Czytelnia </naglowek_rozdzial>
+<lista typ="czytelnia">
+<punkt><link url="http://www.pcworld.pl/news/377106/Zadbaj.o.swoj.wizerunek.na.Facebooku.html">http://www.pcworld.pl/news/377106/Zadbaj.o.swoj.wizerunek.na.Facebooku.html</link> <uwaga>[?]</uwaga></punkt>
+<punkt><link url="http://socjomania.pl/jak-sie-piszesz-tak-cie-widza-jak-dbac-o-wizerunek-w-social-media/">http://socjomania.pl/jak-sie-piszesz-tak-cie-widza-jak-dbac-o-wizerunek-w-social-media/</link> <uwaga>??</uwaga></punkt>
+</lista>
+</powiesc>
+</utwor>

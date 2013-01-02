@@ -79,8 +79,8 @@ class WLURI(object):
     """Represents a WL URI. Extracts slug from it."""
     slug = None
 
-    example = 'http://prawokultury.pl/publikacje/'
-    _re_wl_uri = re.compile(r'http://(www\.)?prawokultury.pl/publikacje/'
+    example = 'http://edukacjamedialna.pl/'
+    _re_wl_uri = re.compile(r'http://(www\.)?edukacjamedialna.pl/'
             '(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):

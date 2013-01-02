@@ -12,28 +12,27 @@ class EduModule(Xmill):
     def __init__(self, *args):
         super(EduModule, self).__init__(*args)
         self.activity_counter = 0
-        self.question_counter = 0
 
-    def handle_utwor(self, element):
-        v = {}
-#        from pdb import *; set_trace()
-        v['title'] = element.xpath('//dc:title/text()', namespaces={'dc':DCNS.uri})[0]
-        return u"""
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"/>
-<title>%(title)s</title>
-<link rel="stylesheet" type="text/css" href="master.book.css"/>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="edumed.js"></script>
-</head>
-<body>
-""" % v, u"""
-</body>
-</html>
 
-"""
+#     def handle_utwor(self, element):
+#         v = {}
+# #        from pdb import *; set_trace()
+#         v['title'] = element.xpath('//dc:title/text()', namespaces={'dc':DCNS.uri})[0]
+#         return u"""
+# <!DOCTYPE html>
+# <html>
+# <head>
+# <meta charset="utf-8"/>
+# <title>%(title)s</title>
+# <link rel="stylesheet" type="text/css" href="/media/static/edumed/edumed.css"/>
+# <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+# <script src="/media/static/edumed/js/edumed.js"></script>
+# </head>
+# <body>
+# """ % v, u"""
+# </body>
+# </html>
+# """
 
     
     def handle_powiesc(self, element):
@@ -110,7 +109,47 @@ class EduModule(Xmill):
 
     def handle_forma(self, *_):
         return
+            
+    def handle_cwiczenie(self, element):
+        excercise_handlers = {
+            'wybor': Wybor,
+            'uporzadkuj': Uporzadkuj
+            }
         
+        typ = element.attrib['typ']
+        handler = excercise_handlers[typ](self.options)
+        return handler.generate(element)
+
+    # Lists
+    def handle_lista(self, element):
+        ltype = element.attrib.get('typ', 'punkt')
+        if ltype == 'slowniczek':
+            self.options = {'slowniczek': True}
+            return '<div class="slowniczek">', '</div>'
+### robie teraz punkty wyboru
+        listtag = {'num': 'ol', 
+               'punkt': 'ul', 
+               'alfa': 'ul', 
+               'czytelnia': 'ul'}[ltype]
+
+        return '<%s class="lista %s">' % (listtag, ltype), '</%s>' % listtag
+
+    def handle_punkt(self, element):
+        if self.options['slowniczek']:
+            return '<dl>', '</dl>'
+        else:
+            return '<li>', '</li>'
+
+    def handle_rdf__RDF(self, _):
+        # ustal w opcjach  rzeczy :D
+        return 
+
+
+class Excercise(EduModule):
+    def __init__(self, *args, **kw):
+        self.question_counter = 0
+        super(Excercise, self).__init__(*args, **kw)
+
     def handle_cwiczenie(self, element):
         self.options = {'excercise': element.attrib['typ']}
         self.question_counter = 0
@@ -141,22 +180,10 @@ u"""
             (self.question_counter, solution_s), \
     "</div>"    
 
-    # Lists
-    def handle_lista(self, element):
-        ltype = element.attrib.get('typ', 'punkt')
-        if ltype == 'slowniczek':
-            self.options = {'slowniczek': True}
-            return '<div class="slowniczek">', '</div>'
-### robie teraz punkty wyboru
-        listtag = {'num': 'ol', 
-               'punkt': 'ul', 
-               'alfa': 'ul', 
-               'czytelnia': 'ul'}[ltype]
 
-        return '<%s class="lista %s">' % (listtag, ltype), '</%s>' % listtag
-
+class Wybor(Excercise):
     def handle_punkt(self, element):
-        if self.options['excercise'] and element.attrib['nazwa']:
+        if self.options['excercise'] and element.attrib.get('nazwa', None):
             qc = self.question_counter
             self.piece_counter += 1
             no = self.piece_counter
@@ -165,14 +192,24 @@ u"""
 <li class="question-piece" data-qc="%(qc)d" data-no="%(no)d"><input type="checkbox" name="q%(qc)d_%(no)d"/>
 """ % locals(), u"</li>"
 
-        elif self.options['slowniczek']:
-            return '<dl>', '</dl>'
         else:
-            return '<li>', '</li>'
+            return super(Wybor, self).handle_punkt(self, element)
 
-    def handle_rdf__RDF(self, _):
-        # ustal w opcjach  rzeczy :D
-        return 
+
+class Uporzadkuj(Excercise):
+    def handle_cwiczenie(self, element):
+        pre, post = super(Uporzadkuj, self).handle_cwiczenie(element)
+        order_items = element.xpath(".//punkt/@rozw")
+        import pdb
+        if order_items == []: pdb.set_trace()
+
+        return pre + u"""<div class="question" data-solution="%s">""" % \
+            ','.join(order_items), \
+            u"""</div>""" + post
+    
+    def handle_punkt(self, element):
+        return """<li class="question-piece" data-pos="%(rozw)s"/>""" % element.attrib,\
+            "</li>"
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
