@@ -79,8 +79,8 @@ class WLURI(object):
     """Represents a WL URI. Extracts slug from it."""
     slug = None
 
-    example = 'http://edukacjamedialna.pl/'
-    _re_wl_uri = re.compile(r'http://(www\.)?edukacjamedialna.pl/'
+    example = 'http://edukacjamedialna.edu.pl/'
+    _re_wl_uri = re.compile(r'http://(www\.)?edukacjamedialna.edu.pl/'
             '(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):
@@ -151,7 +151,7 @@ import dcparser
 DEFAULT_BOOKINFO = dcparser.BookInfo(
         { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'},
         { 
-          DCNS('creator.export'): [u'Some, Author'],
+          DCNS('creator.expert'): [u'Some, Author'],
           DCNS('creator.scenario'): [u'Some, Author'],
           DCNS('creator.textbook'): [u'Some, Author'],
           DCNS('title'): [u'Some Title'],
