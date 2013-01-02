@@ -14,6 +14,7 @@ class EduModule(Xmill):
         self.activity_counter = 0
 
 
+
 #     def handle_utwor(self, element):
 #         v = {}
 # #        from pdb import *; set_trace()
@@ -187,10 +188,10 @@ class Wybor(Excercise):
             qc = self.question_counter
             self.piece_counter += 1
             no = self.piece_counter
-
+            eid = "q%(qc)d_%(no)d" % locals()
             return u"""
-<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d"><input type="checkbox" name="q%(qc)d_%(no)d"/>
-""" % locals(), u"</li>"
+<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d"><input type="checkbox" name="" id="%(eid)s" /><label for="%(eid)s">
+""" % locals(), u"</label></li>"
 
         else:
             return super(Wybor, self).handle_punkt(element)
@@ -203,13 +204,26 @@ class Uporzadkuj(Excercise):
         import pdb
         if order_items == []: pdb.set_trace()
 
-        return pre + u"""<div class="question" data-solution="%s">""" % \
+        return pre + u"""<div class="question" data-original="%s">""" % \
             ','.join(order_items), \
             u"""</div>""" + post
     
     def handle_punkt(self, element):
         return """<li class="question-piece" data-pos="%(rozw)s"/>""" % element.attrib,\
             "</li>"
+
+
+class Luki(Excercise):
+    def handle_luka(self, element):
+        return '<input type="text" class="luka" data-solution="%s">' % element.text, \
+    '</input>'
+
+
+class Zastap(Excercise):
+    def handle_zastap(self, element):
+        return '<span class="zastap" data-solution="%(rozw)s">' % element.attrib, '</span>'
+
+
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
