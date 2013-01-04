@@ -114,7 +114,9 @@ class EduModule(Xmill):
     def handle_cwiczenie(self, element):
         excercise_handlers = {
             'wybor': Wybor,
-            'uporzadkuj': Uporzadkuj
+            'uporzadkuj': Uporzadkuj,
+            'luki': Luki,
+            'zastap': Zastap,
             }
         
         typ = element.attrib['typ']
@@ -122,7 +124,7 @@ class EduModule(Xmill):
         return handler.generate(element)
 
     # Lists
-    def handle_lista(self, element):
+    def handle_lista(self, element, attrs={}):
         ltype = element.attrib.get('typ', 'punkt')
         if ltype == 'slowniczek':
             self.options = {'slowniczek': True}
@@ -133,7 +135,13 @@ class EduModule(Xmill):
                'alfa': 'ul', 
                'czytelnia': 'ul'}[ltype]
 
-        return '<%s class="lista %s">' % (listtag, ltype), '</%s>' % listtag
+        classes = attrs.get('class', '')
+        if classes: del attrs['class']
+            
+        attrs_s = ' '.join(['%s="%s"' % kv for kv in attrs.items()])
+        if attrs_s: attrs_s = ' ' + attrs_s
+            
+        return '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
 
     def handle_punkt(self, element):
         if self.options['slowniczek']:
@@ -190,7 +198,9 @@ class Wybor(Excercise):
             no = self.piece_counter
             eid = "q%(qc)d_%(no)d" % locals()
             return u"""
-<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d"><input type="checkbox" name="" id="%(eid)s" /><label for="%(eid)s">
+<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d">
+<input type="checkbox" name="" id="%(eid)s" />
+<label for="%(eid)s">
 """ % locals(), u"</label></li>"
 
         else:
@@ -209,19 +219,37 @@ class Uporzadkuj(Excercise):
             u"""</div>""" + post
     
     def handle_punkt(self, element):
-        return """<li class="question-piece" data-pos="%(rozw)s"/>""" % element.attrib,\
+        return """<li class="question-piece" data-pos="%(rozw)s"/>""" \
+            % element.attrib,\
             "</li>"
 
 
 class Luki(Excercise):
     def handle_luka(self, element):
-        return '<input type="text" class="luka" data-solution="%s">' % element.text, \
-    '</input>'
+        return '<input type="text" class="luka question-piece" data-solution="%s"></input>' % element.text
+
 
 
 class Zastap(Excercise):
     def handle_zastap(self, element):
-        return '<span class="zastap" data-solution="%(rozw)s">' % element.attrib, '</span>'
+        return '<span class="zastap question-piece" data-solution="%(rozw)s">' % element.attrib, '</span>'
+
+
+class Przyporzadkuj(Excercise):
+    def handle_lista(self, element):
+        if 'nazwa' in lista.attrib:
+            attrs = {
+                'data-name': lista.attrib['nazwa'],
+                'class': 'category'
+                }
+        elif 'cel' in lista.attrib:
+            attrs = {
+                'data-target': lista.attrib['cel'],
+                'class': 'object'
+                }
+        else:
+            attrs = {}
+        return super(Przyporzadkuj, self).handle_lista(element, attrs)  
 
 
 

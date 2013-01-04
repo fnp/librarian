@@ -94,13 +94,10 @@ class Xmill(object):
                     return []
                 else:
                     if not isinstance(vals, tuple):
-                        return [vals]
+                        return [vals, element.tail]
                     else:
                         pre = [vals[0], element.text]
-                        post = [vals[1]]
-
-            if element.tail:
-                post.append(element.tail)
+                        post = [vals[1], element.tail]
 
             out = pre + [self._handle_element(child) for child in element] + post
         finally:
