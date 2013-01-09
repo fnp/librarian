@@ -137,6 +137,9 @@ class Excercise(EduModule):
         self.question_counter = 0
         super(Excercise, self).__init__(*args, **kw)
 
+    def handle_rozw_kom(self, element):
+        return None
+
     def handle_cwiczenie(self, element):
         self.options = {'excercise': element.attrib['typ']}
         self.question_counter = 0
@@ -173,7 +176,7 @@ class Excercise(EduModule):
 
         return '<div class="question" data-no="%d" %s>' %\
             (self.question_counter, solution_s), \
-    "</div>"    
+    "</div>"
 
 
 class Wybor(Excercise):
@@ -205,7 +208,7 @@ Overrides the returned content default handle_pytanie
         return u"""<div class="question" data-original="%s" data-no="%s">""" % \
             (','.join(order_items), self.question_counter), \
             u"""</div>"""
-    
+
     def handle_punkt(self, element):
         return """<li class="question-piece" data-pos="%(rozw)s"/>""" \
             % element.attrib,\
@@ -215,7 +218,6 @@ Overrides the returned content default handle_pytanie
 class Luki(Excercise):
     def handle_luka(self, element):
         return '<input type="text" class="luka question-piece" data-solution="%s"></input>' % element.text
-
 
 
 class Zastap(Excercise):
@@ -240,20 +242,18 @@ class Przyporzadkuj(Excercise):
             self.options = {'subject': True}
         else:
             attrs = {}
-        return super(Przyporzadkuj, self).handle_lista(lista, attrs)  
-
+        pre, post = super(Przyporzadkuj, self).handle_lista(lista, attrs)
+        return pre, post + '<br class="clr"/>'
 
     def handle_punkt(self, element):
         print "in punkt %s %s" % (element.attrib, self.options)
 
         if self.options['subject']:
-            return '<li data-solution="%(rozw)s" class="question-piece draggable multiple">' % element.attrib, '</li>'
+            return '<li data-solution="%(rozw)s" class="question-piece draggable">' % element.attrib, '</li>'
         elif self.options['predicate']:
-            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects droppable"><li>Placeholder</li></ul></li>'
+            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects droppable"></ul></li>'
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
-
-
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
@@ -263,7 +263,6 @@ def transform(wldoc, stylesheet='edumed', options=None, flags=None):
     otherwise returns True if file has been written,False if it hasn't.
     File won't be written if it has no content.
     """
-    
     edumod = EduModule(options)
 #    from pdb import set_trace; set_trace()
     html = edumod.generate(wldoc.edoc.getroot())
