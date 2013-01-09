@@ -194,14 +194,17 @@ class Wybor(Excercise):
 
 
 class Uporzadkuj(Excercise):
-    def handle_cwiczenie(self, element):
-        pre, post = super(Uporzadkuj, self).handle_cwiczenie(element)
+    def handle_pytanie(self, element):
+        """
+Overrides the returned content default handle_pytanie
+        """
+        # we ignore the result, returning our own
+        super(Uporzadkuj, self).handle_pytanie(element)
         order_items = element.xpath(".//punkt/@rozw")
-        if order_items == []: pdb.set_trace()
 
-        return pre + u"""<div class="question" data-original="%s">""" % \
-            ','.join(order_items), \
-            u"""</div>""" + post
+        return u"""<div class="question" data-original="%s" data-no="%s">""" % \
+            (','.join(order_items), self.question_counter), \
+            u"""</div>"""
     
     def handle_punkt(self, element):
         return """<li class="question-piece" data-pos="%(rozw)s"/>""" \
