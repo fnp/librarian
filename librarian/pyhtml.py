@@ -142,11 +142,11 @@ class Excercise(EduModule):
         self.question_counter = 0
         self.piece_counter = 0
 
-        return u"""
+        pre = u"""
 <div class="excercise %(typ)s" data-type="%(typ)s">
 <form action="#" method="POST">
-""" % element.attrib, \
-u"""
+""" % element.attrib
+        post = u"""
 <div class="buttons">
 <span class="message"></span>
 <input type="button" class="check" value="sprawdź"/>
@@ -155,8 +155,16 @@ u"""
 </form>
 </div>
 """
+        # Add a single <pytanie> tag if it's not there
+        if not element.xpath(".//pytanie"):
+            qpre, qpost = self.handle_pytanie(element)
+            pre = pre + qpre
+            post = qpost + post
+        return pre, post
  
     def handle_pytanie(self, element):
+        """This will handle <cwiczenie> element, when there is no <pytanie>
+        """
         self.question_counter += 1
         self.piece_counter = 0
         solution = element.attrib.get('rozw', None)
@@ -189,7 +197,6 @@ class Uporzadkuj(Excercise):
     def handle_cwiczenie(self, element):
         pre, post = super(Uporzadkuj, self).handle_cwiczenie(element)
         order_items = element.xpath(".//punkt/@rozw")
-        import pdb
         if order_items == []: pdb.set_trace()
 
         return pre + u"""<div class="question" data-original="%s">""" % \
