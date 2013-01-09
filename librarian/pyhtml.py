@@ -13,29 +13,6 @@ class EduModule(Xmill):
         super(EduModule, self).__init__(*args)
         self.activity_counter = 0
 
-
-
-#     def handle_utwor(self, element):
-#         v = {}
-# #        from pdb import *; set_trace()
-#         v['title'] = element.xpath('//dc:title/text()', namespaces={'dc':DCNS.uri})[0]
-#         return u"""
-# <!DOCTYPE html>
-# <html>
-# <head>
-# <meta charset="utf-8"/>
-# <title>%(title)s</title>
-# <link rel="stylesheet" type="text/css" href="/media/static/edumed/edumed.css"/>
-# <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-# <script src="/media/static/edumed/js/edumed.js"></script>
-# </head>
-# <body>
-# """ % v, u"""
-# </body>
-# </html>
-# """
-
-    
     def handle_powiesc(self, element):
         return u"""
 <div class="module" id="book-text">
@@ -117,6 +94,7 @@ class EduModule(Xmill):
             'uporzadkuj': Uporzadkuj,
             'luki': Luki,
             'zastap': Zastap,
+            'przyporzadkuj': Przyporzadkuj
             }
         
         typ = element.attrib['typ']
@@ -236,20 +214,34 @@ class Zastap(Excercise):
 
 
 class Przyporzadkuj(Excercise):
-    def handle_lista(self, element):
+    def handle_lista(self, lista):
+        print "in lista %s %s" % (lista.attrib, self.options)
         if 'nazwa' in lista.attrib:
             attrs = {
                 'data-name': lista.attrib['nazwa'],
-                'class': 'category'
+                'class': 'predicate'
                 }
+            self.options = {'predicate': True}
         elif 'cel' in lista.attrib:
             attrs = {
                 'data-target': lista.attrib['cel'],
-                'class': 'object'
+                'class': 'subject'
                 }
+            self.options = {'subject': True}
         else:
             attrs = {}
-        return super(Przyporzadkuj, self).handle_lista(element, attrs)  
+        return super(Przyporzadkuj, self).handle_lista(lista, attrs)  
+
+
+    def handle_punkt(self, element):
+        print "in punkt %s %s" % (element.attrib, self.options)
+
+        if self.options['subject']:
+            return '<li data-solution="%(rozw)s" class="question-piece draggable multiple">' % element.attrib, '</li>'
+        elif self.options['predicate']:
+            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects droppable"><li>Placeholder</li></ul></li>'
+        else:
+            return super(Przyporzadkuj, self).handle_punkt(element)
 
 
 
