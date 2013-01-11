@@ -186,8 +186,9 @@ class Wybor(Excercise):
             self.piece_counter += 1
             no = self.piece_counter
             eid = "q%(qc)d_%(no)d" % locals()
+            aname = element.attrib.get('nazwa', None)
             return u"""
-<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d">
+<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d" data-name="%(aname)s">
 <input type="checkbox" name="" id="%(eid)s" />
 <label for="%(eid)s">
 """ % locals(), u"</label></li>"
