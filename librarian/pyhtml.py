@@ -94,7 +94,8 @@ class EduModule(Xmill):
             'uporzadkuj': Uporzadkuj,
             'luki': Luki,
             'zastap': Zastap,
-            'przyporzadkuj': Przyporzadkuj
+            'przyporzadkuj': Przyporzadkuj,
+            'prawdafalsz': PrawdaFalsz
             }
         
         typ = element.attrib['typ']
@@ -252,9 +253,22 @@ class Przyporzadkuj(Excercise):
         if self.options['subject']:
             return '<li data-solution="%(rozw)s" class="question-piece draggable">' % element.attrib, '</li>'
         elif self.options['predicate']:
+            print etree.tostring(element, encoding=unicode)
             return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects droppable"></ul></li>'
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
+
+
+class PrawdaFalsz(Excercise):
+    def handle_punkt(self, element):
+        if 'rozw' in element.attrib:
+            return u'''<li data-solution="%s" class="question-piece">
+            <span class="buttons">
+            <a href="#" data-value="true" class="true">Prawda</a>
+            <a href="#" data-value="false" class="false">Fałsz</a>
+        </span>''' % {'prawda': 'true', 'falsz': 'false'}[element.attrib['rozw']], '</li>'
+        else:
+            return super(PrawdaFalsz, self).handle_punkt(element)
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
