@@ -6,7 +6,7 @@
 from lxml import etree
 from librarian import OutputFile, RDFNS, DCNS
 from xmlutils import Xmill, tag, tagged, ifoption
- 
+import random 
 
 class EduModule(Xmill):
     def __init__(self, *args):
@@ -218,8 +218,29 @@ Overrides the returned content default handle_pytanie
 
 
 class Luki(Excercise):
+    def handle_pytanie(self, element):
+        qpre, qpost = super(Luki, self).handle_pytanie(element)
+
+        luki = list(enumerate(element.xpath("//luka")))
+        luki_html = ""
+        i = 0
+        random.shuffle(luki)
+        for (i, luka) in luki:
+            i += 1
+            luka_html = luka.text + \
+                ''.join([etree.tostring(n, encoding=unicode) for n in luka])
+            luki_html += u'<span class="draggable question-piece" data-no="%d">%s</span>' % (i, luka_html)
+        self.words_html = '<div class="words">%s</div>' % luki_html
+        
+        return qpre, qpost
+
+    def handle_opis(self, element):
+        pre, post = super(Luki, self).handle_opis(element)
+        return pre, self.words_html + post
+                
     def handle_luka(self, element):
-        return '<input type="text" class="luka question-piece" data-solution="%s"></input>' % element.text
+        self.piece_counter += 1
+        return '<span class="placeholder" data-solution="%d"></span>' % self.piece_counter
 
 
 class Zastap(Excercise):
@@ -248,13 +269,17 @@ class Przyporzadkuj(Excercise):
         return pre, post + '<br class="clr"/>'
 
     def handle_punkt(self, element):
+        self.piece_counter += 1
         print "in punkt %s %s" % (element.attrib, self.options)
 
         if self.options['subject']:
-            return '<li data-solution="%(rozw)s" class="question-piece draggable">' % element.attrib, '</li>'
+            return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
+        
         elif self.options['predicate']:
             print etree.tostring(element, encoding=unicode)
-            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects droppable"></ul></li>'
+            placeholders = u'<li class="placeholder multiple"/>'
+            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
+        
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
 
