@@ -272,7 +272,6 @@ class Zastap(Luki):
 
 class Przyporzadkuj(Excercise):
     def handle_lista(self, lista):
-        print "in lista %s %s" % (lista.attrib, self.options)
         if 'nazwa' in lista.attrib:
             attrs = {
                 'data-name': lista.attrib['nazwa'],
@@ -291,8 +290,6 @@ class Przyporzadkuj(Excercise):
         return pre, post + '<br class="clr"/>'
 
     def handle_punkt(self, element):
-        print "in punkt %s %s" % (element.attrib, self.options)
-
         if self.options['subject']:
             self.piece_counter += 1
             if self.options['handles']:
@@ -301,7 +298,6 @@ class Przyporzadkuj(Excercise):
                 return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
 
         elif self.options['predicate']:
-            print etree.tostring(element, encoding=unicode)
             placeholders = u'<li class="placeholder multiple"/>'
             return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
 
