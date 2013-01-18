@@ -25,9 +25,8 @@ from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
-from librarian import ParseError, DCNS, get_resource, OutputFile
+from librarian import ParseError, DCNS, get_resource, IOFile, Format
 from librarian import functions
-from librarian.cover import WLCover
 
 
 functions.reg_substitute_entities()
@@ -39,15 +38,6 @@ functions.reg_texcommand()
 STYLESHEETS = {
     'wl2tex': 'pdf/wl2tex.xslt',
 }
-
-#CUSTOMIZATIONS = [
-#    'nofootnotes',
-#    'nothemes',
-#    'defaultleading',
-#    'onehalfleading',
-#    'doubleleading',
-#    'nowlfont',
-#    ]
 
 def insert_tags(doc, split_re, tagname, exclude=None):
     """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree
@@ -83,7 +73,7 @@ def substitute_hyphens(doc):
     insert_tags(doc,
                 re.compile("(?<=[^-\s])-(?=[^-\s])"),
                 "dywiz",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+                exclude=[DCNS("identifier.url"), DCNS("rights.license"), 'www']
                 )
 
 
@@ -183,116 +173,6 @@ def package_available(package, args='', verbose=False):
     return p == 0
 
 
-def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None):
-    """ produces a PDF file with XeLaTeX
-
-    wldoc: a WLDocument
-    verbose: prints all output from LaTeX
-    save_tex: path to save the intermediary LaTeX file to
-    morefloats (old/new/none): force specific morefloats
-    cover: a cover.Cover factory or True for default
-    flags: less-advertising,
-    customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
-    """
-
-    # Parse XSLT
-    try:
-        book_info = wldoc.book_info
-        document = load_including_children(wldoc)
-        root = document.edoc.getroot()
-
-        if cover:
-            if cover is True:
-                cover = WLCover
-            bound_cover = cover(book_info)
-            root.set('data-cover-width', str(bound_cover.width))
-            root.set('data-cover-height', str(bound_cover.height))
-            if bound_cover.uses_dc_cover:
-                if book_info.cover_by:
-                    root.set('data-cover-by', book_info.cover_by)
-                if book_info.cover_source:
-                    root.set('data-cover-source',
-                            book_info.cover_source)
-        if flags:
-            for flag in flags:
-                root.set('flag-' + flag, 'yes')
-
-        # check for LaTeX packages
-        if morefloats:
-            root.set('morefloats', morefloats.lower())
-        elif package_available('morefloats', 'maxfloats=19'):
-            root.set('morefloats', 'new')
-
-        # add customizations
-        if customizations is not None:
-            root.set('customizations', u','.join(customizations))
-
-        # add editors info
-        root.set('editors', u', '.join(sorted(
-            editor.readable() for editor in document.editors())))
-
-        # hack the tree
-        move_motifs_inside(document.edoc)
-        hack_motifs(document.edoc)
-        parse_creator(document.edoc)
-        substitute_hyphens(document.edoc)
-        fix_hanging(document.edoc)
-
-        # wl -> TeXML
-        style_filename = get_stylesheet("wl2tex")
-        style = etree.parse(style_filename)
-
-        texml = document.transform(style)
-
-        # TeXML -> LaTeX
-        temp = mkdtemp('-wl2pdf')
-
-        if cover:
-            with open(os.path.join(temp, 'cover.png'), 'w') as f:
-                bound_cover.save(f)
-
-        del document # no longer needed large object :)
-
-        tex_path = os.path.join(temp, 'doc.tex')
-        fout = open(tex_path, 'w')
-        process(StringIO(texml), fout, 'utf-8')
-        fout.close()
-        del texml
-
-        if save_tex:
-            shutil.copy(tex_path, save_tex)
-
-        # LaTeX -> PDF
-        shutil.copy(get_resource('pdf/wl.cls'), temp)
-        shutil.copy(get_resource('res/wl-logo.png'), temp)
-
-        try:
-            cwd = os.getcwd()
-        except OSError:
-            cwd = None
-        os.chdir(temp)
-
-        if verbose:
-            p = call(['xelatex', tex_path])
-        else:
-            p = call(['xelatex', '-interaction=batchmode', tex_path], stdout=PIPE, stderr=PIPE)
-        if p:
-            raise ParseError("Error parsing .tex file")
-
-        if cwd is not None:
-            os.chdir(cwd)
-
-        output_file = NamedTemporaryFile(prefix='librarian', suffix='.pdf', delete=False)
-        pdf_path = os.path.join(temp, 'doc.pdf')
-        shutil.move(pdf_path, output_file.name)
-        shutil.rmtree(temp)
-        return OutputFile.from_filename(output_file.name)
-
-    except (XMLSyntaxError, XSLTApplyError), e:
-        raise ParseError(e)
-
-
 def load_including_children(wldoc=None, provider=None, uri=None):
     """ Makes one big xml file with children inserted at end.
     
@@ -319,3 +199,117 @@ def load_including_children(wldoc=None, provider=None, uri=None):
         child = load_including_children(provider=provider, uri=child_uri)
         document.edoc.getroot().append(child.edoc.getroot())
     return document
+
+
+class PDFFormat(Format):
+    """ Base PDF format.
+    
+    Available customization:
+        nofootnotes: Doesn't do footnotes.
+        nothemes: Doesn't do themes.
+        defaultleading: Default leading.
+        onehalfleading: Bigger leading.
+        doubleleading: Big leading.
+        nowlfont: Uses standard TeX font instead of JUnicodeWL.
+
+    """
+
+    cover_class = None
+    tex_passes = 1
+    style = get_resource('pdf/default.sty')
+    cover = None
+
+    @property
+    def has_cover(self):
+        """ For use in XSLT. """
+        return self.cover is not None
+
+    @property
+    def customization_str(self):
+        """ For use in XSLT. """
+        return u','.join(k for k, v in self.customization.items() if v)
+
+    def get_document(self):
+        document = load_including_children(self.wldoc)
+        root = document.edoc.getroot()
+        root.set('editors', u', '.join(sorted(
+            editor.readable() for editor in document.editors())))
+
+        # hack the tree
+        move_motifs_inside(document.edoc)
+        hack_motifs(document.edoc)
+        parse_creator(document.edoc)
+        substitute_hyphens(document.edoc)
+        fix_hanging(document.edoc)
+        return document
+
+    def get_texml(self):
+        style_filename = get_stylesheet("wl2tex")
+        functions.reg_get(self)
+        try:
+            style = etree.parse(style_filename)
+            texml = self.get_document().transform(style)
+            return texml
+        except (XMLSyntaxError, XSLTApplyError), e:
+            raise ParseError(e)
+
+    def get_tex_dir(self):
+        texml = self.get_texml()
+        temp = mkdtemp('-wl2pdf')
+        # Save TeX file
+        tex_path = os.path.join(temp, 'doc.tex')
+        with open(tex_path, 'w') as fout:
+            process(StringIO(texml), fout, 'utf-8')
+        if self.save_tex:
+            shutil.copy(tex_path, self.save_tex)
+        # Copy style
+        shutil.copy(get_resource('pdf/wl.cls'), temp)
+        shutil.copy(self.style, os.path.join(temp, 'style.sty'))
+        # Save attachments
+        if self.cover:
+            self.cover.for_pdf().dump_to(os.path.join(temp, 'makecover.sty'))
+        return temp
+
+    def get_pdf(self):
+        temp = self.get_tex_dir()
+        tex_path = os.path.join(temp, 'doc.tex')
+        try:
+            cwd = os.getcwd()
+        except OSError:
+            cwd = None
+        os.chdir(temp)
+
+        if self.verbose:
+            for i in range(self.tex_passes):
+                p = call(['xelatex', tex_path])
+        else:
+            for i in range(self.tex_passes):
+                p = call(['xelatex', '-interaction=batchmode', tex_path],
+                            stdout=PIPE, stderr=PIPE)
+        if p:
+            raise ParseError("Error parsing .tex file")
+
+        if cwd is not None:
+            os.chdir(cwd)
+
+        output_file = NamedTemporaryFile(prefix='librarian', suffix='.pdf', delete=False)
+        pdf_path = os.path.join(temp, 'doc.pdf')
+        shutil.move(pdf_path, output_file.name)
+        shutil.rmtree(temp)
+        return IOFile.from_filename(output_file.name)
+
+    def build(self, verbose=False, save_tex=None, morefloats=None):
+        """ morefloats: new/old/none
+        """
+        self.verbose = verbose
+        self.save_tex = save_tex
+        
+        if morefloats is None and package_available('morefloats', 'maxfloats=19'):
+            morefloats = 'new'
+        self.morefloats = morefloats
+
+        book_info = self.wldoc.book_info
+        if self.cover_class:
+            self.cover = self.cover_class(book_info)
+
+        return self.get_pdf()

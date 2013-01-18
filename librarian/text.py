@@ -4,7 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import copy
-from librarian import functions, OutputFile
+from librarian import functions, IOFile
 from lxml import etree
 import os
 
@@ -78,7 +78,7 @@ def transform(wldoc, flags=None, **options):
             license_description = ""
             source = ""
             contributors = ""
-        return OutputFile.from_string((TEMPLATE % {
+        return IOFile.from_string((TEMPLATE % {
             'description': description,
             'url': url,
             'license_description': license_description,
@@ -87,5 +87,5 @@ def transform(wldoc, flags=None, **options):
             'contributors': contributors,
         }).encode('utf-8'))
     else:
-        return OutputFile.from_string(unicode(result).encode('utf-8'))
+        return IOFile.from_string(unicode(result).encode('utf-8'))
 

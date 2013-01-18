@@ -7,7 +7,7 @@ import os.path
 from copy import deepcopy
 from lxml import etree
 
-from librarian import functions, OutputFile
+from librarian import functions, IOFile
 from .epub import replace_by_verse
 
 
@@ -58,6 +58,6 @@ def transform(wldoc, verbose=False,
 
     result = document.transform(style)
 
-    return OutputFile.from_string(unicode(result).encode('utf-8'))
+    return IOFile.from_string(unicode(result).encode('utf-8'))
 
 # vim:et

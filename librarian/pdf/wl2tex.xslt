@@ -15,36 +15,24 @@
 <xsl:template match="utwor">
     <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
         <TeXML escape="0">
-        \documentclass[<xsl:value-of select="@customizations"/>]{wl}
-
-        <!-- flags and values set on root -->
-
-        \newif\ifflaglessadvertising
-        <xsl:for-each select="@*[starts-with(name(), 'flag-')]">
-            <cmd>
-                <xsl:attribute name="name"><xsl:value-of select="wl:texcommand(name())" />true</xsl:attribute>
-            </cmd>
-        </xsl:for-each>
-
-        <xsl:for-each select="@*[starts-with(name(), 'data-')]">
-            <TeXML escape="0">
-                \def\<xsl:value-of select="wl:texcommand(name())" />{<TeXML escape="1"><xsl:value-of select="."/></TeXML>}
-            </TeXML>
-        </xsl:for-each>
-        </TeXML>
+        \documentclass[<xsl:value-of select="wl:get('customization_str')"/>]{wl}
+        \usepackage{style}
+        <xsl:if test="wl:get('has_cover')">
+            \usepackage{makecover}
+        </xsl:if>
 
         <xsl:choose>
-            <xsl:when test="@morefloats = 'new'">
+            <xsl:when test="wl:get('morefloats') = 'new'">
                 <TeXML escape="0">
                     \usepackage[maxfloats=64]{morefloats}
                 </TeXML>
             </xsl:when>
-            <xsl:when test="@morefloats = 'old'">
+            <xsl:when test="wl:get('morefloats') = 'old'">
                 <TeXML escape="0">
                     \usepackage{morefloats}
                 </TeXML>
             </xsl:when>
-            <xsl:when test="@morefloats = 'none'" />
+            <xsl:when test="wl:get('morefloats') = 'none'" />
             <xsl:otherwise>
                 <TeXML escape="0">
                     \IfFileExists{morefloats.sty}{
@@ -58,9 +46,9 @@
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='titlepage' />
 
         <env name="document">
-            <xsl:if test="@data-cover-width">
+            <xsl:if test="wl:get('has_cover')">
                 <cmd name="makecover">
-                    <parm><xsl:value-of select="210 * @data-cover-width div @data-cover-height" />mm</parm>
+                    <parm><xsl:value-of select="210 * wl:get('cover', 'width') div wl:get('cover', 'height')" />mm</parm>
                     <parm>210mm</parm>
                 </cmd>
             </xsl:if>
@@ -89,23 +77,32 @@
 
             <TeXML escape="0">
                 \def\coverby{
-                <xsl:if test="@data-cover-by">Okładka na podstawie: 
+                <TeXML escape="1">
+                <xsl:if test="wl:get('has_cover') and wl:get('wldoc', 'book_info', 'cover_by')">
+                    <!-- FIXME: should be stylable -->
+                    Okładka na podstawie: 
                     <xsl:choose>
-                    <xsl:when test="@data-cover-source">
-                        \href{\datacoversource}{\datacoverby}
+                    <xsl:when test="wl:get('wldoc', 'book_info', 'cover_source')">
+                        <cmd name="href"><parm>
+                            <xsl:value-of select="wl:get('wldoc', 'book_info', 'cover_source')" />
+                        </parm><parm>
+                            <xsl:value-of select="wl:get('wldoc', 'book_info', 'cover_by')" />
+                        </parm></cmd>
                     </xsl:when>
                     <xsl:otherwise>
-                        \datacoverby{}
+                        <xsl:value-of select="wl:get('wldoc', 'book_info', 'cover_by')" />
                     </xsl:otherwise>
                     </xsl:choose>
                 </xsl:if>
+                </TeXML>
                 }
-                \def\editors{<xsl:call-template name="editors" />}
+                \def\editors{<TeXML escape="1"><xsl:call-template name="editors" /></TeXML>}
             </TeXML>
 
             <cmd name="editorialsection" />
 
         </env>
+        </TeXML>
     </TeXML>
 </xsl:template>
 
@@ -140,31 +137,31 @@
 
 <xsl:template match="rdf:RDF" mode="titlepage">
     <TeXML escape="0">
-        \def\authors{<xsl:call-template name="authors" />}
+        \def\authors{<TeXML escape="1"><xsl:call-template name="authors" /></TeXML>}
         \author{\authors}
-        \title{<xsl:apply-templates select=".//dc:title" mode="inline" />}
-        \def\translatorsline{<xsl:call-template name="translators" />}
+        \title{<TeXML escape="1"><xsl:apply-templates select=".//dc:title" mode="inline" /></TeXML>}
+        \def\translatorsline{<TeXML escape="1"><xsl:call-template name="translators" /></TeXML>}
 
-        \def\bookurl{<xsl:value-of select=".//dc:identifier.url" />}
+        \def\bookurl{<TeXML escape="1"><xsl:value-of select=".//dc:identifier.url" /></TeXML>}
 
-        \def\rightsinfo{Ten utwór nie jest chroniony prawem autorskim i~znajduje się w~domenie
-            publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
-            i~rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
-            (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
-            te dodatkowe materiały udostępnione są na licencji
-            \href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
-            Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
-        <xsl:if test=".//dc:rights.license">
-            \def\rightsinfo{Ten utwór jest udostepniony na licencji
-            \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
-        </xsl:if>
+        \def\rightsinfo{<TeXML excape="1">
+            <cmd name="rightsinfostr">
+                <xsl:if test=".//dc:rights.license">
+                    <opt><xsl:value-of select=".//dc:rights.license" /></opt>
+                </xsl:if>
+                <parm><xsl:value-of select=".//dc:rights" /></parm>
+            </cmd>
+        </TeXML>}
 
-        \def\sourceinfo{
+        <!-- FIXME: should be stylable -->
+        \def\sourceinfo{<TeXML excape="1">
             <xsl:if test=".//dc:source">
                 Tekst opracowany na podstawie: <xsl:apply-templates select=".//dc:source" mode="inline" />
                 \vspace{.6em}
-            </xsl:if>}
-        \def\description{<xsl:apply-templates select=".//dc:description" mode="inline" />}
+            </xsl:if>
+        </TeXML>}
+        \def\description{<TeXML excape="1">
+            <xsl:apply-templates select=".//dc:description" mode="inline" /></TeXML>}
     </TeXML>
 </xsl:template>
 

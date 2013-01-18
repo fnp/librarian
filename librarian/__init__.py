@@ -205,32 +205,35 @@ def get_resource(path):
     return os.path.join(os.path.dirname(__file__), path)
 
 
-class OutputFile(object):
-    """Represents a file returned by one of the converters."""
-
+class IOFile(object):
+    """ Represents a file fed as input or returned as a result. """
     _string = None
     _filename = None
+    _filename_tmp = False
+
+    def __init__(self, attachments=None):
+        self.attachments = attachments or {}
 
     def __del__(self):
-        if self._filename:
+        if self._filename_tmp:
             os.unlink(self._filename)
 
     def __nonzero__(self):
         return self._string is not None or self._filename is not None
 
     @classmethod
-    def from_string(cls, string):
+    def from_string(cls, string, *args, **kwargs):
         """Converter returns contents of a file as a string."""
 
-        instance = cls()
+        instance = cls(*args, **kwargs)
         instance._string = string
         return instance
 
     @classmethod
-    def from_filename(cls, filename):
+    def from_filename(cls, filename, *args, **kwargs):
         """Converter returns contents of a file as a named file."""
 
-        instance = cls()
+        instance = cls(*args, **kwargs)
         instance._filename = filename
         return instance
 
@@ -263,6 +266,7 @@ class OutputFile(object):
             temp.write(self._string)
             temp.close()
             self._filename = temp.name
+            self._filename_tmp = True
             return self._filename
         else:
             return None
@@ -274,6 +278,23 @@ class OutputFile(object):
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
         shutil.copy(self.get_filename(), path)
+
+    def dump_to(self, path, directory=None):
+        """ Path should be name for main file. """
+        self.save_as(path)
+        dirname = os.path.dirname(os.path.abspath(path))
+        for filename, attachment in self.attachments.items():
+            attachment.save_as(os.path.join(dirname, filename))
+
+
+class Format(object):
+    """ Generic format class. """
+    def __init__(self, wldoc, **kwargs):
+        self.wldoc = wldoc
+        self.customization = kwargs
+
+    def build(self):
+        raise NotImplementedError
 
 
 class URLOpener(urllib.FancyURLopener):

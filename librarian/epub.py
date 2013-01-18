@@ -16,7 +16,7 @@ import zipfile
 from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
-from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
+from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, IOFile
 from librarian.cover import WLCover
 
 from librarian import functions, get_resource
@@ -560,4 +560,4 @@ def transform(wldoc, verbose=False,
     zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))
     zip.close()
 
-    return OutputFile.from_filename(output_file.name)
+    return IOFile.from_filename(output_file.name)

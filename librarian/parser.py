@@ -4,8 +4,8 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
-from librarian import RDFNS
-from librarian.cover import WLCover
+from librarian import RDFNS, IOFile
+from librarian.styles.wolnelektury.cover import WLCover
 from librarian import dcparser
 
 from xml.parsers.expat import ExpatError
@@ -20,58 +20,68 @@ class WLDocument(object):
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
 
-    def __init__(self, edoc, parse_dublincore=True, provider=None, 
-                    strict=False, meta_fallbacks=None):
-        self.edoc = edoc
-        self.provider = provider
+    _edoc = None
+    @property
+    def edoc(self):
+        if self._edoc is None:
+            data = self.source.get_string()
+            if not isinstance(data, unicode):
+                data = data.decode('utf-8')
+            data = data.replace(u'\ufeff', '')
+            try:
+                parser = etree.XMLParser(remove_blank_text=False)
+                self._edoc = etree.parse(StringIO(data.encode('utf-8')), parser)
+            except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
+                raise ParseError(e)
+        return self._edoc
 
-        root_elem = edoc.getroot()
-
-        dc_path = './/' + RDFNS('RDF')
-
-        if root_elem.tag != 'utwor':
-            raise ValidationError("Invalid root element. Found '%s', should be 'utwor'" % root_elem.tag)
-
-        if parse_dublincore:
-            self.rdf_elem = root_elem.find(dc_path)
-
-            if self.rdf_elem is None:
+    _rdf_elem = None
+    @property
+    def rdf_elem(self):
+        if self._rdf_elem is None:
+            dc_path = './/' + RDFNS('RDF')
+            self._rdf_elem = self.edoc.getroot().find(dc_path)
+            if self._rdf_elem is None:
                 raise NoDublinCore('Document has no DublinCore - which is required.')
+        return self._rdf_elem
 
-            self.book_info = dcparser.BookInfo.from_element(
-                    self.rdf_elem, fallbacks=meta_fallbacks, strict=strict)
-        else:
-            self.book_info = None
+    _book_info = None
+    @property
+    def book_info(self):
+        if not self.parse_dublincore:
+            return None
+        if self._book_info is None:
+            self._book_info = dcparser.BookInfo.from_element(
+                    self.rdf_elem, fallbacks=self.meta_fallbacks, strict=self.strict)
+        return self._book_info
+
+    def __init__(self, iofile, provider=None, 
+            parse_dublincore=True, # shouldn't it be in a subclass?
+            strict=False, # ?
+            meta_fallbacks=None # ?
+            ):
+        self.source = iofile
+        self.provider = provider
+        self.parse_dublincore = parse_dublincore
+        self.strict = strict
+        self.meta_fallbacks = meta_fallbacks
+        if self.edoc.getroot().tag != 'utwor':
+            raise ValidationError("Invalid root element. Found '%s', should be 'utwor'" % root_elem.tag)
+        if parse_dublincore:
+            self.book_info
 
     @classmethod
     def from_string(cls, xml, *args, **kwargs):
-        return cls.from_file(StringIO(xml), *args, **kwargs)
+        return cls(IOFile.from_string(xml), *args, **kwargs)
 
     @classmethod
     def from_file(cls, xmlfile, *args, **kwargs):
-
-        # first, prepare for parsing
         if isinstance(xmlfile, basestring):
-            file = open(xmlfile, 'rb')
-            try:
-                data = file.read()
-            finally:
-                file.close()
+            iofile = IOFile.from_filename(xmlfile)
         else:
-            data = xmlfile.read()
+            iofile = IOFile.from_file(xmlfile)
+        return cls(iofile, *args, **kwargs)
 
-        if not isinstance(data, unicode):
-            data = data.decode('utf-8')
-
-        data = data.replace(u'\ufeff', '')
-
-        try:
-            parser = etree.XMLParser(remove_blank_text=False)
-            tree = etree.parse(StringIO(data.encode('utf-8')), parser)
-
-            return cls(tree, *args, **kwargs)
-        except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
-            raise ParseError(e)
 
     def swap_endlines(self):
         """Converts line breaks in stanzas into <br/> tags."""
@@ -95,10 +105,10 @@ class WLDocument(object):
                 elem.text = chunks.pop(0)
 
     def parts(self):
-        if self.provider is None:
-            raise NoProvider('No document provider supplied.')
         if self.book_info is None:
             raise NoDublinCore('No Dublin Core in document.')
+        if self.book_info.parts and self.provider is None:
+            raise NoProvider('No document provider supplied.')
         for part_uri in self.book_info.parts:
             yield self.from_file(self.provider.by_uri(part_uri),
                     provider=self.provider)
