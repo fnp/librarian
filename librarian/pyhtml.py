@@ -6,7 +6,7 @@
 from lxml import etree
 from librarian import OutputFile, RDFNS, DCNS
 from xmlutils import Xmill, tag, tagged, ifoption
-import random 
+import random
 
 class EduModule(Xmill):
     def __init__(self, *args):
@@ -37,7 +37,7 @@ class EduModule(Xmill):
     def handle_aktywnosc(self, element):
         self.activity_counter += 1
         self.options = {
-            'activity': True, 
+            'activity': True,
             'activity_counter': self.activity_counter
             }
         submill = EduModule()
@@ -61,7 +61,7 @@ class EduModule(Xmill):
 
         return u"""
 <div class="activity">
- <div class="text">%(counter)d. 
+ <div class="text">%(counter)d.
   %(opis)s
   %(wskazowki)s
  </div>
@@ -76,18 +76,18 @@ class EduModule(Xmill):
 
     handle_opis = ifoption(activity=False)(tag('div', 'description'))
     handle_wskazowki = ifoption(activity=False)(tag('div', ('hints', 'teacher')))
-    
+
     @ifoption(activity=False)
     @tagged('div', 'materials')
     def handle_pomoce(self, _):
         return "Pomoce: ", ""
-    
+
     def handle_czas(self, *_):
         return
 
     def handle_forma(self, *_):
         return
-            
+
     def handle_cwiczenie(self, element):
         excercise_handlers = {
             'wybor': Wybor,
@@ -97,7 +97,7 @@ class EduModule(Xmill):
             'przyporzadkuj': Przyporzadkuj,
             'prawdafalsz': PrawdaFalsz
             }
-        
+
         typ = element.attrib['typ']
         handler = excercise_handlers[typ](self.options)
         return handler.generate(element)
@@ -109,17 +109,17 @@ class EduModule(Xmill):
             self.options = {'slowniczek': True}
             return '<div class="slowniczek">', '</div>'
 ### robie teraz punkty wyboru
-        listtag = {'num': 'ol', 
-               'punkt': 'ul', 
-               'alfa': 'ul', 
+        listtag = {'num': 'ol',
+               'punkt': 'ul',
+               'alfa': 'ul',
                'czytelnia': 'ul'}[ltype]
 
         classes = attrs.get('class', '')
         if classes: del attrs['class']
-            
+
         attrs_s = ' '.join(['%s="%s"' % kv for kv in attrs.items()])
         if attrs_s: attrs_s = ' ' + attrs_s
-            
+
         return '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
 
     def handle_punkt(self, element):
@@ -130,7 +130,7 @@ class EduModule(Xmill):
 
     def handle_rdf__RDF(self, _):
         # ustal w opcjach  rzeczy :D
-        return 
+        return
 
 
 class Excercise(EduModule):
@@ -165,18 +165,25 @@ class Excercise(EduModule):
             pre = pre + qpre
             post = qpost + post
         return pre, post
- 
+
     def handle_pytanie(self, element):
         """This will handle <cwiczenie> element, when there is no <pytanie>
         """
+        add_class = ""
         self.question_counter += 1
         self.piece_counter = 0
         solution = element.attrib.get('rozw', None)
         if solution: solution_s = ' data-solution="%s"' % solution
         else: solution_s = ''
 
-        return '<div class="question" data-no="%d" %s>' %\
-            (self.question_counter, solution_s), \
+        handles = element.attrib.get('uchwyty', None)
+        if handles:
+            add_class += ' handles handles-%s' % handles
+            self.options = {'handles': handles}
+
+
+        return '<div class="question%s" data-no="%d" %s>' %\
+            (add_class, self.question_counter, solution_s), \
     "</div>"
 
 
@@ -218,34 +225,49 @@ Overrides the returned content default handle_pytanie
 
 
 class Luki(Excercise):
+    def find_pieces(self, question):
+        return question.xpath("//luka")
+
+    def solution_html(self, piece):
+        return piece.text + ''.join(
+            [etree.tostring(n, encoding=unicode)
+             for n in piece])
+
     def handle_pytanie(self, element):
         qpre, qpost = super(Luki, self).handle_pytanie(element)
 
-        luki = list(enumerate(element.xpath("//luka")))
+        luki = list(enumerate(self.find_pieces(element)))
         luki_html = ""
         i = 0
         random.shuffle(luki)
         for (i, luka) in luki:
             i += 1
-            luka_html = luka.text + \
-                ''.join([etree.tostring(n, encoding=unicode) for n in luka])
+            luka_html = self.solution_html(luka)
             luki_html += u'<span class="draggable question-piece" data-no="%d">%s</span>' % (i, luka_html)
         self.words_html = '<div class="words">%s</div>' % luki_html
-        
+
         return qpre, qpost
 
     def handle_opis(self, element):
         pre, post = super(Luki, self).handle_opis(element)
         return pre, self.words_html + post
-                
+
     def handle_luka(self, element):
         self.piece_counter += 1
         return '<span class="placeholder" data-solution="%d"></span>' % self.piece_counter
 
 
-class Zastap(Excercise):
+class Zastap(Luki):
+    def find_pieces(self, question):
+        return question.xpath("//zastap")
+
+    def solution_html(self, piece):
+        return piece.attrib['rozw']
+
     def handle_zastap(self, element):
-        return '<span class="zastap question-piece" data-solution="%(rozw)s">' % element.attrib, '</span>'
+        self.piece_counter += 1
+        return '<span class="placeholder zastap question-piece" data-solution="%d">' \
+            % self.piece_counter, '</span>'
 
 
 class Przyporzadkuj(Excercise):
@@ -269,17 +291,20 @@ class Przyporzadkuj(Excercise):
         return pre, post + '<br class="clr"/>'
 
     def handle_punkt(self, element):
-        self.piece_counter += 1
         print "in punkt %s %s" % (element.attrib, self.options)
 
         if self.options['subject']:
-            return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
-        
+            self.piece_counter += 1
+            if self.options['handles']:
+                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle">%s</span>' % (element.attrib['rozw'], self.piece_counter, self.piece_counter), '</li>'
+            else:
+                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
+
         elif self.options['predicate']:
             print etree.tostring(element, encoding=unicode)
             placeholders = u'<li class="placeholder multiple"/>'
             return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
-        
+
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
 
