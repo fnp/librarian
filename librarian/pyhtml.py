@@ -155,6 +155,7 @@ class Excercise(EduModule):
 <span class="message"></span>
 <input type="button" class="check" value="sprawdź"/>
 <input type="button" class="solutions" value="pokaż rozwiązanie"/>
+<input type="button" class="reset" value="reset"/>
 </div>
 </form>
 </div>
