@@ -6,6 +6,7 @@
 from lxml import etree
 from librarian import OutputFile, RDFNS, DCNS
 from xmlutils import Xmill, tag, tagged, ifoption
+import re
 import random
 
 class EduModule(Xmill):
@@ -189,6 +190,13 @@ class Excercise(EduModule):
 
 
 class Wybor(Excercise):
+    def handle_pytanie(self, element):
+        pre, post = super(Wybor, self).handle_pytanie(element)
+        solutions = re.split(r"[, ]+", element.attrib['rozw'])
+        if len(solutions) == 1:
+            self.options = { 'single': True }
+        return pre, post
+
     def handle_punkt(self, element):
         if self.options['excercise'] and element.attrib.get('nazwa', None):
             qc = self.question_counter
@@ -196,14 +204,22 @@ class Wybor(Excercise):
             no = self.piece_counter
             eid = "q%(qc)d_%(no)d" % locals()
             aname = element.attrib.get('nazwa', None)
-            return u"""
+            if self.options['single']:
+                return u"""
 <li class="question-piece" data-qc="%(qc)d" data-no="%(no)d" data-name="%(aname)s">
-<input type="checkbox" name="" id="%(eid)s" />
+<input type="radio" name="q%(qc)d" id="%(eid)s" value="%(aname)s" />
+<label for="%(eid)s">
+                """ % locals(), u"</label></li>"
+            else:
+                return u"""
+<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d" data-name="%(aname)s">
+<input type="checkbox" name="%(eid)s" id="%(eid)s" />
 <label for="%(eid)s">
 """ % locals(), u"</label></li>"
 
         else:
             return super(Wybor, self).handle_punkt(element)
+
 
 
 class Uporzadkuj(Excercise):
@@ -284,7 +300,7 @@ class Przyporzadkuj(Excercise):
                 'data-target': lista.attrib['cel'],
                 'class': 'subject'
                 }
-            self.options = {'subject': True}
+            self.options = {'subject': True, 'handles': 'uchwyty' in lista.attrib}
         else:
             attrs = {}
         pre, post = super(Przyporzadkuj, self).handle_lista(lista, attrs)
