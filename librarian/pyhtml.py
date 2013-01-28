@@ -185,8 +185,12 @@ class Excercise(EduModule):
             add_class += ' handles handles-%s' % handles
             self.options = {'handles': handles}
 
+        minimum = element.attrib.get('min', None)
+        if minimum: minimum_s = ' data-minimum="%d"' % int(minimum)
+        else: minimum_s = ''
+
         return '<div class="question%s" data-no="%d" %s>' %\
-            (add_class, self.question_counter, solution_s), \
+            (add_class, self.question_counter, solution_s + minimum_s), \
             "</div>"
 
 
@@ -292,18 +296,25 @@ class Zastap(Luki):
 
 
 class Przyporzadkuj(Excercise):
+    def handle_pytanie(self, element):
+        pre, post = super(Przyporzadkuj, self).handle_pytanie(element)
+        minimum = element.attrib.get("min", None)
+        if minimum:
+            self.options = {"min": int(minimum)}
+        return pre, post
+
     def handle_lista(self, lista):
         if 'nazwa' in lista.attrib:
             attrs = {
                 'data-name': lista.attrib['nazwa'],
                 'class': 'predicate'
-                }
+            }
             self.options = {'predicate': True}
         elif 'cel' in lista.attrib:
             attrs = {
                 'data-target': lista.attrib['cel'],
                 'class': 'subject'
-                }
+            }
             self.options = {'subject': True, 'handles': 'uchwyty' in lista.attrib}
         else:
             attrs = {}
@@ -319,7 +330,10 @@ class Przyporzadkuj(Excercise):
                 return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
 
         elif self.options['predicate']:
-            placeholders = u'<li class="placeholder multiple"/>'
+            if self.options['min']:
+                placeholders = u'<li class="placeholder"/>' * self.options['min']
+            else:
+                placeholders = u'<li class="placeholder multiple"/>'
             return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
 
         else:
