@@ -6,24 +6,26 @@
 from lxml import etree
 from librarian import OutputFile, RDFNS, DCNS
 from xmlutils import Xmill, tag, tagged, ifoption
+from librarian import functions
 import re
 import random
+
 
 class EduModule(Xmill):
     def __init__(self, *args):
         super(EduModule, self).__init__(*args)
         self.activity_counter = 0
+        self.register_text_filter(lambda t: functions.substitute_entities(None, t))
 
     def handle_powiesc(self, element):
         return u"""
 <div class="module" id="book-text">
- <span class="teacher-toggle">
+<!-- <span class="teacher-toggle">
   <input type="checkbox" name="teacher-toggle" id="teacher-toggle"/>
   <label for="teacher-toggle">Pokaż treść dla nauczyciela</label>
- </span>
+ </span>-->
 
 """, u"</div>"
-
 
     handle_autor_utworu = tag("span", "author")
     handle_nazwa_utworu = tag("h1", "title")
@@ -183,18 +185,21 @@ class Excercise(EduModule):
             add_class += ' handles handles-%s' % handles
             self.options = {'handles': handles}
 
-
         return '<div class="question%s" data-no="%d" %s>' %\
             (add_class, self.question_counter, solution_s), \
-    "</div>"
+            "</div>"
 
 
 class Wybor(Excercise):
-    def handle_pytanie(self, element):
-        pre, post = super(Wybor, self).handle_pytanie(element)
-        solutions = re.split(r"[, ]+", element.attrib['rozw'])
-        if len(solutions) == 1:
-            self.options = { 'single': True }
+    def handle_cwiczenie(self, element):
+        pre, post = super(Wybor, self).handle_cwiczenie(element)
+        is_single_choice = True
+        for p in element.xpath(".//pytanie"):
+            solutions = re.split(r"[, ]+", p.attrib['rozw'])
+            if len(solutions) != 1:
+                is_single_choice = False
+                break
+        self.options = {'single': is_single_choice}
         return pre, post
 
     def handle_punkt(self, element):
@@ -219,7 +224,6 @@ class Wybor(Excercise):
 
         else:
             return super(Wybor, self).handle_punkt(element)
-
 
 
 class Uporzadkuj(Excercise):

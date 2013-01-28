@@ -8,14 +8,25 @@ from collections import defaultdict
 
 
 class Xmill(object):
-    """Transforms XML to some text. 
+    """Transforms XML to some text.
     Used instead of XSLT which is difficult and cumbersome.
-    
+
     """
     def __init__(self, options=None):
         self._options = []
         if options:
             self._options.append(options)
+        self.text_filters = []
+
+    def register_text_filter(self, fun):
+        self.text_filters.append(fun)
+
+    def filter_text(self, text):
+        for flt in self.text_filters:
+            if text is None:
+                return None
+            text = flt(text)
+        return text
 
     def generate(self, document):
         """Generate text from node using handlers defined in class."""
@@ -26,7 +37,7 @@ class Xmill(object):
     def options(self):
         """Returnes merged scoped options for current node.
         """
-        # Here we can see how a decision not to return the modified map 
+        # Here we can see how a decision not to return the modified map
         # leads to a need for a hack.
         return reduce(lambda a, b: a.update(b) or a, self._options, defaultdict(lambda: False))
 
@@ -54,8 +65,8 @@ class Xmill(object):
                 except ValueError:
                     pass
             if not ns:
-                raise ValueError("Strange ns for tag: %s, nsmap: %s" % 
-                                 (element.tag, element.nsmap)) 
+                raise ValueError("Strange ns for tag: %s, nsmap: %s" %
+                                 (element.tag, element.nsmap))
         else:
             tagname = element.tag
 
@@ -63,7 +74,7 @@ class Xmill(object):
             meth_name = "handle_%s__%s" % (ns, tagname)
         else:
             meth_name = "handle_%s" % (tagname,)
-        
+
         handler = getattr(self, meth_name, None)
         return handler
 
@@ -84,7 +95,7 @@ class Xmill(object):
             options_scopes = len(self._options)
 
             if handler is None:
-                pre = [element.text]
+                pre = [self.filter_text(element.text)]
                 post = []
             else:
                 vals = handler(element)
@@ -94,10 +105,10 @@ class Xmill(object):
                     return []
                 else:
                     if not isinstance(vals, tuple):
-                        return [vals, element.tail]
+                        return [vals, self.filter_text(element.tail)]
                     else:
-                        pre = [vals[0], element.text]
-                        post = [vals[1], element.tail]
+                        pre = [vals[0], self.filter_text(element.text)]
+                        post = [vals[1], self.filter_text(element.tail)]
 
             out = pre + [self._handle_element(child) for child in element] + post
         finally:
