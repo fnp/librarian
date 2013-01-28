@@ -142,7 +142,7 @@ class Excercise(EduModule):
         super(Excercise, self).__init__(*args, **kw)
 
     def handle_rozw_kom(self, element):
-        return None
+        return u"""<div style="display:none" class="comment">""", u"""</div>"""
 
     def handle_cwiczenie(self, element):
         self.options = {'excercise': element.attrib['typ']}
@@ -157,6 +157,7 @@ class Excercise(EduModule):
 <div class="buttons">
 <span class="message"></span>
 <input type="button" class="check" value="sprawdź"/>
+<input type="button" class="retry" style="display:none" value="spróbuj ponownie"/>
 <input type="button" class="solutions" value="pokaż rozwiązanie"/>
 <input type="button" class="reset" value="reset"/>
 </div>
