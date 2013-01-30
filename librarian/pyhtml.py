@@ -92,7 +92,7 @@ class EduModule(Xmill):
         return
 
     def handle_cwiczenie(self, element):
-        excercise_handlers = {
+        exercise_handlers = {
             'wybor': Wybor,
             'uporzadkuj': Uporzadkuj,
             'luki': Luki,
@@ -102,7 +102,7 @@ class EduModule(Xmill):
             }
 
         typ = element.attrib['typ']
-        handler = excercise_handlers[typ](self.options)
+        handler = exercise_handlers[typ](self.options)
         return handler.generate(element)
 
     # Lists
@@ -152,21 +152,21 @@ class EduModule(Xmill):
         return
 
 
-class Excercise(EduModule):
+class Exercise(EduModule):
     def __init__(self, *args, **kw):
         self.question_counter = 0
-        super(Excercise, self).__init__(*args, **kw)
+        super(Exercise, self).__init__(*args, **kw)
 
     def handle_rozw_kom(self, element):
         return u"""<div style="display:none" class="comment">""", u"""</div>"""
 
     def handle_cwiczenie(self, element):
-        self.options = {'excercise': element.attrib['typ']}
+        self.options = {'exercise': element.attrib['typ']}
         self.question_counter = 0
         self.piece_counter = 0
 
         pre = u"""
-<div class="excercise %(typ)s" data-type="%(typ)s">
+<div class="exercise %(typ)s" data-type="%(typ)s">
 <form action="#" method="POST">
 """ % element.attrib
         post = u"""
@@ -211,7 +211,7 @@ class Excercise(EduModule):
             "</div>"
 
 
-class Wybor(Excercise):
+class Wybor(Exercise):
     def handle_cwiczenie(self, element):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
         is_single_choice = True
@@ -224,7 +224,7 @@ class Wybor(Excercise):
         return pre, post
 
     def handle_punkt(self, element):
-        if self.options['excercise'] and element.attrib.get('nazwa', None):
+        if self.options['exercise'] and element.attrib.get('nazwa', None):
             qc = self.question_counter
             self.piece_counter += 1
             no = self.piece_counter
@@ -247,7 +247,7 @@ class Wybor(Excercise):
             return super(Wybor, self).handle_punkt(element)
 
 
-class Uporzadkuj(Excercise):
+class Uporzadkuj(Exercise):
     def handle_pytanie(self, element):
         """
 Overrides the returned content default handle_pytanie
@@ -266,7 +266,7 @@ Overrides the returned content default handle_pytanie
             "</li>"
 
 
-class Luki(Excercise):
+class Luki(Exercise):
     def find_pieces(self, question):
         return question.xpath("//luka")
 
@@ -312,7 +312,7 @@ class Zastap(Luki):
             % self.piece_counter, '</span>'
 
 
-class Przyporzadkuj(Excercise):
+class Przyporzadkuj(Exercise):
     def handle_pytanie(self, element):
         pre, post = super(Przyporzadkuj, self).handle_pytanie(element)
         minimum = element.attrib.get("min", None)
@@ -357,7 +357,7 @@ class Przyporzadkuj(Excercise):
             return super(Przyporzadkuj, self).handle_punkt(element)
 
 
-class PrawdaFalsz(Excercise):
+class PrawdaFalsz(Exercise):
     def handle_punkt(self, element):
         if 'rozw' in element.attrib:
             return u'''<li data-solution="%s" class="question-piece">
