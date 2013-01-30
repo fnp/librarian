@@ -12,21 +12,24 @@
 	xmlns:l="http://www.w3.org/1999/xlink">
 
 	<!-- footnote body mode -->
-	<xsl:template match="pe" mode="footnotes">
+	<xsl:template match="pa|pe|pr|pt" mode="footnotes">
 		<!-- we number them absolutely -->
-		<xsl:variable name="n" select="count(preceding::pe) + 1"/>
+		<xsl:variable name="n" select="count(preceding::pa) + count(preceding::pe) + count(preceding::pr) + count(preceding::pt) + 1"/>
 
 		<xsl:element name="section">
 			<xsl:attribute name="id">fn<xsl:value-of select="$n"/></xsl:attribute>
 
-			<p><xsl:apply-templates mode="inline"/></p>
+			<p><xsl:apply-templates mode="inline"/>
+                <xsl:if test="local-name() = 'pa'">
+                    <xsl:text> [przypis autorski]</xsl:text>
+                </xsl:if></p>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="text()" mode="footnotes"/>
 
 	<!-- footnote links -->
-	<xsl:template match="pe" mode="inline">
-		<xsl:variable name="n" select="count(preceding::pe) + 1"/>
+	<xsl:template match="pa|pe|pr|pt" mode="inline">
+		<xsl:variable name="n" select="count(preceding::pa) + count(preceding::pe) + count(preceding::pr) + count(preceding::pt) + 1"/>
 		<xsl:element name="a">
 			<xsl:attribute name="type">note</xsl:attribute>
 			<xsl:attribute name="l:href">#fn<xsl:value-of select="$n"/></xsl:attribute>

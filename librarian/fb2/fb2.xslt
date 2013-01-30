@@ -7,6 +7,7 @@
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:wl="http://wolnelektury.pl/functions"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns="http://www.gribuser.ru/xml/fictionbook/2.0"
 	xmlns:l="http://www.w3.org/1999/xlink">
 
@@ -16,6 +17,7 @@
 	<xsl:include href="paragraphs.xslt"/>
 	<xsl:include href="poems.xslt"/>
 	<xsl:include href="sections.xslt"/>
+	<xsl:include href="drama.xslt"/>
 
 	<xsl:strip-space elements="*"/>
 	<xsl:output encoding="utf-8" method="xml" indent="yes"/>
@@ -31,12 +33,13 @@
 	</xsl:template>
 
 	<!-- we can't handle lyrics nicely yet -->
-	<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp" mode="outer">
+	<xsl:template match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp" mode="outer">
 		<body> <!-- main body for main book flow -->
 			<xsl:if test="autor_utworu or nazwa_utworu">
 				<title>
 					<xsl:apply-templates mode="title"
-						select="autor_utworu|dzielo_nadrzedne|nazwa_utworu"/>
+						select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul"/>
+                    <xsl:call-template name="translators" />
 				</title>
 			</xsl:if>
 
@@ -49,24 +52,7 @@
 				</p>
 			</epigraph>
 
-			<xsl:variable name="sections" select="count(naglowek_rozdzial)"/>
-			<section>
-				<xsl:choose>
-					<xsl:when test="local-name() = 'liryka_l'">
-						<poem>
-							<xsl:apply-templates mode="para"/>
-						</poem>
-					</xsl:when>
-
-					<xsl:otherwise>
-						<xsl:apply-templates mode="para"
-							select="*[count(following-sibling::naglowek_rozdzial)
-							= $sections]"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</section>
-
-			<xsl:apply-templates mode="sections"/>
+			<xsl:call-template name="section" />
 		</body>
 	</xsl:template>
 
@@ -78,6 +64,23 @@
 
 		<p><xsl:apply-templates mode="inline"/></p>
 	</xsl:template>
+
+    <xsl:template name="translators">
+        <xsl:if test="//dc:contributor.translator">
+            <p>
+                <xsl:text>tłum. </xsl:text>
+                <xsl:for-each select="//dc:contributor.translator">
+                    <xsl:if test="position() != 1">, </xsl:if>
+                    <xsl:apply-templates mode="person" />
+                </xsl:for-each>
+            </p>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="text()" mode="person">
+        <xsl:value-of select="wl:person_name(.)" />
+    </xsl:template>
+
 
 	<xsl:template match="uwaga" mode="title"/>
 	<xsl:template match="extra" mode="title"/>

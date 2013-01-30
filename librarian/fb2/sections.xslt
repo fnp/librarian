@@ -11,34 +11,37 @@
 	xmlns="http://www.gribuser.ru/xml/fictionbook/2.0"
 	xmlns:l="http://www.w3.org/1999/xlink">
 
-	<!-- a nice epigraph section -->
-	<xsl:template match="dedykacja|nota|nota_red" mode="sections">
-		<epigraph>
-			<xsl:apply-templates mode="para"/>
-			<!-- XXX: <strofa/> can be here as well -->
-		</epigraph>
-	</xsl:template>
+    <xsl:template name="section">
+        <!-- All the <_section> are in the end. -->
+        <xsl:if test="count(*) &gt; count(_section)">
+            <section>
+                <xsl:choose>
+                    <xsl:when test="(local-name() = 'liryka_l' or local-name() = 'liryka_lp')
+                                     and count(_section) = 0">
+                        <poem>
+                            <xsl:apply-templates mode="para" />
+                        </poem>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates mode="para" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </section>
+        </xsl:if>
 
-	<!-- main text is split by headings -->
-	<xsl:template match="naglowek_rozdzial" mode="sections">
-		<!--
+        <!-- Now, recursively, all the _section tags. -->
+        <xsl:apply-templates mode="section" select="_section" />
+    </xsl:template>
 
-		This one's tricky - we need to sections text into sections.
-		In order to do that, all elements belonging to a single section
-		must have something in common. We assume that this common factor
-		is having the same number of following section headings.
-
-		-->
-
-		<section>
-			<xsl:apply-templates mode="para"
-				select="../*[count(following-sibling::naglowek_rozdzial)
-					= count(current()/following-sibling::naglowek_rozdzial)]"/>
-		</section>
-	</xsl:template>
+    <xsl:template match="_section" mode="para" />
+    <xsl:template match="_section" mode="section" >
+        <section>
+            <xsl:call-template name="section" />
+        </section>
+    </xsl:template>
 
 	<!-- actual headings -->
-	<xsl:template match="naglowek_rozdzial" mode="para">
+	<xsl:template match="naglowek_czesc|naglowek_rozdzial|naglowek_podrozdzial|naglowek_akt|naglowek_scena" mode="para">
 		<title><p><xsl:apply-templates mode="inline"/></p></title>
 	</xsl:template>
 </xsl:stylesheet>

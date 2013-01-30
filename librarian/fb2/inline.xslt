@@ -17,12 +17,19 @@
 	<xsl:template match="motyw" mode="inline"/>
 
 	<!-- formatting -->
-	<xsl:template match="slowo_obce|tytul_dziela">
+	<xsl:template match="slowo_obce" mode="inline">
 		<emphasis>
 			<xsl:apply-templates mode="inline"/>
 		</emphasis>
 	</xsl:template>
-	<xsl:template match="wyroznienie">
+	<xsl:template match="tytul_dziela" mode="inline">
+		<emphasis>
+            <xsl:if test="@typ">„</xsl:if>
+			<xsl:apply-templates mode="inline"/>
+            <xsl:if test="@typ">”</xsl:if>
+		</emphasis>
+	</xsl:template>
+	<xsl:template match="wyroznienie" mode="inline">
 		<strong>
 			<xsl:apply-templates mode="inline"/>
 		</strong>

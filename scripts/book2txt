@@ -5,6 +5,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian.book2anything import Book2Anything, Option
+from librarian.parser import WLDocument
 
 
 class Book2Txt(Book2Anything):
@@ -21,6 +22,7 @@ class Book2Txt(Book2Anything):
         Option('-w', '--wrap', action='store', type='int', dest='wrapping', default=0,
                 help='set line wrap column')
     ]
+    transform = WLDocument.as_text
 
 
 if __name__ == '__main__':

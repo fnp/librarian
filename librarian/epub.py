@@ -7,6 +7,7 @@ from __future__ import with_statement
 
 import os
 import os.path
+import re
 import subprocess
 from StringIO import StringIO
 from copy import deepcopy
@@ -109,31 +110,74 @@ def find_annotations(annotations, source, part_no):
             find_annotations(annotations, child, part_no)
 
 
+class Stanza(object):
+    """
+    Converts / verse endings into verse elements in a stanza.
+
+    Slashes may only occur directly in the stanza. Any slashes in subelements
+    will be ignored, and the subelements will be put inside verse elements.
+
+    >>> s = etree.fromstring("<strofa>a/\\nb<x>x/\\ny</x>c/ \\nd</strofa>")
+    >>> Stanza(s).versify()
+    >>> print etree.tostring(s)
+    <strofa><wers_normalny>a</wers_normalny><wers_normalny>b<x>x/
+    y</x>c</wers_normalny><wers_normalny>d</wers_normalny></strofa>
+    
+    """
+    def __init__(self, stanza_elem):
+        self.stanza = stanza_elem
+        self.verses = []
+        self.open_verse = None
+
+    def versify(self):
+        self.push_text(self.stanza.text)
+        for elem in self.stanza:
+            self.push_elem(elem)
+            self.push_text(elem.tail)
+        tail = self.stanza.tail
+        self.stanza.clear()
+        self.stanza.tail = tail
+        self.stanza.extend(self.verses)
+
+    def open_normal_verse(self):
+        self.open_verse = self.stanza.makeelement("wers_normalny")
+        self.verses.append(self.open_verse)
+
+    def get_open_verse(self):
+        if self.open_verse is None:
+            self.open_normal_verse()
+        return self.open_verse
+
+    def push_text(self, text):
+        if not text or not text.strip():
+            return
+        for i, verse_text in enumerate(re.split(r"/\s*\n", text)):
+            if i:
+                self.open_normal_verse()
+            verse = self.get_open_verse()
+            if len(verse):
+                verse[-1].tail = (verse[-1].tail or "") + verse_text.strip()
+            else:
+                verse.text = (verse.text or "") + verse_text.strip()
+
+    def push_elem(self, elem):
+        if elem.tag.startswith("wers"):
+            verse = deepcopy(elem)
+            verse.tail = None
+            self.verses.append(verse)
+            self.open_verse = verse
+        else:
+            appended = deepcopy(elem)
+            appended.tail = None
+            self.get_open_verse().append(appended)
+
+
 def replace_by_verse(tree):
     """ Find stanzas and create new verses in place of a '/' character """
 
     stanzas = tree.findall('.//' + WLNS('strofa'))
-    for node in stanzas:
-        for child_node in node:
-            if child_node.tag in ('slowo_obce', 'wyroznienie'):
-                foreign_verses = inner_xml(child_node).split('/\n')
-                if len(foreign_verses) > 1:
-                    new_foreign = ''
-                    for foreign_verse in foreign_verses:
-                        if foreign_verse.startswith('<wers'):
-                            new_foreign += foreign_verse
-                        else:
-                            new_foreign += ''.join(('<wers_normalny>', foreign_verse, '</wers_normalny>'))
-                    set_inner_xml(child_node, new_foreign)
-        verses = inner_xml(node).split('/\n')
-        if len(verses) > 1:
-            modified_inner_xml = ''
-            for verse in verses:
-                if verse.startswith('<wers') or verse.startswith('<extra'):
-                    modified_inner_xml += verse
-                else:
-                    modified_inner_xml += ''.join(('<wers_normalny>', verse, '</wers_normalny>'))
-            set_inner_xml(node, modified_inner_xml)
+    for stanza in stanzas:
+        Stanza(stanza).versify()
 
 
 def add_to_manifest(manifest, partno):

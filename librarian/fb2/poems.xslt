@@ -25,29 +25,15 @@
 	<!-- regular poem elements -->
 	<xsl:template mode="para" match="strofa">
 		<stanza>
-			<xsl:call-template name="split-poem">
-				<xsl:with-param name="list" select="."/>
-			</xsl:call-template>
+			<xsl:apply-templates mode="poem"/>
 		</stanza>
 	</xsl:template>
 
-	<!-- split into verses -->
-	<xsl:template name="split-poem">
-		<xsl:param name="list"></xsl:param>
+	<!-- XXX: it should be done elsewhere but our cheap verse splitting
+		puts it here -->
+	<xsl:template match="motyw" mode="poem"/>
 
-		<xsl:if test="$list != ''">
-			<xsl:variable name="before"
-				select="substring-before(concat($list, '/'), '/')"/>
-			<xsl:variable name="after"
-				select="substring-after($list, '/')"/>
-
-			<v>
-				<xsl:value-of select="$before"/>
-			</v>
-
-			<xsl:call-template name="split-poem">
-				<xsl:with-param name="list" select="$after"/>
-			</xsl:call-template>
-		</xsl:if>
+	<xsl:template mode="poem" match="wers_normalny|wers_cd|wers_wciety|wers_akap">
+		<v><xsl:apply-templates mode="inline"/></v>
 	</xsl:template>
 </xsl:stylesheet>

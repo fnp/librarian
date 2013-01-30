@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  Example file for testing a converter.
+  Just run it through and see if everything looks ok.
+-->
+<utwor>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:Description rdf:about="LINK DO PLATFORMY REDAKCYJNEJ">
+<dc:creator xml:lang="pl">Utworu, Autor</dc:creator>
+<dc:title xml:lang="pl">Tytuł w DC</dc:title>
+<dc:contributor.translator xml:lang="pl">Utworu, Tłumacz</dc:contributor.translator>
+<dc:contributor.editor xml:lang="pl">Literacki, Redaktor</dc:contributor.editor>
+<dc:contributor.technical_editor xml:lang="pl">Techniczny, Redaktor</dc:contributor.technical_editor>
+<dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+<dc:subject.period xml:lang="pl">period</dc:subject.period>
+<dc:subject.type xml:lang="pl">type</dc:subject.type>
+<dc:subject.genre xml:lang="pl">genre</dc:subject.genre>
+<dc:description xml:lang="pl">Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa wykonana
+ przez Bibliotekę Narodową z egzemplarza pochodzącego ze zbiorów BN.</dc:description>
+<dc:identifier.url xml:lang="pl">http://wolnelektury.pl/katalog/lektura/test1</dc:identifier.url>
+<dc:source xml:lang="pl">source</dc:source>
+<dc:rights xml:lang="pl">Domena publiczna</dc:rights>
+<dc:date.pd xml:lang="pl">1500</dc:date.pd>
+<dc:format xml:lang="pl">xml</dc:format>
+<dc:type xml:lang="pl">text</dc:type>
+<dc:type xml:lang="en">text</dc:type>
+<dc:date xml:lang="pl">2000</dc:date>
+<dc:language xml:lang="pl">pol</dc:language>
+</rdf:Description>
+</rdf:RDF>
+<liryka_l>
+
+<nota_red><akap>nota_red</akap></nota_red>
+
+<autor_utworu>autor_utworu</autor_utworu>
+<dzielo_nadrzedne>dzielo_nadrzedne</dzielo_nadrzedne>
+<nazwa_utworu>nazwa_utworu</nazwa_utworu>
+<podtytul>podtytul</podtytul>
+
+<akap>[powyżej: 
+nota_red (nie pojawia się w tekście, może być podana osobno),
+autor_utworu, dzielo_nadrzedne, nazwa_utworu, podtytul, tłumacz (z DC)]</akap>
+
+<akap>[Noty: nota/akap, dedykacja/akap, motto/akap, motto_podpis]</akap>
+
+
+<nota><akap>nota/akap</akap></nota>
+<dedykacja><akap>dedykacja/akap</akap></dedykacja>
+<motto><akap>motto/akap</akap></motto>
+<motto_podpis>motto_podpis</motto_podpis>
+
+<akap>[Początek dramatu: lista_osob, naglowek_listy, lista_osoba, miejsce_czas]</akap>
+
+<lista_osob>
+  <naglowek_listy>lista_osob/naglowek_listy</naglowek_listy>
+  <lista_osoba>lista_osob/lista_osoba</lista_osoba>
+  <lista_osoba>lista_osob/lista_osoba</lista_osoba>
+</lista_osob>
+<miejsce_czas>miejsce_czas</miejsce_czas>
+
+<akap>[naglowek_czesc, naglowek_rozdzial, naglowek_podrozdzial, srodtytul]</akap>
+
+<naglowek_czesc>naglowek_czesc</naglowek_czesc>
+<naglowek_rozdzial>naglowek_rozdzial</naglowek_rozdzial>
+<naglowek_podrozdzial>naglowek_podrozdzial</naglowek_podrozdzial>
+<srodtytul>srodtytul</srodtytul>
+
+<akap>[akap, akap_cd, akap_dialog, motyw]</akap>
+
+<akap>akap<begin id="a"/><motyw>motyw</motyw></akap>
+<akap_cd>akap_cd</akap_cd>
+<akap_dialog>akap_dialog<end id="a"/></akap_dialog>
+
+<akap>[strofa, wers_akap, wers_wciety,typ=1-6, wers_cd, zastepnik_wersu]</akap>
+
+<strofa>strofa/
+<wers_akap>wers_akap</wers_akap>/
+<wers_wciety typ="1">wers_wciety@typ=1</wers_wciety>/
+<wers_wciety typ="2">wers_wciety@typ=2</wers_wciety>/
+<wers_wciety typ="3">wers_wciety@typ=3</wers_wciety>
+</strofa><strofa>
+<wers_wciety typ="4">wers_wciety@typ=4</wers_wciety>/
+<wers_wciety typ="5">wers_wciety@typ=5</wers_wciety>/
+<wers_wciety typ="6">wers_wciety@typ=6</wers_wciety>/
+<wers_cd>wers_cd</wers_cd>/
+<zastepnik_wersu />. . . . . . . . . . . . . . . .
+</strofa>
+
+<akap>[dlugi_cytat/akap]</akap>
+
+<dlugi_cytat><akap>Cytowany akapit powinien wyglądać jak cytowany akapit.
+Znaczy, może mieć jakieś dodatkowe wcięcie, jakiś rodzaj wyróżnienia czy coś.</akap></dlugi_cytat>
+
+<akap>[poezja_cyt/strofa]</akap>
+
+<poezja_cyt><strofa>To jest poezja/
+cytowana/
+ma być porządnie/
+wyrównana</strofa></poezja_cyt>
+
+<akap>[naglowek_akt, naglowek_scena]</akap>
+
+<naglowek_akt>naglowek_akt</naglowek_akt>
+<naglowek_scena>naglowek_scena</naglowek_scena>
+
+<akap>[Kwestia: naglowek_osoba, kwestia, didask_tekst, didaskalia, strofa, akap]</akap>
+
+<naglowek_osoba>naglowek_osoba</naglowek_osoba>
+
+<kwestia>
+<didask_tekst>didask_tekst</didask_tekst>
+<didaskalia>didaskalia</didaskalia>
+<strofa>Strofa w dramacie/
+jak amen w pacie/
+rzu.</strofa>
+<akap>Powyższy kawałek wiersza jest najzupełniej bez sensu i tak naprawdę wcale nie trzyma rytmu ani rymu. Być może należy skoncentrować się na dramacie prozą, jak ta tutaj niniejsza wypowiedź. </akap></kwestia>
+
+<akap>[didaskalia, osoba]</akap>
+
+<didaskalia>odezwał się <osoba>autor</osoba>.</didaskalia>
+
+<akap>[Wyróżnienia: tytul_dziela, tytul_dziela@typ=1, wyroznienie, slowo_obce]</akap>
+
+<akap>
+<tytul_dziela>tytul_dziela</tytul_dziela>,
+<tytul_dziela typ="1">tytul_dziela@typ=1</tytul_dziela>,
+<wyroznienie>wyroznienie</wyroznienie>,
+<slowo_obce>slowo_obce</slowo_obce>
+</akap>
+
+<akap>[Przypisy: pa, pt, pr, pe]</akap>
+
+<akap>
+<pa>pa - - - przypis <wyroznienie>autorski</wyroznienie></pa>
+<pt>pt - - - przypis tłumacza</pt>
+<pr>pr - - - przypis redakcyjny</pr>
+<pe>pe - - - przypis edytorski</pe>
+</akap>
+
+<akap>[Separatory]</akap>
+
+<akap>[sekcja_swiatlo:]</akap>
+
+<sekcja_swiatlo></sekcja_swiatlo>
+
+<akap>[sekcja_asterysk:]</akap>
+
+<sekcja_asterysk></sekcja_asterysk>
+
+<akap>[separator_linia:]</akap>
+
+<separator_linia></separator_linia>
+
+
+
+<akap>[Komentarze: uwaga, extra]</akap>
+<uwaga>uwaga</uwaga>
+<extra>extra</extra>
+
+<akap>[Nieużywane]</akap>
+
+<wyp_osoba>wyp_osoba</wyp_osoba>
+<wywiad_pyt><akap>wywiad_pyt/akap</akap></wywiad_pyt>
+<wywiad_odp><akap>wywiad_odp/akap</akap></wywiad_odp>
+<mat>mat</mat>
+<www>www</www>
+
+</liryka_l>
+</utwor>
