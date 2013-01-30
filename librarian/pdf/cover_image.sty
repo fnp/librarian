@@ -1,0 +1,27 @@
+\newcommand{\makecover}[2]{
+        \pdfpagewidth=#1
+        \pdfpageheight=#2
+
+        \thispagestyle{empty}
+        \newlength{\PictHOffset}
+        \newlength{\PictVOffset}
+        \setlength{\PictHOffset}{1in}
+        \addtolength{\PictHOffset}{\hoffset}
+        \addtolength{\PictHOffset}{\oddsidemargin}
+
+        \setlength{\PictVOffset}{1in}
+        \addtolength{\PictVOffset}{\voffset}
+        \addtolength{\PictVOffset}{\topmargin}
+        \addtolength{\PictVOffset}{\headheight}
+        \addtolength{\PictVOffset}{\headsep}
+        \addtolength{\PictVOffset}{\topskip}
+        \addtolength{\PictVOffset}{-\pdfpageheight}
+
+        \noindent\hspace*{-\PictHOffset}%
+        \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
+            \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.png}}}
+        \clearpage
+
+        \setlength{\pdfpagewidth}{210mm}
+        \setlength{\pdfpageheight}{297mm}
+}

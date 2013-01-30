@@ -8,7 +8,7 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
-from librarian import OutputFile
+from librarian import IOFile
 from librarian.cover import WLCover
 from librarian import get_resource
 
@@ -57,4 +57,4 @@ def transform(wldoc, verbose=False,
     subprocess.check_call(['ebook-convert', epub.get_filename(), output_file.name,
             '--no-inline-toc', '--cover=%s' % cover_file.name], **kwargs)
     os.unlink(cover_file.name)
-    return OutputFile.from_filename(output_file.name)
+    return IOFile.from_filename(output_file.name)

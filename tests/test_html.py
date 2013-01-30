@@ -37,4 +37,4 @@ def test_empty():
     assert not WLDocument.from_string(
             '<utwor />',
             parse_dublincore=False,
-        ).as_html()
+        ).as_html().get_string()

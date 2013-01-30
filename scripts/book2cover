@@ -4,9 +4,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from StringIO import StringIO
-from librarian import OutputFile
-from librarian.book2anything import Book2Anything, Option
+from librarian.book2anything import Book2Anything
 
 
 class Book2Cover(Book2Anything):

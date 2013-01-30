@@ -1,0 +1,80 @@
+\usepackage[MeX]{polski}
+
+\newcommand{\rightsinfostr}[2][] {
+    \ifx&#1&%
+        Ten utwór nie jest chroniony prawem autorskim i~znajduje się w~domenie
+        publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
+        i~rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
+        (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
+        te dodatkowe materiały udostępnione są na licencji
+        \href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
+        Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.
+    \else
+        Ten utwór jest udostępniony na licencji
+        \href{#1}{#2}.
+    \fi
+}
+
+\renewcommand{\maketitle}{
+    {
+    \thispagestyle{empty}
+    \footnotesize
+    \color{theme}
+
+    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
+        \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
+    \end{minipage}
+    \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
+
+    %\ifflaglessadvertising
+    %\else
+        \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
+        \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
+        \vspace{.5em}
+    %\fi
+
+    Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
+    przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
+
+    \end{minipage}
+    \noindent \rule{\linewidth}{0.4pt}
+
+    \vspace{.6em}
+    \color{black}
+    }
+}
+
+\newcommand{\editorialsection}{
+  \begin{figure}[b!]
+  {
+    \footnotesize
+    \color{theme}
+    \noindent \rule{\linewidth}{0.4pt}
+
+    \rightsinfo
+    \vspace{.6em}
+
+    Źródło: \href{\bookurl}{\bookurl}
+
+    \vspace{.6em}
+    \sourceinfo
+
+    \description
+    \vspace{.6em}
+
+    \editors
+
+    \vspace{.6em}
+    \coverby
+
+    \color{black}
+  }
+  \end{figure}
+}
+
+
+% Label <pa> as such.
+\let\paorig\pa
+\ifshowfootnotes
+  \renewcommand{\pa}[1]{\paorig{#1 [przypis autorski]}}
+\fi

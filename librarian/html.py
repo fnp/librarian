@@ -8,7 +8,7 @@ import cStringIO
 import copy
 
 from lxml import etree
-from librarian import XHTMLNS, ParseError, OutputFile
+from librarian import XHTMLNS, ParseError, IOFile
 from librarian import functions
 
 from lxml.etree import XMLSyntaxError, XSLTApplyError
@@ -59,7 +59,7 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None):
             add_anchors(result.getroot())
             add_table_of_contents(result.getroot())
 
-            return OutputFile.from_string(etree.tostring(result, method='html',
+            return IOFile.from_string(etree.tostring(result, method='html',
                 xml_declaration=False, pretty_print=True, encoding='utf-8'))
         else:
             return None

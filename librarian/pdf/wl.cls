@@ -66,8 +66,6 @@
 
 \usepackage{trace}
 
-\usepackage[MeX]{polski}
-
 \usepackage[xetex]{graphicx}
 \usepackage{fontspec}
 \usepackage{xunicode}
@@ -75,6 +73,7 @@
 
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
+% TODO: link color is a style thing
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
 
 \ifenablewlfont
@@ -168,91 +167,6 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \usebox{\ximagebox}%
 \raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
 
-\newcommand{\makecover}[2]{
-        \pdfpagewidth=#1
-        \pdfpageheight=#2
-
-        \thispagestyle{empty}
-        \newlength{\PictHOffset}
-        \newlength{\PictVOffset}
-        \setlength{\PictHOffset}{1in}
-        \addtolength{\PictHOffset}{\hoffset}
-        \addtolength{\PictHOffset}{\oddsidemargin}
-
-        \setlength{\PictVOffset}{1in}
-        \addtolength{\PictVOffset}{\voffset}
-        \addtolength{\PictVOffset}{\topmargin}
-        \addtolength{\PictVOffset}{\headheight}
-        \addtolength{\PictVOffset}{\headsep}
-        \addtolength{\PictVOffset}{\topskip}
-        \addtolength{\PictVOffset}{-\pdfpageheight}
-
-        \noindent\hspace*{-\PictHOffset}%
-        \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
-            \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.png}}}
-        \clearpage
-
-        \setlength{\pdfpagewidth}{210mm}
-        \setlength{\pdfpageheight}{297mm}
-}
-
-
-\renewcommand{\maketitle}{
-    {
-    \thispagestyle{empty}
-    \footnotesize
-    \color{theme}
-
-    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
-        \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
-    \end{minipage}
-    \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
-
-    \ifflaglessadvertising
-    \else
-        \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
-        \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
-        \vspace{.5em}
-    \fi
-
-    Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
-    przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
-
-    \end{minipage}
-    \noindent \rule{\linewidth}{0.4pt}
-
-    \vspace{.6em}
-    \color{black}
-    }
-}
-
-\newcommand{\editorialsection}{
-  \begin{figure}[b!]
-  {
-    \footnotesize
-    \color{theme}
-    \noindent \rule{\linewidth}{0.4pt}
-
-    \rightsinfo
-    \vspace{.6em}
-
-    Źródło: \href{\bookurl}{\bookurl}
-
-    \vspace{.6em}
-    \sourceinfo
-
-    \description
-    \vspace{.6em}
-
-    \editors
-
-    \vspace{.6em}
-    \coverby
-
-    \color{black}
-  }
-  \end{figure}
-}
 
 
 \newcommand{\typosubsubsection}[1]{%
@@ -303,6 +217,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\translator}[1]{%
+% TODO: l10n is a style thing
 \subsection*{\typosubsubsection{tłum. #1}}%
 }
 
@@ -430,7 +345,7 @@ Letters={Uppercase}
 }
 
 \ifshowfootnotes
-  \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
+  \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}

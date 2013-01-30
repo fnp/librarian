@@ -115,3 +115,17 @@ def reg_texcommand():
     _register_function(texcommand)
 
 
+def reg_get(format_):
+    def get(context, *args):
+        obj = format_
+        for arg in args:
+            if hasattr(obj, arg):
+                obj = getattr(obj, arg)
+            else:
+                try:
+                    obj = obj[arg]
+                except (TypeError, KeyError), e:
+                    # Just raise proper AttributeError.
+                    getattr(obj, arg)
+        return obj
+    _register_function(get)
