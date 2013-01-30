@@ -131,6 +131,22 @@ class EduModule(Xmill):
         else:
             return '<li>', '</li>'
 
+
+    def handle_podpis(self, element):
+        return u"""<div class="caption">""", u"</div>"
+
+    def handle_tabela(self, element):
+        has_frames = int(element.attrib.get("ramki", "0"))
+        if has_frames: frames_c = "framed"
+        else: frames_c = ""
+        return u"""<table class="%s">""" % frames_c, u"</table>"
+
+    def handle_wiersz(self, element):
+        return u"<tr>", u"</tr>"
+
+    def handle_kol(self, element):
+        return u"<td>", u"</td>"
+
     def handle_rdf__RDF(self, _):
         # ustal w opcjach  rzeczy :D
         return
