@@ -29,8 +29,9 @@ setup(
     maintainer_email='radoslaw.czajka@nowoczesnapolska.org.pl',
     url='http://github.com/fnp/librarian',
     packages=['librarian'],
-    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*', 'res/*'] +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer')},
+    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
+                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer') +
+                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'res')},
     include_package_data=True,
     install_requires=['lxml>=2.2'],
     scripts=['scripts/book2html',

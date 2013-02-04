@@ -5,7 +5,6 @@
 #
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS, IOFile
-from librarian.styles.wolnelektury.cover import WLCover
 from librarian import dcparser
 
 from xml.parsers.expat import ExpatError
@@ -218,6 +217,7 @@ class WLDocument(object):
 
     def as_cover(self, cover_class=None, *args, **kwargs):
         if cover_class is None:
+            from librarian.cover import WLCover
             cover_class = WLCover
         return cover_class(self.book_info, *args, **kwargs).output_file()
 

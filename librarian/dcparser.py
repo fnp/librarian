@@ -95,6 +95,7 @@ class Field(object):
         self.default = kwargs.get('default', [] if multiple else [None])
 
     def validate_value(self, val, strict=False):
+        val = [v.strip() if v is not None else v for v in val]
         if strict and self.strict is not None:
             validator = self.strict
         else:
@@ -177,6 +178,9 @@ class WorkInfo(object):
         Field( DCNS('date'), 'created_at', as_date),
         Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
         Field( DCNS('publisher'), 'publisher'),
+
+        Field( DCNS('subject.competence'), 'competences', multiple=True, required=False),
+        Field( DCNS('subject.curriculum'), 'curriculum', multiple=True, required=False),
 
         Field( DCNS('language'), 'language'),
         Field( DCNS('description'), 'description', required=False),
