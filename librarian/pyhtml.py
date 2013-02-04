@@ -4,16 +4,17 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from lxml import etree
-from librarian import OutputFile, RDFNS, DCNS
+from librarian import IOFile, RDFNS, DCNS, Format
 from xmlutils import Xmill, tag, tagged, ifoption
 from librarian import functions
 import re
 import random
 
 
+
 class EduModule(Xmill):
-    def __init__(self, *args):
-        super(EduModule, self).__init__(*args)
+    def __init__(self, options=None):
+        super(EduModule, self).__init__(options)
         self.activity_counter = 0
         self.register_text_filter(lambda t: functions.substitute_entities(None, t))
 
@@ -43,7 +44,7 @@ class EduModule(Xmill):
             'activity': True,
             'activity_counter': self.activity_counter
             }
-        submill = EduModule()
+        submill = EduModule(self.options)
 
         opis = submill.generate(element.xpath('opis')[0])
 
@@ -109,9 +110,13 @@ class EduModule(Xmill):
     def handle_lista(self, element, attrs={}):
         ltype = element.attrib.get('typ', 'punkt')
         if ltype == 'slowniczek':
-            self.options = {'slowniczek': True}
+            surl = element.attrib.get('href', None)
+            sxml = None
+            if surl:
+                sxml = etree.fromstring(self.provider.by_uri(surl).get_string())
+            self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
             return '<div class="slowniczek">', '</div>'
-### robie teraz punkty wyboru
+
         listtag = {'num': 'ol',
                'punkt': 'ul',
                'alfa': 'ul',
@@ -130,6 +135,25 @@ class EduModule(Xmill):
             return '<dl>', '</dl>'
         else:
             return '<li>', '</li>'
+
+    def handle_definiendum(self, element):
+        nxt = element.getnext()
+        definiens_s = ''
+
+        # let's pull definiens from another document
+        if self.options['slowniczek_xml'] and (not nxt or nxt.tag != 'definiens'):
+            sxml = self.options['slowniczek_xml']
+            defloc = sxml.xpath("//definiendum[content()='%s']" % element.text)
+            if defloc:
+                definiens = defloc.getnext()
+                if definiens.tag == 'definiens':
+                    subgen = EduModule(self.options)
+                    definiens_s = subgen.generate(definiens)
+
+        return u"<dt>", u"</dt>" + definiens_s
+
+    def handle_definiens(self, element):
+        return u"<dd>", u"</dd>"
 
 
     def handle_podpis(self, element):
@@ -150,6 +174,15 @@ class EduModule(Xmill):
     def handle_rdf__RDF(self, _):
         # ustal w opcjach  rzeczy :D
         return
+
+    def handle_link(self, element):
+        if 'material' in element.attrib:
+            formats = re.split(r"[, ]+", element.attrib['format'])
+            fmt_links = []
+            for f in formats:
+                fmt_links.append(u'<a href="%s">%s</a>' % (self.options['urlmapper'].url_for_material(element.attrib['material'], f), f.upper()))
+
+            return u"", u' (%s)' % u' '.join(fmt_links)
 
 
 class Exercise(EduModule):
@@ -369,6 +402,24 @@ class PrawdaFalsz(Exercise):
             return super(PrawdaFalsz, self).handle_punkt(element)
 
 
+class EduModuleFormat(Format):
+    def __init__(self, wldoc, **kwargs):
+        super(EduModuleFormat, self).__init__(wldoc, **kwargs)
+
+    def build(self):
+        edumod = EduModule({'provider': self.wldoc.provider, 'urlmapper': self})
+
+        html = edumod.generate(self.wldoc.edoc.getroot())
+
+        return IOFile.from_string(html.encode('utf-8'))
+
+    def url_for_material(self, slug, fmt=None):
+        # No briliant idea for an API here.
+        if fmt:
+            return "%s.%s" % (slug, fmt)
+        return slug
+
+
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
     """Transforms the WL document to XHTML.
 
@@ -376,8 +427,5 @@ def transform(wldoc, stylesheet='edumed', options=None, flags=None):
     otherwise returns True if file has been written,False if it hasn't.
     File won't be written if it has no content.
     """
-    edumod = EduModule(options)
-#    from pdb import set_trace; set_trace()
-    html = edumod.generate(wldoc.edoc.getroot())
-
-    return OutputFile.from_string(html.encode('utf-8'))
+    edumodfor = EduModuleFormat(wldoc)
+    return edumodfor.build()

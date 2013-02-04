@@ -142,7 +142,7 @@ class DirDocProvider(DocProvider):
 
     def by_slug(self, slug):
         fname = slug + '.xml'
-        return open(os.path.join(self.dir, fname))
+        return IOFile.from_filename(os.path.join(self.dir, fname))
 
 
 import lxml.etree as etree
