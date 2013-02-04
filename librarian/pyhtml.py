@@ -113,7 +113,7 @@ class EduModule(Xmill):
             surl = element.attrib.get('href', None)
             sxml = None
             if surl:
-                sxml = etree.fromstring(self.provider.by_uri(surl).get_string())
+                sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
             self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
             return '<div class="slowniczek">', '</div>'
 
@@ -143,9 +143,10 @@ class EduModule(Xmill):
         # let's pull definiens from another document
         if self.options['slowniczek_xml'] and (not nxt or nxt.tag != 'definiens'):
             sxml = self.options['slowniczek_xml']
-            defloc = sxml.xpath("//definiendum[content()='%s']" % element.text)
+            assert element.text != ''
+            defloc = sxml.xpath("//definiendum[text()='%s']" % element.text)
             if defloc:
-                definiens = defloc.getnext()
+                definiens = defloc[0].getnext()
                 if definiens.tag == 'definiens':
                     subgen = EduModule(self.options)
                     definiens_s = subgen.generate(definiens)
