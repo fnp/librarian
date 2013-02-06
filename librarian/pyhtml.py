@@ -42,9 +42,9 @@ class EduModule(Xmill):
         self.activity_counter += 1
         self.options = {
             'activity': True,
-            'activity_counter': self.activity_counter
+            'activity_counter': self.activity_counter,
             }
-        submill = EduModule(self.options)
+        submill = EduModule(dict(self.options.items() + {'sub_gen': True}.items()))
 
         opis = submill.generate(element.xpath('opis')[0])
 
@@ -78,10 +78,10 @@ class EduModule(Xmill):
 </div>
 """ % locals()
 
-    handle_opis = ifoption(activity=True)(tag('div', 'description'))
-    handle_wskazowki = ifoption(activity=True)(tag('div', ('hints', 'teacher')))
+    handle_opis = ifoption(sub_gen=True)(tag('div', 'description'))
+    handle_wskazowki = ifoption(sub_gen=True)(tag('div', ('hints', 'teacher')))
 
-    @ifoption(activity=True)
+    @ifoption(sub_gen=True)
     @tagged('div', 'materials')
     def handle_pomoce(self, _):
         return "Pomoce: ", ""
