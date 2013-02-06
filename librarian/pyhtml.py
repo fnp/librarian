@@ -78,10 +78,10 @@ class EduModule(Xmill):
 </div>
 """ % locals()
 
-    handle_opis = ifoption(activity=False)(tag('div', 'description'))
-    handle_wskazowki = ifoption(activity=False)(tag('div', ('hints', 'teacher')))
+    handle_opis = ifoption(activity=True)(tag('div', 'description'))
+    handle_wskazowki = ifoption(activity=True)(tag('div', ('hints', 'teacher')))
 
-    @ifoption(activity=False)
+    @ifoption(activity=True)
     @tagged('div', 'materials')
     def handle_pomoce(self, _):
         return "Pomoce: ", ""
