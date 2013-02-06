@@ -164,11 +164,11 @@ class WorkInfo(object):
     __metaclass__ = DCInfo
 
     FIELDS = (
-        Field( DCNS('creator.expert'), 'authors', as_person, salias='author', multiple=True),
-        Field( DCNS('creator.scenario'), 'authors', as_person, salias='author', multiple=True),
-        Field( DCNS('creator.textbook'), 'authors', as_person, salias='author', multiple=True),
+        Field( DCNS('creator.expert'), 'authors_expert', as_person, salias='author', required=False, multiple=True),
+        Field( DCNS('creator.scenario'), 'authors_scenario', as_person, salias='author', required=False, multiple=True),
+        Field( DCNS('creator.textbook'), 'authors_textbook', as_person, salias='author', required=False, multiple=True),
         Field( DCNS('title'), 'title'),
-        Field( DCNS('type'), 'type', required=False, multiple=True),
+        Field( DCNS('type'), 'type', required=False),
 
         Field( DCNS('contributor.editor'), 'editors', \
             as_person, salias='editor', multiple=True, default=[]),
