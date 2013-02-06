@@ -139,7 +139,7 @@ class Field(object):
         return self.validate_value(f, strict=strict)
 
     def __eq__(self, other):
-        if isinstance(other, Field) and other.name == self.name:
+        if isinstance(other, Field) and other.name == self.name and other.uri == self.uri:
             return True
         return False
 
@@ -252,6 +252,8 @@ class WorkInfo(object):
         for field in self.FIELDS:
             value = field.validate(dc_fields, fallbacks=fallbacks,
                             strict=strict)
+            if field.multiple:
+                value = getattr(self, 'prop_' + field.name, []) + value
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias: self.fmap[field.salias] = field
@@ -371,12 +373,12 @@ class BookInfo(WorkInfo):
                 required=False),
         Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True,
                 required=False),
-                
+
         Field( DCNS('contributor.translator'), 'translators', \
             as_person,  salias='translator', multiple=True, default=[]),
-        Field( DCNS('relation.hasPart'), 'parts', 
+        Field( DCNS('relation.hasPart'), 'parts',
             WLURI, strict=as_wluri_strict, multiple=True, required=False),
-        Field( DCNS('relation.isVariantOf'), 'variant_of', 
+        Field( DCNS('relation.isVariantOf'), 'variant_of',
             WLURI, strict=as_wluri_strict, required=False),
 
         Field( DCNS('relation.coverImage.url'), 'cover_url', required=False),
