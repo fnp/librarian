@@ -302,7 +302,8 @@ Overrides the returned content default handle_pytanie
 
 class Luki(Exercise):
     def find_pieces(self, question):
-        return question.xpath("//luka")
+        print question.xpath(".//luka")
+        return question.xpath(".//luka")
 
     def solution_html(self, piece):
         return piece.text + ''.join(
@@ -325,8 +326,7 @@ class Luki(Exercise):
         return qpre, qpost
 
     def handle_opis(self, element):
-        pre, post = super(Luki, self).handle_opis(element)
-        return pre, self.words_html + post
+        return '', self.words_html
 
     def handle_luka(self, element):
         self.piece_counter += 1
@@ -335,7 +335,7 @@ class Luki(Exercise):
 
 class Zastap(Luki):
     def find_pieces(self, question):
-        return question.xpath("//zastap")
+        return question.xpath(".//zastap")
 
     def solution_html(self, piece):
         return piece.attrib['rozw']
