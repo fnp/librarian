@@ -16,7 +16,7 @@ class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
         self.activity_counter = 0
-        self.register_text_filter(lambda t: functions.substitute_entities(None, t))
+        self.register_text_filter(functions.substitute_entities)
 
     def handle_powiesc(self, element):
         return u"""

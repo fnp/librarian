@@ -53,8 +53,6 @@ class Xmill(object):
         tagname = None
 #        from nose.tools import set_trace
 
-        if isinstance(element, etree._Comment): return None
-
         if element.tag[0] == '{':
             for nshort, nhref in element.nsmap.items():
                 try:
@@ -89,6 +87,8 @@ class Xmill(object):
             if element is None: return None  # end of tree
 
     def _handle_element(self, element):
+        if isinstance(element, etree._Comment): return None
+        
         handler = self._handle_for_element(element)
         # How many scopes
         try:

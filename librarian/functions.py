@@ -11,7 +11,7 @@ from librarian.dcparser import Person
 def _register_function(f):
     """ Register extension function with lxml """
     ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
-    ns[f.__name__] = f
+    ns[f.__name__] = lambda context, *args: f(*args)
 
 
 ENTITY_SUBSTITUTIONS = [
@@ -22,7 +22,7 @@ ENTITY_SUBSTITUTIONS = [
 	(u'"', u'”'),
 ]
 
-def substitute_entities(context, text):
+def substitute_entities(text):
     """XPath extension function converting all entites in passed text."""
     if isinstance(text, list):
         text = ''.join(text)
@@ -35,7 +35,7 @@ def reg_substitute_entities():
     _register_function(substitute_entities)
 
 
-def strip(context, text):
+def strip(text):
     """Remove unneeded whitespace from beginning and end"""
     if isinstance(text, list):
         text = ''.join(text)
@@ -46,7 +46,7 @@ def reg_strip():
     _register_function(strip)
 
 
-def starts_white(context, text):
+def starts_white(text):
     if isinstance(text, list):
         text = ''.join(text)
     if not text:
@@ -59,7 +59,7 @@ def reg_starts_white():
 
 
 def reg_ends_white():
-    def ends_white(context, text):
+    def ends_white(text):
         if isinstance(text, list):
             text = ''.join(text)
         if not text:
@@ -68,7 +68,7 @@ def reg_ends_white():
     _register_function(ends_white)
 
 
-def wrap_words(context, text, wrapping):
+def wrap_words(text, wrapping):
     """XPath extension function automatically wrapping words in passed text"""
     if isinstance(text, list):
         text = ''.join(text)
@@ -93,7 +93,7 @@ def reg_wrap_words():
     _register_function(wrap_words)
 
 
-def person_name(context, text):
+def person_name(text):
     """ Converts "Name, Forename" to "Forename Name" """
     if isinstance(text, list):
         text = ''.join(text)
@@ -104,7 +104,7 @@ def reg_person_name():
     _register_function(person_name)
 
 
-def texcommand(context, text):
+def texcommand(text):
     """Remove non-letters"""
     if isinstance(text, list):
         text = ''.join(text)
@@ -116,7 +116,7 @@ def reg_texcommand():
 
 
 def reg_get(format_):
-    def get(context, *args):
+    def get(*args):
         obj = format_
         for arg in args:
             if hasattr(obj, arg):
