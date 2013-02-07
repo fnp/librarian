@@ -179,7 +179,7 @@ class EduModule(Xmill):
 
     def handle_link(self, element):
         if 'url' in element.attrib:
-            return tag('a', href=element.attrib['url'])(element)
+            return tag('a', href=element.attrib['url'])(self, element)
         elif 'material' in element.attrib:
             formats = re.split(r"[, ]+", element.attrib['format'])
             fmt_links = []
