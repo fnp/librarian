@@ -33,8 +33,8 @@ class EduModule(Xmill):
     handle_dzielo_nadrzedne = tag("span", "collection")
     handle_podtytul = tag("span", "subtitle")
     handle_naglowek_akt = handle_naglowek_czesc = handle_srodtytul = tag("h2")
-    handle_naglowek_scena = handle_naglowek_rozdzial = tag('h3')
-    handle_naglowek_osoba = handle_naglowek_podrozdzial = tag('h4')
+    handle_naglowek_scena = handle_naglowek_rozdzial = tag('h2')
+    handle_naglowek_osoba = handle_naglowek_podrozdzial = tag('h3')
     handle_akap = handle_akap_dialog = handle_akap_cd = tag('p', 'paragraph')
     handle_strofa = tag('div', 'stanza')
 
@@ -65,15 +65,16 @@ class EduModule(Xmill):
 
         return u"""
 <div class="activity">
- <div class="text">%(counter)d.
+ <div class="text">
+  <span class="act_counter">%(counter)d.</span>
   %(opis)s
   %(wskazowki)s
  </div>
- <div class="info">
-  <p>Czas: %(czas)s min</p>
-  <p>Forma: %(forma)s</p>
+ <aside class="info">
+  <section class="infobox time"><h1>Czas</h1><p>%(czas)s min</p></section>
+  <section class="infobox kind"><h1>Forma</h1><p>%(forma)s</p></section>
   %(pomoce)s
- </div>
+ </aside>
  <div class="clearboth"></div>
 </div>
 """ % locals()
@@ -82,9 +83,9 @@ class EduModule(Xmill):
     handle_wskazowki = ifoption(sub_gen=True)(tag('div', ('hints', 'teacher')))
 
     @ifoption(sub_gen=True)
-    @tagged('div', 'materials')
+    @tagged('section', 'infobox materials')
     def handle_pomoce(self, _):
-        return "Pomoce: ", ""
+        return """<h1>Pomoce</h1>""", ""
 
     def handle_czas(self, *_):
         return
@@ -177,7 +178,9 @@ class EduModule(Xmill):
         return
 
     def handle_link(self, element):
-        if 'material' in element.attrib:
+        if 'url' in element.attrib:
+            return tag('a', href=element.attrib['url'])(element)
+        elif 'material' in element.attrib:
             formats = re.split(r"[, ]+", element.attrib['format'])
             fmt_links = []
             for f in formats:
@@ -302,7 +305,6 @@ Overrides the returned content default handle_pytanie
 
 class Luki(Exercise):
     def find_pieces(self, question):
-        print question.xpath(".//luka")
         return question.xpath(".//luka")
 
     def solution_html(self, piece):
