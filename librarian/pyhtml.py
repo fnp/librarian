@@ -261,6 +261,13 @@ class Wybor(Exercise):
             if len(solutions) != 1:
                 is_single_choice = False
                 break
+            choices = element.xpath(".//*[@nazwa]")
+            uniq = set()
+            for n in choices: uniq.add(n.attrib['nazwa'])
+            if len(choices) != len(uniq):
+                is_single_choice = False
+                break
+
         self.options = {'single': is_single_choice}
         return pre, post
 
