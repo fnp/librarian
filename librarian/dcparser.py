@@ -380,6 +380,8 @@ class BookInfo(WorkInfo):
             WLURI, strict=as_wluri_strict, multiple=True, required=False),
         Field( DCNS('relation.isVariantOf'), 'variant_of',
             WLURI, strict=as_wluri_strict, required=False),
+        Field( DCNS('relation'), 'relations',
+            WLURI, strict=as_wluri_strict, multiple=True, required=False),
 
         Field( DCNS('relation.coverImage.url'), 'cover_url', required=False),
         Field( DCNS('relation.coverImage.attribution'), 'cover_by', required=False),
