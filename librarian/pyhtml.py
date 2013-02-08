@@ -196,6 +196,8 @@ class Exercise(EduModule):
         self.question_counter = 0
         super(Exercise, self).__init__(*args, **kw)
 
+    handle_opis = tag('div', 'description')
+
     def handle_rozw_kom(self, element):
         return u"""<div style="display:none" class="comment">""", u"""</div>"""
 

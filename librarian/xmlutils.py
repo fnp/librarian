@@ -96,7 +96,7 @@ class Xmill(object):
 
             if handler is None:
                 pre = [self.filter_text(element.text)]
-                post = []
+                post = [self.filter_text(element.tail)]
             else:
                 vals = handler(element)
                 # depending on number of returned values, vals can be None, a value, or a tuple.
