@@ -102,7 +102,7 @@ class Xmill(object):
                 # depending on number of returned values, vals can be None, a value, or a tuple.
                 # how poorly designed is that? 9 lines below are needed just to unpack this.
                 if vals is None:
-                    return []
+                    return [self.filter_text(element.tail)]
                 else:
                     if not isinstance(vals, tuple):
                         return [vals, self.filter_text(element.tail)]

@@ -11,6 +11,8 @@ import re
 import random
 
 
+DEFAULT_MATERIAL_FORMAT = 'odt'
+
 
 class EduModule(Xmill):
     def __init__(self, options=None):
@@ -40,6 +42,9 @@ class EduModule(Xmill):
     handle_wyroznienie = tag('em')
     handle_tytul_dziela = tag('em', 'title')
     handle_slowo_obce = tag('em', 'foreign')
+
+    def handle_uwaga(self, _e):
+        return None
 
     def handle_aktywnosc(self, element):
         self.activity_counter += 1
@@ -183,12 +188,16 @@ class EduModule(Xmill):
         if 'url' in element.attrib:
             return tag('a', href=element.attrib['url'])(self, element)
         elif 'material' in element.attrib:
-            formats = re.split(r"[, ]+", element.attrib.get('format', 'odt'))
+            formats = re.split(r"[, ]+",
+                               element.attrib.get('format', DEFAULT_MATERIAL_FORMAT))
+            make_url = lambda f: self.options['urlmapper'] \
+              .url_for_material(element.attrib['material'], f)
+            def_href = make_url(formats[0])
             fmt_links = []
-            for f in formats:
-                fmt_links.append(u'<a href="%s">%s</a>' % (self.options['urlmapper'].url_for_material(element.attrib['material'], f), f.upper()))
+            for f in formats[1:]:
+                fmt_links.append(u'<a href="%s">%s</a>' % (make_url(f), f.upper()))
 
-            return u"", u' (%s)' % u' '.join(fmt_links)
+            return u"<a href='%s'>", u'</a> (%s)' % (def_href, u' '.join(fmt_links))
 
 
 class Exercise(EduModule):
