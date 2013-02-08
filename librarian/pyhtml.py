@@ -398,7 +398,7 @@ class Przyporzadkuj(Exercise):
         if self.options['subject']:
             self.piece_counter += 1
             if self.options['handles']:
-                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle">%s</span>' % (element.attrib['rozw'], self.piece_counter, self.piece_counter), '</li>'
+                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib['rozw'], self.piece_counter, self.piece_counter), '</li>'
             else:
                 return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
 
