@@ -183,7 +183,7 @@ class EduModule(Xmill):
         if 'url' in element.attrib:
             return tag('a', href=element.attrib['url'])(self, element)
         elif 'material' in element.attrib:
-            formats = re.split(r"[, ]+", element.attrib['format'])
+            formats = re.split(r"[, ]+", Element.attrib.get('format', 'odt'))
             fmt_links = []
             for f in formats:
                 fmt_links.append(u'<a href="%s">%s</a>' % (self.options['urlmapper'].url_for_material(element.attrib['material'], f), f.upper()))
