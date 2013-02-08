@@ -37,6 +37,9 @@ class EduModule(Xmill):
     handle_naglowek_osoba = handle_naglowek_podrozdzial = tag('h3')
     handle_akap = handle_akap_dialog = handle_akap_cd = tag('p', 'paragraph')
     handle_strofa = tag('div', 'stanza')
+    handle_wyroznienie = tag('em')
+    handle_tytul_dziela = tag('em', 'title')
+    handle_slowo_obce = tag('em', 'foreign')
 
     def handle_aktywnosc(self, element):
         self.activity_counter += 1
@@ -156,7 +159,6 @@ class EduModule(Xmill):
 
     def handle_definiens(self, element):
         return u"<dd>", u"</dd>"
-
 
     def handle_podpis(self, element):
         return u"""<div class="caption">""", u"</div>"
