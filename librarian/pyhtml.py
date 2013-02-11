@@ -266,7 +266,10 @@ class Wybor(Exercise):
     def handle_cwiczenie(self, element):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
         is_single_choice = True
-        for p in element.xpath(".//pytanie"):
+        pytania = element.xpath(".//pytanie")
+        if not pytania: 
+            pytania = [element]
+        for p in pytania:
             solutions = re.split(r"[, ]+", p.attrib['rozw'])
             if len(solutions) != 1:
                 is_single_choice = False

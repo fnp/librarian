@@ -80,7 +80,7 @@ class WLURI(object):
     slug = None
 
     example = 'http://edukacjamedialna.edu.pl/'
-    _re_wl_uri = re.compile(r'http://(www\.)?edukacjamedialna.edu.pl/'
+    _re_wl_uri = re.compile(r'http://(www\.)?edukacjamedialna.edu.pl/(lekcje/)?'
             '(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):
