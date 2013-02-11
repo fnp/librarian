@@ -292,14 +292,14 @@ class Wybor(Exercise):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
         is_single_choice = True
         pytania = element.xpath(".//pytanie")
-        if not pytania: 
+        if not pytania:
             pytania = [element]
         for p in pytania:
             solutions = re.split(r"[, ]+", p.attrib['rozw'])
             if len(solutions) != 1:
                 is_single_choice = False
                 break
-            choices = element.xpath(".//*[@nazwa]")
+            choices = p.xpath(".//*[@nazwa]")
             uniq = set()
             for n in choices: uniq.add(n.attrib['nazwa'])
             if len(choices) != len(uniq):
