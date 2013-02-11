@@ -196,8 +196,9 @@ class EduModule(Xmill):
             fmt_links = []
             for f in formats[1:]:
                 fmt_links.append(u'<a href="%s">%s</a>' % (make_url(f), f.upper()))
+            more_links = u' (%s)' % u', '.join(fmt_links) if fmt_links else u''
 
-            return u"<a href='%s'>" % def_href, u'</a> (%s)' % u' '.join(fmt_links)
+            return u"<a href='%s'>" % def_href, u'</a>%s' % more_links
 
 
 class Exercise(EduModule):
