@@ -11,9 +11,6 @@ import re
 import random
 
 
-DEFAULT_MATERIAL_FORMAT = 'odt'
-
-
 class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
@@ -202,17 +199,31 @@ class EduModule(Xmill):
         if 'url' in element.attrib:
             return tag('a', href=element.attrib['url'])(self, element)
         elif 'material' in element.attrib:
-            formats = re.split(r"[, ]+",
-                               element.attrib.get('format', DEFAULT_MATERIAL_FORMAT))
+            material_err = u' [BRAKUJĄCY MATERIAŁ]'
             make_url = lambda f: self.options['urlmapper'] \
               .url_for_material(element.attrib['material'], f)
-            def_href = make_url(formats[0])
+
+            if 'format' in element.attrib:
+                formats = re.split(r"[, ]+",
+                               element.attrib['format'])
+            else:
+                formats = [None]
+
+            try:
+                def_href = make_url(formats[0])
+                def_err = u""
+            except self.options['urlmapper'].MaterialNotFound:
+                def_err = material_err
+                def_href = u""
             fmt_links = []
             for f in formats[1:]:
-                fmt_links.append(u'<a href="%s">%s</a>' % (make_url(f), f.upper()))
+                try:
+                    fmt_links.append(u'<a href="%s">%s</a>' % (make_url(f), f.upper()))
+                except self.options['urlmapper'].MaterialNotFound:
+                    fmt_links.append(u'<a>%s%s</a>' % (f.upper(), material_err))
             more_links = u' (%s)' % u', '.join(fmt_links) if fmt_links else u''
 
-            return u"<a href='%s'>" % def_href, u'</a>%s' % more_links
+            return u"<a href='%s'>" % def_href, u'%s</a>%s' % (def_err, more_links)
 
 
 class Exercise(EduModule):
@@ -444,6 +455,11 @@ class PrawdaFalsz(Exercise):
 
 
 class EduModuleFormat(Format):
+    DEFAULT_MATERIAL_FORMAT = 'odt'
+
+    class MaterialNotFound(BaseException):
+        pass
+
     def __init__(self, wldoc, **kwargs):
         super(EduModuleFormat, self).__init__(wldoc, **kwargs)
 
@@ -455,6 +471,8 @@ class EduModuleFormat(Format):
         return IOFile.from_string(html.encode('utf-8'))
 
     def url_for_material(self, slug, fmt=None):
+        if fmt is None:
+            fmt = self.DEFAULT_MATERIAL_FORMAT
         # No briliant idea for an API here.
         if fmt:
             return "%s.%s" % (slug, fmt)
