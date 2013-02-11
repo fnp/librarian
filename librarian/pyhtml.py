@@ -80,7 +80,7 @@ class EduModule(Xmill):
  </div>
  <aside class="info">
   <section class="infobox time"><h1>Czas</h1><p>%(czas)s min</p></section>
-  <section class="infobox kind"><h1>Forma</h1><p>%(forma)s</p></section>
+  <section class="infobox kind"><h1>Metoda</h1><p>%(forma)s</p></section>
   %(pomoce)s
  </aside>
  <div class="clearboth"></div>
