@@ -117,16 +117,30 @@ class Xmill(object):
         return out
 
 
-def tag(name, classes=None, **attrs):
+def tag_open_close(name_, classes_=None, **attrs):
+    u"""Creates tag beginning and end.
+    
+    >>> tag_open_close("a", "klass", x=u"ą<")
+    (u'<a x="\\u0105&lt;" class="klass">', u'</a>')
+
+    """
+    if classes_:
+        if isinstance(classes_, (tuple, list)): classes_ = ' '.join(classes_)
+        attrs['class'] = classes_
+
+    e = etree.Element(name_)
+    e.text = " "
+    for k, v in attrs.items():
+        e.attrib[k] = v
+    pre, post = etree.tostring(e, encoding=unicode).split(u"> <")
+    return pre + u">", u"<" + post
+
+def tag(name_, classes_=None, **attrs):
     """Returns a handler which wraps node contents in tag `name', with class attribute
     set to `classes' and other attributes according to keyword paramters
     """
-    if classes:
-        if isinstance(classes, (tuple, list)): classes = ' '.join(classes)
-        attrs['class'] = classes
-    a = ''.join([' %s="%s"' % (k,v) for (k,v) in attrs.items()])
     def _hnd(self, element):
-        return "<%s%s>" % (name, a), "</%s>" % name
+        return tag_open_close(name_, classes_, **attrs)
     return _hnd
 
 

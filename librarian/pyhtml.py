@@ -5,7 +5,7 @@
 #
 from lxml import etree
 from librarian import IOFile, RDFNS, DCNS, Format
-from xmlutils import Xmill, tag, tagged, ifoption
+from xmlutils import Xmill, tag, tagged, ifoption, tag_open_close
 from librarian import functions
 import re
 import random
@@ -31,17 +31,31 @@ class EduModule(Xmill):
 """, u"</div>"
 
     handle_autor_utworu = tag("span", "author")
-    handle_nazwa_utworu = tag("h1", "title")
     handle_dzielo_nadrzedne = tag("span", "collection")
     handle_podtytul = tag("span", "subtitle")
     handle_naglowek_akt = handle_naglowek_czesc = handle_srodtytul = tag("h2")
-    handle_naglowek_scena = handle_naglowek_rozdzial = tag('h2')
+    handle_naglowek_scena = tag('h2')
     handle_naglowek_osoba = handle_naglowek_podrozdzial = tag('h3')
     handle_akap = handle_akap_dialog = handle_akap_cd = tag('p', 'paragraph')
     handle_strofa = tag('div', 'stanza')
     handle_wyroznienie = tag('em')
     handle_tytul_dziela = tag('em', 'title')
     handle_slowo_obce = tag('em', 'foreign')
+
+    def handle_nazwa_utworu(self, element):
+        toc = []
+        for naglowek in element.getparent().findall('.//naglowek_rozdzial'):
+            a = etree.Element("a")
+            a.attrib["href"] = "#" + naglowek.text
+            a.text = naglowek.text
+            atxt = etree.tostring(a, encoding=unicode)
+            toc.append("<li>%s</li>" % atxt)
+        toc = "<ul class='toc'>%s</ul>" % "".join(toc)
+        return "<h1 class='title'>Lekcja: ", "</h1>" + toc
+
+    @tagged("h2")
+    def handle_naglowek_rozdzial(self, element):
+        return "", "".join(tag_open_close("a", name=element.text))
 
     def handle_uwaga(self, _e):
         return None
