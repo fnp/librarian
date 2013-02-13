@@ -86,8 +86,8 @@ class EduModule(Xmill):
 <div class="activity">
  <div class="text">
   <span class="act_counter">%(counter)d.</span>
-  %(opis)s
-  %(wskazowki)s
+  %(opis)s""" % locals(), \
+u"""%(wskazowki)s
  </div>
  <aside class="info">
   <section class="infobox time"><h1>Czas</h1><p>%(czas)s min</p></section>
