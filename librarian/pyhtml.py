@@ -15,8 +15,20 @@ class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
         self.activity_counter = 0
-        self.register_text_filter(functions.substitute_entities)
 
+        # text filters
+        def swap_endlines(txt):
+            if self.options['strofa']:
+                txt = txt.replace("/\n", "<br/>\n")
+            return txt
+        self.register_text_filter(functions.substitute_entities)
+        self.register_text_filter(swap_endlines)
+
+    @tagged('div', 'stanza')
+    def handle_strofa(self, element):
+        self.options = {'strofa': True}
+        return "", ""
+        
     def handle_powiesc(self, element):
         return u"""
 <div class="module" id="book-text">
@@ -34,7 +46,7 @@ class EduModule(Xmill):
     handle_naglowek_scena = tag('h2')
     handle_naglowek_osoba = handle_naglowek_podrozdzial = tag('h3')
     handle_akap = handle_akap_dialog = handle_akap_cd = tag('p', 'paragraph')
-    handle_strofa = tag('div', 'stanza')
+
     handle_wyroznienie = tag('em')
     handle_tytul_dziela = tag('em', 'title')
     handle_slowo_obce = tag('em', 'foreign')
