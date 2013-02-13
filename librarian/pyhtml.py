@@ -52,11 +52,14 @@ class EduModule(Xmill):
     handle_tytul_dziela = tag('em', 'title')
     handle_slowo_obce = tag('em', 'foreign')
 
+    def naglowek_to_anchor(self, naglowek):
+        return re.sub(r" +", " ", naglowek.text.strip())
+
     def handle_nazwa_utworu(self, element):
         toc = []
         for naglowek in element.getparent().findall('.//naglowek_rozdzial'):
             a = etree.Element("a")
-            a.attrib["href"] = "#" + naglowek.text
+            a.attrib["href"] = "#" + self.naglowek_to_anchor(naglowek)
             a.text = naglowek.text
             atxt = etree.tostring(a, encoding=unicode)
             toc.append("<li>%s</li>" % atxt)
@@ -66,7 +69,7 @@ class EduModule(Xmill):
 
     @tagged("h2")
     def handle_naglowek_rozdzial(self, element):
-        return "", "".join(tag_open_close("a", name=element.text))
+        return "", "".join(tag_open_close("a", name=self.naglowek_to_anchor(element)))
 
     def handle_uwaga(self, _e):
         return None
