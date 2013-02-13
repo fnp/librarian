@@ -124,11 +124,11 @@ class DocProvider(object):
     """
 
     def by_slug(self, slug):
-        """Should return a file-like object with a WL document XML."""
+        """Should return an IOFile object with a WL document XML."""
         raise NotImplementedError
 
     def by_uri(self, uri, wluri=WLURI):
-        """Should return a file-like object with a WL document XML."""
+        """Should return an IOFile object with a WL document XML."""
         wluri = wluri(uri)
         return self.by_slug(wluri.slug)
 

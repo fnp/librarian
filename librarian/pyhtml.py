@@ -60,7 +60,8 @@ class EduModule(Xmill):
             atxt = etree.tostring(a, encoding=unicode)
             toc.append("<li>%s</li>" % atxt)
         toc = "<ul class='toc'>%s</ul>" % "".join(toc)
-        return "<h1 class='title'>Lekcja: ", "</h1>" + toc
+        add_header = "Lekcja: " if self.options['wldoc'].book_info.type in ('course', 'synthetic') else ''
+        return "<h1 class='title'>%s" % add_header, "</h1>" + toc
 
     @tagged("h2")
     def handle_naglowek_rozdzial(self, element):
@@ -142,7 +143,10 @@ u"""%(wskazowki)s
     def handle_lista(self, element, attrs={}):
         ltype = element.attrib.get('typ', 'punkt')
         if ltype == 'slowniczek':
-            surl = element.attrib.get('href', None)
+            surl = element.attrib.get('src', None)
+            if surl is None:
+                print '** missing src on <slowniczek>, setting default'
+                surl = 'http://edukacjamedialna.edu.pl/slowniczek'
             sxml = None
             if surl:
                 sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
@@ -172,16 +176,21 @@ u"""%(wskazowki)s
         nxt = element.getnext()
         definiens_s = ''
 
+        if not element.text:
+            print "!! Empty <definiendum/>"
+            return None
+
         # let's pull definiens from another document
-        if self.options['slowniczek_xml'] and (not nxt or nxt.tag != 'definiens'):
+        if self.options['slowniczek_xml'] is not None and (nxt is None or nxt.tag != 'definiens'):
             sxml = self.options['slowniczek_xml']
-            assert element.text != ''
             defloc = sxml.xpath("//definiendum[text()='%s']" % element.text)
             if defloc:
                 definiens = defloc[0].getnext()
                 if definiens.tag == 'definiens':
                     subgen = EduModule(self.options)
                     definiens_s = subgen.generate(definiens)
+            else:
+                print '!! Missing definiendum in source:', element.text
 
         return u"<dt>", u"</dt>" + definiens_s
 
@@ -479,7 +488,7 @@ class EduModuleFormat(Format):
         super(EduModuleFormat, self).__init__(wldoc, **kwargs)
 
     def build(self):
-        edumod = EduModule({'provider': self.wldoc.provider, 'urlmapper': self})
+        edumod = EduModule({'provider': self.wldoc.provider, 'urlmapper': self, 'wldoc': self.wldoc})
 
         html = edumod.generate(self.wldoc.edoc.getroot())
 
