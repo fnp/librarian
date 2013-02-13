@@ -357,9 +357,12 @@ class Luki(Exercise):
         return question.xpath(".//luka")
 
     def solution_html(self, piece):
-        return piece.text + ''.join(
-            [etree.tostring(n, encoding=unicode)
-             for n in piece])
+        sub = EduModule()
+        return sub.generate(piece)
+        # print piece.text
+        # return piece.text + ''.join(
+        #     [etree.tostring(n, encoding=unicode)
+        #      for n in piece])
 
     def handle_pytanie(self, element):
         qpre, qpost = super(Luki, self).handle_pytanie(element)
