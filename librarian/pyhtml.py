@@ -149,7 +149,7 @@ u"""%(wskazowki)s
         if ltype == 'slowniczek':
             surl = element.attrib.get('src', None)
             if surl is None:
-                print '** missing src on <slowniczek>, setting default'
+                # print '** missing src on <slowniczek>, setting default'
                 surl = 'http://edukacjamedialna.edu.pl/slowniczek'
             sxml = None
             if surl:
@@ -225,8 +225,9 @@ u"""%(wskazowki)s
             return tag('a', href=element.attrib['url'])(self, element)
         elif 'material' in element.attrib:
             material_err = u' [BRAKUJĄCY MATERIAŁ]'
+            slug = element.attrib['material']
             make_url = lambda f: self.options['urlmapper'] \
-              .url_for_material(element.attrib['material'], f)
+              .url_for_material(slug, f)
 
             if 'format' in element.attrib:
                 formats = re.split(r"[, ]+",
@@ -234,18 +235,20 @@ u"""%(wskazowki)s
             else:
                 formats = [None]
 
+            formats = self.options['urlmapper'].materials(slug)
+
             try:
-                def_href = make_url(formats[0])
+                def_href = make_url(formats[0][0])
                 def_err = u""
-            except self.options['urlmapper'].MaterialNotFound:
+            except (IndexError, self.options['urlmapper'].MaterialNotFound):
                 def_err = material_err
                 def_href = u""
             fmt_links = []
             for f in formats[1:]:
                 try:
-                    fmt_links.append(u'<a href="%s">%s</a>' % (make_url(f), f.upper()))
+                    fmt_links.append(u'<a href="%s">%s</a>' % (make_url(f[0]), f[0].upper()))
                 except self.options['urlmapper'].MaterialNotFound:
-                    fmt_links.append(u'<a>%s%s</a>' % (f.upper(), material_err))
+                    fmt_links.append(u'<a>%s%s</a>' % (f[0].upper(), material_err))
             more_links = u' (%s)' % u', '.join(fmt_links) if fmt_links else u''
 
             return u"<a href='%s'>" % def_href, u'%s</a>%s' % (def_err, more_links)
@@ -492,7 +495,7 @@ class PrawdaFalsz(Exercise):
 
 
 class EduModuleFormat(Format):
-    DEFAULT_MATERIAL_FORMAT = 'odt'
+    PRIMARY_MATERIAL_FORMATS = ('pdf', 'odt')
 
     class MaterialNotFound(BaseException):
         pass
@@ -501,19 +504,33 @@ class EduModuleFormat(Format):
         super(EduModuleFormat, self).__init__(wldoc, **kwargs)
 
     def build(self):
+        # Sort materials by slug.
+        self.materials_by_slug = {}
+        for name, att in self.wldoc.source.attachments.items():
+            parts = name.rsplit('.', 1)
+            if len(parts) == 1:
+                continue
+            slug, ext = parts
+            if slug not in self.materials_by_slug:
+                self.materials_by_slug[slug] = {}
+            self.materials_by_slug[slug][ext] = att
+
         edumod = EduModule({'provider': self.wldoc.provider, 'urlmapper': self, 'wldoc': self.wldoc})
 
         html = edumod.generate(self.wldoc.edoc.getroot())
 
         return IOFile.from_string(html.encode('utf-8'))
 
-    def url_for_material(self, slug, fmt=None):
-        if fmt is None:
-            fmt = self.DEFAULT_MATERIAL_FORMAT
-        # No briliant idea for an API here.
-        if fmt:
-            return "%s.%s" % (slug, fmt)
-        return slug
+    def materials(self, slug):
+        """Returns a list of pairs: (ext, iofile)."""
+        order = dict(reversed(k) for k in enumerate(self.PRIMARY_MATERIAL_FORMATS))
+        mats = self.materials_by_slug.get(slug, {}).items()
+        if not mats:
+            print "!! Material missing: '%s'" % slug
+        return sorted(mats, key=lambda (x, y): order.get(x, x))
+
+    def url_for_material(self, slug, fmt):
+        return "%s.%s" % (slug, fmt)
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
