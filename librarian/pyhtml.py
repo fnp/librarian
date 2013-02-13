@@ -255,6 +255,18 @@ u"""%(wskazowki)s
 
             return u"<a href='%s'>" % def_href, u'%s</a>%s' % (def_err, more_links)
 
+    def handle_video(self, element):
+        url = element.attrib.get('url')
+        if not url:
+            print '!! <video> missing url'
+            return
+        m = re.match(r'https?://(?:www.)?youtube.com/watch\?(?:.*&)?v=([^&]+)(?:$|&)', url)
+        if not m:
+            print '!! unknown <video> url scheme:', url
+            return
+        return """<iframe width="630" height="384" src="http://www.youtube.com/embed/%s"
+            frameborder="0" allowfullscreen></iframe>""" % m.group(1), ""
+
 
 class Exercise(EduModule):
     def __init__(self, *args, **kw):
