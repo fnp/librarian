@@ -269,11 +269,15 @@ u"""%(wskazowki)s
 
 
 class Exercise(EduModule):
+    INSTRUCTION = ""
     def __init__(self, *args, **kw):
         self.question_counter = 0
         super(Exercise, self).__init__(*args, **kw)
+        self.instruction_printed = False
 
-    handle_opis = tag('div', 'description')
+    @tagged('div', 'description')
+    def handle_opis(self, element):
+        return "", self.get_instruction()
 
     def handle_rozw_kom(self, element):
         return u"""<div style="display:none" class="comment">""", u"""</div>"""
@@ -337,8 +341,17 @@ class Exercise(EduModule):
             (add_class, self.question_counter, solution_s + minimum_s), \
             "</div>"
 
+    def get_instruction(self):
+        if not self.instruction_printed:
+            self.instruction_printed = True
+            return u'<span class="instruction">%s</span>' % self.INSTRUCTION
+        else:
+            return ""
+
+
 
 class Wybor(Exercise):
+    INSTRUCTION = None
     def handle_cwiczenie(self, element):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
         is_single_choice = True
@@ -385,6 +398,8 @@ class Wybor(Exercise):
 
 
 class Uporzadkuj(Exercise):
+    INSTRUCTION = u"Kliknij wybraną odpowiedź i przeciągnij w nowe miejsce."
+
     def handle_pytanie(self, element):
         """
 Overrides the returned content default handle_pytanie
@@ -404,6 +419,7 @@ Overrides the returned content default handle_pytanie
 
 
 class Luki(Exercise):
+    INSTRUCTION = u"Przeciągnij odpowiedzi i upuść w wybranym polu."
     def find_pieces(self, question):
         return question.xpath(".//luka")
 
@@ -439,6 +455,8 @@ class Luki(Exercise):
 
 
 class Zastap(Luki):
+    INSTRUCTION = u"Przeciągnij odpowiedzi i upuść je na słowie lub wyrażeniu, które chcesz zastąpić."
+
     def find_pieces(self, question):
         return question.xpath(".//zastap")
 
@@ -452,6 +470,24 @@ class Zastap(Luki):
 
 
 class Przyporzadkuj(Exercise):
+    INSTRUCTION = [u"Przeciągnij odpowiedzi i upuść w wybranym polu.",
+                   u"Kliknij numer odpowiedzi, przeciągnij i upuść w wybranym polu."]
+
+    def get_instruction(self):
+        print self.options['handles']
+        if not self.instruction_printed:
+            self.instruction_printed = True
+            return u'<span class="instruction">%s</span>' % self.INSTRUCTION[self.options['handles'] and 1 or 0]
+        else:
+            return ""
+
+    def handle_cwiczenie(self, element):
+        pre, post = super(Przyporzadkuj, self).handle_cwiczenie(element)
+        lista_with_handles = element.xpath(".//*[@uchwyty]")
+        if lista_with_handles:
+            self.options = {'handles': True}
+        return pre, post
+
     def handle_pytanie(self, element):
         pre, post = super(Przyporzadkuj, self).handle_pytanie(element)
         minimum = element.attrib.get("min", None)
@@ -471,7 +507,7 @@ class Przyporzadkuj(Exercise):
                 'data-target': lista.attrib['cel'],
                 'class': 'subject'
             }
-            self.options = {'subject': True, 'handles': 'uchwyty' in lista.attrib}
+            self.options = {'subject': True}
         else:
             attrs = {}
         pre, post = super(Przyporzadkuj, self).handle_lista(lista, attrs)
