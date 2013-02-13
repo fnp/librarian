@@ -478,7 +478,7 @@ class Przyporzadkuj(Exercise):
                 placeholders = u'<li class="placeholder"/>' * self.options['min']
             else:
                 placeholders = u'<li class="placeholder multiple"/>'
-            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul>' + placeholders + '</ul></li>'
+            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
 
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
