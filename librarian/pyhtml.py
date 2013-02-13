@@ -141,7 +141,6 @@ u"""%(wskazowki)s
 
         typ = element.attrib['typ']
         self.exercise_counter += 1
-        print self.exercise_counter
         self.options = {'exercise_counter': self.exercise_counter}
         handler = exercise_handlers[typ](self.options)
         return handler.generate(element)
