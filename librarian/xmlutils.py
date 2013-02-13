@@ -39,7 +39,7 @@ class Xmill(object):
         """
         # Here we can see how a decision not to return the modified map
         # leads to a need for a hack.
-        return reduce(lambda a, b: a.update(b) or a, self._options, defaultdict(lambda: False))
+        return reduce(lambda a, b: a.update(b) or a, self._options, defaultdict(lambda: None))
 
     @options.setter
     def options(self, opts):
