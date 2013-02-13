@@ -15,6 +15,7 @@ class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
         self.activity_counter = 0
+        self.exercise_counter = 0
 
         # text filters
         def swap_endlines(txt):
@@ -28,7 +29,7 @@ class EduModule(Xmill):
     def handle_strofa(self, element):
         self.options = {'strofa': True}
         return "", ""
-        
+
     def handle_powiesc(self, element):
         return u"""
 <div class="module" id="book-text">
@@ -136,6 +137,9 @@ u"""%(wskazowki)s
             }
 
         typ = element.attrib['typ']
+        self.exercise_counter += 1
+        print self.exercise_counter
+        self.options = {'exercise_counter': self.exercise_counter}
         handler = exercise_handlers[typ](self.options)
         return handler.generate(element)
 
@@ -265,7 +269,16 @@ class Exercise(EduModule):
         pre = u"""
 <div class="exercise %(typ)s" data-type="%(typ)s">
 <form action="#" method="POST">
-""" % element.attrib
+<h3>Zadanie %(exercies_counter)d</h3>
+<div class="buttons">
+<span class="message"></span>
+<input type="button" class="check" value="sprawdź"/>
+<input type="button" class="retry" style="display:none" value="spróbuj ponownie"/>
+<input type="button" class="solutions" value="pokaż rozwiązanie"/>
+<input type="button" class="reset" value="reset"/>
+</div>
+
+""" % {'exercies_counter': self.options['exercise_counter'], 'typ': element.attrib['typ']}
         post = u"""
 <div class="buttons">
 <span class="message"></span>
@@ -460,7 +473,7 @@ class Przyporzadkuj(Exercise):
                 placeholders = u'<li class="placeholder"/>' * self.options['min']
             else:
                 placeholders = u'<li class="placeholder multiple"/>'
-            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
+            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul>' + placeholders + '</ul></li>'
 
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
