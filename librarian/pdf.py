@@ -266,7 +266,7 @@ class PDFFormat(Format):
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(self.style, os.path.join(temp, 'style.sty'))
         for sfile in ['wasysym.sty', 'uwasyvar.fd', 'uwasy.fd']:
-            shutil.copy(get_resource(os.path.join('styles/wasysym', sfile)), temp)
+            shutil.copy(get_resource(os.path.join('res/wasysym', sfile)), temp)
 
         # Save attachments
         if self.cover:
