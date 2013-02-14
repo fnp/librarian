@@ -66,11 +66,12 @@ class EduModule(Xmill):
             toc.append("<li>%s</li>" % atxt)
         toc = "<ul class='toc'>%s</ul>" % "".join(toc)
         add_header = "Lekcja: " if self.options['wldoc'].book_info.type in ('course', 'synthetic') else ''
-        return "<h1 class='title'>%s" % add_header, "</h1>" + toc
+        return "<h1 class='title'><a name='top'></a>%s" % add_header, "</h1>" + toc
 
-    @tagged("h2")
     def handle_naglowek_rozdzial(self, element):
-        return "", "".join(tag_open_close("a", name=self.naglowek_to_anchor(element)))
+        return_to_top = u"<a href='#top' class='top-link'>wróć do spisu treści</a>"
+        anchor = "".join(tag_open_close("a", name=self.naglowek_to_anchor(element)))
+        return return_to_top + "<h2>", anchor + "</h2>"
 
     def handle_uwaga(self, _e):
         return None
@@ -361,14 +362,16 @@ class Exercise(EduModule):
     def get_instruction(self):
         if not self.instruction_printed:
             self.instruction_printed = True
-            return u'<span class="instruction">%s</span>' % self.INSTRUCTION
+            if self.INSTRUCTION:
+                return u'<span class="instruction">%s</span>' % self.INSTRUCTION
+            else:
+                return ""
         else:
             return ""
 
 
 
 class Wybor(Exercise):
-    INSTRUCTION = None
     def handle_cwiczenie(self, element):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
         is_single_choice = True
