@@ -31,6 +31,7 @@ from librarian import functions
 from pdf import PDFFormat
 
 
+
 def escape(really):
     def deco(f):
         def _wrap(*args, **kw):
@@ -69,8 +70,15 @@ class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
         self.activity_counter = 0
+        self.exercise_counter = 0
+
+        def swap_endlines(txt):
+            if self.options['strofa']:
+                txt = txt.replace("/\n", '<ctrl ch="\"/>')
+            return txt
         self.register_text_filter(functions.substitute_entities)
         self.register_text_filter(mark_alien_characters)
+        self.register_text_filter(swap_endlines)
 
     def get_dc(self, element, dc_field, single=False):
         values = map(lambda t: t.text, element.xpath("//dc:%s" % dc_field, namespaces={'dc': DCNS.uri}))
@@ -125,9 +133,6 @@ class EduModule(Xmill):
         return u"".join(filter(None, lines)), u'</TeXML>'
 
 
-    handle_naglowek_rozdzial = escape(True)(cmd("naglowekrozdzial", True))
-    handle_naglowek_podrozdzial = escape(True)(cmd("naglowekpodrozdzial", True))
-
     @escape(1)
     def handle_powiesc(self, element):
         return u"""
@@ -135,13 +140,60 @@ class EduModule(Xmill):
     <cmd name="maketitle"/>
     """, """</env>"""
 
-    handle_autor_utworu = cmd('autorutworu', True)
-    handle_nazwa_utworu = cmd('nazwautworu', True)
-    handle_dzielo_nadrzedne = cmd('dzielonadrzedne', True)
-    handle_podtytul = cmd('podtytul', True)
+    @escape(1)
+    def handle_texcommand(self, element):
+        cmd = functions.texcommand(element.tag)
+        return u'<TeXML escape="1"><cmd name="%s"><parm>' % cmd, u'</parm></cmd></TeXML>'
 
-    handle_akap = handle_akap_dialog = handle_akap_cd = lambda s, e: ("\n", "\n")
-    handle_strofa = lambda s, e: ("\n","\n")
+    handle_akap = \
+    handle_akap = \
+    handle_akap_cd = \
+    handle_akap_cd = \
+    handle_akap_dialog = \
+    handle_akap_dialog = \
+    handle_autor_utworu = \
+    handle_dedykacja = \
+    handle_didaskalia = \
+    handle_didask_tekst = \
+    handle_dlugi_cytat = \
+    handle_dzielo_nadrzedne = \
+    handle_lista_osoba = \
+    handle_mat = \
+    handle_miejsce_czas = \
+    handle_motto = \
+    handle_motto_podpis = \
+    handle_naglowek_akt = \
+    handle_naglowek_czesc = \
+    handle_naglowek_listy = \
+    handle_naglowek_osoba = \
+    handle_naglowek_podrozdzial = \
+    handle_naglowek_podrozdzial = \
+    handle_naglowek_rozdzial = \
+    handle_naglowek_rozdzial = \
+    handle_naglowek_scena = \
+    handle_nazwa_utworu = \
+    handle_nota = \
+    handle_osoba = \
+    handle_pa = \
+    handle_pe = \
+    handle_podtytul = \
+    handle_poezja_cyt = \
+    handle_pr = \
+    handle_pt = \
+    handle_sekcja_asterysk = \
+    handle_sekcja_swiatlo = \
+    handle_separator_linia = \
+    handle_slowo_obce = \
+    handle_srodtytul = \
+    handle_tytul_dziela = \
+    handle_wyroznienie = \
+    handle_texcommand
+
+    _handle_strofa = cmd("strofa", True)
+
+    def handle_strofa(self, element):
+        self.options = {'strofa': True}
+        return self._handle_strofa(element)
 
     def handle_aktywnosc(self, element):
         self.activity_counter += 1
@@ -170,11 +222,16 @@ class EduModule(Xmill):
         counter = self.activity_counter
 
         return u"""
-Czas: %(czas)s min
-Forma: %(forma)s
-%(pomoce)s
 
-%(counter)d. %(opis)s
+<cmd name="activitycounter"><parm>%(counter)d.</parm></cmd>
+<cmd name="activityinfo"><parm>
+ <cmd name="activitytime"><parm>%(czas)s</parm></cmd>
+ <cmd name="activityform"><parm>%(forma)s</parm></cmd>
+ <cmd name="activitytools"><parm>%(pomoce)s</parm></cmd>
+</parm></cmd>
+
+
+%(opis)s
 
 %(wskazowki)s
 """ % locals()
@@ -192,162 +249,194 @@ Forma: %(forma)s
     def handle_forma(self, *_):
         return
 
-#     def handle_cwiczenie(self, element):
-#         exercise_handlers = {
-#             'wybor': Wybor,
-#             'uporzadkuj': Uporzadkuj,
-#             'luki': Luki,
-#             'zastap': Zastap,
-#             'przyporzadkuj': Przyporzadkuj,
-#             'prawdafalsz': PrawdaFalsz
-#             }
+    def handle_lista(self, element, attrs={}):
+        ltype = element.attrib.get('typ', 'punkt')
+        if ltype == 'slowniczek':
+            surl = element.attrib.get('href', None)
+            sxml = None
+            if surl:
+                sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
+            self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
 
-#         typ = element.attrib['typ']
-#         handler = exercise_handlers[typ](self.options)
-#         return handler.generate(element)
+        listcmd = {'num': 'enumerate',
+               'punkt': 'itemize',
+               'alfa': 'itemize',
+               'slowniczek': 'itemize',
+               'czytelnia': 'itemize'}[ltype]
 
-#     # Lists
-#     def handle_lista(self, element, attrs={}):
-#         ltype = element.attrib.get('typ', 'punkt')
-#         if ltype == 'slowniczek':
-#             surl = element.attrib.get('href', None)
-#             sxml = None
-#             if surl:
-#                 sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
-#             self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
-#             return '<div class="slowniczek">', '</div>'
+        return u'<env name="%s">' % listcmd, u'</env>'
 
-#         listtag = {'num': 'ol',
-#                'punkt': 'ul',
-#                'alfa': 'ul',
-#                'czytelnia': 'ul'}[ltype]
+    def handle_punkt(self, element):
+        return '<cmd name="item"/>', ''
 
-#         classes = attrs.get('class', '')
-#         if classes: del attrs['class']
+    def handle_cwiczenie(self, element):
+        exercise_handlers = {
+            'wybor': Wybor}
+            # 'uporzadkuj': Uporzadkuj,
+            # 'luki': Luki,
+            # 'zastap': Zastap,
+            # 'przyporzadkuj': Przyporzadkuj,
+            # 'prawdafalsz': PrawdaFalsz
 
-#         attrs_s = ' '.join(['%s="%s"' % kv for kv in attrs.items()])
-#         if attrs_s: attrs_s = ' ' + attrs_s
+        typ = element.attrib['typ']
+        if not typ in exercise_handlers:
+            return '(no handler)'
+        handler = exercise_handlers[typ](self.options)
+        return handler.generate(element)
 
-#         return '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
+    # XXX this is copied from pyhtml.py, except for return and
+    # should be refactored for no code duplication
+    def handle_definiendum(self, element):
+        nxt = element.getnext()
+        definiens_s = ''
 
-#     def handle_punkt(self, element):
-#         if self.options['slowniczek']:
-#             return '<dl>', '</dl>'
-#         else:
-#             return '<li>', '</li>'
+        # let's pull definiens from another document
+        if self.options['slowniczek_xml'] and (not nxt or nxt.tag != 'definiens'):
+            sxml = self.options['slowniczek_xml']
+            assert element.text != ''
+            defloc = sxml.xpath("//definiendum[text()='%s']" % element.text)
+            if defloc:
+                definiens = defloc[0].getnext()
+                if definiens.tag == 'definiens':
+                    subgen = EduModule(self.options)
+                    definiens_s = subgen.generate(definiens)
 
-#     def handle_definiendum(self, element):
-#         nxt = element.getnext()
-#         definiens_s = ''
+        return u'<cmd name="textbf"><parm>', u"</parm></cmd>: " + definiens_s
 
-#         # let's pull definiens from another document
-#         if self.options['slowniczek_xml'] and (not nxt or nxt.tag != 'definiens'):
-#             sxml = self.options['slowniczek_xml']
-#             assert element.text != ''
-#             defloc = sxml.xpath("//definiendum[text()='%s']" % element.text)
-#             if defloc:
-#                 definiens = defloc[0].getnext()
-#                 if definiens.tag == 'definiens':
-#                     subgen = EduModule(self.options)
-#                     definiens_s = subgen.generate(definiens)
+    def handle_definiens(self, element):
+        return u"", u""
 
-#         return u"<dt>", u"</dt>" + definiens_s
+    def handle_podpis(self, element):
+        return u"""<env name="figure">""", u"</env>"
 
-#     def handle_definiens(self, element):
-#         return u"<dd>", u"</dd>"
+    def handle_tabela(self, element):
+        max_col = 0
+        for w in element.xpath("wiersz"):
+            ks = w.xpath("kol")
+            if max_col < len(ks):
+                max_col = len(ks)
+        self.options = {'columnts': max_col}
+        # styling:
+                #        has_frames = int(element.attrib.get("ramki", "0"))
+                #        if has_frames: frames_c = "framed"
+                #        else: frames_c = ""
+                #        return u"""<table class="%s">""" % frames_c, u"</table>"
+        return u'''
+<cmd name="begin"><parm>tabular</parm><opt>%s</opt></cmd>
+    ''' % ('l' * max_col), \
+    u'''<cmd name="end"><parm>tabular</parm></cmd>'''
 
+    @escape(1)
+    def handle_wiersz(self, element):
+        return u"", u'<ctrl ch="\\"/>'
 
-#     def handle_podpis(self, element):
-#         return u"""<div class="caption">""", u"</div>"
+    @escape(1)
+    def handle_kol(self, element):
+        if element.getnext() is not None:
+            return u"", u'<spec cat="align">'
+        return u"", u""
 
-#     def handle_tabela(self, element):
-#         has_frames = int(element.attrib.get("ramki", "0"))
-#         if has_frames: frames_c = "framed"
-#         else: frames_c = ""
-#         return u"""<table class="%s">""" % frames_c, u"</table>"
-
-#     def handle_wiersz(self, element):
-#         return u"<tr>", u"</tr>"
-
-#     def handle_kol(self, element):
-#         return u"<td>", u"</td>"
-
-#     def handle_rdf__RDF(self, _):
-#         # ustal w opcjach  rzeczy :D
-#         return
-
-#     def handle_link(self, element):
-#         if 'material' in element.attrib:
-#             formats = re.split(r"[, ]+", element.attrib['format'])
-#             fmt_links = []
-#             for f in formats:
-#                 fmt_links.append(u'<a href="%s">%s</a>' % (self.options['urlmapper'].url_for_material(element.attrib['material'], f), f.upper()))
-
-#             return u"", u' (%s)' % u' '.join(fmt_links)
+    handle_link = cmd('em', True)
 
 
-# class Exercise(EduModule):
-#     def __init__(self, *args, **kw):
-#         self.question_counter = 0
-#         super(Exercise, self).__init__(*args, **kw)
+class Exercise(EduModule):
+    def __init__(self, *args, **kw):
+        self.question_counter = 0
+        super(Exercise, self).__init__(*args, **kw)
 
-#     def handle_rozw_kom(self, element):
-#         return u"""<div style="display:none" class="comment">""", u"""</div>"""
+    handle_rozw_kom = ifoption(teacher=True)(cmd('akap', True))
 
-#     def handle_cwiczenie(self, element):
-#         self.options = {'exercise': element.attrib['typ']}
-#         self.question_counter = 0
-#         self.piece_counter = 0
+    def handle_cwiczenie(self, element):
+        self.options = {'exercise': element.attrib['typ']}
+        self.question_counter = 0
+        self.piece_counter = 0
 
-#         pre = u"""
-# <div class="exercise %(typ)s" data-type="%(typ)s">
-# <form action="#" method="POST">
-# """ % element.attrib
-#         post = u"""
-# <div class="buttons">
-# <span class="message"></span>
-# <input type="button" class="check" value="sprawdź"/>
-# <input type="button" class="retry" style="display:none" value="spróbuj ponownie"/>
-# <input type="button" class="solutions" value="pokaż rozwiązanie"/>
-# <input type="button" class="reset" value="reset"/>
-# </div>
-# </form>
-# </div>
-# """
-#         # Add a single <pytanie> tag if it's not there
-#         if not element.xpath(".//pytanie"):
-#             qpre, qpost = self.handle_pytanie(element)
-#             pre = pre + qpre
-#             post = qpost + post
-#         return pre, post
+        pre = u""
+        post = u""
+        # Add a single <pytanie> tag if it's not there
+        if not element.xpath(".//pytanie"):
+            qpre, qpost = self.handle_pytanie(element)
+            pre = pre + qpre
+            post = qpost + post
+        return pre, post
 
-#     def handle_pytanie(self, element):
-#         """This will handle <cwiczenie> element, when there is no <pytanie>
-#         """
-#         add_class = ""
-#         self.question_counter += 1
-#         self.piece_counter = 0
-#         solution = element.attrib.get('rozw', None)
-#         if solution: solution_s = ' data-solution="%s"' % solution
-#         else: solution_s = ''
+    def handle_pytanie(self, element):
+        """This will handle <cwiczenie> element, when there is no <pytanie>
+        """
+        opts = {}
+        self.question_counter += 1
+        self.piece_counter = 0
+        solution = element.attrib.get('rozw', None)
+        if solution:
+            opts['solution'] = solution
 
-#         handles = element.attrib.get('uchwyty', None)
-#         if handles:
-#             add_class += ' handles handles-%s' % handles
-#             self.options = {'handles': handles}
+        handles = element.attrib.get('uchwyty', None)
+        if handles:
+            opts['handles'] = handles
 
-#         minimum = element.attrib.get('min', None)
-#         if minimum: minimum_s = ' data-minimum="%d"' % int(minimum)
-#         else: minimum_s = ''
+        minimum = element.attrib.get('min', None)
+        if minimum:
+            opts['minimum'] = minimum
 
-#         return '<div class="question%s" data-no="%d" %s>' %\
-#             (add_class, self.question_counter, solution_s + minimum_s), \
-#             "</div>"
+        if opts:
+            self.options = opts
+        return u"", u""
+
+
+class Wybor(Exercise):
+    INSTRUCTION = None
+
+    def handle_cwiczenie(self, element):
+        pre, post = super(Wybor, self).handle_cwiczenie(element)
+        is_single_choice = True
+        pytania = element.xpath(".//pytanie")
+        if not pytania:
+            pytania = [element]
+        for p in pytania:
+            solutions = re.split(r"[, ]+", p.attrib['rozw'])
+            if len(solutions) != 1:
+                is_single_choice = False
+                break
+            choices = p.xpath(".//*[@nazwa]")
+            uniq = set()
+            for n in choices: uniq.add(n.attrib['nazwa'])
+            if len(choices) != len(uniq):
+                is_single_choice = False
+                break
+
+        self.options = {'single': is_single_choice}
+        return pre, post
+
+    def handle_punkt(self, element):
+        if self.options['exercise'] and element.attrib.get('nazwa', None):
+            cmd = 'radio' if self.options['single'] else 'checkbox'
+            return u'<cmd name="%s"/>' % cmd, ''
+        else:
+            return super(Wybor, self).handle_punkt(element)
+
+
+
+
+def fix_lists(tree):
+    lists = tree.xpath(".//lista")
+    for l in lists:
+        if l.text:
+            p = l.getprevious()
+            if p is not None:
+                if p.tail is None: p.tail = ''
+                p.tail += l.text
+            else:
+                p = l.getparent()
+                if p.text is None: p.text = ''
+                p.text += l.text
+            l.text = ''
+    return tree
+
 
 class EduModulePDFFormat(PDFFormat):
     def get_texml(self):
         edumod = EduModule()
-        texml = edumod.generate(self.wldoc.edoc.getroot()).encode('utf-8')
+        texml = edumod.generate(fix_lists(self.wldoc.edoc.getroot())).encode('utf-8')
 
         open("/tmp/texml.xml", "w").write(texml)
         return texml

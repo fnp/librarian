@@ -414,3 +414,7 @@ Letters={Uppercase}
 \newcommand{\activitytime}[1]{Czas: #1 min \\}
 \newcommand{\activityform}[1]{Forma: #1 \\}
 \newcommand{\activitytools}[1]{#1 \\}
+
+\newcommand*\checkbox{\item[\Square]}
+\newcommand*\radio{\item[\Circle]}
+

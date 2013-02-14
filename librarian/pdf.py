@@ -175,7 +175,7 @@ def package_available(package, args='', verbose=False):
 
 def load_including_children(wldoc=None, provider=None, uri=None):
     """ Makes one big xml file with children inserted at end.
-    
+
     Either wldoc or provider and URI must be provided.
     """
 
@@ -203,7 +203,7 @@ def load_including_children(wldoc=None, provider=None, uri=None):
 
 class PDFFormat(Format):
     """ Base PDF format.
-    
+
     Available customization:
         nofootnotes: Doesn't do footnotes.
         nothemes: Doesn't do themes.
@@ -265,6 +265,9 @@ class PDFFormat(Format):
         # Copy style
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(self.style, os.path.join(temp, 'style.sty'))
+        for sfile in ['wasysym.sty', 'uwasyvar.fd', 'uwasy.fd']:
+            shutil.copy(get_resource(os.path.join('styles/wasysym', sfile)), temp)
+
         # Save attachments
         if self.cover:
             self.cover.for_pdf().dump_to(os.path.join(temp, 'makecover.sty'))
@@ -303,7 +306,7 @@ class PDFFormat(Format):
         """
         self.verbose = verbose
         self.save_tex = save_tex
-        
+
         if morefloats is None and package_available('morefloats', 'maxfloats=19'):
             morefloats = 'new'
         self.morefloats = morefloats
