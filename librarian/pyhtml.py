@@ -10,6 +10,7 @@ from librarian import functions
 import re
 import random
 
+IMAGE_THUMB_WIDTH = 300
 
 class EduModule(Xmill):
     def __init__(self, options=None):
@@ -254,6 +255,22 @@ u"""%(wskazowki)s
             more_links = u' (%s)' % u', '.join(fmt_links) if fmt_links else u''
 
             return u"<a href='%s'>" % def_href, u'%s</a>%s' % (def_err, more_links)
+
+    def handle_obraz(self, element):
+        name = element.attrib.get('nazwa', '').strip()
+        if not name:
+            print '!! <obraz> missing "nazwa"'
+            return
+        alt = element.attrib.get('alt', '')
+        if not alt:
+            print '** <obraz> missing "alt"'
+        slug, ext = name.rsplit('.', 1)
+        url = self.options['urlmapper'].url_for_image(slug, ext)
+        thumb_url = self.options['urlmapper'].url_for_image(slug, ext, IMAGE_THUMB_WIDTH)
+        e = etree.Element("a", attrib={"href": url, "class": "image"})
+        e.append(etree.Element("img", attrib={"src": url, "alt": alt,
+                    "width": str(IMAGE_THUMB_WIDTH)}))
+        return etree.tostring(e, encoding=unicode), u""
 
     def handle_video(self, element):
         url = element.attrib.get('url')
@@ -581,6 +598,9 @@ class EduModuleFormat(Format):
 
     def url_for_material(self, slug, fmt):
         return "%s.%s" % (slug, fmt)
+
+    def url_for_image(self, slug, fmt, width=None):
+        return self.url_for_material(self, slug, fmt)
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
