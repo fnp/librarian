@@ -268,7 +268,7 @@ u"""%(wskazowki)s
         url = self.options['urlmapper'].url_for_image(slug, ext)
         thumb_url = self.options['urlmapper'].url_for_image(slug, ext, IMAGE_THUMB_WIDTH)
         e = etree.Element("a", attrib={"href": url, "class": "image"})
-        e.append(etree.Element("img", attrib={"src": url, "alt": alt,
+        e.append(etree.Element("img", attrib={"src": thumb_url, "alt": alt,
                     "width": str(IMAGE_THUMB_WIDTH)}))
         return etree.tostring(e, encoding=unicode), u""
 
@@ -277,7 +277,7 @@ u"""%(wskazowki)s
         if not url:
             print '!! <video> missing url'
             return
-        m = re.match(r'https?://(?:www.)?youtube.com/watch\?(?:.*&)?v=([^&]+)(?:$|&)', url)
+        m = re.match(r'(?:https?://)?(?:www.)?youtube.com/watch\?(?:.*&)?v=([^&]+)(?:$|&)', url)
         if not m:
             print '!! unknown <video> url scheme:', url
             return
@@ -491,7 +491,6 @@ class Przyporzadkuj(Exercise):
                    u"Kliknij numer odpowiedzi, przeciągnij i upuść w wybranym polu."]
 
     def get_instruction(self):
-        print self.options['handles']
         if not self.instruction_printed:
             self.instruction_printed = True
             return u'<span class="instruction">%s</span>' % self.INSTRUCTION[self.options['handles'] and 1 or 0]
