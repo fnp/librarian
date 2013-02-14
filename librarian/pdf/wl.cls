@@ -14,6 +14,7 @@
 
 \RequirePackage{setspace}
 \RequirePackage{type1cm}
+\RequirePackage{wasysym}
 \DeclareOption{13pt}{%
 \AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
@@ -405,3 +406,11 @@ Letters={Uppercase}
 \fi
 }
 
+%% EDUMED SPECIFIC
+
+\newcommand{\activitycounter}[1]{\vspace{1em}\par{\huge{#1}}}
+
+\newcommand{\activityinfo}[1]{\begin{flushright}\parbox[t]{2in}{#1}\end{flushright}}
+\newcommand{\activitytime}[1]{Czas: #1 min \\}
+\newcommand{\activityform}[1]{Forma: #1 \\}
+\newcommand{\activitytools}[1]{#1 \\}

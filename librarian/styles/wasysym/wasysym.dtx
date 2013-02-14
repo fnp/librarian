@@ -1,0 +1,750 @@
+% \iffalse meta-comment
+%
+% Copyright  1994 - 99 by Axel Kielhorn
+% Copyright  2003 Axel Kielhorn, Walter Schmidt
+% 
+% This program can be redistributed and/or modified under the terms
+% of the LaTeX Project Public License Distributed from CTAN
+% archives in directory macros/latex/base/lppl.txt; either
+% version 1 of the License, or any later version.
+% 
+% IMPORTANT NOTICE:
+% 
+% For error reports in case of UNCHANGED versions contact
+% A.Kielhorn@web.de
+% 
+% You are not allowed to change this file.
+%
+% Changes:
+% 1.0b corrected mathcode for integrals (now 1)
+% 1.0c Minor corrections
+% 1.0e Resync with latex2e [1995/06/01]
+%      Changed some ops to \mathbin
+% 1.0f Corrected \dh and \Dh in T1 encoding as suggested by 
+%      Ernst-Guenter Giessmann (giessman@informatik.hu-berlin.de)
+% 1.0g Reintroduced \hbox in many commands, they work in math-mode
+%      again
+% 1.0h Included some changes by Donald Arseneau
+% 1.0i Changed License to LPPL
+% 1.0j Added uwasyvar.fd for scaleable PS fonts
+%      Added substitution bx -> b
+% 2.0  See the section "Changes over version~1.x".
+%      The instructions how to set up the font definition files
+%      for scaleable Type1 fonts have been moved to the 
+%      installation script, because they are needed at install
+%      time.
+%      \overstrike macro renamed to \wasy@over to avoid potential
+%       clashes
+% \fi
+%
+% \CheckSum{844}
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%
+% \iffalse   % this is a METACOMMENT !
+%
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{wasysym}
+%<fd|fdvar>\ProvidesFile{uwasy.fd}%
+%<-driver>             [2003/10/30 v2.0
+%<package>               Wasy-2 symbol support package]
+%<fd|fdvar>              Wasy-2 symbol font definitions]
+%
+%
+%<*driver>
+\documentclass{ltxdoc}
+\OnlyDescription
+\usepackage[integrals]{wasysym}
+\providecommand\dst{\expandafter{\normalfont\scshape docstrip}}
+\renewcommand{\quad}{{\hskip1em plus 2em}}
+\begin{document}
+ \DocInput{wasysym.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{wasysym.sty}
+% \title{The \texttt{wasysym} macro package for \LaTeXe}
+% \author{Axel Kielhorn}
+% \date{version \fileversion{} -- \filedate}
+% \maketitle
+%
+% \setcounter{StandardModuleDepth}{1}
+%
+%
+% \section{Introduction}
+%
+%    This file defines the package |wasysym| which makes some
+%    additional characters available that come from the \texttt{wasy} fonts.
+%    These fonts were provided by Roland Waldi, Universit\"at Karlsruhe, 
+%    Germany.  
+%    Notice that the present macro package requires version~2 (1992) of 
+%    these fonts. It is not 100 \% compatible to the old 
+%    version~1 from 1989. I have provided no compatibility mode 
+%    for the old fonts! If some characters come out wrong or are
+%    missing, you have to upgrade.
+%
+%    Some of the symbols below are already provided in the T1 or TS1 
+%    (textcompanion) encodings, and |wasysm| serves only to make them 
+%    available also with the traditional (OT1-encoded) CM-Roman fonts. 
+%    Other symbols are  provided in the AMS symbol fonts, too, and can
+%    be accessed using either the |amssymb| or the |amsfonts| package.
+%
+% \section{The symbols}   
+%
+%   \subsection{Various math symbols}
+%    The following commands are valid in math mode only:
+%    \begin{quote}
+%    |\Join|~$\Join$ \quad
+%    |\Box|~$\Box$ \quad
+%    |\Diamond|~$\Diamond$ \quad
+%    |\leadsto|~$\leadsto$ \quad
+%    |\sqsubset|~$\sqsubset$ \quad
+%    |\sqsupset|~$\sqsupset$ \quad
+%    |\lhd|~$\lhd$ \quad
+%    |\unlhd|~$\unlhd$ \quad
+%    |\LHD|~$\LHD$\quad
+%    |\rhd|~$\rhd$ \quad
+%    |\unrhd|~$\unrhd$ \quad
+%    |\RHD|~$\RHD$\quad
+%    |\apprle|~$\apprle$\quad
+%    |\apprge|~$\apprge$\quad
+%    |\wasypropto|~$\wasypropto$\quad
+%    |\invneg|~$\invneg$\quad
+%    |\ocircle|~$\ocircle$\quad
+%    |\logof|~$\logof$\quad
+%    \end{quote}
+%
+%   \subsection{Integrals}
+%   The |wasy| fonts provide a set of integral sybols, which comprises
+%   multiple integrals and surface integrals, too.  
+%   \begin{itemize}
+%   \item
+%    Loading the package
+%    with the option \texttt{[integrals]} makes the following integrals available:
+%    \begin{quote}
+%    |\int|~$\int$\quad
+%    |\iint|~$\iint$\quad
+%    |\iiint|~$\iiint$\quad
+%    |\oint|~$\oint$\quad
+%    |\oiint|~$\oiint$
+%    \end{quote}
+%   Notice that the style of the |\int| and |\oint| is changed, as compared
+%   with standard \LaTeX, and matches the other integral symbols.
+%   This works with or without the |amsmath| package,  
+%   and the sequence of loading does not matter.
+%   \item
+%   If you prefer to stay with the integral symbols provided by \LaTeX
+%   (and possibly |amsmath|),
+%   but need other symbols from the \texttt{wasy} fonts,
+%   load the package with the option \texttt{[nointegrals]}.  Doing so will 
+%   neither alter any existing integral symbols nor add new ones.
+%   \item
+%   Loading the package \emph{without an option} or with the option \texttt{[compat1]}
+%   makes the following commands for integrals available:
+%    \begin{quote}
+%    |\varint|~$\int$\quad
+%    |\iint|~$\iint$\quad
+%    |\iiint|~$\iiint$\quad
+%    |\varoint|~$\oint$\quad
+%    |\oiint|~$\oiint$
+%    \end{quote}
+%   This is compatible with the behavior of |wasysym| version~1.x,
+%   but the package will not cooperate well with |amsmath| then.
+%   \end{itemize}
+%
+% \subsection{General symbols}
+%
+%    \begin{quote}
+%  |\male|~\male \quad
+%  |\female|~\female \quad
+%  |\currency|~\currency \quad
+%  |\phone|~\phone \quad
+%  |\recorder|~\recorder \quad
+%  |\clock|~\clock \quad
+%  |\lightning|~\lightning \quad
+%  |\pointer|~\pointer \quad
+%  |\RIGHTarrow|~\RIGHTarrow \quad
+%  |\LEFTarrow|~\LEFTarrow \quad
+%  |\UParrow|~\UParrow \quad
+%  |\DOWNarrow|~\DOWNarrow \quad
+%  |\diameter|~\diameter \quad
+%  |\invdiameter|~\invdiameter \quad
+%  |\varangle|~\varangle \quad
+%  |\wasylozenge|~\wasylozenge \quad
+%  |\kreuz|~\kreuz \quad
+%  |\smiley|~\smiley \quad
+%  |\frownie|~\frownie \quad
+%  |\blacksmiley|~\blacksmiley \quad
+%  |\sun|~\sun \quad
+%  |\checked|~\checked \quad
+%  |\bell|~\bell \quad
+%  |\ataribox|~\ataribox \quad
+%  |\cent|~\cent \quad
+%  |\permil|~\permil \quad
+%  |\brokenvert|~\brokenvert \quad
+%  |\wasytherefore|~\wasytherefore \quad
+%  |\Bowtie|~\Bowtie \quad
+%  |\agemO|~\agemO
+%   \end{quote}
+%
+%  \subsection{Electrical and physical symbols}
+%
+%   \begin{quote}
+%  |\AC|~\AC \quad
+%  |\HF|~\HF \quad
+%  |\VHF|~\VHF \quad
+%  |\photon|~\photon \quad
+%  |\gluon|~\gluon
+%   \end{quote}
+%
+%   \subsection{Polygons and stars}
+%
+%   \begin{quote}
+%  |\Square|~\Square \quad
+%  |\XBox|~\XBox \quad
+%  |\CheckedBox|~\CheckedBox \quad
+%  |\hexagon|~\hexagon \quad
+%  |\varhexagon|~\varhexagon \quad
+%  |\pentagon|~\pentagon \quad
+%  |\octagon|~\octagon \quad
+%  |\hexstar|~\hexstar \quad
+%  |\varhexstar|~\varhexstar \quad
+%  |\davidsstar|~\davidsstar
+%   \end{quote}
+%
+%   \subsection{Music notes}
+%
+%   \begin{quote}
+%  |\eighthnote|~\eighthnote \quad
+%  |\quarternote|~\quarternote \quad
+%  |\halfnote|~\halfnote \quad
+%  |\fullnote|~\fullnote \quad
+%  |\twonotes|~\twonotes
+%   \end{quote}
+%
+%  \subsection{Various circles}
+%
+%   \begin{quote}
+%  |\Circle|~\Circle \quad
+%  |\CIRCLE|~\CIRCLE \quad
+%  |\Leftcircle|~\Leftcircle \quad
+%  |\LEFTCIRCLE|~\LEFTCIRCLE \quad
+%  |\Rightcircle|~\Rightcircle \quad
+%  |\RIGHTCIRCLE|~\RIGHTCIRCLE \quad
+%  |\LEFTcircle|~\LEFTcircle \quad
+%  |\RIGHTcircle|~\RIGHTcircle \quad
+%  |\leftturn|~\leftturn \quad
+%  |\rightturn|~\rightturn \quad
+%   \end{quote}
+%
+%  \subsection{Phonetic symbols}
+%
+%   \begin{quote}
+%  |\dh|~{\fontencoding{OT1}\fontfamily{cmr}\selectfont\dh} \quad
+%  |\DH|~{\fontencoding{OT1}\fontfamily{cmr}\selectfont\DH} \quad 
+%  |\thorn|~\thorn \quad
+%  |\Thorn|~\Thorn \quad
+%  |\openo|~\openo \quad
+%  |\inve|~\inve
+%   \end{quote}
+%
+%   T1-encoded fonts normally include  Eth characters of their own.
+%   The |wasy| package tries to provide  them in the OT1 encoding, too.
+%   by ``faking'' them.
+%   This should work with the Computer Modern fonts, but may fail with others.
+%
+%   The characters produced by |\thorn|, |\Thorn|, |\openo| and |\inve|  
+%   match only the CM-Roman typeface
+%   and do not change with the surrounding font family or shape.
+%
+%  \subsection{Astronomical symbols}
+%
+%   \begin{quote}
+%  |\vernal|~\vernal \quad
+%  |\ascnode|~\ascnode \quad
+%  |\descnode|~\descnode \quad
+%  |\fullmoon|~\fullmoon \quad
+%  |\newmoon|~\newmoon \quad
+%  |\leftmoon|~\leftmoon \quad
+%  |\rightmoon|~\rightmoon \quad
+%  |\astrosun|~\astrosun \quad
+%  |\mercury|~\mercury \quad
+%  |\venus|~\venus \quad
+%  |\earth|~\earth \quad
+%  |\mars|~\mars \quad
+%  |\jupiter|~\jupiter \quad
+%  |\saturn|~\saturn \quad
+%  |\uranus|~\uranus \quad
+%  |\neptune|~\neptune \quad
+%  |\pluto|~\pluto
+%   \end{quote}
+%
+%   \subsection{Astrological symbols and the zodiacal symbols}
+%
+%    \begin{quote}
+%  |\aries|~\aries \quad
+%  |\taurus|~\taurus \quad
+%  |\gemini|~\gemini \quad
+%  |\cancer|~\cancer \quad
+%  |\leo|~\leo \quad
+%  |\virgo|~\virgo \quad
+%  |\libra|~\libra \quad
+%  |\scorpio|~\scorpio \quad
+%  |\sagittarius|~\sagittarius \quad
+%  |\capricornus|~\capricornus \quad
+%  |\aquarius|~\aquarius \quad
+%  |\pisces|~\pisces \quad
+%  |\conjunction|~\conjunction \quad
+%  |\opposition|~\opposition
+%   \end{quote}
+%
+%  \subsection{APL symbols}
+%
+%    \begin{quote}
+%  |\APLstar|~\APLstar \quad
+%  |\APLlog|~\APLlog \quad
+%  |\APLbox|~\APLbox \quad
+%  |\APLup|~\APLup \quad
+%  |\APLdown|~\APLdown \quad
+%  |\APLinput|~\APLinput \quad
+%  |\APLcomment|~\APLcomment \quad
+%  |\APLinv|~\APLinv \quad
+%  |\APLuparrowbox|~\APLuparrowbox \quad
+%  |\APLdownarrowbox|~\APLdownarrowbox \quad
+%  |\APLleftarrowbox|~\APLleftarrowbox \quad
+%  |\APLrightarrowbox|~\APLrightarrowbox \quad
+%  |\notbackslash|~\notbackslash \quad
+%  |\notslash|~\notslash \quad
+%  |\APLnot|~\APLnot\ \quad
+%  |\APLvert|~\APLvert\ \quad
+%  |\APLcirc|~\APLcirc\ \quad
+%  |\APLminus|~\APLminus
+%
+%    \end{quote}
+%
+% \section{Changes over version~1.x}
+% \begin{itemize}
+%   \item
+%    The |\Dh| command has finally been abolished.
+%    \item
+%    The macros 
+%    |\LEFTcircle|, |\RIGHTcircle|, |\CheckedBox| and |\APLinv|
+%    start with  |\leavevmode| now, so that they work properly at the 
+%    beginning of a paragraph.
+%    \item
+%    Use of the \texttt{wasy}-style integral symbols can be controlled 
+%    via the options \texttt{[compat1]}, \texttt{[integrals]} and \texttt{[nointegrals]},
+%    with \texttt{[compat1]} being the default.
+%    \item
+%    When loaded with the \texttt{[integrals]} or \texttt{[nointegrals]} option, 
+%    the package will not clash with |amsmath|.
+% \end{itemize}
+%
+%
+% \StopEventually{}
+%
+% \section{The \dst{} modules}
+%
+% The following modules are used in the implementation to direct
+% \dst{} in generating the external files:
+% \begin{center}
+% \begin{tabular}{ll}
+%   driver & produce a documentation driver file \\
+%   package  & produce a package file \\
+%   fd     & produce a font definition file \\
+%   fdvar    & produce a \texttt{.fd} file for use with scalable fonts
+% \end{tabular}
+% \end{center}
+%
+% \section{The Implementation}
+% \subsection{The macro package}
+%
+%  With the version 1.x of |wasysym|, the definitions of the multiple 
+%  integrals would depend on whether |amsmath| was loaded additionally, and whether it 
+%  was loaded before or after |wasysym|.  Redefinition of \emph{all} integrals
+%  so as to exhibit the same style was only possible through the (almost) undocumented 
+%  macros |\newint| and |\newamsint|.  Similar problems would also arise
+%  with the Fourier math fonts.
+%  This behavior was hard to understand and somewhat unfortunate\dots
+%
+%  Three options are now introduced to control the (re)definiton of the integral macros
+%  and a ``version~1 compatibility mode'':
+%    \begin{macrocode}
+%<*package>
+\newif\ifwasy@integrals
+\newif\ifwasy@compatibility
+\DeclareOption{compat1}{%
+  \wasy@compatibilitytrue\wasy@integralsfalse}%
+\DeclareOption{integrals}{%
+  \wasy@compatibilityfalse\wasy@integralstrue}%
+\DeclareOption{nointegrals}{%
+  \wasy@compatibilityfalse\wasy@integralsfalse}%
+\ExecuteOptions{compat1}
+\ProcessOptions\relax
+%    \end{macrocode}
+%  \begin{itemize}
+%  \item
+%  By default or with the option \texttt{[compat1]}, version~2 will behave just as version~1,
+%  i.e. the macros |\varint|, |\iint|, |\iiint|, |\varoint| and |\oiint| are defined at load time.
+%  \item
+%  With the option \texttt{[nointegrals]}, the meaning of any ``standard''
+%  or AMS integral macros remains unchanged, and the additional \texttt{wasy}
+%  integrals cannot be used.
+%  Thus, one can use the other \texttt{wasy} symbols without altering the 
+%  integral signs.
+%  \item
+%  With the option \texttt{[integrals]}, the standard
+%  and (if applicable) AMS integral macros are redefined to match the style of the
+%  additional \texttt{wasy} integrals.  The definitions are deferred until 
+%  |\begin{document}|, so that other package cannot interfere.
+%  The redefined integral macros will cooperate with the |amsmath| package,
+%  if it is loaded additionally.
+%  \item
+%  The undocumented commands |\newint| and |\newamsint|, too, may turn on
+%  the redefinition of the integral commands.
+%  \end{itemize}
+%
+%  The following two macros serve to actually (re)define the integrals.
+%  The first one  is to be used if the |amsmath| package is not loaded:
+%    \begin{macrocode}
+\def\wasy@setup{%
+     \let\int\wasy@int  
+     \let\iint\wasy@iint 
+     \let\iiint\wasy@iiint 
+     \let\oint\wasy@oint 
+     \let\oiint\wasy@oiint
+} 
+%    \end{macrocode}
+%    With |amsmath|, it's a bit more complicated:
+%    \begin{macrocode}
+\def\wasy@amssetup{%
+     \let\intop\wasy@int
+     \let\iintop\wasy@iint 
+     \let\iiintop\wasy@iiint
+     \let\ointop\wasy@oint  
+     \let\oiintop\wasy@oiint
+     \def\int{\DOTSI\intop\ilimits@}%
+     \def\iint{\DOTSI\iintop\ilimits@}%
+     \def\iiint{\DOTSI\iiintop\ilimits@}%
+     \def\oint{\DOTSI\ointop\ilimits@}%
+     \def\oiint{\DOTSI\oiintop\ilimits@}%
+     \def\intkern@{\mkern-8mu}
+}
+%    \end{macrocode}
+%
+% The old undocumented commands |\newint| and |\newamsint| are changed,
+% so as to effect the same  as the |integrals| option  and issue a warning
+% message:
+%    \begin{macrocode}
+\newcommand{\newint}{%
+  \PackageWarning{wasysym}{%
+  The command \protect\newint\space is obsolete.
+  \MessageBreak
+  Load the package with the option [integrals] instead}
+  \wasy@integralstrue}
+\newcommand{\newamsint}{%
+  \PackageWarning{wasysym}{%
+  The command \protect\newamsint\space is obsolete.
+  \MessageBreak
+  Load the package with the option [integrals] instead.}
+  \wasy@integralstrue}
+%    \end{macrocode}
+%
+%
+%    To access the wasy symbols in text mode I have defined them
+%    as a new fontfamily. Since I only take single characters but
+%    don't want to write long text this is not an elegant approach. 
+%    But it works and the symbols scale according to textsize, which 
+%    is all I promised.
+%    \begin{macrocode}
+\def\wasyfamily{\fontencoding{U}\fontfamily{wasy}\selectfont}
+\DeclareTextFontCommand{\textwasy}{\wasyfamily}
+%    \end{macrocode}
+%
+% We declare a \texttt{wasy} math symbol font, too:
+%    \begin{macrocode}
+\DeclareSymbolFont{wasy}{U}{wasy}{m}{n}
+\SetSymbolFont{wasy}{bold}{U}{wasy}{b}{n}
+%    \end{macrocode}
+%
+%    We declare a new command to generate overlayed symbols:
+%    \begin{macrocode}
+\def\wasy@over#1#2{{\setbox0\hbox{$#2$}\hbox to \wd0{\hss
+    $#1$\hss}\kern-\wd0\box0}}
+%    \end{macrocode}
+%
+%     Defining some special symbols:
+%    \begin{macrocode}
+\def\male       {\mbox{\wasyfamily\char26}}
+\def\female     {\mbox{\wasyfamily\char25}}
+\def\currency   {{\wasyfamily\char27}}
+\def\phone      {{\wasyfamily\char7}}
+\def\recorder   {{\wasyfamily\char6}}
+\def\clock      {{\wasyfamily\char28}}
+\def\lightning  {{\wasyfamily\char18}}
+\def\pointer    {{\wasyfamily\char9}}
+\def\RIGHTarrow {{\wasyfamily\char17}}
+\def\LEFTarrow  {{\wasyfamily\char16}}
+\def\UParrow    {{\wasyfamily\char75}}
+\def\DOWNarrow  {{\wasyfamily\char76}}
+\def\AC         {\mbox{\kern0.5pt\wasyfamily\char58\kern0.5pt}}
+\def\HF         {\leavevmode
+        \lower0.9pt\hbox to 0pt{\kern0.5pt\wasyfamily\char58\hss}%
+        \raise0.9pt\hbox{\kern0.5pt\wasyfamily\char58\kern0.5pt}}
+\def\VHF        {\mbox{\wasyfamily\char64}}
+\def\Square     {\mbox{$\Box$}}
+\def\CheckedBox {\leavevmode\hbox to 0pt{\wasyfamily\char50\hss}%
+                 \hbox{\wasyfamily\char8}}
+\def\XBox       {\mbox{\wasyfamily\char52}}
+\def\hexagon    {\mbox{\wasyfamily\char55}}
+\def\pentagon   {\mbox{\wasyfamily\char68}}
+\def\octagon    {\mbox{\wasyfamily\char56}}
+\def\varhexagon {\mbox{\wasyfamily\char57}}
+\def\hexstar    {\mbox{\wasyfamily\char65}}
+\def\varhexstar {\mbox{\wasyfamily\char66}}
+\def\davidsstar {\mbox{\wasyfamily\char67}}
+\def\diameter   {\mbox{\wasyfamily\char31}}
+\def\invdiameter{\mbox{\wasyfamily\char21}}
+\def\varangle   {\mbox{\wasyfamily\char30}}
+\def\wasylozenge{\mbox{\wasyfamily\char53}}
+\def\kreuz      {\mbox{\wasyfamily\char54}}
+\def\smiley     {\mbox{\wasyfamily\char44}}
+\def\frownie    {\mbox{\wasyfamily\char47}}
+\def\blacksmiley{\mbox{\wasyfamily\char45}}
+\def\sun        {\mbox{\wasyfamily\char46}}
+\def\checked    {\mbox{\wasyfamily\char8}}
+\def\bell       {\mbox{\wasyfamily\char10}}
+\def\eighthnote {\mbox{\wasyfamily\char11}}
+\def\quarternote{\mbox{\wasyfamily\char12}}
+\def\halfnote   {\mbox{\wasyfamily\char13}}
+\def\fullnote   {\mbox{\wasyfamily\char14}}
+\def\twonotes   {\mbox{\wasyfamily\char15}}
+\def\brokenvert {\mbox{\wasyfamily\char124}}
+\def\ataribox   {\mbox{\wasyfamily\char109}}
+\def\wasytherefore{\mbox{\wasyfamily\char5}}
+\def\Circle     {\mbox{\wasyfamily\char35}}
+\def\CIRCLE     {\mbox{\wasyfamily\char32}}
+\def\Leftcircle {\mbox{\wasyfamily\char73}}
+\def\LEFTCIRCLE {\mbox{\wasyfamily\char71}}
+\def\Rightcircle{\mbox{\wasyfamily\char74}}
+\def\RIGHTCIRCLE{\mbox{\wasyfamily\char72}}
+\def\LEFTcircle {\leavevmode%
+                 \hbox to 0pt{\wasyfamily\char71\hss}%
+                 \hbox{\wasyfamily\char35}}
+\def\RIGHTcircle{\leavevmode%
+                 \hbox to 0pt{\wasyfamily\char72\hss}%
+                 \hbox{\wasyfamily\char35}}
+%    \end{macrocode}
+%
+%     Astronomy:
+%    \begin{macrocode}
+\def\vernal     {\mbox{\wasyfamily\char23}}
+\def\ascnode    {\mbox{\wasyfamily\char19}}
+\def\descnode   {\mbox{\wasyfamily\char20}}
+\let\fullmoon   \Circle
+\let\newmoon    \CIRCLE
+\def\leftmoon   {\mbox{\wasyfamily\char36}}
+\def\rightmoon  {\mbox{\wasyfamily\char37}}
+\def\astrosun   {\mbox{$\odot$}}
+\def\mercury    {\mbox{\wasyfamily\char39}}
+\def\venus      {\leavevmode\raise0.2ex\hbox{\wasyfamily\char25}}
+\def\earth      {\leavevmode\lower0.3ex\hbox{\wasyfamily\char38}}
+\def\mars       {\leavevmode\lower0.2ex\hbox{\wasyfamily\char26}}
+\def\jupiter    {\mbox{\wasyfamily\char88}}
+\def\saturn     {\mbox{\wasyfamily\char89}}
+\def\uranus     {\mbox{\wasyfamily\char90}}
+\def\neptune    {\mbox{\wasyfamily\char91}}
+\def\pluto      {\mbox{\wasyfamily\char92}}
+%    \end{macrocode}
+%
+%     The zodiac:
+%    \begin{macrocode}
+\let\aries      \vernal
+\def\taurus     {\mbox{\wasyfamily\char93}}
+\def\gemini     {\mbox{\wasyfamily\char94}}
+\def\cancer     {\mbox{\wasyfamily\char95}}
+\let\leo        \ascnode
+\def\virgo      {\mbox{\wasyfamily\char96}}
+\def\libra      {\mbox{\wasyfamily\char97}}
+\def\scorpio    {\mbox{\wasyfamily\char98}}
+\def\sagittarius{\mbox{\wasyfamily\char99}}
+\def\capricornus{\mbox{\wasyfamily\char100}}
+\def\aquarius   {\mbox{\wasyfamily\char101}}
+\def\pisces     {\mbox{\wasyfamily\char102}}
+\def\conjunction{{\wasyfamily\char86}}
+\def\opposition {{\wasyfamily\char87}}
+%    \end{macrocode}
+%
+%     APL characters:
+%    \begin{macrocode}
+\def\APLstar    {\mbox{\wasyfamily\char69}}
+\def\APLlog     {\mbox{\wasyfamily\char22}}
+\def\APLbox     {\mbox{\wasyfamily\char126}}
+\def\APLup      {\mbox{\wasyfamily\char0}}
+\def\APLdown    {\mbox{\wasyfamily\char70}}
+\def\APLinput   {\mbox{\wasyfamily\char125}}
+\def\APLcomment {\mbox{\wasyfamily\char127}}
+\def\APLinv     {{\leavevmode\hbox to 0pt{$\div$\hss}\APLbox}}
+\def\APLuparrowbox{\mbox{\wasyfamily\char110}}
+\def\APLdownarrowbox{\mbox{\wasyfamily\char111}}
+\def\APLleftarrowbox{\mbox{\wasyfamily\char112}}
+\def\APLrightarrowbox{\mbox{\wasyfamily\char113}}
+\def\notbackslash{\wasy@over{\backslash}{-}}
+\def\notslash   {\wasy@over{/}{-}}
+\def\APLminus   {\leavevmode\raise0.7ex\hbox{$-$}}
+\def\APLnot#1{\wasy@over{\sim}{#1}}
+\def\APLcirc#1{\wasy@over{\circ}{#1}}
+\def\APLvert#1{\wasy@over{\vert}{#1}}
+%    \end{macrocode}
+%
+%     Math symbols:
+%    \begin{macrocode}
+\def\Bowtie     {\mbox{\wasyfamily\char49}}
+\def\leftturn   {\mbox{\wasyfamily\char34}}
+\def\rightturn  {\mbox{\wasyfamily\char33}}
+%    \end{macrocode}
+%
+%     Particle physics:
+%    \begin{macrocode}
+\def\photon     {\mbox{\wasyfamily\char58\char58\char58\char58}}
+\def\gluon      {\mbox{\wasyfamily\char81\char80\char80\char80%
+    \char80\char80\char80\char82}}
+%    \end{macrocode}
+%
+%     Miscellaneous:
+%    \begin{macrocode}
+\def\cent       {\mbox{\wasyfamily\char103}}
+\def\permil     {\mbox{\wasyfamily\char104}}
+\def\agemO      {{\wasyfamily\char48}}
+%    \end{macrocode}
+%
+%     Phonetic:
+%    \begin{macrocode}
+\def\thorn      {{\wasyfamily\char105}}
+\def\Thorn      {{\wasyfamily\char106}}
+\DeclareTextCommand{\dh}{OT1}{{\wasyfamily\char107}}
+\DeclareTextCommand{\DH}{OT1}{\leavevmode{\rm\setbox0\hbox{D}%
+    \hbox to\wd0{\kern 0.04em\char32\hss D}}}
+\def\openo      {{\wasyfamily\char108}}
+\def\inve       {{\wasyfamily\char85}}
+%    \end{macrocode}
+%
+%
+%    Because the lasy symbols are made an error in the format we have
+%    to undefine them before we can set them anew with
+%    |\DeclareMathSymbol|. Made the mathgroups more readable and
+%    changed |\lhd| and friends to be binary operators as in
+%    latexsym.
+%    \begin{macrocode}
+  \let\mho\undefined
+  \let\sqsupset\undefined \let\Join\undefined
+  \let\lhd\undefined      \let\Box\undefined
+  \let\unlhd\undefined    \let\Diamond\undefined
+  \let\rhd\undefined      \let\leadsto\undefined
+  \let\unrhd\undefined    \let\sqsubset\undefined
+  \DeclareMathSymbol\mho     {\mathord}{wasy}{"30}
+  \DeclareMathSymbol\Join    {\mathrel}{wasy}{"31}
+  \DeclareMathSymbol\Box     {\mathord}{wasy}{"32}
+  \DeclareMathSymbol\Diamond {\mathord}{wasy}{"33}
+  \DeclareMathSymbol\leadsto {\mathrel}{wasy}{"3B}
+  \DeclareMathSymbol\sqsubset{\mathrel}{wasy}{"3C}
+  \DeclareMathSymbol\sqsupset{\mathrel}{wasy}{"3D}
+  \DeclareMathSymbol\lhd     {\mathbin}{wasy}{"01}
+  \DeclareMathSymbol\unlhd   {\mathbin}{wasy}{"02}
+  \DeclareMathSymbol\LHD     {\mathbin}{wasy}{"10}
+  \DeclareMathSymbol\rhd     {\mathbin}{wasy}{"03}
+  \DeclareMathSymbol\unrhd   {\mathbin}{wasy}{"04}
+  \DeclareMathSymbol\RHD     {\mathbin}{wasy}{"11}
+  \DeclareMathSymbol\apprle  {\mathrel}{wasy}{"3E}
+  \DeclareMathSymbol\apprge  {\mathrel}{wasy}{"3F}
+  \DeclareMathSymbol\wasypropto   {\mathrel}{wasy}{"1D}
+  \DeclareMathSymbol\invneg  {\mathrel}{wasy}{"18}
+  \DeclareMathSymbol\ocircle {\mathbin}{wasy}{"23}
+  \DeclareMathSymbol\logof   {\mathrel}{wasy}{"16}
+%    \end{macrocode}
+%    
+%    Initially the integrals are defined with ``harmless''
+%    names. i.e., no existing macros are overwritten:
+%    \begin{macrocode}
+  \DeclareMathSymbol\wasy@int  {\mathop}{wasy}{"72}
+  \DeclareMathSymbol\wasy@iint {\mathop}{wasy}{"73}
+  \DeclareMathSymbol\wasy@iiint{\mathop}{wasy}{"74}
+  \DeclareMathSymbol\wasy@oint {\mathop}{wasy}{"75}
+  \DeclareMathSymbol\wasy@oiint{\mathop}{wasy}{"76}
+%    \end{macrocode}
+%
+% Now let's actually set up the integrals.  
+% In ``compatibility mode'' they are defined immediately at load time:
+%    \begin{macrocode}
+\ifwasy@compatibility
+  \let\varint\wasy@int
+  \let\iint\wasy@iint 
+  \let\iiint\wasy@iiint 
+  \let\varoint\wasy@oint
+  \let\oiint\wasy@oiint
+\fi
+%    \end{macrocode}
+% If the option \texttt{[integrals]} was selected, the related definitions
+% are executed only at |\begin{document}|.  Notice that the commands
+% |\newint| or |\newamsint| may appear in the preamble and turn on the
+% the redefinition of the integral macros.
+%    \begin{macrocode}
+\AtBeginDocument{%
+  \ifwasy@integrals
+    \@ifpackageloaded{amsmath}{\wasy@amssetup}{\wasy@setup}
+  \fi
+}
+%</package>
+%    \end{macrocode}
+%
+%  \subsection{The font definition files}
+%
+%    The declarations, 
+%    that have to go into the corresponding |.fd| files:
+%    \begin{macrocode}
+%<*fd>
+\DeclareFontFamily{U}{wasy}{}
+\DeclareFontShape{U}{wasy}{m}{n}{ <5> <6> <7> <8> <9> gen * wasy
+      <10> <10.95> <12> <14.4> <17.28> <20.74> <24.88>wasy10  }{}
+\DeclareFontShape{U}{wasy}{b}{n}{ <-10> sub * wasy/m/n
+ <10> <10.95> <12> <14.4> <17.28> <20.74> <24.88>wasyb10 }{}
+\DeclareFontShape{U}{wasy}{bx}{n}{ <-> sub * wasy/b/n}{}
+%</fd>
+%<*fdvar>
+\DeclareFontFamily{U}{wasy}{}
+\DeclareFontShape{U}{wasy}{m}{n}{%
+<5-6> wasy5
+<6-7> wasy6
+<7-8> wasy7
+<8-9> wasy8
+<9-10> wasy9
+<10-> wasy10}{}
+\DeclareFontShape{U}{wasy}{b}{n}{ <-10> sub * wasy/m/n
+ <10-> wasyb10 }{}
+\DeclareFontShape{U}{wasy}{bx}{n}{ <-> sub * wasy/b/n}{}
+%</fdvar>
+%    \end{macrocode}
+%
+%    The next line goes into all files and in addition prevents \dst{}
+%    from adding any further code from the main source file (such as a
+%    character table).
+%    \begin{macrocode}
+\endinput
+%    \end{macrocode}
+%
+% \DeleteShortVerb{\|}
+% \Finale
