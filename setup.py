@@ -28,7 +28,12 @@ setup(
     maintainer='Radek Czajka',
     maintainer_email='radoslaw.czajka@nowoczesnapolska.org.pl',
     url='http://github.com/fnp/librarian',
-    packages=['librarian'],
+    packages=[
+        'librarian',
+        'librarian.styles',
+        'librarian.styles.wolnelektury',
+        'librarian.styles.wolnelektury.partners',
+    ],
     package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer') +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'res')},

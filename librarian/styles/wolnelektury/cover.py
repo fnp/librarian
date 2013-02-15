@@ -3,7 +3,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw
 from StringIO import StringIO
 from librarian import get_resource, URLOpener
 from librarian.cover import Cover, TextBox

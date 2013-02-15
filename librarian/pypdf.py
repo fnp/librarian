@@ -10,12 +10,14 @@ with TeXML, then runs it by XeLaTeX.
 
 """
 from __future__ import with_statement
+from copy import deepcopy
 import os
 import os.path
 import shutil
 from StringIO import StringIO
 from tempfile import mkdtemp, NamedTemporaryFile
 import re
+import random
 from copy import deepcopy
 from subprocess import call, PIPE
 
@@ -23,7 +25,7 @@ from Texml.processor import process
 from lxml import etree
 from lxml.etree import XMLSyntaxError, XSLTApplyError
 
-from xmlutils import Xmill, tag, tagged, ifoption
+from xmlutils import Xmill, tag, tagged, ifoption, tag_open_close
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
 from librarian import ParseError, DCNS, get_resource, IOFile, Format
@@ -49,15 +51,18 @@ def escape(really):
     return deco
 
 
-def cmd(name, pass_text=False):
+def cmd(name, parms=None):
     def wrap(self, element):
-        pre = u'<cmd name="%s">' % name
+        pre, post = tag_open_close('cmd', name=name)
 
-        if pass_text:
-            pre += "<parm>%s</parm>" % element.text
-            return pre + '</cmd>'
-        else:
-            return pre, '</cmd>'
+        if parms:
+            for parm in parms:
+                e = etree.Element("parm")
+                e.text = parm
+                pre += etree.tostring(e)
+        pre += "<parm>"
+        post = "</parm>" + post
+        return pre, post
     return wrap
 
 
@@ -74,7 +79,7 @@ class EduModule(Xmill):
 
         def swap_endlines(txt):
             if self.options['strofa']:
-                txt = txt.replace("/\n", '<ctrl ch="\"/>')
+                txt = txt.replace("/\n", '<ctrl ch="\\"/>')
             return txt
         self.register_text_filter(functions.substitute_entities)
         self.register_text_filter(mark_alien_characters)
@@ -189,7 +194,7 @@ class EduModule(Xmill):
     handle_wyroznienie = \
     handle_texcommand
 
-    _handle_strofa = cmd("strofa", True)
+    _handle_strofa = cmd("strofa")
 
     def handle_strofa(self, element):
         self.options = {'strofa': True}
@@ -250,6 +255,8 @@ class EduModule(Xmill):
         return
 
     def handle_lista(self, element, attrs={}):
+        if not element.findall("punkt"):
+            return None
         ltype = element.attrib.get('typ', 'punkt')
         if ltype == 'slowniczek':
             surl = element.attrib.get('href', None)
@@ -271,16 +278,19 @@ class EduModule(Xmill):
 
     def handle_cwiczenie(self, element):
         exercise_handlers = {
-            'wybor': Wybor}
-            # 'uporzadkuj': Uporzadkuj,
-            # 'luki': Luki,
-            # 'zastap': Zastap,
-            # 'przyporzadkuj': Przyporzadkuj,
-            # 'prawdafalsz': PrawdaFalsz
+            'wybor': Wybor,
+            'uporzadkuj': Uporzadkuj,
+            'luki': Luki,
+            'zastap': Zastap,
+            'przyporzadkuj': Przyporzadkuj,
+            'prawdafalsz': PrawdaFalsz
+        }
 
         typ = element.attrib['typ']
+        self.exercise_counter += 1
         if not typ in exercise_handlers:
             return '(no handler)'
+        self.options = {'exercise_counter': self.exercise_counter}
         handler = exercise_handlers[typ](self.options)
         return handler.generate(element)
 
@@ -322,7 +332,7 @@ class EduModule(Xmill):
                 #        else: frames_c = ""
                 #        return u"""<table class="%s">""" % frames_c, u"</table>"
         return u'''
-<cmd name="begin"><parm>tabular</parm><opt>%s</opt></cmd>
+<cmd name="begin"><parm>tabular</parm><parm>%s</parm></cmd>
     ''' % ('l' * max_col), \
     u'''<cmd name="end"><parm>tabular</parm></cmd>'''
 
@@ -333,10 +343,14 @@ class EduModule(Xmill):
     @escape(1)
     def handle_kol(self, element):
         if element.getnext() is not None:
-            return u"", u'<spec cat="align">'
+            return u"", u'<spec cat="align" />'
         return u"", u""
 
-    handle_link = cmd('em', True)
+    def handle_link(self, element):
+        if element.attrib.get('url'):
+            return cmd('href', parms=[element.attrib['url']])(self, element)
+        else:
+            return cmd('em')(self, element)
 
 
 class Exercise(EduModule):
@@ -344,14 +358,22 @@ class Exercise(EduModule):
         self.question_counter = 0
         super(Exercise, self).__init__(*args, **kw)
 
-    handle_rozw_kom = ifoption(teacher=True)(cmd('akap', True))
+    handle_rozw_kom = ifoption(teacher=True)(cmd('akap'))
 
     def handle_cwiczenie(self, element):
-        self.options = {'exercise': element.attrib['typ']}
+        self.options = {
+            'exercise': element.attrib['typ'],
+            'sub_gen': True,
+        }
         self.question_counter = 0
         self.piece_counter = 0
 
-        pre = u""
+        header = etree.Element("parm")
+        header_cmd = etree.Element("cmd", name="naglowekpodrozdzial")
+        header_cmd.append(header)
+        header.text = u"Zadanie %d." % self.options['exercise_counter']
+
+        pre = etree.tostring(header_cmd, encoding=unicode)
         post = u""
         # Add a single <pytanie> tag if it's not there
         if not element.xpath(".//pytanie"):
@@ -363,29 +385,37 @@ class Exercise(EduModule):
     def handle_pytanie(self, element):
         """This will handle <cwiczenie> element, when there is no <pytanie>
         """
-        opts = {}
         self.question_counter += 1
         self.piece_counter = 0
-        solution = element.attrib.get('rozw', None)
-        if solution:
-            opts['solution'] = solution
+        pre = post = u""
+        if self.options['teacher'] and element.attrib.get('rozw'):
+            post += u" [rozwiązanie: %s]" % element.attrib.get('rozw')
+        return pre, post
 
-        handles = element.attrib.get('uchwyty', None)
-        if handles:
-            opts['handles'] = handles
+    def handle_punkt(self, element):
+        pre, post = super(Exercise, self).handle_punkt(element)
+        if self.options['teacher'] and element.attrib.get('rozw'):
+            post += u" [rozwiązanie: %s]" % element.attrib.get('rozw')
+        return pre, post
 
-        minimum = element.attrib.get('min', None)
-        if minimum:
-            opts['minimum'] = minimum
+    def solution_header(self):
+        par = etree.Element("cmd", name="par")
+        parm = etree.Element("parm")
+        parm.text = u"Rozwiązanie:"
+        par.append(parm)
+        return etree.tostring(par)
 
-        if opts:
-            self.options = opts
-        return u"", u""
+    def explicit_solution(self):
+        if self.options['solution']:
+            par = etree.Element("cmd", name="par")
+            parm = etree.Element("parm")
+            parm.text = self.options['solution']
+            par.append(parm)
+            return self.solution_header() + etree.tostring(par)
+
 
 
 class Wybor(Exercise):
-    INSTRUCTION = None
-
     def handle_cwiczenie(self, element):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
         is_single_choice = True
@@ -415,6 +445,89 @@ class Wybor(Exercise):
             return super(Wybor, self).handle_punkt(element)
 
 
+class Uporzadkuj(Exercise):
+    def handle_pytanie(self, element):
+        order_items = element.xpath(".//punkt/@rozw")
+        return super(Uporzadkuj, self).handle_pytanie(element)
+
+
+class Przyporzadkuj(Exercise):
+    def handle_lista(self, lista):
+        header = etree.Element("parm")
+        header_cmd = etree.Element("cmd", name="par")
+        header_cmd.append(header)
+        if 'nazwa' in lista.attrib:
+            header.text = u"Kategorie:"
+        elif 'cel' in lista.attrib:
+            header.text = u"Elementy do przyporządkowania:"
+        else:
+            header.text = u"Lista:"
+        pre, post = super(Przyporzadkuj, self).handle_lista(lista)
+        pre = etree.tostring(header_cmd, encoding=unicode) + pre
+        return pre, post
+
+
+class Luki(Exercise):
+    def find_pieces(self, question):
+        return question.xpath(".//luka")
+
+    def solution(self, piece):
+        piece = deepcopy(piece)
+        piece.tail = None
+        sub = EduModule()
+        return sub.generate(piece)
+
+    def handle_pytanie(self, element):
+        qpre, qpost = super(Luki, self).handle_pytanie(element)
+
+        luki = self.find_pieces(element)
+        random.shuffle(luki)
+        self.words = u"<env name='itemize'>%s</env>" % (
+            "".join("<cmd name='item'/>%s" % self.solution(luka) for luka in luki)
+        )
+        return qpre, qpost
+
+    def handle_opis(self, element):
+        return '', self.words
+
+    def handle_luka(self, element):
+        luka = "_" * 10
+        if self.options['teacher']:
+            piece = deepcopy(element)
+            piece.tail = None
+            sub = EduModule()
+            text = sub.generate(piece)
+            luka += u" [rozwiązanie: %s]" % text
+        return luka
+
+
+class Zastap(Luki):
+    def find_pieces(self, question):
+        return question.xpath(".//zastap")
+
+    def solution(self, piece):
+        return piece.attrib['rozw']
+
+    def list_header(self):
+        return u"Elementy do wstawienia"
+
+    def handle_zastap(self, element):
+        piece = deepcopy(element)
+        piece.tail = None
+        sub = EduModule()
+        text = sub.generate(piece)
+        if self.options['teacher'] and element.attrib.get('rozw'):
+            text += u" [rozwiązanie: %s]" % element.attrib.get('rozw')
+        return text
+
+
+class PrawdaFalsz(Exercise):
+    def handle_punkt(self, element):
+        pre, post = super(PrawdaFalsz, self).handle_punkt(element)
+        if 'rozw' in element.attrib:
+            post += u" [Prawda/Fałsz]"
+        return pre, post
+
 
 
 def fix_lists(tree):
@@ -435,7 +548,7 @@ def fix_lists(tree):
 
 class EduModulePDFFormat(PDFFormat):
     def get_texml(self):
-        edumod = EduModule()
+        edumod = EduModule({"teacher": True})
         texml = edumod.generate(fix_lists(self.wldoc.edoc.getroot())).encode('utf-8')
 
         open("/tmp/texml.xml", "w").write(texml)

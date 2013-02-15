@@ -4,7 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import re
-import Image, ImageFont, ImageDraw, ImageFilter
+from PIL import Image, ImageFont, ImageDraw, ImageFilter
 from StringIO import StringIO
 from librarian import get_resource, IOFile
 

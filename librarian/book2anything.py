@@ -10,7 +10,6 @@ import optparse
 
 from librarian import DirDocProvider, ParseError
 from librarian.parser import WLDocument
-from librarian.cover import WLCover
 
 
 class Option(object):
@@ -88,7 +87,7 @@ class Book2Anything(object):
         for option in cls.parser_options:
             parser_args[option.name()] = option.value(options)
         # Prepare additional args for transform method.
-        transform_args = {}
+        transform_args = {"verbose": options.verbose}
         for option in cls.transform_options:
             transform_args[option.name()] = option.value(options)
         # Add flags to transform_args, if any.
@@ -98,6 +97,7 @@ class Book2Anything(object):
             transform_args['flags'] = transform_flags
         # Add cover support, if any.
         if cls.uses_cover:
+            from librarian.styles.wolnelektury.cover import WLCover
             if options.image_cache:
                 def cover_class(*args, **kwargs):
                     return WLCover(image_cache=options.image_cache, *args, **kwargs)

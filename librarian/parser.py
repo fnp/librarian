@@ -204,8 +204,8 @@ class WLDocument(object):
         return epub.transform(self, *args, **kwargs)
 
     def as_pdf(self, *args, **kwargs):
-        from librarian import pdf
-        return pdf.transform(self, *args, **kwargs)
+        from librarian import pypdf
+        return pypdf.EduModulePDFFormat(self).build(*args, **kwargs)
 
     def as_mobi(self, *args, **kwargs):
         from librarian import mobi
@@ -217,7 +217,7 @@ class WLDocument(object):
 
     def as_cover(self, cover_class=None, *args, **kwargs):
         if cover_class is None:
-            from librarian.cover import WLCover
+            from librarian.styles.wolnelektury.cover import WLCover
             cover_class = WLCover
         return cover_class(self.book_info, *args, **kwargs).output_file()
 

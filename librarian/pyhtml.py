@@ -9,6 +9,7 @@ from xmlutils import Xmill, tag, tagged, ifoption, tag_open_close
 from librarian import functions
 import re
 import random
+from copy import deepcopy
 
 IMAGE_THUMB_WIDTH = 300
 
@@ -444,12 +445,10 @@ class Luki(Exercise):
         return question.xpath(".//luka")
 
     def solution_html(self, piece):
+        piece = deepcopy(piece)
+        piece.tail = None
         sub = EduModule()
         return sub.generate(piece)
-        # print piece.text
-        # return piece.text + ''.join(
-        #     [etree.tostring(n, encoding=unicode)
-        #      for n in piece])
 
     def handle_pytanie(self, element):
         qpre, qpost = super(Luki, self).handle_pytanie(element)

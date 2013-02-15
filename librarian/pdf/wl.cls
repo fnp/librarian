@@ -75,7 +75,7 @@
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 % TODO: link color is a style thing
-\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=blue,xetex]{hyperref}
 
 \ifenablewlfont
 \setmainfont [
@@ -418,3 +418,11 @@ Letters={Uppercase}
 \newcommand*\checkbox{\item[\Square]}
 \newcommand*\radio{\item[\Circle]}
 
+
+\renewcommand{\naglowekrozdzial}[1]{%
+\subsection*{\typosubsection{#1}}%
+}
+
+\renewcommand{\naglowekpodrozdzial}[1]{%
+\subsubsection*{\typosubsubsection{#1}}%
+}
