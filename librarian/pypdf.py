@@ -548,7 +548,7 @@ def fix_lists(tree):
 
 class EduModulePDFFormat(PDFFormat):
     def get_texml(self):
-        edumod = EduModule({"teacher": True})
+        edumod = EduModule({"teacher": self.customization.get('teacher')})
         texml = edumod.generate(fix_lists(self.wldoc.edoc.getroot())).encode('utf-8')
 
         open("/tmp/texml.xml", "w").write(texml)
