@@ -172,7 +172,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 
 \newcommand{\typosubsubsection}[1]{%
-{\textsc{#1}}
+{#1}
 }
 
 \newcommand{\typosubsection}[1]{%
