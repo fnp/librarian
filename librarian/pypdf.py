@@ -206,6 +206,11 @@ class EduModule(Xmill):
     handle_wyroznienie = \
     handle_texcommand
 
+    def handle_uwaga(self, _e):
+        return None
+    def handle_extra(self, _e):
+        return None
+
     _handle_strofa = cmd("strofa")
 
     def handle_strofa(self, element):
