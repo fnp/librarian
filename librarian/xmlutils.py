@@ -26,7 +26,10 @@ class Xmill(object):
             if text is None:
                 return None
             text = flt(text)
-        return text
+        # TODO: just work on the tree and let lxml handle escaping.
+        e = etree.Element("x")
+        e.text = text
+        return etree.tostring(e, encoding=unicode)[3:-4]
 
     def generate(self, document):
         """Generate text from node using handlers defined in class."""

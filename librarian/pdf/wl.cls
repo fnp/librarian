@@ -75,6 +75,7 @@
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 % TODO: link color is a style thing
+\usepackage[hyphens]{url}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=blue,xetex]{hyperref}
 
 \ifenablewlfont
@@ -425,4 +426,13 @@ Letters={Uppercase}
 
 \renewcommand{\naglowekpodrozdzial}[1]{%
 \subsubsection*{\typosubsubsection{#1}}%
+}
+
+\newcommand{\obraz}[1]{
+\includegraphics[width=8cm]{#1}
+}
+
+\newcommand{\video}[2]{
+\includegraphics[width=8cm]{#1}\\
+\href{#2}{(Otwórz wideo w serwisie YouTube)}
 }

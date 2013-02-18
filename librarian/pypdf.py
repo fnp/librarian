@@ -20,6 +20,7 @@ import re
 import random
 from copy import deepcopy
 from subprocess import call, PIPE
+from urllib2 import urlopen
 
 from Texml.processor import process
 from lxml import etree
@@ -52,7 +53,7 @@ def escape(really):
 
 
 def cmd(name, parms=None):
-    def wrap(self, element):
+    def wrap(self, element=None):
         pre, post = tag_open_close('cmd', name=name)
 
         if parms:
@@ -60,9 +61,12 @@ def cmd(name, parms=None):
                 e = etree.Element("parm")
                 e.text = parm
                 pre += etree.tostring(e)
-        pre += "<parm>"
-        post = "</parm>" + post
-        return pre, post
+        if element is not None:
+            pre += "<parm>"
+            post = "</parm>" + post
+            return pre, post
+        else:
+            return pre + post
     return wrap
 
 
@@ -348,9 +352,38 @@ class EduModule(Xmill):
 
     def handle_link(self, element):
         if element.attrib.get('url'):
-            return cmd('href', parms=[element.attrib['url']])(self, element)
+            url = element.attrib.get('url')
+            if url == element.text:
+                return cmd('url')(self, element)
+            else:
+                return cmd('href', parms=[element.attrib['url']])(self, element)
         else:
             return cmd('em')(self, element)
+
+    def handle_obraz(self, element):
+        frmt = self.options['format']
+        name = element.attrib['nazwa'].strip()
+        image = frmt.get_image(name.strip())
+        img_path = "obraz/%s" % name.replace("_", "")
+        frmt.attachments[img_path] = image
+        return cmd("obraz", parms=[img_path])(self)
+
+    def handle_video(self, element):
+        url = element.attrib.get('url')
+        if not url:
+            print '!! <video> missing url'
+            return
+        m = re.match(r'(?:https?://)?(?:www.)?youtube.com/watch\?(?:.*&)?v=([^&]+)(?:$|&)', url)
+        if not m:
+            print '!! unknown <video> url scheme:', url
+            return
+        name = m.group(1)
+        thumb = IOFile.from_string(urlopen
+            ("http://img.youtube.com/vi/%s/0.jpg" % name).read())
+        img_path = "video/%s.jpg" % name.replace("_", "")
+        self.options['format'].attachments[img_path] = thumb
+        canon_url = "https://www.youtube.com/watch?v=%s" % name
+        return cmd("video", parms=[img_path, canon_url])(self)
 
 
 class Exercise(EduModule):
@@ -548,8 +581,22 @@ def fix_lists(tree):
 
 class EduModulePDFFormat(PDFFormat):
     def get_texml(self):
-        edumod = EduModule({"teacher": self.customization.get('teacher')})
+        self.attachments = {}
+        edumod = EduModule({
+            "format": self,
+            "teacher": self.customization.get('teacher'),
+        })
         texml = edumod.generate(fix_lists(self.wldoc.edoc.getroot())).encode('utf-8')
 
         open("/tmp/texml.xml", "w").write(texml)
         return texml
+
+    def get_tex_dir(self):
+        temp = super(EduModulePDFFormat, self).get_tex_dir()
+        for name, iofile in self.attachments.items():
+            iofile.save_as(os.path.join(temp, name))
+        return temp
+
+    def get_image(self, name):
+        return self.wldoc.source.attachments[name]
+
