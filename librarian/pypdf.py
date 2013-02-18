@@ -263,7 +263,10 @@ class EduModule(Xmill):
             return None
         ltype = element.attrib.get('typ', 'punkt')
         if ltype == 'slowniczek':
-            surl = element.attrib.get('href', None)
+            surl = element.attrib.get('src', None)
+            if surl is None:
+                # print '** missing src on <slowniczek>, setting default'
+                surl = 'http://edukacjamedialna.edu.pl/slowniczek'
             sxml = None
             if surl:
                 sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
@@ -305,7 +308,7 @@ class EduModule(Xmill):
         definiens_s = ''
 
         # let's pull definiens from another document
-        if self.options['slowniczek_xml'] and (not nxt or nxt.tag != 'definiens'):
+        if self.options['slowniczek_xml'] is not None and (nxt is None or nxt.tag != 'definiens'):
             sxml = self.options['slowniczek_xml']
             assert element.text != ''
             defloc = sxml.xpath("//definiendum[text()='%s']" % element.text)
@@ -583,6 +586,7 @@ class EduModulePDFFormat(PDFFormat):
     def get_texml(self):
         self.attachments = {}
         edumod = EduModule({
+            'provider': self.wldoc.provider, 
             "format": self,
             "teacher": self.customization.get('teacher'),
         })

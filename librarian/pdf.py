@@ -290,7 +290,7 @@ class PDFFormat(Format):
                 p = call(['xelatex', '-interaction=batchmode', tex_path],
                             stdout=PIPE, stderr=PIPE)
         if p:
-            raise ParseError("Error parsing .tex file")
+            raise ParseError("Error parsing .tex file: %s" % tex_path)
 
         if cwd is not None:
             os.chdir(cwd)
