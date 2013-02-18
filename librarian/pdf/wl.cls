@@ -81,16 +81,16 @@
 \ifenablewlfont
 \setmainfont [
 %ExternalLocation,
-UprightFont = JunicodeWL-Regular,
-ItalicFont = JunicodeWL-Italic,
-BoldFont = JunicodeWL-Regular,
-BoldItalicFont = JunicodeWL-Italic,
-SmallCapsFont = JunicodeWL-Regular,
+UprightFont = Dosis-Regular,
+ItalicFont = Dosis-SemiBold,
+BoldFont = Dosis-Bold,
+BoldItalicFont = Dosis-Bold,
+SmallCapsFont = Dosis-Regular,
 SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
 Numbers=OldStyle,
 Scale=1.04,
 LetterSpace=-1.0
-] {JunicodeWL}
+] {Dosis}
 
 \newfontfamily\alien[
 SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
@@ -150,7 +150,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
+\lfoot{{\footnotesize \@author{} \emph{\@title}}}
 \cfoot{}
 \rfoot{{\footnotesize \thepage}}
 
@@ -405,34 +405,4 @@ Letters={Uppercase}
 \vspace{\baselineskip}%
 }%
 \fi
-}
-
-%% EDUMED SPECIFIC
-
-\newcommand{\activitycounter}[1]{\vspace{1em}\par{\huge{#1}}}
-
-\newcommand{\activityinfo}[1]{\begin{flushright}\parbox[t]{2in}{#1}\end{flushright}}
-\newcommand{\activitytime}[1]{Czas: #1 min \\}
-\newcommand{\activityform}[1]{Forma: #1 \\}
-\newcommand{\activitytools}[1]{#1 \\}
-
-\newcommand*\checkbox{\item[\Square]}
-\newcommand*\radio{\item[\Circle]}
-
-
-\renewcommand{\naglowekrozdzial}[1]{%
-\subsection*{\typosubsection{#1}}%
-}
-
-\renewcommand{\naglowekpodrozdzial}[1]{%
-\subsubsection*{\typosubsubsection{#1}}%
-}
-
-\newcommand{\obraz}[1]{
-\includegraphics[width=8cm]{#1}
-}
-
-\newcommand{\video}[2]{
-\includegraphics[width=8cm]{#1}\\
-\href{#2}{(Otwórz wideo w serwisie YouTube)}
 }

@@ -1,0 +1,77 @@
+
+\newcommand{\activitycounter}[1]{\vspace{1em}\par{\huge{#1}}}
+
+\newcommand{\activityinfo}[1]{\begin{flushright}\parbox[t]{2in}{#1}\end{flushright}}
+\newcommand{\activitytime}[1]{Czas: #1 min \\}
+\newcommand{\activityform}[1]{Forma: #1 \\}
+\newcommand{\activitytools}[1]{#1 \\}
+
+\newcommand*\checkbox{\item[\Square]}
+\newcommand*\radio{\item[\Circle]}
+
+
+\renewcommand{\naglowekrozdzial}[1]{%
+\subsection*{\typosubsection{#1}}%
+}
+
+\renewcommand{\naglowekpodrozdzial}[1]{%
+\subsubsection*{\typosubsubsection{#1}}%
+}
+
+\newcommand{\obraz}[1]{
+\includegraphics[width=8cm]{#1}
+}
+
+\newcommand{\video}[2]{
+\includegraphics[width=8cm]{#1}\\
+\href{#2}{(Otwórz wideo w serwisie YouTube)}
+}
+
+\renewcommand{\maketitle}{
+    {
+    \thispagestyle{empty}
+    \footnotesize
+    \color{theme}
+
+    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
+        \href{http://edukacjamedialna.edu.pl}{\xbox{\includegraphics[width=\textwidth]{logo.png}}}
+    \end{minipage}
+
+    \vspace{.6em}
+    \color{black}
+    }
+}
+
+\newcommand{\rightsinfostr}[2][] {
+    \ifx&#1&%
+        #2
+    \else
+        Udostępniono na licencji \href{#1}{#2}.
+    \fi
+}
+
+\newcommand{\editorialsection}{
+  \begin{figure}[b!]
+  {
+    \footnotesize
+    \color{theme}
+    \noindent \rule{\linewidth}{0.4pt}
+
+    \rightsinfo
+    \vspace{.6em}
+
+
+Tekst: \authorstextbook, scenariusz: \authorsscenario, konsultacja merytoryczna: \authorsexpert.
+Materiał pochodzi z serwisu \href{http://edukacjamedialna.edu.pl}{edukacjamedialna.edu.pl} prowadzonego przez 
+\href{http://nowoczesnapolska.org.pl}{Fundację Nowoczesna Polska}.
+
+\vspace{.6em}
+\rightsinfo
+
+\vspace{.6em}
+Źródło: \href{\bookurl}{\bookurl}.
+
+    \color{black}
+  }
+  \end{figure}
+}

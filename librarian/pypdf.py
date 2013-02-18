@@ -108,11 +108,15 @@ class EduModule(Xmill):
           u'</cmd>'
 
     @escape(True)
-    def get_authors(self, element):
-        authors = self.get_dc(element, 'creator.expert') + \
-          self.get_dc(element, 'creator.scenario') + \
-          self.get_dc(element, 'creator.textbook')
-        return u', '.join(authors)
+    def get_authors(self, element, which=None):
+        dc = self.options['wldoc'].book_info
+        if which is None:
+            authors = dc.authors_textbook + \
+                dc.authors_scenario + \
+                dc.authors_expert
+        else:
+            authors = getattr(dc, "authors_%s" % which)
+        return u', '.join(author.readable() for author in authors)
 
     @escape(1)
     def get_title(self, element):
@@ -133,9 +137,13 @@ class EduModule(Xmill):
             \\usepackage{morefloats}
         }{}'''),
     u'''\\def\\authors{%s}''' % self.get_authors(element),
+    u'''\\def\\authorsexpert{%s}''' % self.get_authors(element, 'expert'),
+    u'''\\def\\authorsscenario{%s}''' % self.get_authors(element, 'scenario'),
+    u'''\\def\\authorstextbook{%s}''' % self.get_authors(element, 'textbook'),
+    
     u'''\\author{\\authors}''',
     u'''\\title{%s}''' % self.get_title(element),
-    u'''\\def\\bookurl{%s}''' % self.get_dc(element, 'identifier.url', True),
+    u'''\\def\\bookurl{%s}''' % self.options['wldoc'].book_info.url.canonical(),
     u'''\\def\\rightsinfo{%s}''' % self.get_rightsinfo(element),
     u'</TeXML>']
 
@@ -147,7 +155,7 @@ class EduModule(Xmill):
         return u"""
     <env name="document">
     <cmd name="maketitle"/>
-    """, """</env>"""
+    """, """<cmd name="editorialsection" /></env>"""
 
     @escape(1)
     def handle_texcommand(self, element):
@@ -231,7 +239,7 @@ class EduModule(Xmill):
         counter = self.activity_counter
 
         return u"""
-
+<cmd name="noindent" />
 <cmd name="activitycounter"><parm>%(counter)d.</parm></cmd>
 <cmd name="activityinfo"><parm>
  <cmd name="activitytime"><parm>%(czas)s</parm></cmd>
@@ -269,7 +277,7 @@ class EduModule(Xmill):
                 surl = 'http://edukacjamedialna.edu.pl/slowniczek'
             sxml = None
             if surl:
-                sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
+                sxml = etree.fromstring(self.options['wldoc'].provider.by_uri(surl).get_string())
             self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
 
         listcmd = {'num': 'enumerate',
@@ -361,7 +369,7 @@ class EduModule(Xmill):
             else:
                 return cmd('href', parms=[element.attrib['url']])(self, element)
         else:
-            return cmd('em')(self, element)
+            return cmd('emph')(self, element)
 
     def handle_obraz(self, element):
         frmt = self.options['format']
@@ -583,10 +591,12 @@ def fix_lists(tree):
 
 
 class EduModulePDFFormat(PDFFormat):
+    style = get_resource('res/styles/edumed/pdf/edumed.sty')
+
     def get_texml(self):
         self.attachments = {}
         edumod = EduModule({
-            'provider': self.wldoc.provider, 
+            "wldoc": self.wldoc,
             "format": self,
             "teacher": self.customization.get('teacher'),
         })
@@ -597,6 +607,7 @@ class EduModulePDFFormat(PDFFormat):
 
     def get_tex_dir(self):
         temp = super(EduModulePDFFormat, self).get_tex_dir()
+        shutil.copy(get_resource('res/styles/edumed/logo.png'), temp)
         for name, iofile in self.attachments.items():
             iofile.save_as(os.path.join(temp, name))
         return temp
