@@ -9,30 +9,20 @@ Creates one big XML from the book and its children, converts it to LaTeX
 with TeXML, then runs it by XeLaTeX.
 
 """
-from __future__ import with_statement
 from copy import deepcopy
-import os
 import os.path
 import shutil
-from StringIO import StringIO
-from tempfile import mkdtemp, NamedTemporaryFile
 import re
 import random
-from copy import deepcopy
-from subprocess import call, PIPE
 from urllib2 import urlopen
 
-from Texml.processor import process
 from lxml import etree
-from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 from xmlutils import Xmill, tag, tagged, ifoption, tag_open_close
 from librarian.dcparser import Person
-from librarian.parser import WLDocument
-from librarian import ParseError, DCNS, get_resource, IOFile, Format
+from librarian import DCNS, get_resource, IOFile
 from librarian import functions
-from pdf import PDFFormat
-
+from pdf import PDFFormat, substitute_hyphens, fix_hanging
 
 
 def escape(really):
@@ -85,9 +75,9 @@ class EduModule(Xmill):
             if self.options['strofa']:
                 txt = txt.replace("/\n", '<ctrl ch="\\"/>')
             return txt
+        self.register_text_filter(swap_endlines)
         self.register_text_filter(functions.substitute_entities)
         self.register_text_filter(mark_alien_characters)
-        self.register_text_filter(swap_endlines)
 
     def get_dc(self, element, dc_field, single=False):
         values = map(lambda t: t.text, element.xpath("//dc:%s" % dc_field, namespaces={'dc': DCNS.uri}))
@@ -204,12 +194,16 @@ class EduModule(Xmill):
     handle_srodtytul = \
     handle_tytul_dziela = \
     handle_wyroznienie = \
+    handle_dywiz = \
     handle_texcommand
 
     def handle_uwaga(self, _e):
         return None
     def handle_extra(self, _e):
         return None
+
+    def handle_nbsp(self, _e):
+        return '<spec cat="tilde" />'
 
     _handle_strofa = cmd("strofa")
 
@@ -272,14 +266,17 @@ class EduModule(Xmill):
         return
 
     def handle_lista(self, element, attrs={}):
-        if not element.findall("punkt"):
-            return None
         ltype = element.attrib.get('typ', 'punkt')
+        if not element.findall("punkt"):
+            if ltype == 'czytelnia':
+                return 'W przygotowaniu.'
+            else:
+                return None
         if ltype == 'slowniczek':
             surl = element.attrib.get('src', None)
             if surl is None:
                 # print '** missing src on <slowniczek>, setting default'
-                surl = 'http://edukacjamedialna.edu.pl/slowniczek'
+                surl = 'http://edukacjamedialna.edu.pl/lekcje/slowniczek/'
             sxml = None
             if surl:
                 sxml = etree.fromstring(self.options['wldoc'].provider.by_uri(surl).get_string())
@@ -599,6 +596,9 @@ class EduModulePDFFormat(PDFFormat):
     style = get_resource('res/styles/edumed/pdf/edumed.sty')
 
     def get_texml(self):
+        substitute_hyphens(self.wldoc.edoc)
+        fix_hanging(self.wldoc.edoc)
+
         self.attachments = {}
         edumod = EduModule({
             "wldoc": self.wldoc,

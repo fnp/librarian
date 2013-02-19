@@ -295,7 +295,7 @@ Letters={Uppercase}
 \subsubsection*{\typosubsubsection{#1}}%
 }
 \newcommand{\naglowekrozdzial}[1]{%
-\subsubsection*{\typosubsubsection{#1}}%
+{\raggedright\subsubsection*{\typosubsubsection{#1}}}%
 }
 
 \newcommand{\naglowekosoba}[1]{%

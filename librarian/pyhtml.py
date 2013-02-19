@@ -151,6 +151,11 @@ u"""%(wskazowki)s
     # Lists
     def handle_lista(self, element, attrs={}):
         ltype = element.attrib.get('typ', 'punkt')
+        if not element.findall("punkt"):
+            if ltype == 'czytelnia':
+                return '<p>W przygotowaniu.</p>'
+            else:
+                return None
         if ltype == 'slowniczek':
             surl = element.attrib.get('src', None)
             if surl is None:
@@ -173,7 +178,10 @@ u"""%(wskazowki)s
         attrs_s = ' '.join(['%s="%s"' % kv for kv in attrs.items()])
         if attrs_s: attrs_s = ' ' + attrs_s
 
-        return '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
+        pre, post = '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
+        if ltype == 'slowniczek':
+            post += '<p class="see-more"><a href="%s">Zobacz cały słowniczek.</a></p>' % surl
+        return pre, post
 
     def handle_punkt(self, element):
         if self.options['slowniczek']:
