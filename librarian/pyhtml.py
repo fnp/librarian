@@ -160,12 +160,15 @@ u"""%(wskazowki)s
             surl = element.attrib.get('src', None)
             if surl is None:
                 # print '** missing src on <slowniczek>, setting default'
-                surl = 'http://edukacjamedialna.edu.pl/slowniczek'
+                surl = 'http://edukacjamedialna.edu.pl/lekcje/slowniczek/'
             sxml = None
             if surl:
                 sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
             self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
-            return '<div class="slowniczek">', '</div>'
+            pre, post = '<div class="slowniczek">', '</div>'
+            if self.options['wldoc'].book_info.url.slug != 'slowniczek':
+                post += u'<p class="see-more"><a href="%s">Zobacz cały słowniczek.</a></p>' % surl
+            return pre, post
 
         listtag = {'num': 'ol',
                'punkt': 'ul',
@@ -178,10 +181,7 @@ u"""%(wskazowki)s
         attrs_s = ' '.join(['%s="%s"' % kv for kv in attrs.items()])
         if attrs_s: attrs_s = ' ' + attrs_s
 
-        pre, post = '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
-        if ltype == 'slowniczek':
-            post += '<p class="see-more"><a href="%s">Zobacz cały słowniczek.</a></p>' % surl
-        return pre, post
+        return '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
 
     def handle_punkt(self, element):
         if self.options['slowniczek']:
