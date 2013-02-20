@@ -211,7 +211,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\nazwautworu}[1]{%
-\section*{\typosection{#1}}%
+\section*{\raggedright{\typosection{#1}}}%
 }
 
 \newcommand{\podtytul}[1]{%
@@ -295,7 +295,7 @@ Letters={Uppercase}
 \subsubsection*{\typosubsubsection{#1}}%
 }
 \newcommand{\naglowekrozdzial}[1]{%
-{\raggedright\subsubsection*{\typosubsubsection{#1}}}%
+{\subsubsection*{\raggedright{\typosubsubsection{#1}}}}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
