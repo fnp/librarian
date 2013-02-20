@@ -13,6 +13,17 @@ from copy import deepcopy
 
 IMAGE_THUMB_WIDTH = 300
 
+try:
+    from fnpdjango.utils.text.slughifi import slughifi
+    def naglowek_to_anchor(naglowek):
+        return slughifi(naglowek.text)
+except ImportError:
+    from urllib import quote
+    def naglowek_to_anchor(naglowek):
+        return quote(re.sub(r" +", " ", naglowek.text.strip()))
+    
+    
+
 class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
@@ -54,25 +65,22 @@ class EduModule(Xmill):
     handle_tytul_dziela = tag('em', 'title')
     handle_slowo_obce = tag('em', 'foreign')
 
-    def naglowek_to_anchor(self, naglowek):
-        return re.sub(r" +", " ", naglowek.text.strip())
-
     def handle_nazwa_utworu(self, element):
         toc = []
         for naglowek in element.getparent().findall('.//naglowek_rozdzial'):
             a = etree.Element("a")
-            a.attrib["href"] = "#" + self.naglowek_to_anchor(naglowek)
+            a.attrib["href"] = "#" + naglowek_to_anchor(naglowek)
             a.text = naglowek.text
             atxt = etree.tostring(a, encoding=unicode)
             toc.append("<li>%s</li>" % atxt)
         toc = "<ul class='toc'>%s</ul>" % "".join(toc)
         add_header = "Lekcja: " if self.options['wldoc'].book_info.type in ('course', 'synthetic') else ''
-        return "<h1 class='title'><a name='top'></a>%s" % add_header, "</h1>" + toc
+        return "<h1 class='title' id='top'>%s" % add_header, "</h1>" + toc
 
     def handle_naglowek_rozdzial(self, element):
         return_to_top = u"<a href='#top' class='top-link'>wróć do spisu treści</a>"
-        anchor = "".join(tag_open_close("a", name=self.naglowek_to_anchor(element)))
-        return return_to_top + "<h2>", anchor + "</h2>"
+        pre, post = tag_open_close("h2", id=naglowek_to_anchor(element))
+        return return_to_top + pre, post
 
     def handle_uwaga(self, _e):
         return None
@@ -442,7 +450,7 @@ Overrides the returned content default handle_pytanie
             u"""</div>"""
 
     def handle_punkt(self, element):
-        return """<li class="question-piece" data-pos="%(rozw)s"/>""" \
+        return """<li class="question-piece" data-pos="%(rozw)s">""" \
             % element.attrib,\
             "</li>"
 
@@ -549,9 +557,9 @@ class Przyporzadkuj(Exercise):
 
         elif self.options['predicate']:
             if self.options['min']:
-                placeholders = u'<li class="placeholder"/>' * self.options['min']
+                placeholders = u'<li class="placeholder"></li>' * self.options['min']
             else:
-                placeholders = u'<li class="placeholder multiple"/>'
+                placeholders = u'<li class="placeholder multiple"></li>'
             return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
 
         else:
