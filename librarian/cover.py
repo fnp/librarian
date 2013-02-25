@@ -4,7 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import re
-import Image, ImageFont, ImageDraw, ImageFilter
+import Image, ImageFont, ImageDraw, ImageFilter, ImageEnhance
 from StringIO import StringIO
 from librarian import get_resource, OutputFile, URLOpener
 
@@ -231,7 +231,10 @@ class WLCover(Cover):
     box_line_left = 75
     box_line_right = 275
     box_line_width = 2
-    
+
+    logo_top = 15
+    logo_width = 140
+
     bar_width = 35
     background_color = '#444'
     author_color = '#444'
@@ -251,10 +254,11 @@ class WLCover(Cover):
         u'Współczesność': '#06393d',
     }
 
-    def __init__(self, book_info, format=None, width=None, height=None):
+    def __init__(self, book_info, format=None, width=None, height=None, with_logo=False):
         super(WLCover, self).__init__(book_info, format=format, width=width, height=height)
         self.kind = book_info.kind
         self.epoch = book_info.epoch
+        self.with_logo = with_logo
         if book_info.cover_url:
             url = book_info.cover_url
             bg_src = None
@@ -288,7 +292,7 @@ class WLCover(Cover):
                     src.size[1] * trg_size[0] / src.size[0]
                 )
                 cut = (resized[1] - trg_size[1]) / 2
-                src = src.resize(resized)
+                src = src.resize(resized, Image.ANTIALIAS)
                 src = src.crop((0, cut, src.size[0], src.size[1] - cut))
             else:
                 resized = (
@@ -296,7 +300,7 @@ class WLCover(Cover):
                     trg_size[1],
                 )
                 cut = (resized[0] - trg_size[0]) / 2
-                src = src.resize(resized)
+                src = src.resize(resized, Image.ANTIALIAS)
                 src = src.crop((cut, 0, src.size[0] - cut, src.size[1]))
 
             img.paste(src, (metr.bar_width, 0))
@@ -325,6 +329,15 @@ class WLCover(Cover):
                  color=epoch_color,
                  shadow_color=self.title_shadow,
                 )
+
+        if self.with_logo:
+            logo = Image.open(get_resource('res/wl-logo-mono.png'))
+            logo = logo.resize((metr.logo_width, logo.size[1] * metr.logo_width / logo.size[0]), Image.ANTIALIAS)
+            alpha = logo.split()[3]
+            alpha = ImageEnhance.Brightness(alpha).enhance(.75)
+            logo.putalpha(alpha)
+            box.skip(metr.logo_top + logo.size[1])
+
         box_img = box.image()
 
         if self.kind == 'Liryka':
@@ -344,8 +357,12 @@ class WLCover(Cover):
             fill='#fff')
         img.paste(box_img, (box_left, box_top), box_img)
 
-        return img
+        if self.with_logo:
+            img.paste(logo, 
+                (box_left + (box_img.size[0] - logo.size[0]) / 2,
+                    box_top + box_img.size[1] - metr.box_padding_y - logo.size[1]), mask=logo)
 
+        return img
 
 
 class VirtualoCover(Cover):
