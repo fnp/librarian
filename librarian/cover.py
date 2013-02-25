@@ -9,6 +9,19 @@ from StringIO import StringIO
 from librarian import get_resource, OutputFile, URLOpener
 
 
+class Metric(object):
+    """Gets metrics from an object, scaling it by a factor."""
+    def __init__(self, obj, scale):
+        self._obj = obj
+        self._scale = float(scale)
+
+    def __getattr__(self, name):
+        src = getattr(self._obj, name)
+        if src and self._scale:
+            src = type(src)(self._scale * src)
+        return src
+
+
 class TextBox(object):
     """Creates an Image with a series of centered strings."""
 
@@ -94,7 +107,8 @@ class Cover(object):
     author_lineskip = 40
     author_color = '#000'
     author_shadow = None
-    author_font = None
+    author_font_ttf = get_resource('fonts/DejaVuSerif.ttf')
+    author_font_size = 30
 
     title_top = 100
     title_margin_left = 20
@@ -102,13 +116,15 @@ class Cover(object):
     title_lineskip = 54
     title_color = '#000'
     title_shadow = None
-    title_font = None
+    title_font_ttf = get_resource('fonts/DejaVuSerif.ttf')
+    title_font_size = 40
 
     logo_bottom = None
     logo_width = None
     uses_dc_cover = False
 
     format = 'JPEG'
+    scale = 1
 
     exts = {
         'JPEG': 'jpg',
@@ -120,11 +136,14 @@ class Cover(object):
         'PNG': 'image/png',
         }
 
-    def __init__(self, book_info, format=None):
+    def __init__(self, book_info, format=None, width=None, height=None):
         self.author = ", ".join(auth.readable() for auth in book_info.authors)
         self.title = book_info.title
         if format is not None:
             self.format = format
+        scale = max(float(width or 0) / self.width, float(height or 0) / self.height)
+        if scale:
+            self.scale = scale
 
     def pretty_author(self):
         """Allows for decorating author's name."""
@@ -135,7 +154,8 @@ class Cover(object):
         return self.title
 
     def image(self):
-        img = Image.new('RGB', (self.width, self.height), self.background_color)
+        metr = Metric(self, self.scale)
+        img = Image.new('RGB', (metr.width, metr.height), self.background_color)
 
         if self.background_img:
             background = Image.open(self.background_img)
@@ -143,34 +163,35 @@ class Cover(object):
             del background
 
         # WL logo
-        if self.logo_width:
+        if metr.logo_width:
             logo = Image.open(get_resource('res/wl-logo.png'))
-            logo = logo.resize((self.logo_width, logo.size[1] * self.logo_width / logo.size[0]))
-            img.paste(logo, ((self.width - self.logo_width) / 2, img.size[1] - logo.size[1] - self.logo_bottom))
+            logo = logo.resize((metr.logo_width, logo.size[1] * metr.logo_width / logo.size[0]))
+            img.paste(logo, ((metr.width - metr.logo_width) / 2, img.size[1] - logo.size[1] - metr.logo_bottom))
 
-        top = self.author_top
+        top = metr.author_top
         tbox = TextBox(
-            self.width - self.author_margin_left - self.author_margin_right,
-            self.height - top,
+            metr.width - metr.author_margin_left - metr.author_margin_right,
+            metr.height - top,
             )
-        author_font = self.author_font or ImageFont.truetype(
-            get_resource('fonts/DejaVuSerif.ttf'), 30)
+            
+        author_font = ImageFont.truetype(
+            self.author_font_ttf, metr.author_font_size)
         tbox.text(self.pretty_author(), self.author_color, author_font,
-            self.author_lineskip, self.author_shadow)
+            metr.author_lineskip, self.author_shadow)
         text_img = tbox.image()
-        img.paste(text_img, (self.author_margin_left, top), text_img)
+        img.paste(text_img, (metr.author_margin_left, top), text_img)
 
-        top += text_img.size[1] + self.title_top
+        top += text_img.size[1] + metr.title_top
         tbox = TextBox(
-            self.width - self.title_margin_left - self.title_margin_right,
-            self.height - top,
+            metr.width - metr.title_margin_left - metr.title_margin_right,
+            metr.height - top,
             )
-        title_font = self.author_font or ImageFont.truetype(
-            get_resource('fonts/DejaVuSerif.ttf'), 40)
+        title_font = ImageFont.truetype(
+            self.title_font_ttf, metr.title_font_size)
         tbox.text(self.pretty_title(), self.title_color, title_font,
-            self.title_lineskip, self.title_shadow)
+            metr.title_lineskip, self.title_shadow)
         text_img = tbox.image()
-        img.paste(text_img, (self.title_margin_left, top), text_img)
+        img.paste(text_img, (metr.title_margin_left, top), text_img)
 
         return img
 
@@ -181,7 +202,7 @@ class Cover(object):
         return self.exts[self.format]
 
     def save(self, *args, **kwargs):
-        return self.image().save(format=self.format, *args, **kwargs)
+        return self.image().save(format=self.format, quality=95, *args, **kwargs)
 
     def output_file(self, *args, **kwargs):
         imgstr = StringIO()
@@ -194,13 +215,23 @@ class WLCover(Cover):
     width = 600
     height = 833
     uses_dc_cover = True
-    author_font = ImageFont.truetype(
-        get_resource('fonts/JunicodeWL-Regular.ttf'), 20)
+    author_font_ttf = get_resource('fonts/JunicodeWL-Regular.ttf')
+    author_font_size = 20
     author_lineskip = 30
-    title_font = ImageFont.truetype(
-        get_resource('fonts/DejaVuSerif-Bold.ttf'), 30)
+    title_font_ttf = get_resource('fonts/DejaVuSerif-Bold.ttf')
+    title_font_size = 30
     title_lineskip = 40
     title_box_width = 350
+    
+    box_top_margin = 100
+    box_bottom_margin = 100
+    box_padding_y = 20
+    box_above_line = 10
+    box_below_line = 15
+    box_line_left = 75
+    box_line_right = 275
+    box_line_width = 2
+    
     bar_width = 35
     background_color = '#444'
     author_color = '#444'
@@ -220,19 +251,13 @@ class WLCover(Cover):
         u'Współczesność': '#06393d',
     }
 
-    def __init__(self, book_info, format=None, image_cache=None):
-        super(WLCover, self).__init__(book_info, format=format)
+    def __init__(self, book_info, format=None, width=None, height=None):
+        super(WLCover, self).__init__(book_info, format=format, width=width, height=height)
         self.kind = book_info.kind
         self.epoch = book_info.epoch
         if book_info.cover_url:
             url = book_info.cover_url
             bg_src = None
-            if image_cache:
-                from urllib import quote
-                try:
-                    bg_src = URLOpener().open(image_cache + quote(url, safe=""))
-                except:
-                    pass
             if bg_src is None:
                 bg_src = URLOpener().open(url)
             self.background_img = StringIO(bg_src.read())
@@ -244,18 +269,19 @@ class WLCover(Cover):
         return self.author.upper()
 
     def image(self):
-        img = Image.new('RGB', (self.width, self.height), self.background_color)
+        metr = Metric(self, self.scale)
+        img = Image.new('RGB', (metr.width, metr.height), self.background_color)
         draw = ImageDraw.Draw(img)
 
         if self.epoch in self.epoch_colors:
             epoch_color = self.epoch_colors[self.epoch]
         else:
             epoch_color = '#000'
-        draw.rectangle((0, 0, self.bar_width, self.height), fill=epoch_color)
+        draw.rectangle((0, 0, metr.bar_width, metr.height), fill=epoch_color)
 
         if self.background_img:
             src = Image.open(self.background_img)
-            trg_size = (self.width - self.bar_width, self.height)
+            trg_size = (metr.width - metr.bar_width, metr.height)
             if src.size[0] * trg_size[1] < src.size[1] * trg_size[0]:
                 resized = (
                     trg_size[0],
@@ -273,25 +299,29 @@ class WLCover(Cover):
                 src = src.resize(resized)
                 src = src.crop((cut, 0, src.size[0] - cut, src.size[1]))
 
-            img.paste(src, (self.bar_width, 0))
+            img.paste(src, (metr.bar_width, 0))
             del src
 
-        box = TextBox(self.title_box_width, self.height, padding_y=20)
+        box = TextBox(metr.title_box_width, metr.height, padding_y=metr.box_padding_y)
+        author_font = ImageFont.truetype(
+            self.author_font_ttf, metr.author_font_size)
         box.text(self.pretty_author(),
-                 font=self.author_font,
-                 line_height=self.author_lineskip,
+                 font=author_font,
+                 line_height=metr.author_lineskip,
                  color=self.author_color,
                  shadow_color=self.author_shadow,
                 )
 
-        box.skip(10)
-        box.draw.line((75, box.height, 275, box.height),
-                fill=self.author_color, width=2)
-        box.skip(15)
+        box.skip(metr.box_above_line)
+        box.draw.line((metr.box_line_left, box.height, metr.box_line_right, box.height),
+                fill=self.author_color, width=metr.box_line_width)
+        box.skip(metr.box_below_line)
 
+        title_font = ImageFont.truetype(
+            self.title_font_ttf, metr.title_font_size)
         box.text(self.pretty_title(),
-                 line_height=self.title_lineskip,
-                 font=self.title_font,
+                 line_height=metr.title_lineskip,
+                 font=title_font,
                  color=epoch_color,
                  shadow_color=self.title_shadow,
                 )
@@ -299,15 +329,15 @@ class WLCover(Cover):
 
         if self.kind == 'Liryka':
             # top
-            box_top = 100
+            box_top = metr.box_top_margin
         elif self.kind == 'Epika':
             # bottom
-            box_top = self.height - 100 - box_img.size[1]
+            box_top = metr.height - metr.box_bottom_margin - box_img.size[1]
         else:
             # center
-            box_top = (self.height - box_img.size[1]) / 2
+            box_top = (metr.height - box_img.size[1]) / 2
 
-        box_left = self.bar_width + (self.width - self.bar_width -
+        box_left = metr.bar_width + (metr.width - metr.bar_width -
                         box_img.size[0]) / 2
         draw.rectangle((box_left, box_top,
             box_left + box_img.size[0], box_top + box_img.size[1]),
@@ -338,7 +368,8 @@ class PrestigioCover(Cover):
     author_lineskip = 60
     author_color = '#fff'
     author_shadow = '#000'
-    author_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50)
+    author_font_ttf = get_resource('fonts/JunicodeWL-Italic.ttf')
+    author_font_size = 50
 
     title_top = 0
     title_margin_left = 118
@@ -346,7 +377,8 @@ class PrestigioCover(Cover):
     title_lineskip = 60
     title_color = '#fff'
     title_shadow = '#000'
-    title_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Italic.ttf'), 50)
+    title_font_ttf = get_resource('fonts/JunicodeWL-Italic.ttf')
+    title_font_size = 50
 
     def pretty_title(self):
         return u"„%s”" % self.title
@@ -362,14 +394,16 @@ class BookotekaCover(Cover):
     author_margin_right = 233
     author_lineskip = 156
     author_color = '#d9d919'
-    author_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Regular.ttf'), 130)
+    author_font_ttf = get_resource('fonts/JunicodeWL-Regular.ttf')
+    author_font_size = 130
 
     title_top = 400
     title_margin_left = 307
     title_margin_right = 233
     title_lineskip = 168
     title_color = '#d9d919'
-    title_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Regular.ttf'), 140)
+    title_font_ttf = get_resource('fonts/JunicodeWL-Regular.ttf')
+    title_font_size = 140
 
     format = 'PNG'
 
@@ -378,8 +412,10 @@ class GandalfCover(Cover):
     width = 600
     height = 730
     background_img = get_resource('res/cover-gandalf.png')
-    author_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Regular.ttf'), 30)
-    title_font = ImageFont.truetype(get_resource('fonts/JunicodeWL-Regular.ttf'), 40)
+    author_font_ttf = get_resource('fonts/JunicodeWL-Regular.ttf')
+    author_font_size = 30
+    title_font_ttf = get_resource('fonts/JunicodeWL-Regular.ttf')
+    title_font_size = 40
     logo_bottom = 25
     logo_width = 250
     format = 'PNG'
