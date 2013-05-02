@@ -8,9 +8,8 @@ from collections import namedtuple
 import os.path
 import optparse
 
-from librarian import DirDocProvider, ParseError
-from librarian.parser import WLDocument
-from librarian.cover import WLCover
+from librarian import ParseError
+from librarian.document import Document
 
 
 class Option(object):
@@ -34,47 +33,26 @@ class Book2Anything(object):
     
     Subclass it for any format you want to convert to.
     """
-    format_name = None # Set format name, like "PDF".
-    ext = None # Set file extension, like "pdf".
-    uses_cover = False # Can it add a cover?
-    cover_optional = True # Only relevant if uses_cover
-    uses_provider = False # Does it need a DocProvider?
-    transform = None # Transform method. Uses WLDocument.as_{ext} by default.
-    parser_options = [] # List of Option objects for additional parser args.
-    transform_options = [] # List of Option objects for additional transform args.
-    transform_flags = [] # List of Option objects for supported transform flags.
-
+    format_cls = None # A formats.Format subclass
+    document_options = [] # List of Option objects for document options.
+    format_options = [] # List of Option objects for format customization.
+    build_options = [] # List of Option objects for build options.
 
     @classmethod
     def run(cls):
         # Parse commandline arguments
         usage = """Usage: %%prog [options] SOURCE [SOURCE...]
-        Convert SOURCE files to %s format.""" % cls.format_name
+        Convert SOURCE files to %s.""" % cls.format_cls.format_name
 
         parser = optparse.OptionParser(usage=usage)
 
         parser.add_option('-v', '--verbose', 
                 action='store_true', dest='verbose', default=False,
                 help='print status messages to stdout')
-        parser.add_option('-d', '--make-dir',
-                action='store_true', dest='make_dir', default=False,
-                help='create a directory for author and put the output file in it')
         parser.add_option('-o', '--output-file',
                 dest='output_file', metavar='FILE',
                 help='specifies the output file')
-        parser.add_option('-O', '--output-dir',
-                dest='output_dir', metavar='DIR',
-                help='specifies the directory for output')
-        if cls.uses_cover:
-            if cls.cover_optional:
-                parser.add_option('-c', '--with-cover', 
-                        action='store_true', dest='with_cover', default=False,
-                        help='create default cover')
-            parser.add_option('-C', '--image-cache',
-                    dest='image_cache', metavar='URL',
-                    help='prefix for image download cache' +
-                        (' (implies --with-cover)' if cls.cover_optional else ''))
-        for option in cls.parser_options + cls.transform_options + cls.transform_flags:
+        for option in cls.document_options + cls.format_options + cls.build_options:
             option.add(parser)
 
         options, input_filenames = parser.parse_args()
@@ -83,28 +61,18 @@ class Book2Anything(object):
             parser.print_help()
             return(1)
 
-        # Prepare additional args for parser.
-        parser_args = {}
-        for option in cls.parser_options:
-            parser_args[option.name()] = option.value(options)
-        # Prepare additional args for transform method.
-        transform_args = {}
-        for option in cls.transform_options:
-            transform_args[option.name()] = option.value(options)
-        # Add flags to transform_args, if any.
-        transform_flags = [flag.name() for flag in cls.transform_flags
-                    if flag.value(options)]
-        if transform_flags:
-            transform_args['flags'] = transform_flags
-        # Add cover support, if any.
-        if cls.uses_cover:
-            if options.image_cache:
-                def cover_class(*args, **kwargs):
-                    return WLCover(image_cache=options.image_cache, *args, **kwargs)
-                transform_args['cover'] = cover_class
-            elif not cls.cover_optional or options.with_cover:
-                transform_args['cover'] = WLCover
-
+        # Prepare additional args for document.
+        document_args = {}
+        for option in cls.document_options:
+            document_args[option.name()] = option.value(options)
+        # Prepare additional args for format.
+        format_args = {}
+        for option in cls.format_options:
+            format_args[option.name()] = option.value(options)
+        # Prepare additional args for build.
+        build_args = {}
+        for option in cls.build_options:
+            build_args[option.name()] = option.value(options)
 
         # Do some real work
         try:
@@ -112,28 +80,18 @@ class Book2Anything(object):
                 if options.verbose:
                     print main_input
 
-            # Where to find input?
-            if cls.uses_provider:
-                path, fname = os.path.realpath(main_input).rsplit('/', 1)
-                provider = DirDocProvider(path)
-            else:
-                provider = None
+            # Do the transformation.
+            doc = Document.from_file(main_input, **document_args)
+            format_ = cls.format_cls(doc, **format_args)
 
             # Where to write output?
-            if not (options.output_file or options.output_dir):
-                output_file = os.path.splitext(main_input)[0] + '.' + cls.ext
+            if not options.output_file:
+                output_file = os.path.splitext(main_input)[0] + '.' + format_.format_ext
             else:
                 output_file = None
-
-            # Do the transformation.
-            doc = WLDocument.from_file(main_input, provider=provider, **parser_args)
-            transform = cls.transform
-            if transform is None:
-                transform = getattr(WLDocument, 'as_%s' % cls.ext)
-            output = transform(doc, **transform_args)
-
-            doc.save_output_file(output,
-                output_file, options.output_dir, options.make_dir, cls.ext)
+            
+            output = format_.build(**build_args)
+            output.save_as(output_file)
 
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {

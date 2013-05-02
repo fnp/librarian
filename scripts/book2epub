@@ -5,19 +5,11 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian.book2anything import Book2Anything, Option
+from librarian.formats.epub import EpubFormat
 
 
 class Book2Epub(Book2Anything):
-    format_name = "EPUB"
-    ext = "epub"
-    uses_cover = True
-    uses_provider = True
-    transform_flags = [
-        Option('-w', '--working-copy', dest='working-copy',
-                action='store_true', default=False,
-                help='mark the output as a working copy')
-        ]
-
+    format_cls = EpubFormat
 
 if __name__ == '__main__':
     Book2Epub.run()

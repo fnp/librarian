@@ -6,7 +6,7 @@
 #
 import os
 import os.path
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 def whole_tree(prefix, path):
     files = []
@@ -21,18 +21,26 @@ def whole_tree(prefix, path):
 
 setup(
     name='librarian',
-    version='1.5.1',
+    version='2.0a',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
     maintainer='Radek Czajka',
     maintainer_email='radoslaw.czajka@nowoczesnapolska.org.pl',
     url='http://github.com/fnp/librarian',
-    packages=['librarian'],
-    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*', 'res/*'] +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer')},
+    packages=find_packages(),
+    package_data={
+            'librarian': ['xslt/*.xslt', 'epub/*', 'html/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*', 'res/*'] +
+                        whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer'),
+            'librarian.formats.html': ['res/*'],
+            'librarian.formats.epub': ['res/*'],
+        },
     include_package_data=True,
-    install_requires=['lxml>=2.2'],
+    install_requires=[
+            'lxml>=2.2',
+            'pillow',
+            'Texml',
+        ],
     scripts=['scripts/book2html',
              'scripts/book2txt',
              'scripts/book2epub',

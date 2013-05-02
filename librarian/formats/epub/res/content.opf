@@ -1,0 +1,24 @@
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:title></dc:title>
+        <dc:language xsi:type="dcterms:RFC3066"></dc:language>
+        <dc:identifier id="BookId" opf:scheme="URI"></dc:identifier>
+        <dc:subject></dc:subject>
+        <dc:creator></dc:creator>
+        <dc:publisher></dc:publisher>
+        <dc:date xsi:type="dcterms:W3CDTF"></dc:date>
+    </metadata>
+    <manifest>
+        <item id="toc" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+        <item id="style" href="style.css" media-type="text/css" />
+        <!--item id="titlePage" href="title.html" media-type="application/xhtml+xml" />
+        <item id="logo_wolnelektury" href="logo_wolnelektury.png" media-type="image/png" />
+        <item id="jedenprocent" href="jedenprocent.png" media-type="image/png" /-->
+    </manifest>
+    <spine toc="toc">
+        <!--itemref idref="titlePage" /-->
+    </spine>
+    <guide>
+        <!--reference type="text" title="Początek" href="part1.html" /-->
+    </guide>
+</package>

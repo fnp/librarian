@@ -5,22 +5,16 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian.book2anything import Book2Anything, Option
+from librarian.formats.html import HtmlFormat
 
 
 class Book2Html(Book2Anything):
-    format_name = "HTML"
-    ext = "html"
-    uses_cover = False
-    uses_provider = False
-    transform_flags = [
-        Option('-r', '--raw', dest='full-page',
+    format_cls = HtmlFormat
+
+    format_options = [
+        Option('-r', '--raw', dest='standalone',
                 action='store_false', default=True,
                 help='output raw text for use in templates')
-    ]
-    parser_args = [
-        Option('-i', '--ignore-dublin-core', dest='parse_dublincore', 
-                action='store_false', default=True,
-                help='don\'t try to parse dublin core metadata')
     ]
 
 
