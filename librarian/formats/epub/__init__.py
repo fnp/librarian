@@ -230,7 +230,7 @@ class TOC(object):
             content.set('src', child.href)
             nav_point.append(content)
             nav_map.append(nav_point)
-            child.render(nav_map)
+            child.render(nav_point)
 
 
 # Renderers
