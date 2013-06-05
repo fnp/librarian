@@ -121,7 +121,10 @@ class Cover(object):
         }
 
     def __init__(self, book_info, format=None):
-        self.author = ", ".join(auth.readable() for auth in book_info.authors)
+        try:
+            self.author = ", ".join(auth.readable() for auth in book_info.authors)
+        except AttributeError:
+            self.author = ""
         self.title = book_info.title
         if format is not None:
             self.format = format

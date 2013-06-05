@@ -9,26 +9,12 @@ from xmlutils import Xmill, tag, tagged, ifoption, tag_open_close
 from librarian import functions
 import re
 import random
-from copy import deepcopy
 
-IMAGE_THUMB_WIDTH = 300
-
-try:
-    from fnpdjango.utils.text.slughifi import slughifi
-    def naglowek_to_anchor(naglowek):
-        return slughifi(naglowek.text)
-except ImportError:
-    from urllib import quote
-    def naglowek_to_anchor(naglowek):
-        return quote(re.sub(r" +", " ", naglowek.text.strip()))
-    
-    
 
 class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
         self.activity_counter = 0
-        self.activity_last = None
         self.exercise_counter = 0
 
         # text filters
@@ -37,7 +23,7 @@ class EduModule(Xmill):
                 txt = txt.replace("/\n", "<br/>\n")
             return txt
         self.register_text_filter(functions.substitute_entities)
-        self.register_escaped_text_filter(swap_endlines)
+        self.register_text_filter(swap_endlines)
 
     @tagged('div', 'stanza')
     def handle_strofa(self, element):
@@ -59,33 +45,31 @@ class EduModule(Xmill):
     handle_podtytul = tag("span", "subtitle")
     handle_naglowek_akt = handle_naglowek_czesc = handle_srodtytul = tag("h2")
     handle_naglowek_scena = tag('h2')
-    handle_naglowek_osoba = tag('h3')
+    handle_naglowek_osoba = handle_naglowek_podrozdzial = tag('h3')
     handle_akap = handle_akap_dialog = handle_akap_cd = tag('p', 'paragraph')
 
     handle_wyroznienie = tag('em')
     handle_tytul_dziela = tag('em', 'title')
     handle_slowo_obce = tag('em', 'foreign')
 
+    def naglowek_to_anchor(self, naglowek):
+        return re.sub(r" +", " ", naglowek.text.strip())
+
     def handle_nazwa_utworu(self, element):
         toc = []
         for naglowek in element.getparent().findall('.//naglowek_rozdzial'):
             a = etree.Element("a")
-            a.attrib["href"] = "#" + naglowek_to_anchor(naglowek)
+            a.attrib["href"] = "#" + self.naglowek_to_anchor(naglowek)
             a.text = naglowek.text
             atxt = etree.tostring(a, encoding=unicode)
             toc.append("<li>%s</li>" % atxt)
         toc = "<ul class='toc'>%s</ul>" % "".join(toc)
         add_header = "Lekcja: " if self.options['wldoc'].book_info.type in ('course', 'synthetic') else ''
-        return "<h1 class='title' id='top'>%s" % add_header, "</h1>" + toc
+        return "<h1 class='title'>%s" % add_header, "</h1>" + toc
 
+    @tagged("h2")
     def handle_naglowek_rozdzial(self, element):
-        return_to_top = u"<a href='#top' class='top-link'>wróć do spisu treści</a>"
-        pre, post = tag_open_close("h2", id=naglowek_to_anchor(element))
-        return return_to_top + pre, post
-
-    def handle_naglowek_podrozdzial(self, element):
-        self.activity_counter = 0
-        return tag('h3')(self, element)
+        return "", "".join(tag_open_close("a", name=self.naglowek_to_anchor(element)))
 
     def handle_uwaga(self, _e):
         return None
@@ -118,17 +102,10 @@ class EduModule(Xmill):
 
         counter = self.activity_counter
 
-        if element.getnext().tag == 'aktywnosc' or self.activity_last.getnext() == element:
-            counter_html = """<span class="act_counter">%(counter)d.</span>""" % locals()
-        else:
-            counter_html = ''
-
-        self.activity_last = element
-
         return u"""
 <div class="activity">
  <div class="text">
-  %(counter_html)s
+  <span class="act_counter">%(counter)d.</span>
   %(opis)s""" % locals(), \
 u"""%(wskazowki)s
  </div>
@@ -174,24 +151,16 @@ u"""%(wskazowki)s
     # Lists
     def handle_lista(self, element, attrs={}):
         ltype = element.attrib.get('typ', 'punkt')
-        if not element.findall("punkt"):
-            if ltype == 'czytelnia':
-                return '<p>W przygotowaniu.</p>'
-            else:
-                return None
         if ltype == 'slowniczek':
             surl = element.attrib.get('src', None)
             if surl is None:
                 # print '** missing src on <slowniczek>, setting default'
-                surl = 'http://edukacjamedialna.edu.pl/lekcje/slowniczek/'
+                surl = 'http://edukacjamedialna.edu.pl/slowniczek'
             sxml = None
             if surl:
                 sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
             self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
-            pre, post = '<div class="slowniczek">', '</div>'
-            if self.options['wldoc'].book_info.url.slug != 'slowniczek':
-                post += u'<p class="see-more"><a href="%s">Zobacz cały słowniczek.</a></p>' % surl
-            return pre, post
+            return '<div class="slowniczek">', '</div>'
 
         listtag = {'num': 'ol',
                'punkt': 'ul',
@@ -289,45 +258,13 @@ u"""%(wskazowki)s
 
             return u"<a href='%s'>" % def_href, u'%s</a>%s' % (def_err, more_links)
 
-    def handle_obraz(self, element):
-        name = element.attrib.get('nazwa', '').strip()
-        if not name:
-            print '!! <obraz> missing "nazwa"'
-            return
-        alt = element.attrib.get('alt', '')
-        if not alt:
-            print '** <obraz> missing "alt"'
-        slug, ext = name.rsplit('.', 1)
-        url = self.options['urlmapper'].url_for_image(slug, ext)
-        thumb_url = self.options['urlmapper'].url_for_image(slug, ext, IMAGE_THUMB_WIDTH)
-        e = etree.Element("a", attrib={"href": url, "class": "image"})
-        e.append(etree.Element("img", attrib={"src": thumb_url, "alt": alt,
-                    "width": str(IMAGE_THUMB_WIDTH)}))
-        return etree.tostring(e, encoding=unicode), u""
-
-    def handle_video(self, element):
-        url = element.attrib.get('url')
-        if not url:
-            print '!! <video> missing url'
-            return
-        m = re.match(r'(?:https?://)?(?:www.)?youtube.com/watch\?(?:.*&)?v=([^&]+)(?:$|&)', url)
-        if not m:
-            print '!! unknown <video> url scheme:', url
-            return
-        return """<iframe width="630" height="384" src="http://www.youtube.com/embed/%s"
-            frameborder="0" allowfullscreen></iframe>""" % m.group(1), ""
-
 
 class Exercise(EduModule):
-    INSTRUCTION = ""
     def __init__(self, *args, **kw):
         self.question_counter = 0
         super(Exercise, self).__init__(*args, **kw)
-        self.instruction_printed = False
 
-    @tagged('div', 'description')
-    def handle_opis(self, element):
-        return "", self.get_instruction()
+    handle_opis = tag('div', 'description')
 
     def handle_rozw_kom(self, element):
         return u"""<div style="display:none" class="comment">""", u"""</div>"""
@@ -391,17 +328,6 @@ class Exercise(EduModule):
             (add_class, self.question_counter, solution_s + minimum_s), \
             "</div>"
 
-    def get_instruction(self):
-        if not self.instruction_printed:
-            self.instruction_printed = True
-            if self.INSTRUCTION:
-                return u'<span class="instruction">%s</span>' % self.INSTRUCTION
-            else:
-                return ""
-        else:
-            return ""
-
-
 
 class Wybor(Exercise):
     def handle_cwiczenie(self, element):
@@ -411,13 +337,13 @@ class Wybor(Exercise):
         if not pytania:
             pytania = [element]
         for p in pytania:
-            solutions = re.split(r"[, ]+", p.attrib.get('rozw', ''))
+            solutions = re.split(r"[, ]+", p.attrib['rozw'])
             if len(solutions) != 1:
                 is_single_choice = False
                 break
             choices = p.xpath(".//*[@nazwa]")
             uniq = set()
-            for n in choices: uniq.add(n.attrib.get('nazwa', ''))
+            for n in choices: uniq.add(n.attrib['nazwa'])
             if len(choices) != len(uniq):
                 is_single_choice = False
                 break
@@ -450,8 +376,6 @@ class Wybor(Exercise):
 
 
 class Uporzadkuj(Exercise):
-    INSTRUCTION = u"Kliknij wybraną odpowiedź i przeciągnij w nowe miejsce."
-
     def handle_pytanie(self, element):
         """
 Overrides the returned content default handle_pytanie
@@ -465,21 +389,22 @@ Overrides the returned content default handle_pytanie
             u"""</div>"""
 
     def handle_punkt(self, element):
-        return """<li class="question-piece" data-pos="%(rozw)s">""" \
+        return """<li class="question-piece" data-pos="%(rozw)s"/>""" \
             % element.attrib,\
             "</li>"
 
 
 class Luki(Exercise):
-    INSTRUCTION = u"Przeciągnij odpowiedzi i upuść w wybranym polu."
     def find_pieces(self, question):
         return question.xpath(".//luka")
 
     def solution_html(self, piece):
-        piece = deepcopy(piece)
-        piece.tail = None
         sub = EduModule()
         return sub.generate(piece)
+        # print piece.text
+        # return piece.text + ''.join(
+        #     [etree.tostring(n, encoding=unicode)
+        #      for n in piece])
 
     def handle_pytanie(self, element):
         qpre, qpost = super(Luki, self).handle_pytanie(element)
@@ -505,13 +430,11 @@ class Luki(Exercise):
 
 
 class Zastap(Luki):
-    INSTRUCTION = u"Przeciągnij odpowiedzi i upuść je na słowie lub wyrażeniu, które chcesz zastąpić."
-
     def find_pieces(self, question):
         return question.xpath(".//zastap")
 
     def solution_html(self, piece):
-        return piece.attrib.get('rozw', '')
+        return piece.attrib['rozw']
 
     def handle_zastap(self, element):
         self.piece_counter += 1
@@ -520,23 +443,6 @@ class Zastap(Luki):
 
 
 class Przyporzadkuj(Exercise):
-    INSTRUCTION = [u"Przeciągnij odpowiedzi i upuść w wybranym polu.",
-                   u"Kliknij numer odpowiedzi, przeciągnij i upuść w wybranym polu."]
-
-    def get_instruction(self):
-        if not self.instruction_printed:
-            self.instruction_printed = True
-            return u'<span class="instruction">%s</span>' % self.INSTRUCTION[self.options['handles'] and 1 or 0]
-        else:
-            return ""
-
-    def handle_cwiczenie(self, element):
-        pre, post = super(Przyporzadkuj, self).handle_cwiczenie(element)
-        lista_with_handles = element.xpath(".//*[@uchwyty]")
-        if lista_with_handles:
-            self.options = {'handles': True}
-        return pre, post
-
     def handle_pytanie(self, element):
         pre, post = super(Przyporzadkuj, self).handle_pytanie(element)
         minimum = element.attrib.get("min", None)
@@ -556,7 +462,7 @@ class Przyporzadkuj(Exercise):
                 'data-target': lista.attrib['cel'],
                 'class': 'subject'
             }
-            self.options = {'subject': True}
+            self.options = {'subject': True, 'handles': 'uchwyty' in lista.attrib}
         else:
             attrs = {}
         pre, post = super(Przyporzadkuj, self).handle_lista(lista, attrs)
@@ -566,16 +472,16 @@ class Przyporzadkuj(Exercise):
         if self.options['subject']:
             self.piece_counter += 1
             if self.options['handles']:
-                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib.get('rozw', ''), self.piece_counter, self.piece_counter), '</li>'
+                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib['rozw'], self.piece_counter, self.piece_counter), '</li>'
             else:
-                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib.get('rozw', ''), self.piece_counter), '</li>'
+                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
 
         elif self.options['predicate']:
             if self.options['min']:
-                placeholders = u'<li class="placeholder"></li>' * self.options['min']
+                placeholders = u'<li class="placeholder"/>' * self.options['min']
             else:
-                placeholders = u'<li class="placeholder multiple"></li>'
-            return '<li data-predicate="%s">' % element.attrib.get('nazwa', ''), '<ul class="subjects">' + placeholders + '</ul></li>'
+                placeholders = u'<li class="placeholder multiple"/>'
+            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul>' + placeholders + '</ul></li>'
 
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
@@ -630,9 +536,6 @@ class EduModuleFormat(Format):
 
     def url_for_material(self, slug, fmt):
         return "%s.%s" % (slug, fmt)
-
-    def url_for_image(self, slug, fmt, width=None):
-        return self.url_for_material(self, slug, fmt)
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None):
