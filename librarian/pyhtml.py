@@ -93,7 +93,10 @@ class EduModule(Xmill):
             }
         submill = EduModule(dict(self.options.items() + {'sub_gen': True}.items()))
 
-        opis = submill.generate(element.xpath('opis')[0])
+        if element.xpath('opis'):
+            opis = submill.generate(element.xpath('opis')[0])
+        else:
+            opis = ''
 
         n = element.xpath('wskazowki')
         if n: wskazowki = submill.generate(n[0])
@@ -396,13 +399,13 @@ class Wybor(Exercise):
         if not pytania:
             pytania = [element]
         for p in pytania:
-            solutions = re.split(r"[, ]+", p.attrib['rozw'])
+            solutions = re.split(r"[, ]+", p.attrib.get('rozw', ''))
             if len(solutions) != 1:
                 is_single_choice = False
                 break
             choices = p.xpath(".//*[@nazwa]")
             uniq = set()
-            for n in choices: uniq.add(n.attrib['nazwa'])
+            for n in choices: uniq.add(n.attrib.get('nazwa', ''))
             if len(choices) != len(uniq):
                 is_single_choice = False
                 break
@@ -496,7 +499,7 @@ class Zastap(Luki):
         return question.xpath(".//zastap")
 
     def solution_html(self, piece):
-        return piece.attrib['rozw']
+        return piece.attrib.get('rozw', '')
 
     def handle_zastap(self, element):
         self.piece_counter += 1
@@ -551,16 +554,16 @@ class Przyporzadkuj(Exercise):
         if self.options['subject']:
             self.piece_counter += 1
             if self.options['handles']:
-                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib['rozw'], self.piece_counter, self.piece_counter), '</li>'
+                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib.get('rozw', ''), self.piece_counter, self.piece_counter), '</li>'
             else:
-                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
+                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib.get('rozw', ''), self.piece_counter), '</li>'
 
         elif self.options['predicate']:
             if self.options['min']:
                 placeholders = u'<li class="placeholder"></li>' * self.options['min']
             else:
                 placeholders = u'<li class="placeholder multiple"></li>'
-            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul class="subjects">' + placeholders + '</ul></li>'
+            return '<li data-predicate="%s">' % element.attrib.get('nazwa', ''), '<ul class="subjects">' + placeholders + '</ul></li>'
 
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)

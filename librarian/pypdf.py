@@ -220,7 +220,10 @@ class EduModule(Xmill):
         }
         submill = EduModule(self.options)
 
-        opis = submill.generate(element.xpath('opis')[0])
+        if element.xpath('opis'):
+            opis = submill.generate(element.xpath('opis')[0])
+        else:
+            opis = ''
 
         n = element.xpath('wskazowki')
         if n: wskazowki = submill.generate(n[0])
@@ -375,7 +378,7 @@ class EduModule(Xmill):
 
     def handle_obraz(self, element):
         frmt = self.options['format']
-        name = element.attrib['nazwa'].strip()
+        name = element.attrib.get('nazwa', '').strip()
         image = frmt.get_image(name.strip())
         img_path = "obraz/%s" % name.replace("_", "")
         frmt.attachments[img_path] = image
@@ -469,13 +472,13 @@ class Wybor(Exercise):
         if not pytania:
             pytania = [element]
         for p in pytania:
-            solutions = re.split(r"[, ]+", p.attrib['rozw'])
+            solutions = re.split(r"[, ]+", p.attrib.get('rozw', ''))
             if len(solutions) != 1:
                 is_single_choice = False
                 break
             choices = p.xpath(".//*[@nazwa]")
             uniq = set()
-            for n in choices: uniq.add(n.attrib['nazwa'])
+            for n in choices: uniq.add(n.attrib.get('nazwa', ''))
             if len(choices) != len(uniq):
                 is_single_choice = False
                 break
@@ -552,7 +555,7 @@ class Zastap(Luki):
         return question.xpath(".//zastap")
 
     def solution(self, piece):
-        return piece.attrib['rozw']
+        return piece.attrib.get('rozw', '')
 
     def list_header(self):
         return u"Elementy do wstawienia"
