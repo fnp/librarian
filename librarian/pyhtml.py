@@ -36,7 +36,7 @@ class EduModule(Xmill):
                 txt = txt.replace("/\n", "<br/>\n")
             return txt
         self.register_text_filter(functions.substitute_entities)
-        self.register_text_filter(swap_endlines)
+        self.register_escaped_text_filter(swap_endlines)
 
     @tagged('div', 'stanza')
     def handle_strofa(self, element):
