@@ -22,14 +22,15 @@ class Xmill(object):
         self.text_filters.append(fun)
 
     def filter_text(self, text):
-        for flt in self.text_filters:
-            if text is None:
-                return None
-            text = flt(text)
         # TODO: just work on the tree and let lxml handle escaping.
         e = etree.Element("x")
         e.text = text
-        return etree.tostring(e, encoding=unicode)[3:-4]
+        # This whole mixing text with ML is so wrong.
+        output = etree.tostring(e, encoding=unicode)[3:-4]
+        for flt in self.text_filters:
+            output = flt(output)
+        return output
+
 
     def generate(self, document):
         """Generate text from node using handlers defined in class."""
