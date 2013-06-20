@@ -22,6 +22,9 @@ class Xmill(object):
     def register_text_filter(self, fun):
         self.text_filters.append(fun)
 
+    def register_escaped_text_filter(self, fun):
+        self.escaped_text_filters.append(fun)
+
     def filter_text(self, text):
         for flt in self.text_filters:
             if text is None:
