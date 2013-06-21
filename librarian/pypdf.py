@@ -66,8 +66,8 @@ def mark_alien_characters(text):
 
 
 class EduModule(Xmill):
-    def __init__(self, options=None):
-        super(EduModule, self).__init__(options)
+    def __init__(self, options=None, state=None):
+        super(EduModule, self).__init__(options, state)
         self.activity_counter = 0
         self.exercise_counter = 0
 
@@ -174,9 +174,6 @@ class EduModule(Xmill):
     handle_naglowek_listy = \
     handle_naglowek_osoba = \
     handle_naglowek_podrozdzial = \
-    handle_naglowek_podrozdzial = \
-    handle_naglowek_rozdzial = \
-    handle_naglowek_rozdzial = \
     handle_naglowek_scena = \
     handle_nazwa_utworu = \
     handle_nota = \
@@ -196,6 +193,20 @@ class EduModule(Xmill):
     handle_wyroznienie = \
     handle_dywiz = \
     handle_texcommand
+
+    def handle_naglowek_rozdzial(self, element):
+        if not self.options['teacher']:
+            print element.text
+            if element.text.startswith((u'Wiedza', u'Zadania', u'Słowniczek')):
+                print 'not mute'
+                self.state['mute'] = False
+            else:
+                print 'mute'
+                self.state['mute'] = True
+                return None
+        return self.handle_texcommand(element)
+    handle_naglowek_rozdzial.unmuter = True
+
 
     def handle_uwaga(self, _e):
         return None
@@ -218,7 +229,7 @@ class EduModule(Xmill):
             'activity_counter': self.activity_counter,
             'sub_gen': True,
         }
-        submill = EduModule(self.options)
+        submill = EduModule(self.options, self.state)
 
         if element.xpath('opis'):
             opis = submill.generate(element.xpath('opis')[0])
@@ -311,7 +322,7 @@ class EduModule(Xmill):
         if not typ in exercise_handlers:
             return '(no handler)'
         self.options = {'exercise_counter': self.exercise_counter}
-        handler = exercise_handlers[typ](self.options)
+        handler = exercise_handlers[typ](self.options, self.state)
         return handler.generate(element)
 
     # XXX this is copied from pyhtml.py, except for return and
@@ -328,7 +339,7 @@ class EduModule(Xmill):
             if defloc:
                 definiens = defloc[0].getnext()
                 if definiens.tag == 'definiens':
-                    subgen = EduModule(self.options)
+                    subgen = EduModule(self.options, self.state)
                     definiens_s = subgen.generate(definiens)
 
         return u'<cmd name="textbf"><parm>', u"</parm></cmd>: " + definiens_s

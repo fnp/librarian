@@ -12,8 +12,9 @@ class Xmill(object):
     Used instead of XSLT which is difficult and cumbersome.
 
     """
-    def __init__(self, options=None):
+    def __init__(self, options=None, state=None):
         self._options = []
+        self.state = state or {}
         if options:
             self._options.append(options)
         self.text_filters = []
@@ -103,6 +104,7 @@ class Xmill(object):
         if isinstance(element, etree._Comment): return None
         
         handler = self._handle_for_element(element)
+        if self.state.get('mute') and not getattr(handler, 'unmuter', False): return None
         # How many scopes
         try:
             options_scopes = len(self._options)
@@ -127,6 +129,7 @@ class Xmill(object):
         finally:
             # clean up option scopes if necessary
             self._options = self._options[0:options_scopes]
+            
         return out
 
 
