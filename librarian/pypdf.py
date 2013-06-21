@@ -196,12 +196,9 @@ class EduModule(Xmill):
 
     def handle_naglowek_rozdzial(self, element):
         if not self.options['teacher']:
-            print element.text
             if element.text.startswith((u'Wiedza', u'Zadania', u'Słowniczek')):
-                print 'not mute'
                 self.state['mute'] = False
             else:
-                print 'mute'
                 self.state['mute'] = True
                 return None
         return self.handle_texcommand(element)
