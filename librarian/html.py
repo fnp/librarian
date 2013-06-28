@@ -288,6 +288,7 @@ def add_table_of_themes(root):
         for i, fragment in enumerate(fragments):
             item = etree.SubElement(themes_li, 'a', href="#%s" % fragment)
             item.text = str(i + 1)
+            item.tail = ' '
     root.insert(0, themes_div)
 
 
