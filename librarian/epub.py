@@ -117,10 +117,10 @@ class Stanza(object):
     Slashes may only occur directly in the stanza. Any slashes in subelements
     will be ignored, and the subelements will be put inside verse elements.
 
-    >>> s = etree.fromstring("<strofa>a/\\nb<x>x/\\ny</x>c/ \\nd</strofa>")
+    >>> s = etree.fromstring("<strofa>a <b>c</b> <b>c</b>/\\nb<x>x/\\ny</x>c/ \\nd</strofa>")
     >>> Stanza(s).versify()
     >>> print etree.tostring(s)
-    <strofa><wers_normalny>a</wers_normalny><wers_normalny>b<x>x/
+    <strofa><wers_normalny>a <b>c</b> <b>c</b></wers_normalny><wers_normalny>b<x>x/
     y</x>c</wers_normalny><wers_normalny>d</wers_normalny></strofa>
     
     """
@@ -149,16 +149,16 @@ class Stanza(object):
         return self.open_verse
 
     def push_text(self, text):
-        if not text or not text.strip():
+        if not text:
             return
         for i, verse_text in enumerate(re.split(r"/\s*\n", text)):
             if i:
                 self.open_normal_verse()
             verse = self.get_open_verse()
             if len(verse):
-                verse[-1].tail = (verse[-1].tail or "") + verse_text.strip()
+                verse[-1].tail = (verse[-1].tail or "") + verse_text
             else:
-                verse.text = (verse.text or "") + verse_text.strip()
+                verse.text = (verse.text or "") + verse_text
 
     def push_elem(self, elem):
         if elem.tag.startswith("wers"):
