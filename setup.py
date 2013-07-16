@@ -32,7 +32,10 @@ setup(
     package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*', 'res/*'] +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer')},
     include_package_data=True,
-    install_requires=['lxml>=2.2'],
+    install_requires=[
+        'lxml>=2.2',
+        'Pillow',
+    ],
     scripts=['scripts/book2html',
              'scripts/book2txt',
              'scripts/book2epub',
