@@ -81,13 +81,6 @@
             </p>
           </xsl:if>
 
-          <div class="info">
-          <img src="jedenprocent.png" alt="Logo 1%" />
-          <div>Przekaż 1% podatku na rozwój Wolnych Lektur.</div>
-          <div>Nazwa organizacji: Fundacja Nowoczesna Polska</div>
-          <div>KRS 0000070056</div>
-          </div>
-
           <p class="info">&#160;</p>
           <p class="minor info">
               Plik wygenerowany dnia <span id="file_date"><xsl:value-of select="substring(date:date(), 1, 10)" /></span>.

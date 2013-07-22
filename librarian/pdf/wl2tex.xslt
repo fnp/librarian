@@ -88,8 +88,8 @@
             <xsl:apply-templates select="utwor" mode="part" />
 
             <TeXML escape="0">
-                \def\coverby{
                 <xsl:if test="@data-cover-by">Okładka na podstawie: 
+                \def\coverby{
                     <xsl:choose>
                     <xsl:when test="@data-cover-source">
                         \href{\datacoversource}{\datacoverby}
@@ -98,8 +98,8 @@
                         \datacoverby{}
                     </xsl:otherwise>
                     </xsl:choose>
-                </xsl:if>
                 }
+                </xsl:if>
                 \def\editors{<xsl:call-template name="editors" />}
             </TeXML>
 

@@ -246,8 +246,32 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
     \editors
 
+    \ifdefined\coverby
+        \vspace{.6em}
+        \coverby
+    \fi
+
     \vspace{.6em}
-    \coverby
+    \emph{Wesprzyj Wolne Lektury!}
+
+    Wolne Lektury to projekt fundacji Nowoczesna Polska – organizacji
+    pożytku publicznego działającej na rzecz wolności korzystania
+    z dóbr kultury.
+
+    Co roku do domeny publicznej przechodzi twórczość kolejnych autorów.
+    Dzięki Twojemu wsparciu będziemy je mogli udostępnić wszystkim bezpłatnie.
+
+    \vspace{.6em}
+    \emph{Jak możesz pomóc?}
+
+    Przekaż 1\% podatku na rozwój Wolnych Lektur:
+    Fundacja Nowoczesna Polska, KRS 0000070056.
+
+    Pomóż uwolnić konkretną książkę, wspierając
+    \href{http://www.wolnelektury.pl/wesprzyj/}{zbiórkę na stronie wolnelektury.pl}.
+
+    Przekaż darowiznę na konto:
+    \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
 
     \color{black}
   }
