@@ -88,8 +88,8 @@
             <xsl:apply-templates select="utwor" mode="part" />
 
             <TeXML escape="0">
-                <xsl:if test="@data-cover-by">Okładka na podstawie: 
-                \def\coverby{
+                <xsl:if test="@data-cover-by">
+                \def\coverby{Okładka na podstawie:
                     <xsl:choose>
                     <xsl:when test="@data-cover-source">
                         \href{\datacoversource}{\datacoverby}
