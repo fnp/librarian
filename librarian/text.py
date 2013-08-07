@@ -26,7 +26,7 @@ Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowocz
 
 %(license_description)s.%(source)s
 
-%(description)s%(contributors)s
+%(description)s%(contributors)s%(funders)s
 """
 
 def transform(wldoc, flags=None, **options):
@@ -70,7 +70,10 @@ def transform(wldoc, flags=None, **options):
             contributors = ', '.join(person.readable() for person in 
                                      sorted(set(p for p in (parsed_dc.technical_editors + parsed_dc.editors) if p)))
             if contributors:
-                contributors = "\n\nOpracowanie redakcyjne i przypisy: %s" % contributors
+                contributors = "\n\nOpracowanie redakcyjne i przypisy: %s." % contributors
+            funders = ', '.join(parsed_dc.funders)
+            if funders:
+                funders = u"\n\nPublikację ufundowali i ufundowały: %s." % funders
         else:
             description = 'Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).'
             url = '*' * 10
@@ -78,6 +81,7 @@ def transform(wldoc, flags=None, **options):
             license_description = ""
             source = ""
             contributors = ""
+            funders = ""
         return OutputFile.from_string((TEMPLATE % {
             'description': description,
             'url': url,
@@ -85,6 +89,7 @@ def transform(wldoc, flags=None, **options):
             'text': unicode(result),
             'source': source,
             'contributors': contributors,
+            'funders': funders,
         }).encode('utf-8'))
     else:
         return OutputFile.from_string(unicode(result).encode('utf-8'))
