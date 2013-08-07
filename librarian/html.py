@@ -57,6 +57,7 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None):
 
         if html_has_content(result):
             add_anchors(result.getroot())
+            add_table_of_themes(result.getroot())
             add_table_of_contents(result.getroot())
 
             return OutputFile.from_string(etree.tostring(result, method='html',
@@ -262,6 +263,34 @@ def add_table_of_contents(root):
                 add_anchor(subsection_element, "s%d" % n, with_target=False, link_text=text)
 
     root.insert(0, toc)
+
+    
+def add_table_of_themes(root):
+    try:
+        from sortify import sortify
+    except ImportError:
+        sortify = lambda x: x
+
+    book_themes = {}
+    for fragment in root.findall('.//a[@class="theme-begin"]'):
+        if not fragment.text:
+            continue
+        theme_names = [s.strip() for s in fragment.text.split(',')]
+        for theme_name in theme_names:
+            book_themes.setdefault(theme_name, []).append(fragment.get('name'))
+    book_themes = book_themes.items()
+    book_themes.sort(key=lambda s: sortify(s[0]))
+    themes_div = etree.Element('div', id="themes")
+    themes_ol = etree.SubElement(themes_div, 'ol')
+    for theme_name, fragments in book_themes:
+        themes_li = etree.SubElement(themes_ol, 'li')
+        themes_li.text = "%s: " % theme_name
+        for i, fragment in enumerate(fragments):
+            item = etree.SubElement(themes_li, 'a', href="#%s" % fragment)
+            item.text = str(i + 1)
+            item.tail = ' '
+    root.insert(0, themes_div)
+
 
 
 def extract_annotations(html_path):

@@ -31,7 +31,7 @@ def test_wlpicture():
 
     #    from nose.tools import set_trace; set_trace()
     assert pi.type[0] == u"Image"
-    assert pi.mime_type == u'image/png' == wlp.mime_type
+    assert pi.mime_type == u'image/jpeg' == wlp.mime_type
     assert wlp.slug == 'angelus-novus'
 
     assert path.exists(wlp.image_path)

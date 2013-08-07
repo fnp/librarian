@@ -5,6 +5,7 @@
 #
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS
+from librarian.cover import WLCover
 from librarian import dcparser
 
 from xml.parsers.expat import ExpatError
@@ -19,7 +20,8 @@ class WLDocument(object):
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
 
-    def __init__(self, edoc, parse_dublincore=True, provider=None, strict=False):
+    def __init__(self, edoc, parse_dublincore=True, provider=None, 
+                    strict=False, meta_fallbacks=None):
         self.edoc = edoc
         self.provider = provider
 
@@ -37,7 +39,7 @@ class WLDocument(object):
                 raise NoDublinCore('Document has no DublinCore - which is required.')
 
             self.book_info = dcparser.BookInfo.from_element(
-                    self.rdf_elem, strict=strict)
+                    self.rdf_elem, fallbacks=meta_fallbacks, strict=strict)
         else:
             self.book_info = None
 
@@ -46,7 +48,7 @@ class WLDocument(object):
         return cls.from_file(StringIO(xml), *args, **kwargs)
 
     @classmethod
-    def from_file(cls, xmlfile, parse_dublincore=True, provider=None):
+    def from_file(cls, xmlfile, *args, **kwargs):
 
         # first, prepare for parsing
         if isinstance(xmlfile, basestring):
@@ -67,7 +69,7 @@ class WLDocument(object):
             parser = etree.XMLParser(remove_blank_text=False)
             tree = etree.parse(StringIO(data.encode('utf-8')), parser)
 
-            return cls(tree, parse_dublincore=parse_dublincore, provider=provider)
+            return cls(tree, *args, **kwargs)
         except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
             raise ParseError(e)
 
@@ -147,7 +149,7 @@ class WLDocument(object):
                 xpath = self.path_to_xpath(key)
                 node = self.edoc.xpath(xpath)[0]
                 repl = etree.fromstring(u"<%s>%s</%s>" %(node.tag, data, node.tag) )
-                node.getparent().replace(node, repl);
+                node.getparent().replace(node, repl)
             except Exception, e:
                 unmerged.append( repr( (key, xpath, e) ) )
 
@@ -162,6 +164,21 @@ class WLDocument(object):
             node.clear()
             node.tag = 'span'
             node.tail = tail
+
+    def editors(self):
+        """Returns a set of all editors for book and its children.
+
+        :returns: set of dcparser.Person objects
+        """
+        if self.book_info is None:
+            raise NoDublinCore('No Dublin Core in document.')
+        persons = set(self.book_info.editors +
+                        self.book_info.technical_editors)
+        for child in self.parts():
+            persons.update(child.editors())
+        if None in persons:
+            persons.remove(None)
+        return persons
 
     # Converters
 
@@ -184,6 +201,15 @@ class WLDocument(object):
     def as_mobi(self, *args, **kwargs):
         from librarian import mobi
         return mobi.transform(self, *args, **kwargs)
+
+    def as_fb2(self, *args, **kwargs):
+        from librarian import fb2
+        return fb2.transform(self, *args, **kwargs)
+
+    def as_cover(self, cover_class=None, *args, **kwargs):
+        if cover_class is None:
+            cover_class = WLCover
+        return cover_class(self.book_info, *args, **kwargs).output_file()
 
     def save_output_file(self, output_file, output_path=None,
             output_dir_path=None, make_author_dir=False, ext=None):

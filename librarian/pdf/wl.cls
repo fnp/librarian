@@ -77,7 +77,6 @@
 \usepackage{xunicode}
 \usepackage{xltxtra}
 
-
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
@@ -178,10 +177,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
 
 \newcommand{\makecover}[2]{
-
-
-        %\pdfpagewidth=#1
-        %\pdfpageheight=#2
+        \pdfpagewidth=#1
+        \pdfpageheight=#2
 
         \thispagestyle{empty}
         \newlength{\PictHOffset}
@@ -196,16 +193,16 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \addtolength{\PictVOffset}{\headheight}
         \addtolength{\PictVOffset}{\headsep}
         \addtolength{\PictVOffset}{\topskip}
-
-        \addtolength{\PictVOffset}{-#2}
+        \addtolength{\PictVOffset}{-\pdfpageheight}
 
         \noindent\hspace*{-\PictHOffset}%
         \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
-            \includegraphics[height=#2,width=#1]{cover.jpg}}}
-        %\clearpage
-        \vspace{#2}
+            \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.png}}}
+        \clearpage
 
-        \hspace{-36mm}\parbox{16cm}{
+ 
+%% Strona tytułowa %% XXX
+       \hspace{-36mm}\parbox{16cm}{
         {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
             \noindent Philippe Aigrain}}
 
@@ -222,15 +219,10 @@ Letters={SmallCaps,UppercaseSmallCaps}
         {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
             Kultura i gospodarka epoki internetu
         }}
-        
-
-%\emph{\thankyou}\\
-%\indent\emph{You made this book possible.}
         }
 
-
-        %\setlength{\pdfpagewidth}{210mm}
-        %\setlength{\pdfpageheight}{297mm}
+       \setlength{\pdfpagewidth}{210mm}
+       \setlength{\pdfpageheight}{297mm}
 }
 
 
@@ -260,13 +252,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
     \vspace{.6em}
     \color{black}
-    
     }
 }
 
 \usepackage{printlen}
 
 \newcommand{\editorialsection}{
+%% XXX % sprawdzic czy czegos nie zgubilem z master
+%% szczegolnie jesli chodzi o makra wstawiajace dane z DC, jak np \editors
 \clearpage
         \thispagestyle{empty}
 
@@ -328,6 +321,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \includegraphics[scale=.2]{logo.eps}
 }
 
+    Przekaż darowiznę na konto:
+    \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
 
 \clearpage
         \thispagestyle{empty}
@@ -435,13 +430,10 @@ Letters={Uppercase}
 %{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
 }
 
+
 \newcommand{\tytul}[1]{%
 #1%
-%\vspace{1em}%
-}
-
-\newcommand{\autorpodutworu}[1]{%
-\section*{\typosection{#1}}%
+\vspace{1em}%
 }
 
 \newcommand{\nazwapodutworu}[1]{%
@@ -449,7 +441,6 @@ Letters={Uppercase}
 }
 
 \newcommand{\autorutworu}[1]{%
-\addcontentsline{toc}{part}{???}
 \subsection*{\typosubsection{#1}}%
 }
 
@@ -473,6 +464,7 @@ Letters={Uppercase}
 \subsection*{\typosubsubsection{tłum. #1}}%
 }
 
+
 \newcommand{\powiesc}[1]{#1}
 \newcommand{\opowiadanie}[1]{#1}
 \newcommand{\lirykal}[1]{#1}
@@ -482,9 +474,7 @@ Letters={Uppercase}
 \newcommand{\dramatwspolczesny}[1]{#1}
 
 \newcommand{\nota}[1]{%
-\begin{quotation}%
-#1%
-\end{quotation}%
+\par{#1}%
 }
 
 \newcommand{\dedykacja}[1]{%
@@ -535,25 +525,25 @@ Letters={Uppercase}
 \subsection*{\typosubsection{#1}}%
 }
 \newcommand{\naglowekczesc}[1]{%
-%\pagebreak
+\pagebreak
 \subsection*{\typosubsection{#1}}%
 }
-\newcommand{\naglowekrozdzial}[1]{%
+\newcommand{\srodtytul}[1]{%
 \subsection*{\typosubsection{#1}}%
 }
 
 \newcommand{\naglowekscena}[1]{%
 \subsubsection*{\typosubsubsection{#1}}%
 }
-\newcommand{\naglowekpodrozdzial}[1]{%
+\newcommand{\naglowekrozdzial}[1]{%
 \subsubsection*{\typosubsubsection{#1}}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
 \par{\textsc{#1}}\nopagebreak%
 }
-\newcommand{\srodtytul}[1]{%
-\vskip 1em \par{\large \it \noindent #1}\vskip .5em\nopagebreak%
+\newcommand{\naglowekpodrozdzial}[1]{%
+\par{#1}\nopagebreak%
 }
 
 \newcommand{\miejsceczas}[1]{%
@@ -637,7 +627,6 @@ Letters={Uppercase}
 \begin{center}%
 \par{*}%
 \end{center}%
-\noindent%
 }
 
 \newcommand{\separatorlinia}{%
@@ -659,11 +648,3 @@ Letters={Uppercase}
 \fi
 }
 
-\newcommand{\ilustr}[2]{
-
-\vspace{1em}%
-\begin{center}%
-\par{\includegraphics[width=\textwidth]{#1}\\#2}%
-\end{center}%
-\vspace{1em}%
-}

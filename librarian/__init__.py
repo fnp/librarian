@@ -8,15 +8,22 @@ from __future__ import with_statement
 import os
 import re
 import shutil
+import urllib
+
 
 class UnicodeException(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message
+        return unicode(self).encode('utf-8')
 
     def __unicode__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message
+        args = self.args[0] if len(self.args) == 1 else self.args
+        try:
+            message = unicode(args)
+        except UnicodeDecodeError:
+            message = unicode(args, encoding='utf-8', errors='ignore')
+        return message
 
 class ParseError(UnicodeException):
     pass
@@ -267,3 +274,8 @@ class OutputFile(object):
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
         shutil.copy(self.get_filename(), path)
+
+
+class URLOpener(urllib.FancyURLopener):
+    version = 'FNP Librarian (http://github.com/fnp/librarian)'
+urllib._urlopener = URLOpener()

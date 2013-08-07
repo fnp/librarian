@@ -9,7 +9,7 @@ import subprocess
 from tempfile import NamedTemporaryFile
 
 from librarian import OutputFile
-from librarian.cover import ImageCover as WLCover
+from librarian.cover import WLCover
 from librarian import get_resource
 
 
@@ -19,7 +19,7 @@ def transform(wldoc, verbose=False,
 
     wldoc: a WLDocument
     sample=n: generate sample e-book (with at least n paragraphs)
-    cover: a cover.Cover object
+    cover: a cover.Cover factory overriding default
     flags: less-advertising,
     """
 
@@ -30,15 +30,12 @@ def transform(wldoc, verbose=False,
     # provide a cover by default
     if not cover:
         cover = WLCover
+    cover_file = NamedTemporaryFile(suffix='.png', delete=False)
     c = cover(book_info)
-    import Image
-    c.im = Image.open('cover.jpg')
-    c.ext = lambda: 'jpg'
-    cover_file = NamedTemporaryFile(suffix='.' + c.ext(), delete=False)
     c.save(cover_file)
 
-    if cover.uses_dc_cover:
-        if document.book_info.cover_by:
+    if bound_cover.uses_dc_cover:
+        if document.remobook_info.cover_by:
             document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
         if document.book_info.cover_source:
             document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)

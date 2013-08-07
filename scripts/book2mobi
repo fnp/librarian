@@ -4,53 +4,16 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import os.path
-import optparse
+from librarian.book2anything import Book2Anything
 
-from librarian import DirDocProvider, ParseError
-from librarian.parser import WLDocument
+
+class Book2Mobi(Book2Anything):
+    format_name = "MOBI"
+    ext = "mobi"
+    uses_cover = True
+    cover_optional = False
+    uses_provider = True
 
 
 if __name__ == '__main__':
-    # Parse commandline arguments
-    usage = """Usage: %prog [options] SOURCE [SOURCE...]
-    Convert SOURCE files to MOBI format."""
-
-    parser = optparse.OptionParser(usage=usage)
-
-    parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
-        help='print status messages to stdout')
-    parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
-                      help='create a directory for author and put the PDF in it')
-    parser.add_option('-o', '--output-file', dest='output_file', metavar='FILE',
-                      help='specifies the output file')
-    parser.add_option('-O', '--output-dir', dest='output_dir', metavar='DIR',
-                      help='specifies the directory for output')
-
-    options, input_filenames = parser.parse_args()
-
-    if len(input_filenames) < 1:
-        parser.print_help()
-        exit(1)
-
-    # Do some real work
-    try:
-        for main_input in input_filenames:
-            path, fname = os.path.realpath(main_input).rsplit('/', 1)
-            provider = DirDocProvider(path)
-            if not (options.output_file or options.output_dir):
-                output_file = os.path.splitext(main_input)[0] + '.mobi'
-            else:
-                output_file = None
-
-            doc = WLDocument.from_file(main_input, provider=provider)
-            mobi = doc.as_mobi()
-
-            doc.save_output_file(mobi,
-                output_file, options.output_dir, options.make_dir, 'mobi')
-    except ParseError, e:
-        print '%(file)s:%(name)s:%(message)s' % {
-            'file': main_input,
-            'name': e.__class__.__name__,
-            'message': e
-        }
+    Book2Mobi.run()

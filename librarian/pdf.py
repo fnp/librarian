@@ -3,6 +3,12 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+"""PDF creation library.
+
+Creates one big XML from the book and its children, converts it to LaTeX
+with TeXML, then runs it by XeLaTeX.
+
+"""
 from __future__ import with_statement
 import os
 import os.path
@@ -21,7 +27,7 @@ from librarian.dcparser import Person
 from librarian.parser import WLDocument
 from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
-from librarian.cover import ImageCover as WLCover
+from librarian.cover import WLCover
 
 
 functions.reg_substitute_entities()
@@ -135,9 +141,13 @@ def hack_motifs(doc):
 
 
 def parse_creator(doc):
-    """ find all dc:creator and dc.contributor tags and add *_parsed versions with forenames first """
+    """Generates readable versions of creator and translator tags.
+
+    Finds all dc:creator and dc.contributor.translator tags
+    and adds *_parsed versions with forenames first.
+    """
     for person in doc.xpath("|".join('//dc:'+(tag) for tag in (
-                    'creator', 'contributor.translator', 'contributor.editor', 'contributor.technical_editor')),
+                    'creator', 'contributor.translator')),
                     namespaces = {'dc': str(DCNS)})[::-1]:
         if not person.text:
             continue
@@ -174,54 +184,59 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None,
-              imgdir=""):
+              cover=None, flags=None, customizations=None):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
     verbose: prints all output from LaTeX
     save_tex: path to save the intermediary LaTeX file to
     morefloats (old/new/none): force specific morefloats
-    cover: a cover.Cover object
+    cover: a cover.Cover factory or True for default
     flags: less-advertising,
     customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
     """
 
     # Parse XSLT
     try:
+        book_info = wldoc.book_info
         document = load_including_children(wldoc)
+        root = document.edoc.getroot()
 
         if cover:
             if cover is True:
                 cover = WLCover
-            the_cover = cover(document.book_info)
-            document.edoc.getroot().set('data-cover-width', str(the_cover.width))
-            document.edoc.getroot().set('data-cover-height', str(the_cover.height))
-            if the_cover.uses_dc_cover:
-                if document.book_info.cover_by:
-                    document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
-                if document.book_info.cover_source:
-                    document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
+            bound_cover = cover(book_info)
+            root.set('data-cover-width', str(bound_cover.width))
+            root.set('data-cover-height', str(bound_cover.height))
+            if bound_cover.uses_dc_cover:
+                if book_info.cover_by:
+                    root.set('data-cover-by', book_info.cover_by)
+                if book_info.cover_source:
+                    root.set('data-cover-source',
+                            book_info.cover_source)
         if flags:
             for flag in flags:
-                document.edoc.getroot().set('flag-' + flag, 'yes')
+                root.set('flag-' + flag, 'yes')
 
         # check for LaTeX packages
         if morefloats:
-            document.edoc.getroot().set('morefloats', morefloats.lower())
+            root.set('morefloats', morefloats.lower())
         elif package_available('morefloats', 'maxfloats=19'):
-            document.edoc.getroot().set('morefloats', 'new')
+            root.set('morefloats', 'new')
 
         # add customizations
         if customizations is not None:
-            document.edoc.getroot().set('customizations', u','.join(customizations))
+            root.set('customizations', u','.join(customizations))
+
+        # add editors info
+        root.set('editors', u', '.join(sorted(
+            editor.readable() for editor in document.editors())))
 
         # hack the tree
-        #move_motifs_inside(document.edoc)
-        #hack_motifs(document.edoc)
+        move_motifs_inside(document.edoc)
+        hack_motifs(document.edoc)
         parse_creator(document.edoc)
-        if document.book_info.language == 'pol':
-            substitute_hyphens(document.edoc)
+        substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
 
         # wl -> TeXML
@@ -229,20 +244,13 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         style = etree.parse(style_filename)
 
         texml = document.transform(style)
-        #        etree.dump(texml.getroot())
+
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
 
         if cover:
-            with open(os.path.join(temp, 'cover.jpg'), 'w') as f:
-                the_cover.save(f)
-
-        shutil.copy("cce_trust.eps", temp)
-        shutil.copy("logo.eps", temp)
-        for img in document.edoc.findall('//ilustr'):
-            #            print "--->> %s %s %s" % (imgdir, img, img.get('src'))
-            shutil.copy(os.path.join(imgdir, img.get('src')), temp)
-
+            with open(os.path.join(temp, 'cover.png'), 'w') as f:
+                bound_cover.save(f)
 
         del document # no longer needed large object :)
 
@@ -258,9 +266,11 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
-        shutil.copy('logo.eps', temp)
 
-        cwd = os.getcwd()
+        try:
+            cwd = os.getcwd()
+        except OSError:
+            cwd = None
         os.chdir(temp)
 
         if verbose:
@@ -270,7 +280,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         if p:
             raise ParseError("Error parsing .tex file")
 
-        os.chdir(cwd)
+        if cwd is not None:
+            os.chdir(cwd)
 
         output_file = NamedTemporaryFile(prefix='librarian', suffix='.pdf', delete=False)
         pdf_path = os.path.join(temp, 'doc.pdf')
@@ -279,7 +290,6 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         return OutputFile.from_filename(output_file.name)
 
     except (XMLSyntaxError, XSLTApplyError), e:
-        print e
         raise ParseError(e)
 
 
@@ -301,7 +311,8 @@ def load_including_children(wldoc=None, provider=None, uri=None):
 
     text = re.sub(ur"([\u0400-\u04ff]+)", ur"<alien>\1</alien>", text)
 
-    document = WLDocument.from_string(text, parse_dublincore=True)
+    document = WLDocument.from_string(text,
+                parse_dublincore=True, provider=provider)
     document.swap_endlines()
 
     for child_uri in document.book_info.parts:
