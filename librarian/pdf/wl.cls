@@ -246,6 +246,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
     \editors
 
+    \ifdefined\funders
+        \vspace{.6em}
+        \funders
+    \fi
+
     \ifdefined\coverby
         \vspace{.6em}
         \coverby

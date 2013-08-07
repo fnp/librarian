@@ -63,6 +63,8 @@
 
           <xsl:call-template name="editors" />
 
+          <xsl:call-template name="funders" />
+
           <xsl:if test="@data-cover-by">
             <p class="info">Okładka na podstawie: 
             <xsl:choose>
@@ -82,7 +84,7 @@
           </xsl:if>
 
           <p class="info">&#160;</p>
-          <p class="minor info">
+          <p class="minor-info">
               Plik wygenerowany dnia <span id="file_date"><xsl:value-of select="substring(date:date(), 1, 10)" /></span>.
           </p>
 
@@ -100,6 +102,13 @@
         <p class="info">
             <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
             <xsl:value-of select="@editors" />.</p>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="funders">
+    <xsl:if test="@funders">
+        <p class="minor-info">Publikację ufundowali i ufundowały:
+            <xsl:value-of select="@funders" />.</p>
     </xsl:if>
   </xsl:template>
 

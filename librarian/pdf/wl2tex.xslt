@@ -100,7 +100,11 @@
                     </xsl:choose>
                 }
                 </xsl:if>
-                \def\editors{<xsl:call-template name="editors" />}
+                \def\editors{<TeXML escape="1"><xsl:call-template name="editors" /></TeXML>}
+                <xsl:if test="@funders">
+                    \def\funders{Publikację ufundowali i ufundowały:
+                        <TeXML escape="1"><xsl:value-of select="@funders" /></TeXML>.}
+                </xsl:if>
             </TeXML>
 
             <cmd name="editorialsection" />

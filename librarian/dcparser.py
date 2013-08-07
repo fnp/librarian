@@ -171,6 +171,8 @@ class WorkInfo(object):
             as_person, salias='editor', multiple=True, default=[]),
         Field( DCNS('contributor.technical_editor'), 'technical_editors',
             as_person, salias='technical_editor', multiple=True, default=[]),
+        Field( DCNS('contributor.funding'), 'funders',
+            salias='funder', multiple=True, default=[]),
 
         Field( DCNS('date'), 'created_at', as_date),
         Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
