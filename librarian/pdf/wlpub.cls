@@ -94,6 +94,7 @@
 \usepackage{fontspec}
 \usepackage{xunicode}
 \usepackage{xltxtra}
+\usepackage{trimspaces}
 
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
@@ -189,6 +190,8 @@ Mapping=tex-text
 \long\def\@makefntext#1{%
   \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1.
 }
+
+\def\trimspace#1{\trim@spaces{#1}}
 
 \makeatother
 
@@ -634,6 +637,15 @@ Mapping=tex-text
 \hrule{}%
 \vspace{10pt}%
 }
+
+\newcommand{\ilustr}[2]{
+  \vspace{1em}%
+  \begin{center}%
+    \par{\includegraphics[width=\textwidth]{\trimspace{#1}}\\#2}%
+  \end{center}%
+  \vspace{1em}%
+}
+
 
 \newcommand{\motyw}[2][0]{%
 \ifshowthemes

@@ -13,6 +13,7 @@ from __future__ import with_statement
 import os
 import os.path
 import shutil
+from distutils.dir_util import copy_tree # shutil.copytree is so uncapable.
 from StringIO import StringIO
 from tempfile import mkdtemp, NamedTemporaryFile
 import re
@@ -183,17 +184,20 @@ def package_available(package, args='', verbose=False):
     return p == 0
 
 
-def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None):
+def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=None,
+              cover=None, flags=None, customizations=None, documentclass='wl', resources=None):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
     verbose: prints all output from LaTeX
     save_tex: path to save the intermediary LaTeX file to
+    save_texml: path to save the intermediary TeXML file to
     morefloats (old/new/none): force specific morefloats
     cover: a cover.Cover factory or True for default
     flags: less-advertising,
     customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
+    documentclass: LaTeX document class, defaults to wl
+    resources: a directory with resources, copied to place where LaTeX compilation is made
     """
 
     # Parse XSLT
@@ -228,6 +232,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         if customizations is not None:
             root.set('customizations', u','.join(customizations))
 
+        root.set('documentclass', documentclass)
+
         # add editors info
         root.set('editors', u', '.join(sorted(
             editor.readable() for editor in document.editors())))
@@ -244,6 +250,9 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         style = etree.parse(style_filename)
 
         texml = document.transform(style)
+
+        if save_texml:
+            texml.write(save_texml)
 
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
@@ -265,7 +274,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
+        shutil.copy(get_resource('pdf/wlpub.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
+        if resources:
+            copy_tree(resources, temp)
 
         try:
             cwd = os.getcwd()

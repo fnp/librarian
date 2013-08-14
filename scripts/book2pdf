@@ -14,11 +14,17 @@ class Book2Pdf(Book2Anything):
     ext = "pdf"
     uses_cover = True
     uses_provider = True
-    transform_args = [
+    transform_options = [
         Option('-t', '--save-tex', dest='save_tex', metavar='FILE',
                 help='path to save the intermediary LaTeX file to'),
+        Option('-x', '--save-texml', dest='save_texml', metavar='FILE',
+                help='path to save the intermediary TeXML file to'),
         Option('-m', '--morefloats', dest='morefloats', metavar='old/new/none',
-                help='force morefloats in old (<1.0c), new (>=1.0c) or none')
+                help='force morefloats in old (<1.0c), new (>=1.0c) or none'),
+        Option('-R', '--resources', dest='resources', metavar='DIR',
+                help='a directory with additional resources'),
+        Option('-D', '--documentclass', dest='documentclass', 
+               help='LaTeX document class, defaults to "wl"')
     ]
 
 

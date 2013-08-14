@@ -15,7 +15,7 @@
 <xsl:template match="utwor">
     <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
         <TeXML escape="0">
-        \documentclass[<xsl:value-of select="@customizations"/>]{wl}
+        \documentclass[<xsl:value-of select="@customizations"/>]{<xsl:value-of select="@documentclass"/>}
 
         <!-- flags and values set on root -->
 
@@ -362,12 +362,13 @@
     </cmd>
 </xsl:template>
 
+<xsl:strip-space elements="ilustr"/>
 <xsl:template match="ilustr">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
         </xsl:attribute>
-		<parm><xsl:value-of select="@src" /></parm>
+	<parm><TeXML escape="0"><xsl:value-of select="normalize-space(@src)" /></TeXML></parm>
         <parm><xsl:apply-templates mode="inline" /></parm>
     </cmd>
 </xsl:template>
@@ -390,6 +391,12 @@
   <math>
     <xsl:apply-templates mode="identity"/>
   </math>
+</xsl:template>
+
+<xsl:template match="latex" mode="inline">
+  <TeXML escape="0">
+    <xsl:apply-templates select="@*|node()" mode="identity"/>
+  </TeXML>
 </xsl:template>
 
 <xsl:template match="tablewrap">
