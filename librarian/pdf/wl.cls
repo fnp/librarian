@@ -12,34 +12,35 @@
 % a4paper,... - paper size as required by LaTeX
 % nowlfont - don't use customized WL font
 
+%\RequirePackage{geometry}
 \RequirePackage{setspace}
 \RequirePackage{type1cm}
 \RequirePackage{amssymb}
 \RequirePackage{amsmath}
 
-\DeclareOption{13pt}{%
-\AtEndOfClass{%
+%\DeclareOption{13pt}{%
+%\AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
-\renewcommand\normalsize{%
-   \@setfontsize\normalsize{13pt}{14.5pt}%
-   \abovedisplayskip 12\p@ \@plus3\p@ \@minus7\p@
-   \abovedisplayshortskip \z@ \@plus3\p@
-   \belowdisplayshortskip 6.5\p@ \@plus3.5\p@ \@minus3\p@
-   \belowdisplayskip \abovedisplayskip
-   \let\@listi\@listI}\normalsize%
-\renewcommand\footnotesize{%
-   \@setfontsize\footnotesize\@xpt\@xiipt
-   \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
-   \abovedisplayshortskip \z@ \@plus3\p@
-   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
-   \def\@listi{\leftmargin\leftmargini
-               \topsep 6\p@ \@plus2\p@ \@minus2\p@
-               \parsep 3\p@ \@plus2\p@ \@minus\p@
-               \itemsep \parsep}%
-   \belowdisplayskip \abovedisplayskip
-}%
-}%
-}
+%% \renewcommand\normalsize{%
+%%    \@setfontsize\normalsize{13pt}{14.5pt}%
+%%    \abovedisplayskip 12\p@ \@plus3\p@ \@minus7\p@
+%%    \abovedisplayshortskip \z@ \@plus3\p@
+%%    \belowdisplayshortskip 6.5\p@ \@plus3.5\p@ \@minus3\p@
+%%    \belowdisplayskip \abovedisplayskip
+%%    \let\@listi\@listI}\normalsize%
+%% \renewcommand\footnotesize{%
+%%    \@setfontsize\footnotesize\@xpt\@xiipt
+%%    \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+%%    \abovedisplayshortskip \z@ \@plus3\p@
+%%    \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+%%    \def\@listi{\leftmargin\leftmargini
+%%                \topsep 6\p@ \@plus2\p@ \@minus2\p@
+%%                \parsep 3\p@ \@plus2\p@ \@minus\p@
+%%                \itemsep \parsep}%
+%%    \belowdisplayskip \abovedisplayskip
+%}%
+%}%
+%}
 
 %% \DeclareOption{14pt}{\renewcommand{\normalsize}{\AtEndOfClass{\fontsize{14}{17}\selectfont}}}
 
@@ -51,7 +52,13 @@
 \DeclareOption{a5paper}{%
       \setlength{\paperheight}{210mm}%
       \setlength{\paperwidth}{148mm}}
-
+% a5paper dropped down size
+\newif\ifafivepaper \afivepaperfalse
+\DeclareOption{a5paperdd}{%
+  \setlength{\paperheight}{225mm}%
+  \setlength{\paperwidth}{160mm}%
+  \afivepapertrue
+}
 
 \newif\ifshowfootnotes \showfootnotestrue
 \DeclareOption{nofootnotes}{\showfootnotesfalse}
@@ -62,10 +69,21 @@
 \newif\ifenablewlfont \enablewlfonttrue
 \DeclareOption{nowlfont}{\enablewlfontfalse}
 
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
-\ProcessOptions\relax
-\LoadClass[a4paper]{book}
 
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{extbook}}
+\ProcessOptions\relax
+\LoadClass{extbook}
+
+\ifafivepaper
+  \usepackage[%
+    paperwidth=160mm,%
+    paperheight=225mm,%
+    text={117mm,162mm},% 
+    top=30mm,% 
+    headsep=8mm,%
+    left=23mm,%
+    right=30mm]{geometry}%
+\fi
 
 \usepackage{trace}
 \usepackage{caption}
@@ -81,57 +99,25 @@
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
 
-\ifenablewlfont
+
 \setmainfont [
-%ExternalLocation,
-UprightFont = JunicodeWL-Regular,
-ItalicFont = JunicodeWL-Italic,
-BoldFont = JunicodeWL-Regular,
-BoldItalicFont = JunicodeWL-Italic,
-SmallCapsFont = JunicodeWL-Regular,
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-Numbers=OldStyle,
-Scale=1.04,
-LetterSpace=-1.0
-] {JunicodeWL}
+ItalicFont = CrimsonText-Italic,
+BoldFont = CrimsonText-Bold,
+BoldItalicFont = CrimsonText-BoldItalic,
+Ligatures={Common, Contextual},
+Mapping=tex-text
+]{CrimsonText-Roman}
+\newfontface\sb{CrimsonText-Semibold}
 
-\newfontfamily\alien[
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-Numbers=OldStyle,
-Scale=0.85,
-LetterSpace=-1.0
-] {DejaVu Serif}
-
-
-\defaultfontfeatures{
-SizeFeatures={
-  {Size={-10.5}, FakeStretch=1.02, LetterSpace=2.0 },
-  {Size={10.5-12}, FakeStretch=2.00, LetterSpace=0.0 },
-  {Size={12-}, FakeStretch=0.98, LetterSpace=-2.0 }
-}
-}
-
-\renewcommand{\textsc}[1]{%
-{\addfontfeature{
-SizeFeatures={
-  {Size={-10.5}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
-  {Size={10.5-12}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
-  {Size={12-}, FakeStretch=1.0, LetterSpace=8.0 }
-},
-Letters={SmallCaps,UppercaseSmallCaps}
-}
-#1}
-}
-\fi% enablewlfont
-
-%{\Itshape JunicodeWL-Italic.ttf }
-%{\bfseries Junicode-Bold.ttf }
-%{\bfseries\itshape Junicode-BoldItalic.ttf }
+\renewcommand{\baselinestretch}{1.1}
 
 \pagestyle{plain}
 \usepackage{fancyhdr}
+\usepackage[explicit]{titlesec}
 
 \makeatletter
+
+
 
 % bottom figure below footnotes
 \usepackage{fnpos}
@@ -140,15 +126,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \usepackage{color}
 \definecolor{theme}{gray}{.3}
 
-\setlength{\marginparsep}{2em}
-\setlength{\marginparwidth}{8.5em}
-\setlength{\oddsidemargin}{36mm}
-\setlength{\evensidemargin}{0pt}
-\setlength{\voffset}{0pt}
-\setlength{\topmargin}{0pt}
-\setlength{\headheight}{0pt}
-\setlength{\headsep}{0pt}
-\setlength{\textheight}{24cm}
+
+%%%%%%%%%%%%%%%%%%%%%% Headings.
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -158,8 +137,61 @@ Letters={SmallCaps,UppercaseSmallCaps}
 %\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
 \cfoot{}
 %\rfoot{{\footnotesize \thepage}}
-\fancyfoot[LO,RE]{{\footnotesize \textsc{\@author} \emph{\@title}}}
-\fancyfoot[LE,RO]{{\footnotesize \thepage}}
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{#1}}{}}
+\fancyhead[CE]{{\textsc{\MakeUppercase{\@title}}}}
+\fancyhead[CO]{{\textsc{\leftmark}}}
+\fancyhead[LE,RO]{{\thepage}}
+
+%%%%%%%%%%%%%%%%%%%%%% Section title styles.
+%% Sections
+\titleformat{\chapter}%
+{\raggedright\Huge\sc\addfontfeature{LetterSpace=0.0, Letters={Uppercase}}}%
+{}{0pt}{\MakeUppercase{#1}}
+\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+
+%% Subsections
+\titleformat{\section}%
+{\bf\large\addfontfeature{Scale=1.0}}%
+{\thesection\enskip}{0pt}{#1}
+\renewcommand{\thesection}{\Roman{section}}
+
+\titleformat{\subsection}%
+{\sc}%
+{\thesubsection}{0pt}{#1}
+
+\newcommand{\typosubsubsection}[1]{%
+{\textsc{#1}}
+}
+
+%% XXX delete them
+\newcommand{\typosubsection}[1]{%
+{\MakeUppercase{#1}}
+}
+
+\newcommand{\typosection}[1]{%
+{\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{2}#1}}
+%{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
+}
+%%%%%%%%%%%%%%%%%% ^^
+
+%%%%% Footnotes %%%%%%%%5
+%% \makeatletter
+%% \renewcommand\@makefntext[1]{%
+%%   \noindent\parbox[t][\height][l]{3em}{\@thefnmark.}\parbox[t][\height][l]{6cm}{#1}\vskip3pt}
+%% \makeatother
+\makeatletter
+
+\renewcommand\@makefnmark{%
+\hbox{{\normalfont\@thefnmark}}%
+}
+\renewcommand\thefootnote{[\arabic{footnote}]}
+
+\long\def\@makefntext#1{%
+  \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1.
+}
+
+\makeatother
+
 
 \clubpenalty=100000
 \widowpenalty=100000
@@ -231,23 +263,6 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \thispagestyle{empty}
     \footnotesize
     \color{theme}
-
-    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
-        \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
-    \end{minipage}
-    \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
-
-    \ifflaglessadvertising
-    \else
-        \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
-        \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
-        \vspace{.5em}
-    \fi
-
-    Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
-    przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
-
-    \end{minipage}
     \noindent \rule{\linewidth}{0.4pt}
 
     \vspace{.6em}
@@ -260,175 +275,157 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \newcommand{\editorialsection}{
 %% XXX % sprawdzic czy czegos nie zgubilem z master
 %% szczegolnie jesli chodzi o makra wstawiajace dane z DC, jak np \editors
-\clearpage
-        \thispagestyle{empty}
+%% coś tu nie dizała, do zmiany ogólnie
 
-% Pusta strona 
-\clearpage
-        \thispagestyle{empty}
+%% \clearpage
+%%         \thispagestyle{empty}
 
-\vspace{2em}
-      \hspace{0mm}\parbox{16cm}{
-\centering
-      {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
-           Dzielenie się
-      }}
+%% % Pusta strona 
+%% \clearpage
+%%         \thispagestyle{empty}
 
-  \vspace{2em}
-         {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
-             Kultura i gospodarka epoki internetu
-         }}
-}
+%% \vspace{2em}
+%%       \hspace{0mm}\parbox{16cm}{
+%% \centering
+%%       {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
+%%            Dzielenie się
+%%       }}
 
-\clearpage
-        \thispagestyle{empty}
+%%   \vspace{2em}
+%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
+%%              Kultura i gospodarka epoki internetu
+%%          }}
+%% }
 
-\clearpage
-        \thispagestyle{empty}
+%% \clearpage
+%%         \thispagestyle{empty}
 
-%\parbox{10cm}{
-%  \centering
+%% \clearpage
+%%         \thispagestyle{empty}
 
-  \hspace{-36mm}\parbox{16cm}{
-\centering
+%% %\parbox{10cm}{
+%% %  \centering
 
-  {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
-      \noindent Philippe Aigrain
-  }}
+%%   \hspace{-36mm}\parbox{16cm}{
+%% \centering
 
-  {\addfontfeature{LetterSpace=-4.0}{\scalefont{2.5}%
-      przy współpracy Suzanne Aigrain
-  }}
+%%   {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
+%%       \noindent Philippe Aigrain
+%%   }}
+
+%%   {\addfontfeature{LetterSpace=-4.0}{\scalefont{2.5}%
+%%       przy współpracy Suzanne Aigrain
+%%   }}
   
-  \vspace{2em}
-         {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
-             Dzielenie się
-         }}
+%%   \vspace{2em}
+%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
+%%              Dzielenie się
+%%          }}
          
-  \vspace{2em}
-         {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
-             Kultura i gospodarka epoki internetu
-         }}
+%%   \vspace{2em}
+%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
+%%              Kultura i gospodarka epoki internetu
+%%          }}
 
-  \vspace{2em}
-         {\addfontfeature{LetterSpace=-4.0}{\scalefont{2}%
-             Z języka angielskiego przełożył \\
-             \emph{Wojciech Pędzich}
-         }}
+%%   \vspace{2em}
+%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{2}%
+%%              Z języka angielskiego przełożył \\
+%%              \emph{Wojciech Pędzich}
+%%          }}
 
-\vspace{22em}
+%% \vspace{22em}
 
-\includegraphics[scale=.2]{logo.eps}
-}
+%% \includegraphics[scale=.2]{logo.eps}
+%% }
 
-    Przekaż darowiznę na konto:
-    \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
+%%     Przekaż darowiznę na konto:
+%%     \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
 
-\clearpage
-        \thispagestyle{empty}
+%% \clearpage
+%%         \thispagestyle{empty}
 
-\noindent Tytuł oryginału
+%% \noindent Tytuł oryginału
 
-\noindent \emph{Sharing. Culture and the Economy in the Internet Age}
-
-\vspace{1em}
-
-\noindent \editors
-
-\vspace{1em}
-
-
-\noindent \rightsinfo
-
-\vspace{1em}
-
-\noindent \coverby
-
-
-%\set\textwidth=450pt
-%\printlength\textwidth
-
-
-%% {\scalefont{1.5}Drogi czytelniku!}
-
-
+%% \noindent \emph{Sharing. Culture and the Economy in the Internet Age}
 
 %% \vspace{1em}
 
-\vspace{1em}
+%% \noindent \editors
 
-\noindent Tłumaczenie książki powstało w ramach projektu "Przyszłość prawa autorskiego" finansowanego przez {\it Trust for Civil Society in Central and Eastern Europe}.
-
-\vspace{1em}
-
-\noindent \includegraphics[scale=.4]{cce_trust.eps}
-
-\vspace{1em}
-
-\noindent Wydawca: Fundacja Nowoczesna Polska, Warszawa 2012
-
-\vspace{1em}
-\includegraphics[scale=.2]{logo.eps}
-\vspace{1em}
-
-\noindent \href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
+%% \vspace{1em}
 
 
+%% \noindent \rightsinfo
 
-%\vspace{4em}
-%\box{\tableofcontents}
+%% \vspace{1em}
 
-%%   \begin{figure}[b!]
-%%   {
-%%     \footnotesize
-%%     \color{theme}
-%%     \noindent \rule{\linewidth}{0.4pt}
+%% \noindent \coverby
 
-%%     \rightsinfo
-%% %    \vspace{.6em}
 
-%%     %Źródło: \href{\bookurl}{\bookurl}
+%% %\set\textwidth=450pt
+%% %\printlength\textwidth
 
-%%     %\vspace{.6em}
-%%     %\sourceinfo
 
-%%     %\description
-%%     %\vspace{.6em}
+%% %% {\scalefont{1.5}Drogi czytelniku!}
 
-%%     Opublikowano przez \href{http://nowoczesnapolska.org.pl}{Fundację Nowoczesna Polska}, 2012.
 
-%%     \editors
 
-%%     %\vspace{.6em}
-%%     \coverby
+%% %% \vspace{1em}
+
+%% \vspace{1em}
+
+%% \noindent Tłumaczenie książki powstało w ramach projektu "Przyszłość prawa autorskiego" finansowanego przez {\it Trust for Civil Society in Central and Eastern Europe}.
+
+%% \vspace{1em}
+
+%% \noindent \includegraphics[scale=.4]{cce_trust.eps}
+
+%% \vspace{1em}
+
+%% \noindent Wydawca: Fundacja Nowoczesna Polska, Warszawa 2012
+
+%% \vspace{1em}
+%% \includegraphics[scale=.2]{logo.eps}
+%% \vspace{1em}
+
+%% \noindent \href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
+
+
+
+%% %\vspace{4em}
+%% %\box{\tableofcontents}
+
+%% %%   \begin{figure}[b!]
+%% %%   {
+%% %%     \footnotesize
+%% %%     \color{theme}
+%% %%     \noindent \rule{\linewidth}{0.4pt}
+
+%% %%     \rightsinfo
+%% %% %    \vspace{.6em}
+
+%% %%     %Źródło: \href{\bookurl}{\bookurl}
+
+%% %%     %\vspace{.6em}
+%% %%     %\sourceinfo
+
+%% %%     %\description
+%% %%     %\vspace{.6em}
+
+%% %%     Opublikowano przez \href{http://nowoczesnapolska.org.pl}{Fundację Nowoczesna Polska}, 2012.
+
+%% %%     \editors
+
+%% %%     %\vspace{.6em}
+%% %%     \coverby
     
-%%     \color{black}
-%%   }
-%%   \end{figure}
-\clearpage
+%% %%     \color{black}
+%% %%   }
+%% %%   \end{figure}
+%% \clearpage
+%% }
 }
 
-
-\newcommand{\typosubsubsection}[1]{%
-{\textsc{#1}}
-}
-
-\newcommand{\typosubsection}[1]{%
-{\addfontfeature{
-SizeFeatures={
-  {Size={-10}, Scale=1.2, FakeStretch=1.00, LetterSpace=8.0 },
-  {Size={10.5-12}, Scale=1.2, FakeStretch=1.00, LetterSpace=8.0 },
-  {Size={12-}, FakeStretch=1.0, LetterSpace=8.0 }
-},
-Letters={Uppercase}
-}
-\MakeUppercase{#1}}
-}
-
-\newcommand{\typosection}[1]{%
-{\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{2}#1}}
-%{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
-}
 
 
 \newcommand{\tytul}[1]{%
@@ -437,19 +434,20 @@ Letters={Uppercase}
 }
 
 \newcommand{\nazwapodutworu}[1]{%
-\section*{\typosection{#1}}%
+\section*{#1}%
 }
 
 \newcommand{\autorutworu}[1]{%
-\subsection*{\typosubsection{#1}}%
+#1
+%\subsection*{\typosubsection{#1}}%
 }
 
 \newcommand{\dzielonadrzedne}[1]{%
-\subsection*{\typosubsubsection{#1}}%
+\subsection*{#1}%
 }
 
 \newcommand{\nazwautworu}[1]{%
-\section*{\typosection{#1}}%
+\section*{#1}%
 }
 
 \newcommand{\podtytul}[1]{%
@@ -463,7 +461,9 @@ Letters={Uppercase}
 \newcommand{\translator}[1]{%
 \subsection*{\typosubsubsection{tłum. #1}}%
 }
-
+\newcommand{\translatorsline}[1]{%
+#1
+}
 
 \newcommand{\powiesc}[1]{#1}
 \newcommand{\opowiadanie}[1]{#1}
@@ -526,7 +526,7 @@ Letters={Uppercase}
 }
 \newcommand{\naglowekczesc}[1]{%
 \pagebreak
-\subsection*{\typosubsection{#1}}%
+\part{#1}%
 }
 \newcommand{\srodtytul}[1]{%
 \subsection*{\typosubsection{#1}}%
@@ -536,14 +536,14 @@ Letters={Uppercase}
 \subsubsection*{\typosubsubsection{#1}}%
 }
 \newcommand{\naglowekrozdzial}[1]{%
-\subsubsection*{\typosubsubsection{#1}}%
+\chapter{#1}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
 \par{\textsc{#1}}\nopagebreak%
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
-\par{#1}\nopagebreak%
+\section{#1}\nopagebreak%
 }
 
 \newcommand{\miejsceczas}[1]{%

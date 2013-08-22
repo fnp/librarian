@@ -1,6 +1,6 @@
 % -*- coding: utf-8 -*-
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{wl}[2011/11/28 wolnelektury.pl book style]
+\ProvidesClass{wlpub}[2011/11/28 wolnelektury.pl book style]
 
 % PDF customizations
 %
@@ -17,7 +17,8 @@
 \RequirePackage{type1cm}
 \RequirePackage{amssymb}
 \RequirePackage{amsmath}
-
+\RequirePackage{paralist}
+\RequirePackage[normalem]{ulem}
 %\DeclareOption{13pt}{%
 %\AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
@@ -53,11 +54,11 @@
       \setlength{\paperheight}{210mm}%
       \setlength{\paperwidth}{148mm}}
 % a5paper dropped down size
-\newif\ifafivepaper \afivepaperfalse
+\newif\ifcutafivepaper \cutafivepaperfalse
 \DeclareOption{a5paperdd}{%
   \setlength{\paperheight}{225mm}%
   \setlength{\paperwidth}{160mm}%
-  \afivepapertrue
+  \cutafivepapertrue
 }
 
 \newif\ifshowfootnotes \showfootnotestrue
@@ -73,17 +74,7 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{extbook}}
 \ProcessOptions\relax
 \LoadClass{extbook}
-
-\ifafivepaper
-  \usepackage[%
-    paperwidth=160mm,%
-    paperheight=225mm,%
-    text={117mm,162mm},% 
-    top=30mm,% 
-    headsep=8mm,%
-    left=23mm,%
-    right=30mm]{geometry}%
-\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{trace}
 \usepackage{caption}
@@ -95,70 +86,131 @@
 \usepackage{xunicode}
 \usepackage{xltxtra}
 \usepackage{trimspaces}
-
+\usepackage{color}
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[explicit]{titlesec}
+\usepackage{fnpos}
+\usepackage{printlen}
+\usepackage{calc}
+\pagestyle{plain}
+% bottom figure below footnotes
+\makeFNabove
 
 
-\setmainfont [
+%%%%%%%%%%%%%%%%%%%%%%% Paper size
+\setlength\baselineskip{7.14pt}
+\ifcutafivepaper
+  \usepackage[%
+    paperwidth=160mm,%
+    paperheight=225mm,%
+    text={117mm,162mm},% 
+    top=30mm,% 
+    headsep=8mm,%
+    left=23mm,%
+    right=30mm]{geometry}%
+\else
+  \usepackage[%
+    top=\dimexpr14.5mm+\baselineskip-16pt\relax, % margin will be smaller to accomodate for bigger header (16pt) 
+    headsep=3\baselineskip,
+    headheight=16pt,
+    bottom=26.3mm,%
+    inner=14.5mm,%
+    outer=22.5mm,%
+    textheight=\dimexpr7.14pt*(32*2+1)\relax,%
+    includehead]{geometry}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%% Fonts
+
+\setmainfont[
 ItalicFont = CrimsonText-Italic,
 BoldFont = CrimsonText-Bold,
 BoldItalicFont = CrimsonText-BoldItalic,
 Ligatures={Common, Contextual},
+SmallCapsFont = CrimsonText-Roman,
+SmallCapsFeatures={Letters=SmallCaps},
 Mapping=tex-text
 ]{CrimsonText-Roman}
 \newfontface\sb{CrimsonText-Semibold}
+\newfontface\intro{Archivo-Black}
 
-\renewcommand{\baselinestretch}{1.1}
-
-\pagestyle{plain}
-\usepackage{fancyhdr}
-\usepackage[explicit]{titlesec}
-
+%% For faking small caps You burn in typographic hell.
 \makeatletter
+\newlength\fake@f
+\newlength\fake@c
+\def\fakesc#1{%
+  \begingroup%
+  \xdef\fake@name{\csname\curr@fontshape/\f@size\endcsname}%
+  \fontsize{\fontdimen8\fake@name}{\baselineskip}\selectfont%
+  \uppercase{#1}%
+  \endgroup%
+}
+\makeatother
+
+
+\renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont}
+\setlength{\parindent}{4mm}
+\setlength{\parskip}{0mm}
+
+\renewcommand{\large}{\fontsize{14}{14.28}\selectfont} % srodtytul
+\renewcommand{\small}{\fontsize{8}{14.28}\selectfont} % paginy
+\renewcommand{\Large}{\fontsize{15}{21.42}\selectfont} % tytuł rozdziału
+\renewcommand{\huge}{\fontsize{18}{21.6}\selectfont} % wyimek
+\renewcommand{\Huge}{\fontsize{24}{40}\selectfont} % cover
+\renewcommand{\footnotesize}{\fontsize{9}{10.74}\selectfont}
 
 
 
-% bottom figure below footnotes
-\usepackage{fnpos}
-\makeFNabove
-
-\usepackage{color}
+\definecolor{stoK}{cmyk}{0,0,0,1}
 \definecolor{theme}{gray}{.3}
+%\color{stoK}
 
 
 %%%%%%%%%%%%%%%%%%%%%% Headings.
-
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-
-%\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
+\makeatletter
+%%%%%%%%%% Nagłówek normalny
 \cfoot{}
-%\rfoot{{\footnotesize \thepage}}
+% this will go to \leftmark
 \renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{#1}}{}}
-\fancyhead[CE]{{\textsc{\MakeUppercase{\@title}}}}
-\fancyhead[CO]{{\textsc{\leftmark}}}
-\fancyhead[LE,RO]{{\thepage}}
+\fancyhead[CE]{{\small\MakeUppercase{\@title}}}
+\fancyhead[CO]{{\small\leftmark}}
+\fancyhead[LE,RO]{{\small\intro\thepage}}
+%%%%%%%%%% Nagłówek pierwszej strony rozdziału
+\fancypagestyle{plain}{%
+\fancyhf{}
+\fancyhead[LE,RO]{{\small\intro\thepage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+\makeatother
 
 %%%%%%%%%%%%%%%%%%%%%% Section title styles.
 %% Sections
-\titleformat{\chapter}%
-{\raggedright\Huge\sc\addfontfeature{LetterSpace=0.0, Letters={Uppercase}}}%
-{}{0pt}{\MakeUppercase{#1}}
-\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+\titleformat{\chapter}[block]%
+{\Large\intro\addfontfeature{LetterSpace=0.5,Kerning={Uppercase}}}%
+{}{0pt}{\parbox{80mm}{\raggedright\MakeUppercase{#1}}}
+\newlength{\chapterposcorrection}\newlength{\chapterspaceafter}
+\setlength{\chapterposcorrection}{-\headsep-2\baselineskip}
+\setlength{\chapterspaceafter}{14\baselineskip-14pt}%\f@size of large
+\titlespacing*{\chapter}{0pt}{\chapterposcorrection}{\chapterspaceafter}
 
 %% Subsections
 \titleformat{\section}%
-{\bf\large\addfontfeature{Scale=1.0}}%
-{\thesection\enskip}{0pt}{#1}
+{\addfontfeature{LetterSpace=0.3}\large}%
+{\thesection}{.5em}{\MakeUppercase{#1}}
+
 \renewcommand{\thesection}{\Roman{section}}
 
 \titleformat{\subsection}%
-{\sc}%
-{\thesubsection}{0pt}{#1}
+{}%
+{\thesubsection}{0pt}{\fakesc{#1}}
+
 
 \newcommand{\typosubsubsection}[1]{%
 {\textsc{#1}}
@@ -175,20 +227,23 @@ Mapping=tex-text
 }
 %%%%%%%%%%%%%%%%%% ^^
 
-%%%%% Footnotes %%%%%%%%5
-%% \makeatletter
-%% \renewcommand\@makefntext[1]{%
-%%   \noindent\parbox[t][\height][l]{3em}{\@thefnmark.}\parbox[t][\height][l]{6cm}{#1}\vskip3pt}
-%% \makeatother
+%%%%% Footnotes %%%%%%%%
+\newlength{\footnoteindent}\newlength{\footnoteprespace}
+\setlength{\footnoteindent}{6mm}%{3.5mm}
+\setlength{\footnoteprespace}{.3em}
 \makeatletter
 
 \renewcommand\@makefnmark{%
-\hbox{{\normalfont\@thefnmark}}%
+\hspace{\footnoteprespace}\hbox{{\normalfont \@thefnmark}}%
 }
 \renewcommand\thefootnote{[\arabic{footnote}]}
 
 \long\def\@makefntext#1{%
-  \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1.
+\setlength{\leftskip}{\footnoteindent}%
+\setlength{\hskip}{-\footnoteindent-\footnoteprespace-.1em}%
+\hb@xt@ \dimexpr\footnoteindent+\footnoteprespace%
+{\@makefnmark}#1
+%  \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1
 }
 
 \def\trimspace#1{\trim@spaces{#1}}
@@ -211,54 +266,69 @@ Mapping=tex-text
 \usebox{\ximagebox}%
 \raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
 
-\newcommand{\makecover}[2]{
-        \pdfpagewidth=#1
-        \pdfpageheight=#2
 
-        \thispagestyle{empty}
-        \newlength{\PictHOffset}
-        \newlength{\PictVOffset}
-        \setlength{\PictHOffset}{1in}
-        \addtolength{\PictHOffset}{\hoffset}
-        \addtolength{\PictHOffset}{\oddsidemargin}
+\newcommand{\makecover}{
 
-        \setlength{\PictVOffset}{1in}
-        \addtolength{\PictVOffset}{\voffset}
-        \addtolength{\PictVOffset}{\topmargin}
-        \addtolength{\PictVOffset}{\headheight}
-        \addtolength{\PictVOffset}{\headsep}
-        \addtolength{\PictVOffset}{\topskip}
-        \addtolength{\PictVOffset}{-\pdfpageheight}
+  %\pdfpagewidth=#1
+  %\pdfpageheight=#2
 
-        \noindent\hspace*{-\PictHOffset}%
-        \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
-            \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.png}}}
-        \clearpage
+  \thispagestyle{empty}
+  \newlength{\PictHOffset}
+  \newlength{\PictVOffset}
+  \setlength{\PictHOffset}{1in}
+  \addtolength{\PictHOffset}{\hoffset}
+  \addtolength{\PictHOffset}{\oddsidemargin}
 
- 
-%% Strona tytułowa %% XXX
-       \hspace{-36mm}\parbox{16cm}{
-        {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
-            \noindent Philippe Aigrain}}
+  \setlength{\PictVOffset}{1in}
+  \addtolength{\PictVOffset}{\voffset}
+  \addtolength{\PictVOffset}{\topmargin}
+  \addtolength{\PictVOffset}{\headheight}
+  \addtolength{\PictVOffset}{\headsep}
+  \addtolength{\PictVOffset}{\topskip}
 
-       {\addfontfeature{LetterSpace=-4.0}{\scalefont{2.5}%
-            przy współpracy Suzanne Aigrain
-        }}
+  \addtolength{\PictVOffset}{-\paperheight}
 
-        \vspace{2em}
-        {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
-            Dzielenie się
-        }}
-        
-        \vspace{2em}
-        {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
-            Kultura i gospodarka epoki internetu
-        }}
-        }
+  \noindent\hspace*{-\PictHOffset}%
+  \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
+      \includegraphics[height=\paperheight,width=\paperwidth]{cover.jpg}}}
+  \newpage
+  %\vspace{\paperheight}
 
-       \setlength{\pdfpagewidth}{210mm}
-       \setlength{\pdfpageheight}{297mm}
-}
+
+  \thispagestyle{empty}
+  \begin{center}
+  \intro
+  {
+    \begin{spacing}{1.4}
+    \Huge \noindent \thetitle
+    \end{spacing}
+  }
+  \end{center}
+
+  \vspace{2em}
+  
+  \begin{center}
+    \intro
+    {
+    \huge \noindent \theauthor
+    }
+  \end{center}
+                  %\emph{\thankyou}\\
+                  %\indent\emph{You made this book possible.}
+  \vspace{16em}
+
+  \begin{center}
+    \includegraphics[scale=.2]{logo.eps}
+  \end{center}
+
+  \newpage
+  \thispagestyle{empty}
+
+  \input{editorial}
+
+  
+  }
+
 
 
 \renewcommand{\maketitle}{
@@ -273,160 +343,9 @@ Mapping=tex-text
     }
 }
 
-\usepackage{printlen}
 
 \newcommand{\editorialsection}{
-%% XXX % sprawdzic czy czegos nie zgubilem z master
-%% szczegolnie jesli chodzi o makra wstawiajace dane z DC, jak np \editors
-%% coś tu nie dizała, do zmiany ogólnie
 
-%% \clearpage
-%%         \thispagestyle{empty}
-
-%% % Pusta strona 
-%% \clearpage
-%%         \thispagestyle{empty}
-
-%% \vspace{2em}
-%%       \hspace{0mm}\parbox{16cm}{
-%% \centering
-%%       {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
-%%            Dzielenie się
-%%       }}
-
-%%   \vspace{2em}
-%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{3}%
-%%              Kultura i gospodarka epoki internetu
-%%          }}
-%% }
-
-%% \clearpage
-%%         \thispagestyle{empty}
-
-%% \clearpage
-%%         \thispagestyle{empty}
-
-%% %\parbox{10cm}{
-%% %  \centering
-
-%%   \hspace{-36mm}\parbox{16cm}{
-%% \centering
-
-%%   {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
-%%       \noindent Philippe Aigrain
-%%   }}
-
-%%   {\addfontfeature{LetterSpace=-4.0}{\scalefont{2.5}%
-%%       przy współpracy Suzanne Aigrain
-%%   }}
-  
-%%   \vspace{2em}
-%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{6}%
-%%              Dzielenie się
-%%          }}
-         
-%%   \vspace{2em}
-%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{4}%
-%%              Kultura i gospodarka epoki internetu
-%%          }}
-
-%%   \vspace{2em}
-%%          {\addfontfeature{LetterSpace=-4.0}{\scalefont{2}%
-%%              Z języka angielskiego przełożył \\
-%%              \emph{Wojciech Pędzich}
-%%          }}
-
-%% \vspace{22em}
-
-%% \includegraphics[scale=.2]{logo.eps}
-%% }
-
-%%     Przekaż darowiznę na konto:
-%%     \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
-
-%% \clearpage
-%%         \thispagestyle{empty}
-
-%% \noindent Tytuł oryginału
-
-%% \noindent \emph{Sharing. Culture and the Economy in the Internet Age}
-
-%% \vspace{1em}
-
-%% \noindent \editors
-
-%% \vspace{1em}
-
-
-%% \noindent \rightsinfo
-
-%% \vspace{1em}
-
-%% \noindent \coverby
-
-
-%% %\set\textwidth=450pt
-%% %\printlength\textwidth
-
-
-%% %% {\scalefont{1.5}Drogi czytelniku!}
-
-
-
-%% %% \vspace{1em}
-
-%% \vspace{1em}
-
-%% \noindent Tłumaczenie książki powstało w ramach projektu "Przyszłość prawa autorskiego" finansowanego przez {\it Trust for Civil Society in Central and Eastern Europe}.
-
-%% \vspace{1em}
-
-%% \noindent \includegraphics[scale=.4]{cce_trust.eps}
-
-%% \vspace{1em}
-
-%% \noindent Wydawca: Fundacja Nowoczesna Polska, Warszawa 2012
-
-%% \vspace{1em}
-%% \includegraphics[scale=.2]{logo.eps}
-%% \vspace{1em}
-
-%% \noindent \href{http://nowoczesnapolska.org.pl/}{http://nowoczesnapolska.org.pl/}
-
-
-
-%% %\vspace{4em}
-%% %\box{\tableofcontents}
-
-%% %%   \begin{figure}[b!]
-%% %%   {
-%% %%     \footnotesize
-%% %%     \color{theme}
-%% %%     \noindent \rule{\linewidth}{0.4pt}
-
-%% %%     \rightsinfo
-%% %% %    \vspace{.6em}
-
-%% %%     %Źródło: \href{\bookurl}{\bookurl}
-
-%% %%     %\vspace{.6em}
-%% %%     %\sourceinfo
-
-%% %%     %\description
-%% %%     %\vspace{.6em}
-
-%% %%     Opublikowano przez \href{http://nowoczesnapolska.org.pl}{Fundację Nowoczesna Polska}, 2012.
-
-%% %%     \editors
-
-%% %%     %\vspace{.6em}
-%% %%     \coverby
-    
-%% %%     \color{black}
-%% %%   }
-%% %%   \end{figure}
-%% \clearpage
-%% }
 }
 
 
@@ -477,7 +396,11 @@ Mapping=tex-text
 \newcommand{\dramatwspolczesny}[1]{#1}
 
 \newcommand{\nota}[1]{%
-\par{#1}%
+\begin{em}%
+\begin{flushright}%
+#1%
+\end{flushright}%
+\end{em}%
 }
 
 \newcommand{\dedykacja}[1]{%
@@ -538,8 +461,15 @@ Mapping=tex-text
 \newcommand{\naglowekscena}[1]{%
 \subsubsection*{\typosubsubsection{#1}}%
 }
+
+\newcommand{\theautorrozdzialu}{}
+
+\newcommand{\autorrozdzialu}[1]{%
+\renewcommand{\theautorrozdzialu}{\newline\newline#1}
+}
+
 \newcommand{\naglowekrozdzial}[1]{%
-\chapter{#1}%
+\chapter{#1\theautorrozdzialu{}}\renewcommand{\theautorrozdzialu}{}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
@@ -659,4 +589,17 @@ Mapping=tex-text
 }%
 \fi
 }
+
+\newcommand{\lista}[1]{%
+\begin{compactitem}
+#1
+\end{compactitem}
+}
+
+\newcommand{\punkt}[1]{%
+\item #1
+}
+\newcommand{\link}[2]{\href{#1}{\uline{#2}\footnote{#1}}}
+
+\newcommand{\www}[1]{\url{#1}}
 

@@ -24,7 +24,10 @@ class Book2Pdf(Book2Anything):
         Option('-R', '--resources', dest='resources', metavar='DIR',
                 help='a directory with additional resources'),
         Option('-D', '--documentclass', dest='documentclass', 
-               help='LaTeX document class, defaults to "wl"')
+               help='LaTeX document class, defaults to "wl"'),
+        Option('-s', '--customizations', dest='customizations', action='append', 
+               help='LaTeX document class options')
+
     ]
 
 

@@ -158,6 +158,11 @@
         \def\authors{<xsl:call-template name="authors" />}
         \author{\authors}
         \title{<xsl:apply-templates select=".//dc:title" mode="inline" />}
+	\makeatletter
+	\let\theauthor\@author
+	\let\thetitle\@title
+	\makeatother
+
         \def\translatorsline{<xsl:call-template name="translators" />}
 
         \def\bookurl{<xsl:value-of select=".//dc:identifier.url" />}
@@ -265,7 +270,7 @@
 
 
 <xsl:template
-    match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy">
+    match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|autor_rozdzialu|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|lista">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
@@ -304,6 +309,14 @@
 </xsl:template>
 
 
+<xsl:template match="link">
+  <cmd name="link">
+    <parm><xsl:value-of select="@url"/></parm>
+    <parm><xsl:apply-templates mode="inline"/></parm>
+  </cmd>
+</xsl:template>
+
+
 <xsl:template name="verse">
     <xsl:param name="verse-content" />
     <xsl:param name="verse-type" />
@@ -330,7 +343,7 @@
 <!-- ================================================ -->
 
 <xsl:template mode="inline"
-    match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba">
+    match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|punkt|www">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
