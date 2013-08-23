@@ -84,7 +84,7 @@ def substitute_hyphens(doc):
     insert_tags(doc,
                 re.compile("(?<=[^-\s])-(?=[^-\s])"),
                 "dywiz",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+                exclude=[DCNS("identifier.url"), DCNS("rights.license"), "www"]
                 )
 
 
@@ -232,7 +232,7 @@ def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=N
         if customizations is not None:
             root.set('customizations', u','.join(customizations))
 
-        root.set('documentclass', documentclass)
+        root.set('documentclass', documentclass or 'wl')
 
         # add editors info
         root.set('editors', u', '.join(sorted(

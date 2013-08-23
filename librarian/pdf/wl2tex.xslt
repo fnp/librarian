@@ -66,33 +66,15 @@
                 </xsl:choose>
                 }
             </TeXML>
-
-            <xsl:if test="@data-cover-width">
+	    <!-- XXX fix this not to hardcode width -->
+            <!--<xsl:if test="@data-cover-width">
                 <cmd name="makecover">
                     <parm>210mm</parm>
                     <parm><xsl:value-of select="210 * @data-cover-height div @data-cover-width" />mm</parm>
                 </cmd>
-            </xsl:if>
-            <!--cmd name="maketitle" /-->
-
-            <!--cmd name="tytul"><parm>
-              <xsl:choose>
-                <xsl:when test="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu">
-                    <!- title in master ->
-                    <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/autor_utworu" mode="title" />
-                    <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/dzielo_nadrzedne" mode="title" />
-                    <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu" mode="title" />
-                    <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/podtytul" mode="title" />
-                    <!- dc in master or not ->
-                    <cmd name="translatorsline" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <!- look for author title in dc ->
-                    <xsl:apply-templates select="rdf:RDF" mode="firstdctitle" />
-                    <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='firstdctitle' />
-                </xsl:otherwise>
-              </xsl:choose>
-            </parm></cmd-->
+            </xsl:if>-->
+	    <cmd name="makecover" />
+            <cmd name="maketitle" />
 
             <TeXML escape="0">
                 \def\coverby{
@@ -110,6 +92,7 @@
             </TeXML>
 
             <cmd name="editorialsection" />
+	    <cmd name="spistresci" />
 
             <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
             <xsl:apply-templates select="utwor" mode="part" />
@@ -268,9 +251,14 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="autor_rozdzialu">
+</xsl:template>
 
 <xsl:template
-    match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|autor_rozdzialu|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|lista">
+    match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|lista">
+  <xsl:if test="name(following-sibling::*[1])='autor_rozdzialu'">
+    <cmd name="autorrozdzialu"><parm><xsl:value-of select="following-sibling::*[1]/text()"/></parm></cmd>
+  </xsl:if>
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
@@ -381,6 +369,9 @@
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
         </xsl:attribute>
+	<xsl:if test="@opt">
+	  <opt><TeXML ecape="0"><xsl:value-of select="normalize-space(@opt)" /></TeXML></opt>
+	</xsl:if>
 	<parm><TeXML escape="0"><xsl:value-of select="normalize-space(@src)" /></TeXML></parm>
         <parm><xsl:apply-templates mode="inline" /></parm>
     </cmd>

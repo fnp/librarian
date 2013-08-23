@@ -19,6 +19,7 @@
 \RequirePackage{amsmath}
 \RequirePackage{paralist}
 \RequirePackage[normalem]{ulem}
+\RequirePackage{xifthen}
 %\DeclareOption{13pt}{%
 %\AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
@@ -150,15 +151,14 @@ Mapping=tex-text
 }
 \makeatother
 
-
-\renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont}
 \setlength{\parindent}{4mm}
 \setlength{\parskip}{0mm}
 
-\renewcommand{\large}{\fontsize{14}{14.28}\selectfont} % srodtytul
-\renewcommand{\small}{\fontsize{8}{14.28}\selectfont} % paginy
-\renewcommand{\Large}{\fontsize{15}{21.42}\selectfont} % tytuł rozdziału
-\renewcommand{\huge}{\fontsize{18}{21.6}\selectfont} % wyimek
+\renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont}
+\renewcommand{\large}{\fontsize{14}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont} % srodtytul
+\renewcommand{\small}{\fontsize{8}{14.28}\addfontfeature{LetterSpace=0.5}\selectfont} % paginy
+\renewcommand{\Large}{\fontsize{15}{21.42}\addfontfeature{LetterSpace=0.1}\selectfont} % tytuł rozdziału
+\renewcommand{\huge}{\fontsize{18}{21.6}\addfontfeature{LetterSpace=0.1}\selectfont} % wyimek
 \renewcommand{\Huge}{\fontsize{24}{40}\selectfont} % cover
 \renewcommand{\footnotesize}{\fontsize{9}{10.74}\selectfont}
 
@@ -191,7 +191,7 @@ Mapping=tex-text
 \makeatother
 
 %%%%%%%%%%%%%%%%%%%%%% Section title styles.
-%% Sections
+%% Chapters
 \titleformat{\chapter}[block]%
 {\Large\intro\addfontfeature{LetterSpace=0.5,Kerning={Uppercase}}}%
 {}{0pt}{\parbox{80mm}{\raggedright\MakeUppercase{#1}}}
@@ -200,7 +200,7 @@ Mapping=tex-text
 \setlength{\chapterspaceafter}{14\baselineskip-14pt}%\f@size of large
 \titlespacing*{\chapter}{0pt}{\chapterposcorrection}{\chapterspaceafter}
 
-%% Subsections
+%% Sections
 \titleformat{\section}%
 {\addfontfeature{LetterSpace=0.3}\large}%
 {\thesection}{.5em}{\MakeUppercase{#1}}
@@ -267,7 +267,7 @@ Mapping=tex-text
 \raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
 
 
-\newcommand{\makecover}{
+\newcommand{\makecover}[2]{
 
   %\pdfpagewidth=#1
   %\pdfpageheight=#2
@@ -291,9 +291,15 @@ Mapping=tex-text
   \noindent\hspace*{-\PictHOffset}%
   \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
       \includegraphics[height=\paperheight,width=\paperwidth]{cover.jpg}}}
+
+  
+  }
+
+
+
+\renewcommand{\maketitle}{
   \newpage
   %\vspace{\paperheight}
-
 
   \thispagestyle{empty}
   \begin{center}
@@ -321,32 +327,24 @@ Mapping=tex-text
     \includegraphics[scale=.2]{logo.eps}
   \end{center}
 
-  \newpage
-  \thispagestyle{empty}
-
-  \input{editorial}
-
-  
-  }
-
-
-
-\renewcommand{\maketitle}{
-    {
-    \thispagestyle{empty}
-    \footnotesize
-    \color{theme}
-    \noindent \rule{\linewidth}{0.4pt}
-
-    \vspace{.6em}
-    \color{black}
-    }
 }
 
 
 \newcommand{\editorialsection}{
-
+  \newpage
+  \thispagestyle{empty}
 }
+
+\renewcommand*\contentsname{Table of Contents}
+\newcommand{\spistresci}{
+{
+  \intro
+  \setcounter{tocdepth}{0}
+  \tableofcontents
+  \newpage
+}
+}
+
 
 
 
@@ -469,7 +467,7 @@ Mapping=tex-text
 }
 
 \newcommand{\naglowekrozdzial}[1]{%
-\chapter{#1\theautorrozdzialu{}}\renewcommand{\theautorrozdzialu}{}%
+\chapter[#1]{#1\theautorrozdzialu{}}\renewcommand{\theautorrozdzialu}{}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
@@ -568,12 +566,17 @@ Mapping=tex-text
 \vspace{10pt}%
 }
 
-\newcommand{\ilustr}[2]{
-  \vspace{1em}%
+\newcommand{\ilustrscale}[0]{1}
+\newcommand{\setilustrscale}[1]{\renewcomand{\ilustrscale}{#1}}
+
+\newcommand{\ilustr}[3][]{
+  \vspace{2\baselineskip}%
   \begin{center}%
-    \par{\includegraphics[width=\textwidth]{\trimspace{#1}}\\#2}%
+    \ifthenelse{\isempty{#1}}%
+    {\par{\includegraphics{\trimspace{#2}}\\#3}}%
+    {\par{\includegraphics[#1]{\trimspace{#2}}\\#3}}%
   \end{center}%
-  \vspace{1em}%
+  \vspace{2\baselineskip}%
 }
 
 
@@ -601,5 +604,5 @@ Mapping=tex-text
 }
 \newcommand{\link}[2]{\href{#1}{\uline{#2}\footnote{#1}}}
 
-\newcommand{\www}[1]{\url{#1}}
+\newcommand{\www}[1]{{\normalfont\small\url{#1}}}
 

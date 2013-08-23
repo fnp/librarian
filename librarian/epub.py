@@ -506,14 +506,14 @@ def transform(wldoc, verbose=False,
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, method="html", pretty_print=True))
 
-    toc.add("Weprzyj Wolne Lektury", "support.html")
-    manifest.append(etree.fromstring(
-        '<item id="support" href="support.html" media-type="application/xhtml+xml" />'))
-    spine.append(etree.fromstring(
-        '<itemref idref="support" />'))
-    html_string = open(get_resource('epub/support.html')).read()
-    chars.update(used_chars(etree.fromstring(html_string)))
-    zip.writestr('OPS/support.html', html_string)
+    # toc.add("Weprzyj Wolne Lektury", "support.html")
+    # manifest.append(etree.fromstring(
+    #     '<item id="support" href="support.html" media-type="application/xhtml+xml" />'))
+    # spine.append(etree.fromstring(
+    #     '<itemref idref="support" />'))
+    # html_string = open(get_resource('epub/support.html')).read()
+    # chars.update(used_chars(etree.fromstring(html_string)))
+    # zip.writestr('OPS/support.html', html_string)
 
     toc.add("Strona redakcyjna", "last.html")
     manifest.append(etree.fromstring(

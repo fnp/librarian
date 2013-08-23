@@ -136,9 +136,15 @@
       <xsl:apply-templates />
     </h2>
   </xsl:template>
+  
+  <xsl:template match="autor_rozdzialu">
+  </xsl:template>
 
   <xsl:template match="naglowek_rozdzial">
     <h2 class="h3" xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:if test="name(following-sibling::*[1])='autor_rozdzialu'">
+	<xsl:value-of select="following-sibling::*[1]/text()"/> -
+      </xsl:if>
       <xsl:apply-templates />
     </h2>
   </xsl:template>
@@ -211,6 +217,35 @@
       <xsl:apply-templates />
     </div>
   </xsl:template>
+
+  <xsl:template match="lista">
+    <ul>
+      <xsl:apply-templates />
+    </ul>
+  </xsl:template>
+
+  <xsl:template match="punkt">
+    <li><xsl:apply-templates /></li>
+  </xsl:template>
+
+  <xsl:template match="www">
+    <a>
+      <xsl:attribute name="href">
+	<xsl:value-of select="text()"/>
+      </xsl:attribute>
+      <xsl:value-of select="text()"/>
+    </a>
+  </xsl:template>
+
+  <xsl:template match="link">
+    <a>
+      <xsl:attribute name="href">
+	<xsl:value-of select="@url"/>
+      </xsl:attribute>
+      <xsl:value-of select="text()"/>
+    </a>
+  </xsl:template>
+
 
   <!--===========================================================-->
   <!-- Tagi LINIOWE -->

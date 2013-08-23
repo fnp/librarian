@@ -52,13 +52,13 @@
             </p>
           </xsl:if-->
 
-          <p class="info">
+<!--          <p class="info">
           <xsl:choose>
           <xsl:when test="//dc:contributor">Thank you for your contribution, <xsl:value-of select="//dc:contributor"/>!</xsl:when>
           <xsl:otherwise>Thank you for all your contributions!</xsl:otherwise>
           </xsl:choose>
           <br/>You made this book possible.
-          </p>
+          </p>-->
 
 
           <!--p class="info">
