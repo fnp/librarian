@@ -34,7 +34,7 @@ def transform(wldoc, verbose=False,
     c = cover(book_info)
     c.save(cover_file)
 
-    if bound_cover.uses_dc_cover:
+    if c.uses_dc_cover:
         if document.remobook_info.cover_by:
             document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
         if document.book_info.cover_source:

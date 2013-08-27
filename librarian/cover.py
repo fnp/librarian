@@ -435,3 +435,12 @@ class GandalfCover(Cover):
     logo_bottom = 25
     logo_width = 250
     format = 'PNG'
+
+class FutureOfCopyrightCover(Cover):
+    width = 420
+    height = 595
+    background_img = 'cover.png'
+    format = 'PNG'
+    
+    def save(self, dest):
+        dest.write(open(self.background_img).read())

@@ -16,6 +16,7 @@
       <xsl:element name="body" xmlns="http://www.w3.org/1999/xhtml">
         <xsl:element name="div" xmlns="http://www.w3.org/1999/xhtml">
           <xsl:attribute name="id">book-text</xsl:attribute>
+
           <xsl:if test="//nazwa_utworu">
             <!--h1 xmlns="http://www.w3.org/1999/xhtml"-->
               <xsl:apply-templates select="//dzielo_nadrzedne" mode="poczatek"/>
@@ -86,6 +87,9 @@
   </xsl:template>
 
   <xsl:template match="autor_utworu" />
+  <xsl:template match="autor_rozdzialu">
+      <xsl:apply-templates />
+  </xsl:template>
 
   <xsl:template match="dzielo_nadrzedne" mode="poczatek">
     <h2 class="collection" xmlns="http://www.w3.org/1999/xhtml">

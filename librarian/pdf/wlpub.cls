@@ -13,6 +13,7 @@
 % nowlfont - don't use customized WL font
 
 %\RequirePackage{geometry}
+
 \RequirePackage{setspace}
 \RequirePackage{type1cm}
 \RequirePackage{amssymb}
@@ -20,6 +21,7 @@
 \RequirePackage{paralist}
 \RequirePackage[normalem]{ulem}
 \RequirePackage{xifthen}
+
 %\DeclareOption{13pt}{%
 %\AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
@@ -93,12 +95,14 @@
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
 \usepackage{fancyhdr}
 \usepackage[explicit]{titlesec}
-\usepackage{fnpos}
+%\usepackage{fnpos}
 \usepackage{printlen}
 \usepackage{calc}
+\usepackage[stable]{footmisc}
+
 \pagestyle{plain}
 % bottom figure below footnotes
-\makeFNabove
+%\makeFNabove
 
 
 %%%%%%%%%%%%%%%%%%%%%%% Paper size
@@ -151,7 +155,7 @@ Mapping=tex-text
 }
 \makeatother
 
-\setlength{\parindent}{4mm}
+\setlength{\parindent}{3mm}
 \setlength{\parskip}{0mm}
 
 \renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont}
@@ -203,14 +207,16 @@ Mapping=tex-text
 %% Sections
 \titleformat{\section}%
 {\addfontfeature{LetterSpace=0.3}\large}%
-{\thesection}{.5em}{\MakeUppercase{#1}}
+{\thesection{}.}{.5em}{\MakeUppercase{#1}}
 
 \renewcommand{\thesection}{\Roman{section}}
 
-\titleformat{\subsection}%
+\titleformat{\subsection}[runin]%
 {}%
-{\thesubsection}{0pt}{\fakesc{#1}}
+{\thesubsection{}.}{.5em}{\MakeUppercase{#1}.}[]
 
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\titlespacing*{\subsection}{0pt}{0pt}{.5em}
 
 \newcommand{\typosubsubsection}[1]{%
 {\textsc{#1}}
@@ -227,24 +233,29 @@ Mapping=tex-text
 }
 %%%%%%%%%%%%%%%%%% ^^
 
-%%%%% Footnotes %%%%%%%%
+%%%%% Footnotes (works with footmisc) %%%%%%%%
 \newlength{\footnoteindent}\newlength{\footnoteprespace}
 \setlength{\footnoteindent}{6mm}%{3.5mm}
-\setlength{\footnoteprespace}{.3em}
+\setlength{\footnoteprespace}{0em}
 \makeatletter
 
 \renewcommand\@makefnmark{%
-\hspace{\footnoteprespace}\hbox{{\normalfont \@thefnmark}}%
+\hspace{\footnoteprespace}
+\hbox{{\normalfont \@thefnmark}}%
 }
 \renewcommand\thefootnote{[\arabic{footnote}]}
 
-\long\def\@makefntext#1{%
-\setlength{\leftskip}{\footnoteindent}%
-\setlength{\hskip}{-\footnoteindent-\footnoteprespace-.1em}%
-\hb@xt@ \dimexpr\footnoteindent+\footnoteprespace%
-{\@makefnmark}#1
-%  \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1
-}
+\setlength{\footnotemargin}{-\footnoteindent-\footnoteprespace-.3em}
+\renewcommand\footnotelayout[1]{%
+  \setlength{\leftskip}{\footnoteindent}#1}
+
+%% \long\def\@makefntext#1{%
+%% \setlength{\leftskip}{\footnoteindent}%
+%% \setlength{\hskip}{-\footnoteindent-\footnoteprespace-.1em}%
+%% \hb@xt@ \dimexpr\footnoteindent+\footnoteprespace%
+%% {\@makefnmark}#1
+%% %  \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1
+%% }
 
 \def\trimspace#1{\trim@spaces{#1}}
 
@@ -267,8 +278,7 @@ Mapping=tex-text
 \raisebox{0pt}[0pt][0pt]{\makebox[0pt][r]{\usebox{\xglyphbox}}}}
 
 
-\newcommand{\makecover}[2]{
-
+\newcommand{\makecover}{
   %\pdfpagewidth=#1
   %\pdfpageheight=#2
 
@@ -292,15 +302,11 @@ Mapping=tex-text
   \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
       \includegraphics[height=\paperheight,width=\paperwidth]{cover.jpg}}}
 
-  
   }
 
-
-
 \renewcommand{\maketitle}{
-  \newpage
   %\vspace{\paperheight}
-
+  \newpage
   \thispagestyle{empty}
   \begin{center}
   \intro
@@ -311,28 +317,31 @@ Mapping=tex-text
   }
   \end{center}
 
-  \vspace{2em}
+  \vspace{\baselineskip}
   
   \begin{center}
     \intro
     {
-    \huge \noindent \theauthor
+      \huge \noindent 
+      \theauthor
+      
     }
   \end{center}
                   %\emph{\thankyou}\\
                   %\indent\emph{You made this book possible.}
-  \vspace{16em}
+  \vspace{7\baselineskip}
 
   \begin{center}
     \includegraphics[scale=.2]{logo.eps}
   \end{center}
-
+  
 }
 
 
 \newcommand{\editorialsection}{
   \newpage
   \thispagestyle{empty}
+  \input{editorial}
 }
 
 \renewcommand*\contentsname{Table of Contents}
@@ -395,9 +404,9 @@ Mapping=tex-text
 
 \newcommand{\nota}[1]{%
 \begin{em}%
-\begin{flushright}%
-#1%
-\end{flushright}%
+\begin{flushleft}%
+\noindent #1%
+\end{flushleft}%
 \end{em}%
 }
 
@@ -453,7 +462,7 @@ Mapping=tex-text
 \part{#1}%
 }
 \newcommand{\srodtytul}[1]{%
-\subsection*{\typosubsection{#1}}%
+\subsection{#1}%
 }
 
 \newcommand{\naglowekscena}[1]{%
@@ -463,7 +472,7 @@ Mapping=tex-text
 \newcommand{\theautorrozdzialu}{}
 
 \newcommand{\autorrozdzialu}[1]{%
-\renewcommand{\theautorrozdzialu}{\newline\newline#1}
+\renewcommand{\theautorrozdzialu}{\newline{}{\normalfont by}\newline#1}
 }
 
 \newcommand{\naglowekrozdzial}[1]{%
@@ -604,5 +613,5 @@ Mapping=tex-text
 }
 \newcommand{\link}[2]{\href{#1}{\uline{#2}\footnote{#1}}}
 
-\newcommand{\www}[1]{{\normalfont\small\url{#1}}}
+\newcommand{\www}[1]{{\normalfont\small\href{#1}{#1}}}
 

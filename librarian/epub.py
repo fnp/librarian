@@ -17,7 +17,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
 from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
-from librarian.cover import WLCover
+from librarian.cover import WLCover, FutureOfCopyrightCover
 
 from librarian import functions, get_resource
 
@@ -355,7 +355,7 @@ def transform(wldoc, verbose=False,
             zip.writestr('OPS/title.html',
                  etree.tostring(html_tree, method="html", pretty_print=True))
             # add a title page TOC entry
-            toc.add(u"Strona tytułowa", "title.html")
+            toc.add(u"Title", "title.html")
         elif wldoc.book_info.parts:
             # write title page for every parent
             if sample is not None and sample <= 0:
@@ -436,6 +436,7 @@ def transform(wldoc, verbose=False,
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
     zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
+    zip.write(get_resource('res/logo.png'), os.path.join('OPS', 'logo.png'))
     zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
     if not style:
         style = get_resource('epub/style.css')
@@ -443,7 +444,7 @@ def transform(wldoc, verbose=False,
 
     if cover:
         if cover is True:
-            cover = WLCover
+            cover = FutureOfCopyrightCover
 
         cover_file = StringIO()
         c = cover(document.book_info)
@@ -453,11 +454,11 @@ def transform(wldoc, verbose=False,
         del cover_file
 
         cover_tree = etree.parse(get_resource('epub/cover.html'))
-        cover_tree.find('//' + XHTMLNS('img')).set('src', cover_name)
+        cover_tree.find('//' + XHTMLNS('img')).set('src', c_name)
         zip.writestr('OPS/cover.html', etree.tostring(
                         cover_tree, method="html", pretty_print=True))
 
-        if bound_cover.uses_dc_cover:
+        if c.uses_dc_cover:
             if document.book_info.cover_by:
                 document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
             if document.book_info.cover_source:
@@ -466,11 +467,12 @@ def transform(wldoc, verbose=False,
         manifest.append(etree.fromstring(
             '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
         manifest.append(etree.fromstring(
-            '<item id="cover-image" href="%s" media-type="%s" />' % (cover_name, bound_cover.mime_type())))
+            '<item id="cover-image" href="%s" media-type="%s" />' % (c_name, c.mime_type())))
         spine.insert(0, etree.fromstring('<itemref idref="cover" linear="no" />'))
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
         guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
-
+    
+              
 
     annotations = etree.Element('annotations')
 
@@ -481,21 +483,28 @@ def transform(wldoc, verbose=False,
                                '</navMap></ncx>')
     nav_map = toc_file[-1]
 
+    manifest.append(etree.fromstring(
+        '<item id="intro" href="intro.html" media-type="application/xhtml+xml" />'))
+    spine.append(etree.fromstring(
+        '<itemref idref="intro" />'))
+    zip.writestr('OPS/intro.html', open(get_resource('epub/intro.html')).read())
+
+
     if html_toc:
         manifest.append(etree.fromstring(
             '<item id="html_toc" href="toc.html" media-type="application/xhtml+xml" />'))
         spine.append(etree.fromstring(
             '<itemref idref="html_toc" />'))
-        guide.append(etree.fromstring('<reference href="toc.html" type="toc" title="Spis treści"/>'))
+        guide.append(etree.fromstring('<reference href="toc.html" type="toc" title="Table of Contents"/>'))
 
     toc, chunk_counter, chars, sample = transform_file(document, sample=sample)
 
     if len(toc.children) < 2:
-        toc.add(u"Początek utworu", "part1.html")
+        toc.add(u"Beginning of the book", "part1.html")
 
     # Last modifications in container files and EPUB creation
     if len(annotations) > 0:
-        toc.add("Przypisy", "annotations.html")
+        toc.add("Footnotes", "annotations.html")
         manifest.append(etree.fromstring(
             '<item id="annotations" href="annotations.html" media-type="application/xhtml+xml" />'))
         spine.append(etree.fromstring(
@@ -515,7 +524,7 @@ def transform(wldoc, verbose=False,
     # chars.update(used_chars(etree.fromstring(html_string)))
     # zip.writestr('OPS/support.html', html_string)
 
-    toc.add("Strona redakcyjna", "last.html")
+    toc.add("Editors", "last.html")
     manifest.append(etree.fromstring(
         '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
@@ -563,7 +572,7 @@ def transform(wldoc, verbose=False,
 
     # write TOC
     if html_toc:
-        toc.add(u"Spis treści", "toc.html", index=1)
+        toc.add(u"Table of Contents", "toc.html", index=1)
         zip.writestr('OPS/toc.html', toc.html().encode('utf-8'))
     toc.write_to_xml(nav_map)
     zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))

@@ -15,82 +15,53 @@
         <link rel="stylesheet" href="style.css" type="text/css" />
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <title>
-          <xsl:text>Strona redakcyjna</xsl:text>
+          <xsl:text>Credits</xsl:text>
         </title>
       </head>
       <body>
         <div id="book-text" >
-          <p class="info">
-              <xsl:choose>
-                  <xsl:when test="//dc:rights.license">
-                      Ten utwór jest udostepniony na licencji
-                      <a>
-                          <xsl:attribute name="href">
-                              <xsl:value-of select="//dc:rights.license" />
-                          </xsl:attribute>
-                          <xsl:value-of select="//dc:rights" />
-                      </a>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie
-                    publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
-                    i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
-                    (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
-                    te dodatkowe materiały udostępnione są na licencji
-                    <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons
-                    Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL</a>.
-                  </xsl:otherwise>
-              </xsl:choose>
-          </p>
+	  
 
-          <p class="info">Źródło: <a>
-              <xsl:attribute name="href">
-                  <xsl:value-of select="//dc:identifier.url" />
-              </xsl:attribute>
-              <xsl:attribute name="title">
-                  <xsl:value-of select="wl:person_name(//dc:creator/text())" />, <xsl:value-of select="//dc:title" />
-              </xsl:attribute>
-              <xsl:value-of select="//dc:identifier.url" />
-          </a></p>
+<p>The Future of Copyright 2.0 Contest is a~part of Future of Copyright Project supported by Trust for Civil Society in Central and Eastern Europe</p>
 
-          <xsl:if test="//dc:source" >
-            <p class="info">Tekst opracowany na podstawie: <xsl:value-of select="//dc:source" /></p>
-          </xsl:if>
+<!-- \includegraphics[scale=.2]<p>trust.eps} -->
 
-          <xsl:if test="//dc:description" >
-            <p class="info"><xsl:value-of select="//dc:description" /></p>
-          </xsl:if>
+<p>This book is available under the terms of Creative Commons Attribution-ShareAlike 3.0 Unported License (read more:
+<a href="http://creativecommons.org/licenses/by-sa/3.0/">http://creativecommons.org/licenses/by-sa/3.0/</a>) <br/>
+Published by Modern Poland Foundation, Warsaw 2013 </p>
 
-          <xsl:call-template name="editors" />
+<p>Technical editor: Paulina Choromańska <br/>
+Book design: Jakub Waluchowski<br/>
+Typography: Marcin Koziej </p>
 
-          <xsl:if test="@data-cover-by">
-            <p class="info">Okładka na podstawie: 
-            <xsl:choose>
-            <xsl:when test="@data-cover-source">
-                <a>
-                <xsl:attribute name="href">
-                  <xsl:value-of select="@data-cover-source" />
-                </xsl:attribute>
-                <xsl:value-of select="@data-cover-by" />
-                </a>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="@data-cover-by" />
-            </xsl:otherwise>
-            </xsl:choose>
-            </p>
-          </xsl:if>
+<p>Modern Poland Fundation <br/>
+Marszalkowska St. 84/92 app. 125 <br/>
+00-514 Warsaw <br/>
+tel/fax: +48 22 621-30-17 <br/>
+email: fundacja@nowoczesnapolska.org.pl <br/> 
+</p>
 
-          <div class="info">
+ 
+<p>If you wish to support our projects, feel free to make a~donation via our secure online payment service: 
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=L2CLCXHZCWYJN">PLN</a> or <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=XVC8XD7DBGV6N">USD</a>
+ or direct payment account number: 59 1030 0019 0109 8530 0040 5685 </p>
+
+<p> Thank you for your support.</p>
+
+
+
+
+
+<!--          <div class="info">
           <img src="jedenprocent.png" alt="Logo 1%" />
           <div>Przekaż 1% podatku na rozwój Wolnych Lektur.</div>
           <div>Nazwa organizacji: Fundacja Nowoczesna Polska</div>
           <div>KRS 0000070056</div>
-          </div>
+          </div>-->
 
           <p class="info">&#160;</p>
           <p class="minor info">
-              Plik wygenerowany dnia <span id="file_date"><xsl:value-of select="substring(date:date(), 1, 10)" /></span>.
+              Generated on <span id="file_date"><xsl:value-of select="substring(date:date(), 1, 10)" /></span>.
           </p>
 
         </div>
