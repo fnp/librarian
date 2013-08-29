@@ -59,7 +59,7 @@ class EduModule(Xmill):
     handle_podtytul = tag("span", "subtitle")
     handle_naglowek_akt = handle_naglowek_czesc = handle_srodtytul = tag("h2")
     handle_naglowek_scena = tag('h2')
-    handle_naglowek_osoba = handle_naglowek_podrozdzial = tag('h3')
+    handle_naglowek_osoba = tag('h3')
     handle_akap = handle_akap_dialog = handle_akap_cd = tag('p', 'paragraph')
 
     handle_wyroznienie = tag('em')
@@ -82,6 +82,10 @@ class EduModule(Xmill):
         return_to_top = u"<a href='#top' class='top-link'>wróć do spisu treści</a>"
         pre, post = tag_open_close("h2", id=naglowek_to_anchor(element))
         return return_to_top + pre, post
+
+    def handle_naglowek_podrozdzial(self, element):
+        self.activity_counter = 0
+        return tag('h3')(self, element)
 
     def handle_uwaga(self, _e):
         return None
