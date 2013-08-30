@@ -28,6 +28,7 @@ class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
         self.activity_counter = 0
+        self.activity_last = None
         self.exercise_counter = 0
 
         # text filters
@@ -113,10 +114,17 @@ class EduModule(Xmill):
 
         counter = self.activity_counter
 
+        if element.getnext().tag == 'aktywnosc' or self.activity_last.getnext() == element:
+            counter_html = """<span class="act_counter">%(counter)d.</span>""" % locals()
+        else:
+            counter_html = ''
+
+        self.activity_last = element
+
         return u"""
 <div class="activity">
  <div class="text">
-  <span class="act_counter">%(counter)d.</span>
+  %(counter_html)s
   %(opis)s""" % locals(), \
 u"""%(wskazowki)s
  </div>
