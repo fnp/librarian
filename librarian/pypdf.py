@@ -174,7 +174,6 @@ class EduModule(Xmill):
     handle_naglowek_czesc = \
     handle_naglowek_listy = \
     handle_naglowek_osoba = \
-    handle_naglowek_podrozdzial = \
     handle_naglowek_scena = \
     handle_nazwa_utworu = \
     handle_nota = \
@@ -205,6 +204,9 @@ class EduModule(Xmill):
         return self.handle_texcommand(element)
     handle_naglowek_rozdzial.unmuter = True
 
+    def handle_naglowek_podrozdzial(self, element):
+        self.activity_counter = 0
+        return self.handle_texcommand(element)
 
     def handle_uwaga(self, _e):
         return None
