@@ -69,6 +69,7 @@ class EduModule(Xmill):
     def __init__(self, options=None, state=None):
         super(EduModule, self).__init__(options, state)
         self.activity_counter = 0
+        self.activity_last = None
         self.exercise_counter = 0
 
         def swap_endlines(txt):
@@ -248,9 +249,16 @@ class EduModule(Xmill):
 
         counter = self.activity_counter
 
+        if element.getnext().tag == 'aktywnosc' or self.activity_last.getnext() == element:
+            counter_tex = """<cmd name="activitycounter"><parm>%(counter)d.</parm></cmd>""" % locals()
+        else:
+            counter_tex = ''
+
+        self.activity_last = element
+
         return u"""
 <cmd name="noindent" />
-<cmd name="activitycounter"><parm>%(counter)d.</parm></cmd>
+%(counter_tex)s
 <cmd name="activityinfo"><parm>
  <cmd name="activitytime"><parm>%(czas)s</parm></cmd>
  <cmd name="activityform"><parm>%(forma)s</parm></cmd>
