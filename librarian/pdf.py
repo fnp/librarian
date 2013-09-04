@@ -276,6 +276,7 @@ def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=N
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('pdf/wlpub.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
+        shutil.copy(get_resource('res/cover.jpg'), temp)
         if resources:
             copy_tree(resources, temp)
 

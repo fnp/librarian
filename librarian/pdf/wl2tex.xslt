@@ -33,7 +33,8 @@
         </xsl:for-each>
         </TeXML>
 
-        <xsl:choose>
+<!-- WHAT. THE. FUCK. -->
+<!--        <xsl:choose>
             <xsl:when test="@morefloats = 'new'">
                 <TeXML escape="0">
                     \usepackage[maxfloats=64]{morefloats}
@@ -52,7 +53,7 @@
                     }{}
                 </TeXML>
             </xsl:otherwise>
-        </xsl:choose>
+        </xsl:choose>-->
 
         <xsl:apply-templates select="rdf:RDF" mode="titlepage" />
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" mode='titlepage' />
@@ -340,6 +341,17 @@
     </cmd>
 </xsl:template>
 
+<xsl:template mode="inline"
+    match="wyimek">
+    <env>
+        <xsl:attribute name="name">
+            <xsl:value-of select="wl:texcommand(name())" />
+        </xsl:attribute>
+        <xsl:apply-templates mode="inline"/>
+    </env>
+</xsl:template>
+
+
 
 
 <xsl:template match="tytul_dziela" mode="inline">
@@ -397,11 +409,22 @@
   </math>
 </xsl:template>
 
-<xsl:template match="latex" mode="inline">
+<xsl:template match="latex">
   <TeXML escape="0">
-    <xsl:apply-templates select="@*|node()" mode="identity"/>
+    <xsl:for-each select="text()">
+      <xsl:value-of select="normalize-space(.)"/>
+    </xsl:for-each>
   </TeXML>
 </xsl:template>
+
+<xsl:template match="latex" mode="inline">
+  <TeXML escape="0">
+    <xsl:for-each select="text()">
+      <xsl:value-of select="normalize-space(.)"/>
+    </xsl:for-each>
+  </TeXML>
+</xsl:template>
+
 
 <xsl:template match="tablewrap">
   <cmd name="begin"><parm>table</parm><opt>h!</opt></cmd>

@@ -21,6 +21,7 @@
 \RequirePackage{paralist}
 \RequirePackage[normalem]{ulem}
 \RequirePackage{xifthen}
+\RequirePackage{environ} % environments with \BODY, for wyimek
 
 %\DeclareOption{13pt}{%
 %\AtEndOfClass{%
@@ -88,7 +89,7 @@
 \usepackage{fontspec}
 \usepackage{xunicode}
 \usepackage{xltxtra}
-\usepackage{trimspaces}
+%\usepackage{trimspaces} % imported by something else?
 \usepackage{color}
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
@@ -99,6 +100,11 @@
 \usepackage{printlen}
 \usepackage{calc}
 \usepackage[stable]{footmisc}
+
+%% Wyimki - placing them on correct pages
+\usepackage{changepage}
+%\usepackage{fltpage}
+\usepackage{float}
 
 \pagestyle{plain}
 % bottom figure below footnotes
@@ -162,7 +168,7 @@ Mapping=tex-text
 \renewcommand{\large}{\fontsize{14}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont} % srodtytul
 \renewcommand{\small}{\fontsize{8}{14.28}\addfontfeature{LetterSpace=0.5}\selectfont} % paginy
 \renewcommand{\Large}{\fontsize{15}{21.42}\addfontfeature{LetterSpace=0.1}\selectfont} % tytuł rozdziału
-\renewcommand{\huge}{\fontsize{18}{21.6}\addfontfeature{LetterSpace=0.1}\selectfont} % wyimek
+\renewcommand{\huge}{\fontsize{18}{28.56}\addfontfeature{LetterSpace=0.1}\selectfont} % wyimek
 \renewcommand{\Huge}{\fontsize{24}{40}\selectfont} % cover
 \renewcommand{\footnotesize}{\fontsize{9}{10.74}\selectfont}
 
@@ -257,9 +263,37 @@ Mapping=tex-text
 %% %  \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1
 %% }
 
+% make public
 \def\trimspace#1{\trim@spaces{#1}}
 
 \makeatother
+
+%%%%%%%%%%%%%%%%%%%%%% Wyimki
+%% \floatstyle{plain}
+%% \newfloat{wyimekbox}{p}{wmk}
+%% \floatname{wyimekbox}{Wyimek}
+
+\NewEnviron{wyimek}{%
+  \checkoddpage
+  \ifoddpage
+    \PackageWarning{wlpub}{Wyimek on odd page, omitting it.}
+  \else
+    \begin{figure}[tp]
+      \begin{center}
+        \begin{minipage}[t][\textheight][c]{70mm}
+          \huge\it\BODY
+        \end{minipage}
+      \end{center}
+    \end{figure}
+  \fi
+  \BODY
+}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \clubpenalty=100000
@@ -270,7 +304,7 @@ Mapping=tex-text
 \newsavebox{\ximagebox}\newlength{\ximageheight}
 \newsavebox{\xglyphbox}\newlength{\xglyphheight}
 \newcommand{\xbox}[1]
-{\savebox{\ximagebox}{#1}\settoheight{\ximageheight}{\usebox {\ximagebox}}%
+{\savebox{\ximagebox}{#1}\settoheight{\ximageheight}{\usebox {\ximapgebox}}%
 \savebox{\xglyphbox}{\char32}\settoheight{\xglyphheight}{\usebox {\xglyphbox}}%
 \raisebox{\ximageheight}[0pt][0pt]{%\raisebox{-\xglyphheight}[0pt] [0pt]{%
 \makebox[0pt][l]{\usebox{\xglyphbox}}}%}%
