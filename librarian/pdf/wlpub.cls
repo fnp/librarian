@@ -13,7 +13,6 @@
 % nowlfont - don't use customized WL font
 
 %\RequirePackage{geometry}
-
 \RequirePackage{setspace}
 \RequirePackage{type1cm}
 \RequirePackage{amssymb}
@@ -93,18 +92,23 @@
 \usepackage{color}
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
-\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex,linktocpage]{hyperref}
 \usepackage{fancyhdr}
-\usepackage[explicit]{titlesec}
+
 %\usepackage{fnpos}
 \usepackage{printlen}
 \usepackage{calc}
 \usepackage[stable]{footmisc}
 
+\usepackage{chngcntr}
+\counterwithout{footnote}{chapter}
+
+\usepackage[explicit]{titlesec}
+
 %% Wyimki - placing them on correct pages
 \usepackage{changepage}
 %\usepackage{fltpage}
-\usepackage{float}
+%\usepackage{float}
 
 \pagestyle{plain}
 % bottom figure below footnotes
@@ -117,14 +121,14 @@
   \usepackage[%
     paperwidth=160mm,%
     paperheight=225mm,%
-    text={117mm,162mm},% 
-    top=30mm,% 
+    text={117mm,162mm},%
+    top=30mm,%
     headsep=8mm,%
     left=23mm,%
     right=30mm]{geometry}%
 \else
   \usepackage[%
-    top=\dimexpr14.5mm+\baselineskip-16pt\relax, % margin will be smaller to accomodate for bigger header (16pt) 
+    top=\dimexpr14.5mm+\baselineskip-16pt\relax, % margin will be smaller to accomodate for bigger header (16pt)
     headsep=3\baselineskip,
     headheight=16pt,
     bottom=26.3mm,%
@@ -164,13 +168,13 @@ Mapping=tex-text
 \setlength{\parindent}{3mm}
 \setlength{\parskip}{0mm}
 
-\renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont}
-\renewcommand{\large}{\fontsize{14}{14.28}\addfontfeature{LetterSpace=0.3}\selectfont} % srodtytul
-\renewcommand{\small}{\fontsize{8}{14.28}\addfontfeature{LetterSpace=0.5}\selectfont} % paginy
-\renewcommand{\Large}{\fontsize{15}{21.42}\addfontfeature{LetterSpace=0.1}\selectfont} % tytuł rozdziału
-\renewcommand{\huge}{\fontsize{18}{28.56}\addfontfeature{LetterSpace=0.1}\selectfont} % wyimek
+\renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=3.0}\selectfont}
+\renewcommand{\large}{\fontsize{14}{14.28}\addfontfeature{LetterSpace=3.0}\selectfont} % srodtytul
+\renewcommand{\small}{\fontsize{8}{14.28}\addfontfeature{LetterSpace=5.0}\selectfont} % paginy
+\renewcommand{\Large}{\fontsize{15}{21.42}\addfontfeature{LetterSpace=0.0}\selectfont} % tytuł rozdziału
+\renewcommand{\huge}{\fontsize{18}{28.56}\addfontfeature{LetterSpace=1.0}\selectfont} % wyimek
 \renewcommand{\Huge}{\fontsize{24}{40}\selectfont} % cover
-\renewcommand{\footnotesize}{\fontsize{9}{10.74}\selectfont}
+\renewcommand{\footnotesize}{\addfontfeature{LetterSpace=1.0}\fontsize{9}{10.74}\selectfont}
 
 
 
@@ -204,7 +208,7 @@ Mapping=tex-text
 %% Chapters
 \titleformat{\chapter}[block]%
 {\Large\intro\addfontfeature{LetterSpace=0.5,Kerning={Uppercase}}}%
-{}{0pt}{\parbox{80mm}{\raggedright\MakeUppercase{#1}}}
+{}{0pt}{\parbox{80mm}{\raggedright#1}}
 \newlength{\chapterposcorrection}\newlength{\chapterspaceafter}
 \setlength{\chapterposcorrection}{-\headsep-2\baselineskip}
 \setlength{\chapterspaceafter}{14\baselineskip-14pt}%\f@size of large
@@ -313,8 +317,14 @@ Mapping=tex-text
 
 
 \newcommand{\makecover}{
-  %\pdfpagewidth=#1
-  %\pdfpageheight=#2
+  %% \paperwidth=297mm
+
+
+  %% \paperheight=210mm
+
+  \newgeometry{paperwidth=297mm,paperheight=210mm}
+  \pdfpageheight=210mm
+  \pdfpagewidth=297mm
 
   \thispagestyle{empty}
   \newlength{\PictHOffset}
@@ -334,13 +344,19 @@ Mapping=tex-text
 
   \noindent\hspace*{-\PictHOffset}%
   \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
-      \includegraphics[height=\paperheight,width=\paperwidth]{cover.jpg}}}
+      \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.pdf}}}
+
+  \restoregeometry
+  \pdfpageheight=210mm
+  \pdfpagewidth=148mm
 
   }
 
 \renewcommand{\maketitle}{
   %\vspace{\paperheight}
-  \newpage
+  \thispagestyle{empty}
+  \cleardoublepage
+  \setcounter{page}{1}
   \thispagestyle{empty}
   \begin{center}
   \intro
@@ -352,13 +368,13 @@ Mapping=tex-text
   \end{center}
 
   \vspace{\baselineskip}
-  
+
   \begin{center}
     \intro
     {
-      \huge \noindent 
+      \huge \noindent
       \theauthor
-      
+
     }
   \end{center}
                   %\emph{\thankyou}\\
@@ -368,17 +384,20 @@ Mapping=tex-text
   \begin{center}
     \includegraphics[scale=.2]{logo.eps}
   \end{center}
-  
+
 }
 
 
 \newcommand{\editorialsection}{
-  \newpage
+  \clearpage
   \thispagestyle{empty}
+  {
+    \setlength{\parindent}{0mm}
   \input{editorial}
+  }
 }
 
-\renewcommand*\contentsname{Table of Contents}
+\renewcommand*\contentsname{Spis treści}
 \newcommand{\spistresci}{
 {
   \intro
@@ -506,11 +525,13 @@ Mapping=tex-text
 \newcommand{\theautorrozdzialu}{}
 
 \newcommand{\autorrozdzialu}[1]{%
-\renewcommand{\theautorrozdzialu}{\newline{}{\normalfont by}\newline#1}
+\renewcommand{\theautorrozdzialu}{{\normalfont\normalsize\newline{}\newline{}\emph{#1}}}
 }
 
+
 \newcommand{\naglowekrozdzial}[1]{%
-\chapter[#1]{#1\theautorrozdzialu{}}\renewcommand{\theautorrozdzialu}{}%
+\chapter[#1]{\MakeUppercase{#1}\theautorrozdzialu{}}
+\renewcommand{\theautorrozdzialu}{}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
@@ -593,7 +614,7 @@ Mapping=tex-text
 }
 
 \newcommand{\sekcjaswiatlo}{%
-\vspace{30pt}%
+\vspace{\baselineskip}%
 }
 
 \newcommand{\sekcjaasterysk}{%
@@ -638,6 +659,7 @@ Mapping=tex-text
 
 \newcommand{\lista}[1]{%
 \begin{compactitem}
+\setlength{\parskip}{\parindent}
 #1
 \end{compactitem}
 }
@@ -648,4 +670,3 @@ Mapping=tex-text
 \newcommand{\link}[2]{\href{#1}{\uline{#2}\footnote{#1}}}
 
 \newcommand{\www}[1]{{\normalfont\small\href{#1}{#1}}}
-
