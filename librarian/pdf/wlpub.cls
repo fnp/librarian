@@ -85,7 +85,7 @@
 \usepackage[MeX]{polski}
 \usepackage{icomma}
 \usepackage[xetex]{graphicx}
-\usepackage{fontspec}
+\usepackage[silent]{fontspec} % silent - no warnings, quiet - warn only to log
 \usepackage{xunicode}
 \usepackage{xltxtra}
 %\usepackage{trimspaces} % imported by something else?
@@ -252,7 +252,7 @@ Mapping=tex-text
 
 %%%%% Footnotes (works with footmisc) %%%%%%%%
 \newlength{\footnoteindent}\newlength{\footnoteprespace}
-\setlength{\footnoteindent}{6mm}%{3.5mm}
+\setlength{\footnoteindent}{8mm}%{3.5mm}
 \setlength{\footnoteprespace}{0em}
 \makeatletter
 
@@ -307,8 +307,8 @@ Mapping=tex-text
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\clubpenalty=100000
-\widowpenalty=100000
+\clubpenalty=400
+\widowpenalty=400
 
 
 % see http://osdir.com/ml/tex.xetex/2005-10/msg00003.html
@@ -480,8 +480,7 @@ Mapping=tex-text
 
 \newcommand{\dlugicytat}[1]{%
 \begin{quotation}%
-\noindent
-#1%
+\noindent{}\ignorespaces#1%
 \end{quotation}%
 }
 
@@ -533,7 +532,7 @@ Mapping=tex-text
 \newcommand{\theautorrozdzialu}{}
 
 \newcommand{\autorrozdzialu}[1]{%
-\renewcommand{\theautorrozdzialu}{{\normalfont\normalsize\newline{}\newline{}\parbox{\textwidth}{\emph\normalsize #1}}}
+\renewcommand{\theautorrozdzialu}{{\normalfont\normalsize\newline{}\newline{}\parbox{\textwidth}{\normalsize\it #1}}}
 }
 
 
@@ -557,7 +556,9 @@ Mapping=tex-text
 }
 
 \newcommand{\akap}[1]{%
-\par{#1}%
+#1
+
+% newline here needed, we don't use \par cause it ignores \noindent before
 }
 \newcommand{\akapdialog}[1]{%
 \par{#1}%
