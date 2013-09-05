@@ -93,6 +93,7 @@
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex,linktocpage]{hyperref}
+%\usepackage{hyperref}
 \usepackage{fancyhdr}
 
 %\usepackage{fnpos}
@@ -104,15 +105,21 @@
 \counterwithout{footnote}{chapter}
 
 \usepackage[explicit]{titlesec}
+\usepackage{microtype}
 
 %% Wyimki - placing them on correct pages
-\usepackage{changepage}
+\usepackage[strict]{changepage}
 %\usepackage{fltpage}
 %\usepackage{float}
 
 \pagestyle{plain}
 % bottom figure below footnotes
 %\makeFNabove
+
+%%% Hyphenation opts:
+%\pretolerance=10000
+\tolerance=2600
+\emergencystretch=30pt
 
 
 %%%%%%%%%%%%%%%%%%%%%%% Paper size
@@ -169,7 +176,7 @@ Mapping=tex-text
 \setlength{\parskip}{0mm}
 
 \renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=3.0}\selectfont}
-\renewcommand{\large}{\fontsize{14}{14.28}\addfontfeature{LetterSpace=3.0}\selectfont} % srodtytul
+\renewcommand{\large}{\fontsize{14}{14.28}\addfontfeature{LetterSpace=3.0,Letters=Uppercase}\selectfont} % srodtytul
 \renewcommand{\small}{\fontsize{8}{14.28}\addfontfeature{LetterSpace=5.0}\selectfont} % paginy
 \renewcommand{\Large}{\fontsize{15}{21.42}\addfontfeature{LetterSpace=0.0}\selectfont} % tytuł rozdziału
 \renewcommand{\huge}{\fontsize{18}{28.56}\addfontfeature{LetterSpace=1.0}\selectfont} % wyimek
@@ -192,8 +199,8 @@ Mapping=tex-text
 %%%%%%%%%% Nagłówek normalny
 \cfoot{}
 % this will go to \leftmark
-\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{#1}}{}}
-\fancyhead[CE]{{\small\MakeUppercase{\@title}}}
+\renewcommand{\chaptermark}[1]{\markboth{\MakeTextUppercase{#1}}{}}
+\fancyhead[CE]{{\small\MakeTextUppercase{\@author, \@title}}}
 \fancyhead[CO]{{\small\leftmark}}
 \fancyhead[LE,RO]{{\small\intro\thepage}}
 %%%%%%%%%% Nagłówek pierwszej strony rozdziału
@@ -210,23 +217,23 @@ Mapping=tex-text
 {\Large\intro\addfontfeature{LetterSpace=0.5,Kerning={Uppercase}}}%
 {}{0pt}{\parbox{80mm}{\raggedright#1}}
 \newlength{\chapterposcorrection}\newlength{\chapterspaceafter}
-\setlength{\chapterposcorrection}{-\headsep-2\baselineskip}
-\setlength{\chapterspaceafter}{14\baselineskip-14pt}%\f@size of large
+\setlength{\chapterposcorrection}{-\headsep-2\baselineskip-2.352mm} % 2.352 is a measured correction:
+\setlength{\chapterspaceafter}{14\baselineskip-14pt+2.352mm}%\f@size of large
 \titlespacing*{\chapter}{0pt}{\chapterposcorrection}{\chapterspaceafter}
 
 %% Sections
 \titleformat{\section}%
 {\addfontfeature{LetterSpace=0.3}\large}%
-{\thesection{}.}{.5em}{\MakeUppercase{#1}}
+{\thesection{}.}{.5em}{\MakeTextUppercase{#1}}
 
 \renewcommand{\thesection}{\Roman{section}}
 
 \titleformat{\subsection}[runin]%
 {}%
-{\thesubsection{}.}{.5em}{\MakeUppercase{#1}.}[]
+{\thesubsection{}.}{.5em}{\MakeTextUppercase{#1}.}[]
 
 \renewcommand{\thesubsection}{\Alph{subsection}}
-\titlespacing*{\subsection}{0pt}{0pt}{.5em}
+\titlespacing*{\subsection}{0pt}{\baselineskip}{.5em}
 
 \newcommand{\typosubsubsection}[1]{%
 {\textsc{#1}}
@@ -234,7 +241,7 @@ Mapping=tex-text
 
 %% XXX delete them
 \newcommand{\typosubsection}[1]{%
-{\MakeUppercase{#1}}
+{\MakeTextUppercase{#1}}
 }
 
 \newcommand{\typosection}[1]{%
@@ -473,6 +480,7 @@ Mapping=tex-text
 
 \newcommand{\dlugicytat}[1]{%
 \begin{quotation}%
+\noindent
 #1%
 \end{quotation}%
 }
@@ -525,7 +533,7 @@ Mapping=tex-text
 \newcommand{\theautorrozdzialu}{}
 
 \newcommand{\autorrozdzialu}[1]{%
-\renewcommand{\theautorrozdzialu}{{\normalfont\normalsize\newline{}\newline{}\emph{#1}}}
+\renewcommand{\theautorrozdzialu}{{\normalfont\normalsize\newline{}\newline{}\parbox{\textwidth}{\emph\normalsize #1}}}
 }
 
 
