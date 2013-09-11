@@ -21,7 +21,7 @@
 \RequirePackage[normalem]{ulem}
 \RequirePackage{xifthen}
 \RequirePackage{environ} % environments with \BODY, for wyimek
-
+\RequirePackage{indentfirst}
 %\DeclareOption{13pt}{%
 %\AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
@@ -482,6 +482,7 @@ Mapping=tex-text
 \begin{quotation}%
 \noindent{}\ignorespaces#1%
 \end{quotation}%
+\hspace{\parindent}
 }
 
 \newcommand{\poezjacyt}[1]{%
