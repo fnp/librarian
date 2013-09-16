@@ -15,7 +15,9 @@ class Book2Epub(Book2Anything):
     transform_flags = [
         Option('-w', '--working-copy', dest='working-copy',
                 action='store_true', default=False,
-                help='mark the output as a working copy')
+                help='mark the output as a working copy'),
+        Option('-R', '--resources', dest='resources', metavar='DIR',
+                help='a directory with additional resources'),
         ]
 
 

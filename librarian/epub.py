@@ -331,7 +331,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
 def transform(wldoc, verbose=False,
               style=None, html_toc=False,
-              sample=None, cover=None, flags=None):
+              sample=None, cover=None, flags=None, resources=None):
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
@@ -441,6 +441,16 @@ def transform(wldoc, verbose=False,
     if not style:
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))
+    if resources:
+        if os.path.isdir(resources):
+            for dp, dirs, files in os.walk(resources):
+                for fname in files:
+                    fpath  = os.path.join(dp, fname)
+                    if os.path.isfile(fpath):
+                        zip.write(fpath, os.path.join('OPS', fname))
+        else:
+            print "resources path %s is not directory" % resources
+                
 
     if cover:
         if cover is True:
