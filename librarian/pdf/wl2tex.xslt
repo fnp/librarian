@@ -97,6 +97,7 @@
 
             <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
             <xsl:apply-templates select="utwor" mode="part" />
+
         </env>
     </TeXML>
 </xsl:template>
@@ -343,6 +344,15 @@
 
 <xsl:template mode="inline"
     match="wyimek">
+    <env>
+        <xsl:attribute name="name">
+            <xsl:value-of select="wl:texcommand(name())" />
+        </xsl:attribute>
+        <xsl:apply-templates mode="inline"/>
+    </env>
+</xsl:template>
+<xsl:template
+    match="wyimek_extra">
     <env>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />

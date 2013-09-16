@@ -21,7 +21,7 @@
 \RequirePackage[normalem]{ulem}
 \RequirePackage{xifthen}
 \RequirePackage{environ} % environments with \BODY, for wyimek
-\RequirePackage{indentfirst}
+%\RequirePackage{indentfirst}
 %\DeclareOption{13pt}{%
 %\AtEndOfClass{%
 % font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
@@ -95,7 +95,7 @@
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex,linktocpage]{hyperref}
 %\usepackage{hyperref}
 \usepackage{fancyhdr}
-
+\usepackage{endnotes}
 %\usepackage{fnpos}
 \usepackage{printlen}
 \usepackage{calc}
@@ -108,7 +108,7 @@
 \usepackage{microtype}
 
 %% Wyimki - placing them on correct pages
-\usepackage[strict]{changepage}
+\usepackage{changepage}
 %\usepackage{fltpage}
 %\usepackage{float}
 
@@ -213,6 +213,10 @@ Mapping=tex-text
 
 %%%%%%%%%%%%%%%%%%%%%% Section title styles.
 %% Chapters
+
+% No chapter numbers in TOC
+\renewcommand{\thechapter}{}
+
 \titleformat{\chapter}[block]%
 {\Large\intro\addfontfeature{LetterSpace=0.5,Kerning={Uppercase}}}%
 {}{0pt}{\parbox{80mm}{\raggedright#1}}
@@ -225,15 +229,15 @@ Mapping=tex-text
 \titleformat{\section}%
 {\addfontfeature{LetterSpace=0.3}\large}%
 {\thesection{}.}{.5em}{\MakeTextUppercase{#1}}
-
 \renewcommand{\thesection}{\Roman{section}}
+\titlespacing*{\section}{0pt}{\baselineskip}{0em}
 
-\titleformat{\subsection}[runin]%
+\titleformat{\subsection}[block]%
 {}%
 {\thesubsection{}.}{.5em}{\MakeTextUppercase{#1}.}[]
 
 \renewcommand{\thesubsection}{\Alph{subsection}}
-\titlespacing*{\subsection}{0pt}{\baselineskip}{.5em}
+\titlespacing*{\subsection}{0pt}{\baselineskip}{0em}
 
 \newcommand{\typosubsubsection}[1]{%
 {\textsc{#1}}
@@ -274,6 +278,31 @@ Mapping=tex-text
 %% %  \parindent 1em\noindent \hb@xt@ 1.8em{\hss \@makefnmark \enskip}#1
 %% }
 
+%%%%% Endnotes
+\newlength{\myendnoteprespace}\setlength{\myendnoteprespace}{.5em}
+\newlength{\myendnoteindent}\setlength{\myendnoteindent}{14mm+.5em}
+
+\renewcommand\theendnote{[\roman{endnote}]}
+\renewcommand\makeenmark{\hspace{\myendnoteprespace}\theenmark}
+\renewcommand{\notesname}{}
+\newcommand{\authornotes}{
+%  \newpage
+    \cleardoublepage
+    \chapter{Przypisy autora}
+    \setlength{\parindent}{0pt}
+    \def\enotesize{\normalsize}
+    \theendnotes
+}
+%% \newcommand{\@makeentext}[1]{%
+%% \noindent\theenmark\hspace{\footnoteindent}#1
+%% }
+
+%% \def\enoteformat{\rightskip\z@ \parindent=0em
+%%  \makebox[\myendnoteindent][l]{\makeenmark}} % 12.4mm - measured biggest endnote marker (in Moglen text [xxxviii])
+\def\enoteformat{\rightskip\z@ \setlength{\leftskip}{\myendnoteindent-\myendnoteprespace} \parindent=0em
+  \leavevmode\llap{\makebox[\myendnoteindent][l]{\makeenmark}}}
+
+
 % make public
 \def\trimspace#1{\trim@spaces{#1}}
 
@@ -287,7 +316,7 @@ Mapping=tex-text
 \NewEnviron{wyimek}{%
   \checkoddpage
   \ifoddpage
-    \PackageWarning{wlpub}{Wyimek on odd page, omitting it.}
+    \PackageWarning{wlpub}{Wyimek on odd page, omitting it ( \BODY )}
   \else
     \begin{figure}[tp]
       \begin{center}
@@ -300,6 +329,22 @@ Mapping=tex-text
   \BODY
 }
 
+%% wyimek that doesn't leave text in text flow
+%% TODO: reduce code duplication
+\NewEnviron{wyimekextra}{%
+  \checkoddpage
+  \ifoddpage
+    \PackageWarning{wlpub}{Wyimek on odd page, omitting it ( \BODY )}
+  \else
+    \begin{figure}[tp]
+      \begin{center}
+        \begin{minipage}[t][\textheight][c]{70mm}
+          \huge\it\BODY
+        \end{minipage}
+      \end{center}
+    \end{figure}
+  \fi
+}
 
 
 
@@ -307,8 +352,11 @@ Mapping=tex-text
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\clubpenalty=400
-\widowpenalty=400
+\clubpenalty=700
+\widowpenalty=700
+\hyphenpenalty=3500
+\doublehyphendemerits=9000
+\finalhyphendemerits=6000
 
 
 % see http://osdir.com/ml/tex.xetex/2005-10/msg00003.html
@@ -400,6 +448,7 @@ Mapping=tex-text
   \thispagestyle{empty}
   {
     \setlength{\parindent}{0mm}
+    \small
   \input{editorial}
   }
 }
@@ -462,13 +511,6 @@ Mapping=tex-text
 \newcommand{\dramatwierszowanylp}[1]{#1}
 \newcommand{\dramatwspolczesny}[1]{#1}
 
-\newcommand{\nota}[1]{%
-\begin{em}%
-\begin{flushleft}%
-\noindent #1%
-\end{flushleft}%
-\end{em}%
-}
 
 \newcommand{\dedykacja}[1]{%
 \begin{em}%
@@ -577,7 +619,7 @@ Mapping=tex-text
 }
 
 \newcommand{\strofa}[1]{%
-\par{\noindent{\ignorespaces#1\vspace{1em}}}%
+#1\vspace{\baselineskip}%
 }
 
 \newcommand{\wers}[1]{#1}
@@ -593,7 +635,7 @@ Mapping=tex-text
 }
 
 \ifshowfootnotes
-  \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
+  \newcommand{\pa}[1]{\NoCaseChange{\endnote{#1}}}
   \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}
@@ -612,12 +654,34 @@ Mapping=tex-text
 \newcommand{\slowoobce}[1]{%
 \emph{#1}%
 }
+\makeatletter
+
+\newif\ifinnota \innotafalse
+
 \newcommand{\tytuldziela}[1]{%
-\emph{#1}%
+  \ifinnota
+   #1%
+  \else
+   \emph{#1}%
+  \fi
 }
+\makeatother
+
 \newcommand{\wyroznienie}[1]{%
 \emph{#1}%
 }
+
+\newcommand{\nota}[1]{%
+%\sekcjaasterysk{}
+\begin{em}%
+  \innotatrue
+%\begin{flushleft}%
+  \noindent{}\small{}#1%
+  \innotafalse
+%\end{flushleft}%
+\end{em}%
+}
+
 
 \newcommand{\osoba}[1]{%
 #1%
@@ -628,7 +692,7 @@ Mapping=tex-text
 }
 
 \newcommand{\sekcjaasterysk}{%
-\vspace{10pt}%
+\vspace{\baselineskip}%
 \begin{center}%
 \par{*}%
 \end{center}%
@@ -644,13 +708,11 @@ Mapping=tex-text
 \newcommand{\setilustrscale}[1]{\renewcomand{\ilustrscale}{#1}}
 
 \newcommand{\ilustr}[3][]{
-  \vspace{2\baselineskip}%
   \begin{center}%
     \ifthenelse{\isempty{#1}}%
     {\par{\includegraphics{\trimspace{#2}}\\#3}}%
     {\par{\includegraphics[#1]{\trimspace{#2}}\\#3}}%
   \end{center}%
-  \vspace{2\baselineskip}%
 }
 
 
@@ -668,10 +730,10 @@ Mapping=tex-text
 }
 
 \newcommand{\lista}[1]{%
-\begin{compactitem}
-\setlength{\parskip}{\parindent}
+\begin{compactenum}
+%\setlength{\parskip}{\parindent}
 #1
-\end{compactitem}
+\end{compactenum}
 }
 
 \newcommand{\punkt}[1]{%
@@ -679,4 +741,4 @@ Mapping=tex-text
 }
 \newcommand{\link}[2]{\href{#1}{\uline{#2}\footnote{#1}}}
 
-\newcommand{\www}[1]{{\normalfont\small\href{#1}{#1}}}
+\newcommand{\www}[1]{{\normalfont\href{#1}{#1}}}
