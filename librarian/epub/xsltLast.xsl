@@ -32,7 +32,7 @@
                       </a>
                   </xsl:when>
                   <xsl:otherwise>
-                    Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie
+                    Ten utwór nie jest objęty majątkowym prawem autorskim i znajduje się w domenie
                     publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
                     i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
                     (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
