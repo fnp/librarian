@@ -105,6 +105,15 @@
                     \def\funders{Publikację ufundowali i ufundowały:
                         <TeXML escape="1"><xsl:value-of select="@funders" /></TeXML>.}
                 </xsl:if>
+
+                <xsl:if test="data-sponsor">
+                    \def\sponsors{
+                        \scriptsize Sfinansowano ze~środków:\\
+                        <xsl:for-each select="data-sponsor">
+                            \includegraphics[height=0.25\textwidth,width=0.25\textwidth,keepaspectratio]{<xsl:value-of select="@src" />}
+                        </xsl:for-each>
+                    }
+                </xsl:if>
             </TeXML>
 
             <cmd name="editorialsection" />

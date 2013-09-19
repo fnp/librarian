@@ -4,6 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
+from librarian import NoSponsorProvider, DirSponsorProvider
 from librarian import RDFNS
 from librarian.cover import WLCover
 from librarian import dcparser
@@ -21,9 +22,11 @@ class WLDocument(object):
     provider = None
 
     def __init__(self, edoc, parse_dublincore=True, provider=None, 
+                    sponsor_provider=None,
                     strict=False, meta_fallbacks=None):
         self.edoc = edoc
         self.provider = provider
+        self.sponsor_provider = sponsor_provider
 
         root_elem = edoc.getroot()
 
@@ -179,6 +182,11 @@ class WLDocument(object):
         if None in persons:
             persons.remove(None)
         return persons
+
+    def sponsor_by_name(self, name):
+        if self.sponsor_provider is None:
+            raise NoSponsorProvider
+        return self.sponsor_provider.by_name(name)
 
     # Converters
 

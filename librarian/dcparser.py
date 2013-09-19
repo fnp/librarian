@@ -174,6 +174,8 @@ class WorkInfo(object):
         Field( DCNS('contributor.funding'), 'funders',
             salias='funder', multiple=True, default=[]),
 
+        Field( DCNS('digitisationSponsor'), 'sponsors', multiple=True, default=[]),
+
         Field( DCNS('date'), 'created_at', as_date),
         Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
         Field( DCNS('publisher'), 'publisher'),

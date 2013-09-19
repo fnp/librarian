@@ -126,6 +126,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \pagestyle{plain}
 \usepackage{fancyhdr}
+\usepackage{marginnote}
 
 \makeatletter
 
@@ -233,6 +234,13 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \color{theme}
     \noindent \rule{\linewidth}{0.4pt}
 
+    \ifdefined\sponsors
+        \marginnote{%
+            \centering%
+            \sponsors%
+        }
+    \fi
+
     \rightsinfo
     \vspace{.6em}
 
@@ -269,14 +277,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \vspace{.6em}
     \emph{Jak możesz pomóc?}
 
-    Przekaż 1\% podatku na rozwój Wolnych Lektur:
-    Fundacja Nowoczesna Polska, KRS 0000070056.
+    Przekaż 1\% podatku na rozwój Wolnych~Lektur:
+    Fundacja~Nowoczesna~Polska, KRS~0000070056.
 
-    Pomóż uwolnić konkretną książkę, wspierając
-    \href{http://www.wolnelektury.pl/wesprzyj/}{zbiórkę na stronie wolnelektury.pl}.
+    Pomóż uwolnić konkretną książkę, wspierając zbiórkę na stronie:
+    \href{http://wolnelektury.pl/wesprzyj/}{http://wolnelektury.pl/wesprzyj/}
 
-    Przekaż darowiznę na konto:
-    \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
+    Przekaż darowiznę na konto, szczegóły na stronie:
+    \href{http://nowoczesnapolska.org.pl/wesprzyj/}{http://nowoczesnapolska.org.pl/wesprzyj/}
 
     \color{black}
   }

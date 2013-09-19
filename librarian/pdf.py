@@ -245,10 +245,18 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         style_filename = get_stylesheet("wl2tex")
         style = etree.parse(style_filename)
 
-        texml = document.transform(style)
-
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
+
+        for i, sponsor in enumerate(book_info.sponsors):
+            sponsor_logo = wldoc.sponsor_by_name(sponsor)
+            fname = 'sponsor%d.png' % i
+            with open(os.path.join(temp, fname), 'w') as f:
+                f.write(sponsor_logo.get_string())
+                ins = etree.Element("data-sponsor", src=fname)
+                root.insert(0, ins)
+
+        texml = document.transform(style)
 
         if cover:
             with open(os.path.join(temp, 'cover.png'), 'w') as f:

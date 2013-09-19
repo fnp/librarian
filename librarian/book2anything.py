@@ -8,7 +8,7 @@ from collections import namedtuple
 import os.path
 import optparse
 
-from librarian import DirDocProvider, ParseError
+from librarian import DirDocProvider, DirSponsorProvider, ParseError
 from librarian.parser import WLDocument
 from librarian.cover import WLCover
 
@@ -38,7 +38,6 @@ class Book2Anything(object):
     ext = None # Set file extension, like "pdf".
     uses_cover = False # Can it add a cover?
     cover_optional = True # Only relevant if uses_cover
-    uses_provider = False # Does it need a DocProvider?
     transform = None # Transform method. Uses WLDocument.as_{ext} by default.
     parser_options = [] # List of Option objects for additional parser args.
     transform_options = [] # List of Option objects for additional transform args.
@@ -112,12 +111,10 @@ class Book2Anything(object):
                 if options.verbose:
                     print main_input
 
+            path, fname = os.path.realpath(main_input).rsplit('/', 1)
             # Where to find input?
-            if cls.uses_provider:
-                path, fname = os.path.realpath(main_input).rsplit('/', 1)
-                provider = DirDocProvider(path)
-            else:
-                provider = None
+            provider = DirDocProvider(path)
+            sponsor_provider = DirSponsorProvider(path)
 
             # Where to write output?
             if not (options.output_file or options.output_dir):
@@ -126,7 +123,8 @@ class Book2Anything(object):
                 output_file = None
 
             # Do the transformation.
-            doc = WLDocument.from_file(main_input, provider=provider, **parser_args)
+            doc = WLDocument.from_file(main_input, provider=provider,
+                sponsor_provider=sponsor_provider, **parser_args)
             transform = cls.transform
             if transform is None:
                 transform = getattr(WLDocument, 'as_%s' % cls.ext)

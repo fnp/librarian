@@ -39,6 +39,10 @@ class NoProvider(UnicodeException):
     """There's no DocProvider specified, and it's needed."""
     pass
 
+class NoSponsorProvider(UnicodeException):
+    """There's no DocProvider specified, and it's needed."""
+    pass
+
 class XMLNamespace(object):
     '''A handy structure to repsent names in an XML namespace.'''
 
@@ -144,6 +148,26 @@ class DirDocProvider(DocProvider):
         fname = slug + '.xml'
         return open(os.path.join(self.dir, fname))
 
+class SponsorProvider(object):
+    class NoLogo(UnicodeException): pass
+
+    def by_name(self, name):
+        raise NotImplementedError
+
+class DirSponsorProvider(SponsorProvider):
+    exts = ["png", "jpg", "jpeg", "gif"]
+
+    def __init__(self, dir_):
+        self.dir = dir_
+
+    def by_name(self, name):
+        base = name.replace("/", "_")
+        fnames = ["%s.%s" % (base, ext) for ext in self.exts]
+        for fname in fnames:
+            fpath = os.path.join(self.dir, fname)
+            if os.path.exists(fpath):
+                return OutputFile.from_filename(fpath)
+        raise self.NoLogo('Missing sponsor logo: "%s.[%s]"' % (base, ",".join(self.exts)))
 
 import lxml.etree as etree
 import dcparser
