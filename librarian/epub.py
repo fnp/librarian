@@ -509,7 +509,7 @@ def transform(wldoc, verbose=False,
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, method="html", pretty_print=True))
 
-    toc.add("Weprzyj Wolne Lektury", "support.html")
+    toc.add("Wesprzyj Wolne Lektury", "support.html")
     manifest.append(etree.fromstring(
         '<item id="support" href="support.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
