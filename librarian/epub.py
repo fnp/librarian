@@ -418,6 +418,8 @@ def transform(wldoc, verbose=False,
     if document.book_info.funders:
         document.edoc.getroot().set('funders', u', '.join(
             document.book_info.funders))
+    if document.book_info.thanks:
+        document.edoc.getroot().set('thanks', document.book_info.thanks)
 
     opf = xslt(document.book_info.to_etree(), get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))

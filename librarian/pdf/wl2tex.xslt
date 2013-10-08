@@ -64,6 +64,11 @@
                     <parm>210mm</parm>
                 </cmd>
             </xsl:if>
+                <xsl:if test="@thanks">
+                    <TeXML escape="0">
+                        \def\thanknote{<TeXML escape="1"><xsl:value-of select="@thanks" /></TeXML>}
+                    </TeXML>
+                </xsl:if>
             <cmd name="maketitle" />
 
             <cmd name="tytul"><parm>

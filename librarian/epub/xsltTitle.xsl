@@ -52,6 +52,10 @@
             </p>
           </xsl:if>
 
+          <xsl:if test="@thanks">
+            <p class="info"><xsl:value-of select="@thanks" />.</p>
+          </xsl:if>
+
           <p class="info">
             Utwór opracowany został w&#160;ramach projektu<a href="http://www.wolnelektury.pl/"> Wolne Lektury</a> przez<a href="http://www.nowoczesnapolska.org.pl/"> fundację Nowoczesna Polska</a>.
           </p>

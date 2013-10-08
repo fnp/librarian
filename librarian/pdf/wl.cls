@@ -215,6 +215,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \vspace{.5em}
     \fi
 
+    \ifdefined\thanknote
+        \thanknote
+        \vspace{.5em}
+    \fi
+
     Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
     przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
 

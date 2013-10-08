@@ -233,6 +233,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             editor.readable() for editor in document.editors())))
         if document.book_info.funders:
             root.set('funders', u', '.join(document.book_info.funders))
+        if document.book_info.thanks:
+            root.set('thanks', document.book_info.thanks)
 
         # hack the tree
         move_motifs_inside(document.edoc)
