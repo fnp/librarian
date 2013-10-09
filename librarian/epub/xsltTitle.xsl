@@ -52,8 +52,8 @@
             </p>
           </xsl:if>
 
-          <xsl:if test="@thanks">
-            <p class="info"><xsl:value-of select="@thanks" />.</p>
+          <xsl:if test="utwor/@thanks">
+            <p class="info"><xsl:value-of select="utwor/@thanks" /></p>
           </xsl:if>
 
           <p class="info">
