@@ -16,8 +16,14 @@ class Book2Epub(Book2Anything):
         Option('-w', '--working-copy', dest='working-copy',
                 action='store_true', default=False,
                 help='mark the output as a working copy'),
+        ]
+    transform_options = [
         Option('-R', '--resources', dest='resources', metavar='DIR',
                 help='a directory with additional resources'),
+        Option('-I', '--intro', dest='intro_file', metavar='FILE',
+                help='HTML file containing intro'),
+        Option('-e', '--cover-file', dest='cover_file', metavar='FILE',
+               help='Cover image file'),
         ]
 
 

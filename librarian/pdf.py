@@ -185,7 +185,7 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=None,
-              cover=None, flags=None, customizations=None, documentclass='wl', resources=None):
+              cover=None, cover_file=None, flags=None, customizations=None, documentclass='wl', resources=None):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument

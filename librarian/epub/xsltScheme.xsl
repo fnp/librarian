@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <xsl:output method="html" version="1.0" encoding="utf-8" />
   <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
   <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="style.css" type="text/css" />
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <title>
-          Future of Copyright
+	  <xsl:value-of select="//dc:title"/>
         </title>
       </xsl:element>
       <xsl:element name="body" xmlns="http://www.w3.org/1999/xhtml">
@@ -36,9 +36,11 @@
   <!--===========================================================-->
 
   <xsl:template match="nota">
-    <div class="note" xmlns="http://www.w3.org/1999/xhtml">
-      <xsl:apply-templates />
-    </div>
+    <xsl:if test="not(@typ!='redp' or @typ!='redk')">
+      <div class="note" xmlns="http://www.w3.org/1999/xhtml">
+	<xsl:apply-templates />
+      </div>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="lista_osob" >
@@ -87,9 +89,7 @@
   </xsl:template>
 
   <xsl:template match="autor_utworu" />
-  <xsl:template match="autor_rozdzialu">
-      <xsl:apply-templates />
-  </xsl:template>
+  <xsl:template match="autor_rozdzialu"/>
 
   <xsl:template match="dzielo_nadrzedne" mode="poczatek">
     <h2 class="collection" xmlns="http://www.w3.org/1999/xhtml">
@@ -140,17 +140,27 @@
       <xsl:apply-templates />
     </h2>
   </xsl:template>
+
+  <xsl:template match="naglowek_podpodrozdzial">
+    <a xmlns="http://www.w3.org/1999/xhtml"></a>
+    <div class="p" xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates />
+    </div>
+  </xsl:template>
+
   
   <xsl:template match="autor_rozdzialu">
   </xsl:template>
 
   <xsl:template match="naglowek_rozdzial">
-    <h2 class="h3" xmlns="http://www.w3.org/1999/xhtml">
-      <xsl:if test="name(following-sibling::*[1])='autor_rozdzialu'">
-	<xsl:value-of select="following-sibling::*[1]/text()"/> -
-      </xsl:if>
+    <h2 class="h2" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
+    <div class="info" xmlns="http://www.w3.org/1999/xhtml">    
+      <xsl:if test="name(following-sibling::*[1])='autor_rozdzialu'">
+	<xsl:value-of select="following-sibling::*[1]/text()"/>
+      </xsl:if>
+    </div>
   </xsl:template>
 
   <xsl:template match="naglowek_osoba">
@@ -343,6 +353,8 @@
   <!--pominięcie tych metadanych-->
   <xsl:template match="rdf:RDF" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
 
+  <xsl:template match="latex" />
+
   <!--===========================================================-->
   <!-- Tagi TEKSTOWE -->
   <!--===========================================================-->
@@ -354,5 +366,15 @@
   <xsl:template match="text()" >
     <xsl:value-of select="." />
   </xsl:template>
+
+  <!--===========================================================-->
+  <!-- Tagi ILUSTRACJE -->
+  <!--===========================================================-->
+  <xsl:template match="ilustr" >
+    <img>
+      <xsl:attribute name="src"><xsl:value-of select="@src"/>.<xsl:choose><xsl:when test="@extbitmap"><xsl:value-of select="@extbitmap"/></xsl:when><xsl:otherwise><xsl:value-of select="@ext"/></xsl:otherwise></xsl:choose></xsl:attribute>
+    </img>
+  </xsl:template>
+  
 
 </xsl:stylesheet>

@@ -12,6 +12,9 @@
         <dc:identifier id="BookId" opf:scheme="URI">
           <xsl:apply-templates select="//dc:identifier.url" />
         </dc:identifier>
+        <dc:identifier id="BookId" opf:scheme="ISBN">
+          <xsl:apply-templates select="//dc:source.ISBN" />
+        </dc:identifier>
         <dc:subject>
           <xsl:apply-templates select="//dc:identifier.url" />
         </dc:subject>

@@ -7,7 +7,7 @@ import re
 from PIL import Image, ImageFont, ImageDraw, ImageFilter, ImageEnhance
 from StringIO import StringIO
 from librarian import get_resource, OutputFile, URLOpener
-
+from os import path
 
 class Metric(object):
     """Gets metrics from an object, scaling it by a factor."""
@@ -437,10 +437,25 @@ class GandalfCover(Cover):
     format = 'PNG'
 
 class FutureOfCopyrightCover(Cover):
-    width = 420
+    width = 402
     height = 595
     background_img = 'cover.png'
     format = 'PNG'
     
     def save(self, dest):
         dest.write(open(self.background_img).read())
+
+
+class CoverFromFile(Cover):
+    def __init__(self, filename, *args, **kwargs):
+        super(CoverFromFile, self).__init__(*args, **kwargs)
+
+        self.background_img = filename
+
+        self.img = Image.open(filename)
+        (self.width, self.height) = self.img.size
+
+        self.format = path.splitext(filename)[-1][1:].upper()
+        
+    def image(self):
+        return self.img

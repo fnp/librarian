@@ -10,7 +10,7 @@ import optparse
 
 from librarian import DirDocProvider, ParseError
 from librarian.parser import WLDocument
-from librarian.cover import WLCover, FutureOfCopyrightCover
+from librarian.cover import WLCover, FutureOfCopyrightCover, CoverFromFile
 
 
 class Option(object):
@@ -101,6 +101,10 @@ class Book2Anything(object):
             if options.image_cache:
                 def cover_class(*args, **kwargs):
                     return FutureOfCopyrightCover(image_cache=options.image_cache, *args, **kwargs)
+                transform_args['cover'] = cover_class
+            elif options.cover_file:
+                def cover_class(*args, **kwargs):
+                    return CoverFromFile(options.cover_file, *args, **kwargs)
                 transform_args['cover'] = cover_class
             elif not cls.cover_optional or options.with_cover:
                 transform_args['cover'] = FutureOfCopyrightCover

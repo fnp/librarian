@@ -648,3 +648,11 @@ Mapping=tex-text
 \fi
 }
 
+\newcommand{\spistresci}{
+  \tableofcontents
+  \newpage
+}
+
+\newcommand{\link}[2]{\href{#1}{\uline{#2}\footnote{#1}}}
+
+\newcommand{\www}[1]{{\normalfont\href{#1}{#1}}}

@@ -26,8 +26,9 @@ class Book2Pdf(Book2Anything):
         Option('-D', '--documentclass', dest='documentclass', 
                help='LaTeX document class, defaults to "wl"'),
         Option('-s', '--customizations', dest='customizations', action='append', 
-               help='LaTeX document class options')
-
+               help='LaTeX document class options'),
+        Option('-e', '--cover-file', dest='cover_file', metavar='FILE',
+               help='Cover image file'),
     ]
 
 
