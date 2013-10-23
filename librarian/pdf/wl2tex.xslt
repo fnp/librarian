@@ -257,7 +257,7 @@
 </xsl:template>
 
 <xsl:template
-    match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|lista">
+    match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|lista|nota_red">
   <xsl:if test="name(following-sibling::*[1])='autor_rozdzialu'">
     <cmd name="autorrozdzialu"><parm><xsl:value-of select="following-sibling::*[1]/text()"/></parm></cmd>
   </xsl:if>
@@ -333,7 +333,7 @@
 <!-- ================================================ -->
 
 <xsl:template mode="inline"
-    match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|punkt|www">
+    match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|punkt|www|nota_red">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
@@ -554,7 +554,8 @@
 <xsl:template match="extra|uwaga" />
 <xsl:template match="extra|uwaga" mode="inline" />
 
-<xsl:template match="nota_red" />
+<!-- make it a command: <xsl:template match="nota_red" />-->
+
 
 <!-- ======== -->
 <!-- = TEXT = -->

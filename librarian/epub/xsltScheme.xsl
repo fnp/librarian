@@ -375,6 +375,8 @@
       <xsl:attribute name="src"><xsl:value-of select="@src"/>.<xsl:choose><xsl:when test="@extbitmap"><xsl:value-of select="@extbitmap"/></xsl:when><xsl:otherwise><xsl:value-of select="@ext"/></xsl:otherwise></xsl:choose></xsl:attribute>
     </img>
   </xsl:template>
-  
+
+  <xsl:template match="wyimek_extra">
+  </xsl:template>
 
 </xsl:stylesheet>
