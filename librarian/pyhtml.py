@@ -474,14 +474,14 @@ class Przyporzadkuj(Exercise):
             if self.options['handles']:
                 return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib['rozw'], self.piece_counter, self.piece_counter), '</li>'
             else:
-                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib['rozw'], self.piece_counter), '</li>'
+                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib.get('rozw', ''), self.piece_counter), '</li>'
 
         elif self.options['predicate']:
             if self.options['min']:
                 placeholders = u'<li class="placeholder"/>' * self.options['min']
             else:
                 placeholders = u'<li class="placeholder multiple"/>'
-            return '<li data-predicate="%(nazwa)s">' % element.attrib, '<ul>' + placeholders + '</ul></li>'
+            return '<li data-predicate="%s">' % element.attrib.get('nazwa', ''), '<ul>' + placeholders + '</ul></li>'
 
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
@@ -531,7 +531,7 @@ class EduModuleFormat(Format):
         order = dict(reversed(k) for k in enumerate(self.PRIMARY_MATERIAL_FORMATS))
         mats = self.materials_by_slug.get(slug, {}).items()
         if not mats:
-            print "!! Material missing: '%s'" % slug
+            pass # print "!! Material missing: '%s'" % slug
         return sorted(mats, key=lambda (x, y): order.get(x, x))
 
     def url_for_material(self, slug, fmt):
