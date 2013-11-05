@@ -9,7 +9,7 @@ from nose.tools import *
 from os.path import splitext
 from tests.utils import get_all_fixtures
 import codecs
-
+from datetime import date
 
 def check_dcparser(xml_file, result_file):
     xml = file(xml_file).read()
@@ -46,3 +46,7 @@ def test_serialize():
     for fixture in get_all_fixtures('dcparser', '*.xml'):
         yield check_serialize, fixture
 
+def test_as_date():
+    assert_equals(dcparser.as_date(u"2010-10-03"), date(2010, 10, 03))
+    assert_equals(dcparser.as_date("2011"), date(2011, 1, 1))
+    assert_equals(dcparser.as_date("2 poł. XIX w."), date(1950, 1, 1))

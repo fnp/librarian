@@ -65,7 +65,8 @@ class Person(object):
 def as_date(text):
     try:
         # check out the "N. poł X w." syntax
-        m = re.match(u"([12]) *poł[.]? ([MCDXVI]+) .*[.]?", text)
+        if isinstance(text, str): text = text.decode("utf-8")
+        m = re.match(u"([12]) *poł[.]? ([MCDXVI]+) *w[.]?", text)
         if m:
             half = int(m.groups()[0])
             century = roman_to_int(str(m.groups()[1]))
