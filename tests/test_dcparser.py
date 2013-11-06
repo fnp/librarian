@@ -46,7 +46,14 @@ def test_serialize():
     for fixture in get_all_fixtures('dcparser', '*.xml'):
         yield check_serialize, fixture
 
-def test_as_date():
+def test_asdate():
     assert_equals(dcparser.as_date(u"2010-10-03"), date(2010, 10, 03))
-    assert_equals(dcparser.as_date("2011"), date(2011, 1, 1))
-    assert_equals(dcparser.as_date("2 poł. XIX w."), date(1950, 1, 1))
+    assert_equals(dcparser.as_date(u"2011"), date(2011, 1, 1))
+    assert_equals(dcparser.as_date(u"2 poł. XIX w."), date(1950, 1, 1))
+    assert_equals(dcparser.as_date(u"XVII w., l. 20"), date(1720, 1, 1))
+    import pdb; pdb.set_trace()
+    assert_equals(dcparser.as_date(u"po 1460"), date(1460, 1, 1))
+    assert_equals(dcparser.as_date(u"ok. 1813-1814"), date(1813, 1, 1))
+    assert_equals(dcparser.as_date(u"ok.1876-ok.1886"), date(1876, 1, 1))
+    assert_equals(dcparser.as_date(u"1893/1894"), date(1893, 1, 1))
+    

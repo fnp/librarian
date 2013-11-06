@@ -63,19 +63,44 @@ class Person(object):
         return 'Person(last_name=%r, first_names=*%r)' % (self.last_name, self.first_names)
 
 def as_date(text):
+    """Dates for digitization of pictures. It seems we need the following:
+ranges:		'1350-1450',
+centuries:	"XVIII w.'
+half centuries/decades: '2 poł. XVIII w.', 'XVII w., l. 20'
+later-then: 'po 1450'
+circa 'ok. 1813-1814', 'ok.1876-ok.1886
+turn: 1893/1894
+for now we will translate this to some single date losing information of course.
+    """
     try:
         # check out the "N. poł X w." syntax
         if isinstance(text, str): text = text.decode("utf-8")
-        m = re.match(u"([12]) *poł[.]? ([MCDXVI]+) *w[.]?", text)
+        century_format = u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
+        vague_format = u"(?:po *|ok. *)([0-9]+)"
+
+        m = re.match(century_format, text)
+        m2 = re.match(vague_format, text)
         if m:
-            half = int(m.groups()[0])
-            century = roman_to_int(str(m.groups()[1]))
-            t = ((century*100 + (half-1)*50), 1, 1)
+            half = m.group(1)
+            decade = m.group(3)
+            century = roman_to_int(str(m.group(2)))
+            if half is not None:
+                if decade is not None:
+                    raise ValueError("Bad date format. Cannot specify both half and decade of century")
+                half = int(half)
+                t = ((century*100 + (half-1)*50), 1, 1)
+            else:
+                decade = int(decade or 0)
+                t = ((century*100 + decade), 1, 1)
+        elif m2:
+            year = int(m2.group(1))
+            t = (year, 1, 1)
         else:
             try:
                 t = time.strptime(text, '%Y-%m-%d')
             except ValueError:
                 t = time.strptime(text, '%Y')
+
         return date(t[0], t[1], t[2])
     except ValueError, e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
