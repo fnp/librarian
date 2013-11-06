@@ -76,7 +76,7 @@ for now we will translate this to some single date losing information of course.
         # check out the "N. poł X w." syntax
         if isinstance(text, str): text = text.decode("utf-8")
         century_format = u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
-        vague_format = u"(?:po *|ok. *)([0-9]+)"
+        vague_format = u"(?:po *|ok. *)?([0-9]{4})(-[0-9]{2}-[0-9]{2})?"
 
         m = re.match(century_format, text)
         m2 = re.match(vague_format, text)
@@ -93,13 +93,14 @@ for now we will translate this to some single date losing information of course.
                 decade = int(decade or 0)
                 t = ((century*100 + decade), 1, 1)
         elif m2:
-            year = int(m2.group(1))
-            t = (year, 1, 1)
+            year = m2.group(1)
+            mon_day = m2.group(2)
+            if mon_day:
+                t = time.strptime(year + mon_day, "%Y-%m-%d")
+            else:
+                t = time.strptime(year, '%Y')
         else:
-            try:
-                t = time.strptime(text, '%Y-%m-%d')
-            except ValueError:
-                t = time.strptime(text, '%Y')
+            raise ValueError
 
         return date(t[0], t[1], t[2])
     except ValueError, e:

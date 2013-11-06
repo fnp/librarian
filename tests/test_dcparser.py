@@ -51,7 +51,6 @@ def test_asdate():
     assert_equals(dcparser.as_date(u"2011"), date(2011, 1, 1))
     assert_equals(dcparser.as_date(u"2 poł. XIX w."), date(1950, 1, 1))
     assert_equals(dcparser.as_date(u"XVII w., l. 20"), date(1720, 1, 1))
-    import pdb; pdb.set_trace()
     assert_equals(dcparser.as_date(u"po 1460"), date(1460, 1, 1))
     assert_equals(dcparser.as_date(u"ok. 1813-1814"), date(1813, 1, 1))
     assert_equals(dcparser.as_date(u"ok.1876-ok.1886"), date(1876, 1, 1))
