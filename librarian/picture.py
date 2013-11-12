@@ -30,6 +30,7 @@ class PictureInfo(WorkInfo):
         Field(DCNS('language'), 'language', required=False),
         Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
         Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
+        Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True, required=False),
 
         Field(DCNS('format.dimensions'), 'dimensions', required=False),
         Field(DCNS('format.checksum.sha1'), 'sha1', required=True),
