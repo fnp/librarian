@@ -65,6 +65,7 @@ class EmptyNamespace(XMLNamespace):
         return tag
 
 # some common namespaces we use
+XMLNS = XMLNamespace('http://www.w3.org/XML/1998/namespace')
 RDFNS = XMLNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 DCNS = XMLNamespace('http://purl.org/dc/elements/1.1/')
 XINS = XMLNamespace("http://www.w3.org/2001/XInclude")

@@ -10,10 +10,17 @@ import re
 from librarian.util import roman_to_int
 
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
-                       WLURI)
+                       XMLNS, WLURI)
 
 import lxml.etree as etree # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
+
+
+class TextPlus(unicode):
+    pass
+
+class DatePlus(date):
+    pass
 
 
 # ==============
@@ -102,7 +109,7 @@ for now we will translate this to some single date losing information of course.
         else:
             raise ValueError
 
-        return date(t[0], t[1], t[2])
+        return DatePlus(t[0], t[1], t[2])
     except ValueError, e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
@@ -113,7 +120,7 @@ def as_unicode(text):
     if isinstance(text, unicode):
         return text
     else:
-        return text.decode('utf-8')
+        return TextPlus(text.decode('utf-8'))
 
 def as_wluri_strict(text):
     return WLURI.strict(text)
@@ -139,7 +146,15 @@ class Field(object):
             if self.multiple:
                 if validator is None:
                     return val
-                return [ validator(v) if v is not None else v for v in val ]
+                new_values = []
+                for v in val:
+                    nv = v
+                    if v is not None:
+                        nv = validator(v)
+                        if hasattr(v, 'lang'):
+                            setattr(nv, 'lang', v.lang)
+                    new_values.append(nv)
+                return new_values
             elif len(val) > 1:
                 raise ValidationError("Multiple values not allowed for field '%s'" % self.uri)
             elif len(val) == 0:
@@ -147,7 +162,10 @@ class Field(object):
             else:
                 if validator is None or val[0] is None:
                     return val[0]
-                return validator(val[0])
+                nv = validator(val[0])
+                if hasattr(val[0], 'lang'):
+                    setattr(nv, 'lang', val[0].lang)
+                return nv
         except ValueError, e:
             raise ValidationError("Field '%s' - invald value: %s" % (self.uri, e.message))
 
@@ -267,9 +285,23 @@ class WorkInfo(object):
         if desc is None:
             raise NoDublinCore("No DublinCore section found.")
 
+        lang = None
+        p = desc
+        while p is not None and lang is None:
+            lang = p.attrib.get(XMLNS('lang'))
+            p = p.getparent()
+
         for e in desc.getchildren():
             fv = field_dict.get(e.tag, [])
-            fv.append(e.text)
+            if e.text is not None:
+                text = e.text
+                if not isinstance(text, unicode):
+                    text = text.decode('utf-8')
+                val = TextPlus(text)
+                val.lang = e.attrib.get(XMLNS('lang'), lang)
+            else:
+                val = e.text
+            fv.append(val)
             field_dict[e.tag] = fv
 
         return cls(desc.attrib, field_dict, *args, **kwargs)
