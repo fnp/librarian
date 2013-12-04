@@ -66,16 +66,22 @@ def as_date(text):
     try:
         # check out the "N. poł X w." syntax
         if isinstance(text, str): text = text.decode("utf-8")
-        m = re.match(u"([12]) *poł[.]? ([MCDXVI]+) *w[.]?", text)
+        m = re.match(u"(?:([12]) *poł[.]? )?([MCDXVI]+) *w[.]?", text)
         if m:
-            half = int(m.groups()[0])
+            
+            half = m.groups()[0]
+            if half is not None: 
+                half = int(half)
+            else: 
+                half = 1
             century = roman_to_int(str(m.groups()[1]))
             t = ((century*100 + (half-1)*50), 1, 1)
         else:
+            text = re.sub(r"(po|ok[.]?) *", "", text)
             try:
                 t = time.strptime(text, '%Y-%m-%d')
             except ValueError:
-                t = time.strptime(text, '%Y')
+                t = time.strptime(re.split(r'[-/]', text)[0], '%Y')
         return date(t[0], t[1], t[2])
     except ValueError, e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
