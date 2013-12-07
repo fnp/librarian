@@ -10,10 +10,17 @@ import re
 from librarian.util import roman_to_int
 
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
-                       WLURI)
+                       XMLNS, WLURI)
 
 import lxml.etree as etree # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
+
+
+class TextPlus(unicode):
+    pass
+
+class DatePlus(date):
+    pass
 
 
 # ==============
@@ -63,26 +70,47 @@ class Person(object):
         return 'Person(last_name=%r, first_names=*%r)' % (self.last_name, self.first_names)
 
 def as_date(text):
+    """Dates for digitization of pictures. It seems we need the following:
+ranges:		'1350-1450',
+centuries:	"XVIII w.'
+half centuries/decades: '2 poł. XVIII w.', 'XVII w., l. 20'
+later-then: 'po 1450'
+circa 'ok. 1813-1814', 'ok.1876-ok.1886
+turn: 1893/1894
+for now we will translate this to some single date losing information of course.
+    """
     try:
         # check out the "N. poł X w." syntax
         if isinstance(text, str): text = text.decode("utf-8")
-        m = re.match(u"(?:([12]) *poł[.]? )?([MCDXVI]+) *w[.]?", text)
+
+        century_format = u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
+        vague_format = u"(?:po *|ok. *)?([0-9]{4})(-[0-9]{2}-[0-9]{2})?"
+
+        m = re.match(century_format, text)
+        m2 = re.match(vague_format, text)
         if m:
-            
-            half = m.groups()[0]
-            if half is not None: 
+            half = m.group(1)
+            decade = m.group(3)
+            century = roman_to_int(str(m.group(2)))
+            if half is not None:
+                if decade is not None:
+                    raise ValueError("Bad date format. Cannot specify both half and decade of century")
                 half = int(half)
-            else: 
-                half = 1
-            century = roman_to_int(str(m.groups()[1]))
-            t = ((century*100 + (half-1)*50), 1, 1)
+                t = ((century*100 + (half-1)*50), 1, 1)
+            else:
+                decade = int(decade or 0)
+                t = ((century*100 + decade), 1, 1)
+        elif m2:
+            year = m2.group(1)
+            mon_day = m2.group(2)
+            if mon_day:
+                t = time.strptime(year + mon_day, "%Y-%m-%d")
+            else:
+                t = time.strptime(year, '%Y')
         else:
-            text = re.sub(r"(po|ok[.]?) *", "", text)
-            try:
-                t = time.strptime(text, '%Y-%m-%d')
-            except ValueError:
-                t = time.strptime(re.split(r'[-/]', text)[0], '%Y')
-        return date(t[0], t[1], t[2])
+            raise ValueError
+
+        return DatePlus(t[0], t[1], t[2])
     except ValueError, e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
@@ -93,7 +121,7 @@ def as_unicode(text):
     if isinstance(text, unicode):
         return text
     else:
-        return text.decode('utf-8')
+        return TextPlus(text.decode('utf-8'))
 
 def as_wluri_strict(text):
     return WLURI.strict(text)
@@ -119,7 +147,15 @@ class Field(object):
             if self.multiple:
                 if validator is None:
                     return val
-                return [ validator(v) if v is not None else v for v in val ]
+                new_values = []
+                for v in val:
+                    nv = v
+                    if v is not None:
+                        nv = validator(v)
+                        if hasattr(v, 'lang'):
+                            setattr(nv, 'lang', v.lang)
+                    new_values.append(nv)
+                return new_values
             elif len(val) > 1:
                 raise ValidationError("Multiple values not allowed for field '%s'" % self.uri)
             elif len(val) == 0:
@@ -127,7 +163,10 @@ class Field(object):
             else:
                 if validator is None or val[0] is None:
                     return val[0]
-                return validator(val[0])
+                nv = validator(val[0])
+                if hasattr(val[0], 'lang'):
+                    setattr(nv, 'lang', val[0].lang)
+                return nv
         except ValueError, e:
             raise ValidationError("Field '%s' - invald value: %s" % (self.uri, e.message))
 
@@ -247,9 +286,23 @@ class WorkInfo(object):
         if desc is None:
             raise NoDublinCore("No DublinCore section found.")
 
+        lang = None
+        p = desc
+        while p is not None and lang is None:
+            lang = p.attrib.get(XMLNS('lang'))
+            p = p.getparent()
+
         for e in desc.getchildren():
             fv = field_dict.get(e.tag, [])
-            fv.append(e.text)
+            if e.text is not None:
+                text = e.text
+                if not isinstance(text, unicode):
+                    text = text.decode('utf-8')
+                val = TextPlus(text)
+                val.lang = e.attrib.get(XMLNS('lang'), lang)
+            else:
+                val = e.text
+            fv.append(val)
             field_dict[e.tag] = fv
 
         return cls(desc.attrib, field_dict, *args, **kwargs)
