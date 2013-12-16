@@ -156,7 +156,7 @@ class WLPicture(object):
         area = sem.find("div[@type='rect']")
         if area is None:
             area = sem.find("div[@type='whole']")
-            return ((0, 0), (-1, -1))
+            return [[0, 0], [-1, -1]]
 
         def has_all_props(node, props):
             return reduce(and_, map(lambda prop: prop in node.attrib, props))
@@ -165,7 +165,7 @@ class WLPicture(object):
             return None
             
         def n(prop): return int(area.get(prop))
-        return ((n('x1'), n('y1')), (n('x2'), n('y2')))
+        return [[n('x1'), n('y1')], [n('x2'), n('y2')]]
         
 
     def partiter(self):
