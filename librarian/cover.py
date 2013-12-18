@@ -365,6 +365,53 @@ class WLCover(Cover):
         return img
 
 
+class LogoWLCover(WLCover):
+    gradient_height = 90
+    gradient_logo_height = 60
+    gradient_logo_margin_right = 30
+    gradient_logo_spacing = 40
+    gradient_color = '#000'
+    gradient_opacity = .6
+    gradient_logos = [
+        'res/wl-logo-white.png',
+        'res/fnp-logo-white.png',
+    ]
+
+    def image(self):
+        img = super(LogoWLCover, self).image()
+        metr = Metric(self, self.scale)
+        gradient = Image.new('RGBA', (metr.width - metr.bar_width, metr.gradient_height), self.gradient_color)
+        gradient_mask = Image.new('L', (metr.width - metr.bar_width, metr.gradient_height))
+        draw = ImageDraw.Draw(gradient_mask)
+        for line in range(0, metr.gradient_height):
+            draw.line((0, line, metr.width - metr.bar_width, line), fill=int(255 * self.gradient_opacity * line / metr.gradient_height))
+        img.paste(gradient, 
+            (metr.bar_width, metr.height - metr.gradient_height), mask=gradient_mask)
+
+        cursor = metr.width - metr.gradient_logo_margin_right
+        logo_top = metr.height - metr.gradient_height / 2  - metr.gradient_logo_height / 2
+        for logo_path in self.gradient_logos[::-1]:
+            logo = Image.open(get_resource(logo_path))
+            logo = logo.resize(
+                (logo.size[0] * metr.gradient_logo_height / logo.size[1], metr.gradient_logo_height),
+                Image.ANTIALIAS)
+            cursor -= logo.size[0]
+            img.paste(logo, (cursor, logo_top), mask=logo)
+            cursor -= metr.gradient_logo_spacing
+
+        return img
+
+
+class EbookpointCover(LogoWLCover):
+    gradient_logo_height = 58
+    gradient_logo_spacing = 25
+    gradient_logos = [
+        'res/ebookpoint-logo-white.png',
+        'res/wl-logo-white.png',
+        'res/fnp-logo-white.png',
+    ]
+
+
 class VirtualoCover(Cover):
     width = 600
     height = 730
