@@ -125,6 +125,7 @@ class Cover(object):
 
     format = 'JPEG'
     scale = 1
+    scale_after = 1
 
     exts = {
         'JPEG': 'jpg',
@@ -142,8 +143,10 @@ class Cover(object):
         if format is not None:
             self.format = format
         scale = max(float(width or 0) / self.width, float(height or 0) / self.height)
-        if scale:
+        if scale >= 1:
             self.scale = scale
+        elif scale:
+            self.scale_after = scale
 
     def pretty_author(self):
         """Allows for decorating author's name."""
@@ -195,6 +198,15 @@ class Cover(object):
 
         return img
 
+    def final_image(self):
+        img = self.image()
+        if self.scale_after != 1:
+            img = img.resize((
+                    int(round(img.size[0] * self.scale_after)),
+                    int(round(img.size[1] * self.scale_after))),
+                Image.ANTIALIAS)
+        return img
+
     def mime_type(self):
         return self.mime_types[self.format]
 
@@ -202,7 +214,7 @@ class Cover(object):
         return self.exts[self.format]
 
     def save(self, *args, **kwargs):
-        return self.image().save(format=self.format, quality=95, *args, **kwargs)
+        return self.final_image().save(format=self.format, quality=95, *args, **kwargs)
 
     def output_file(self, *args, **kwargs):
         imgstr = StringIO()
@@ -211,7 +223,7 @@ class Cover(object):
 
 
 class WLCover(Cover):
-    """Default Wolne Lektury cover generator."""
+    """Wolne Lektury cover without logos."""
     width = 600
     height = 833
     uses_dc_cover = True
@@ -483,3 +495,7 @@ class GandalfCover(Cover):
     logo_bottom = 25
     logo_width = 250
     format = 'PNG'
+
+
+DefaultEbookCover = LogoWLCover
+

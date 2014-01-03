@@ -17,7 +17,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
 from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
-from librarian.cover import WLCover
+from librarian.cover import DefaultEbookCover
 
 from librarian import functions, get_resource
 
@@ -448,7 +448,7 @@ def transform(wldoc, verbose=False,
 
     if cover:
         if cover is True:
-            cover = WLCover
+            cover = DefaultEbookCover
 
         cover_file = StringIO()
         bound_cover = cover(document.book_info)

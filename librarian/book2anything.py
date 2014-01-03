@@ -10,7 +10,7 @@ import optparse
 
 from librarian import DirDocProvider, ParseError
 from librarian.parser import WLDocument
-from librarian.cover import WLCover
+from librarian.cover import DefaultEbookCover
 
 
 class Option(object):
@@ -100,10 +100,10 @@ class Book2Anything(object):
         if cls.uses_cover:
             if options.image_cache:
                 def cover_class(*args, **kwargs):
-                    return WLCover(image_cache=options.image_cache, *args, **kwargs)
+                    return DefaultEbookCover(image_cache=options.image_cache, *args, **kwargs)
                 transform_args['cover'] = cover_class
             elif not cls.cover_optional or options.with_cover:
-                transform_args['cover'] = WLCover
+                transform_args['cover'] = DefaultEbookCover
 
 
         # Do some real work

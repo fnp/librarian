@@ -9,7 +9,7 @@ import subprocess
 from tempfile import NamedTemporaryFile
 
 from librarian import OutputFile
-from librarian.cover import WLCover
+from librarian.cover import DefaultEbookCover
 from librarian import get_resource
 
 
@@ -29,7 +29,7 @@ def transform(wldoc, verbose=False,
 
     # provide a cover by default
     if not cover:
-        cover = WLCover
+        cover = DefaultEbookCover
     cover_file = NamedTemporaryFile(suffix='.png', delete=False)
     bound_cover = cover(book_info)
     bound_cover.save(cover_file)

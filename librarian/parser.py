@@ -5,7 +5,7 @@
 #
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS
-from librarian.cover import WLCover
+from librarian.cover import DefaultEbookCover
 from librarian import dcparser
 
 from xml.parsers.expat import ExpatError
@@ -208,7 +208,7 @@ class WLDocument(object):
 
     def as_cover(self, cover_class=None, *args, **kwargs):
         if cover_class is None:
-            cover_class = WLCover
+            cover_class = DefaultEbookCover
         return cover_class(self.book_info, *args, **kwargs).output_file()
 
     def save_output_file(self, output_file, output_path=None,

@@ -27,7 +27,7 @@ from librarian.dcparser import Person
 from librarian.parser import WLDocument
 from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
-from librarian.cover import WLCover
+from librarian.cover import DefaultEbookCover
 
 
 functions.reg_substitute_entities()
@@ -204,7 +204,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         if cover:
             if cover is True:
-                cover = WLCover
+                cover = DefaultEbookCover
             bound_cover = cover(book_info)
             root.set('data-cover-width', str(bound_cover.width))
             root.set('data-cover-height', str(bound_cover.height))
