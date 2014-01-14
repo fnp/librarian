@@ -177,25 +177,22 @@ def extract_fragments(input_filename):
 
 
 def add_anchor(element, prefix, with_link=True, with_target=True, link_text=None):
+    parent = element.getparent()
+    index = parent.index(element)
+
     if with_link:
         if link_text is None:
             link_text = prefix
         anchor = etree.Element('a', href='#%s' % prefix)
         anchor.set('class', 'anchor')
         anchor.text = unicode(link_text)
-        if element.text:
-            anchor.tail = element.text
-            element.text = u''
-        element.insert(0, anchor)
+        parent.insert(index, anchor)
 
     if with_target:
         anchor_target = etree.Element('a', name='%s' % prefix)
         anchor_target.set('class', 'target')
         anchor_target.text = u' '
-        if element.text:
-            anchor_target.tail = element.text
-            element.text = u''
-        element.insert(0, anchor_target)
+        parent.insert(index, anchor_target)
 
 
 def any_ancestor(element, test):
