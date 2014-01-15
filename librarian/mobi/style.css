@@ -2,7 +2,6 @@
 /* = Common elements: headings, paragraphs and lines = */
 /* =================================================== */
 
-
 .h2
 {
 	font-size: 2em;
@@ -31,8 +30,14 @@
 
 .paragraph
 {
-    margin-top: 0;
+    margin: 0;
 }
+
+.paragraph + .paragraph
+{
+    text-indent: 1.5em;
+}
+
 
 /* ======================== */
 /* = Footnotes and themes = */
@@ -71,15 +76,10 @@
 /* = Numbering = */
 /* ============= */
 
-.anchor
+.anchor sup
 {
-	margin: -0.25em -0.5em;
-	color: #777;
-	font-size: 0.875em;
-	width: 2em;
-	text-align: center;
-	padding: 0.25em 0.5em;
-	line-height: 1.5em;
+	vertical-align: text-top;
+	font-size: 0.7em;
 }
 
 /* =================== */
