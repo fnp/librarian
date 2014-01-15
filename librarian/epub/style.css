@@ -238,7 +238,12 @@ div.kwestia
 .paragraph
 {
 	text-align: justify;
-	margin-top: 1.5em;
+	margin: 0
+}
+
+.paragraph + .paragraph
+{
+	text-indent: 1.5em;
 }
 
 .motto
