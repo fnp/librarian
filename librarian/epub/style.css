@@ -140,16 +140,11 @@ p
 /* = Numbering = */
 /* ============= */
 
-.anchor
+.anchor sup
 {
-	margin: -0.25em -0.5em;
-	color: #777;
-	font-size: 0.875em;
-	width: 2em;
-	text-align: center;
-	padding: 0.25em 0.5em;
-	line-height: 1.5em;
-}
+	vertical-align: text-top;
+	font-size: 0.7em;
+}	
 
 /* =================== */
 /* = Custom elements = */
