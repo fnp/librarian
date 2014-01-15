@@ -549,7 +549,7 @@ def transform(wldoc, verbose=False,
                 subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
             manifest.append(etree.fromstring(
-                '<item id="%s" href="%s" media-type="font/ttf" />' % (fname, fname)))
+                '<item id="%s" href="%s" media-type="application/x-font-truetype" />' % (fname, fname)))
         rmtree(tmpdir)
         if cwd is not None:
             os.chdir(cwd)
