@@ -107,27 +107,10 @@ p
 	text-align: left;
 }
 
-.annotation-anchor
-{
-	font-style: normal;
-	font-weight: normal;
-	font-size: 0.875em;
-	display: block;
-	float: left;
-	width: 2.5em;
-	clear: both;
-}
-
 .annotation
 {
-    margin: 0;
-    margin-top: 1.5em;
-}
-
-.annotation-body
-{
-	margin-left: 2.5em;
-	font-size: 0.875em;
+	margin-bottom: 0.3em;
+	text-align: left;
 }
 
 .block
@@ -135,6 +118,7 @@ p
 	font-size: 0.875em;
 	padding: 1em;
 }
+
 
 /* ============= */
 /* = Numbering = */
