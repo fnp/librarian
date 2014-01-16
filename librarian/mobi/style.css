@@ -161,7 +161,7 @@ div.didaskalia
 	margin-left: 1.5em;
 }
 
-div.kwestia
+.kwestia
 {
 	margin-top: 0.5em;
 }
@@ -183,39 +183,29 @@ div.kwestia
 	margin-top: 1.5em;
 }
 
-.motto_podpis
+.motto_podpis, .motto_podpis .paragraph
 {
 	font-size: 0.875em;
 	text-align: right;
 }
 
-div.fragment
+.fragment
 {
 	border-bottom: 0.1em solid #999;
 	padding-bottom: 1.5em;
 }
 
-div.note
+.note, .note .paragraph
 {
 	text-align: right;
 	font-style: italic;
 }
-div.note div.paragraph
-{
-    text-align: right;
-    font-style: italic;
-}
-div.dedication
-{
-    text-align: right;
-    font-style: italic;
-}
-div.dedication div.paragaph
-{
-    text-align: right;
-    font-style: italic;
-}
 
+.dedication, .dedication .paragaph
+{
+    text-align: right;
+    font-style: italic;
+}
 
 hr.spacer
 {
