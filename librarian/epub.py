@@ -336,7 +336,7 @@ def transform(wldoc, verbose=False,
 
     sample=n: generate sample e-book (with at least n paragraphs)
     cover: a cover.Cover factory or True for default
-    flags: less-advertising, without-fonts, working-copy
+    flags: less-advertising, without-fonts, working-copy, with-full-fonts
     """
 
     def transform_file(wldoc, chunk_counter=1, first=True, sample=None):
@@ -540,14 +540,17 @@ def transform(wldoc, verbose=False,
 
         os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
         for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-            optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
-                              get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
-            if verbose:
-                print "Running font-optimizer"
-                subprocess.check_call(optimizer_call)
+            if not flags or not 'with-full-fonts' in flags:
+                optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
+                              get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]              
+                if verbose:
+                    print "Running font-optimizer"
+                    subprocess.check_call(optimizer_call)
+                else:
+                    subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
             else:
-                subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
+                zip.write(get_resource('fonts/' + fname), os.path.join('OPS', fname))
             manifest.append(etree.fromstring(
                 '<item id="%s" href="%s" media-type="application/x-font-truetype" />' % (fname, fname)))
         rmtree(tmpdir)

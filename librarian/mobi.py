@@ -42,9 +42,9 @@ def transform(wldoc, verbose=False,
 
     if not flags:
         flags = []
-    flags = list(flags) + ['without-fonts']
+    flags = list(flags) + ['with-full-fonts']
     epub = document.as_epub(verbose=verbose, sample=sample, html_toc=True,
-            flags=flags, style=get_resource('mobi/style.css'))
+            flags=flags, style=get_resource('epub/style.css'))
 
     if verbose:
         kwargs = {}
@@ -55,6 +55,6 @@ def transform(wldoc, verbose=False,
     output_file = NamedTemporaryFile(prefix='librarian', suffix='.mobi', delete=False)
     output_file.close()
     subprocess.check_call(['ebook-convert', epub.get_filename(), output_file.name,
-            '--no-inline-toc', '--cover=%s' % cover_file.name], **kwargs)
+            '--no-inline-toc', '--mobi-file-type=both', '--subset-embedded-fonts', '--mobi-ignore-margins', '--cover=%s' % cover_file.name], **kwargs)
     os.unlink(cover_file.name)
     return OutputFile.from_filename(output_file.name)
