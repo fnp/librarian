@@ -43,6 +43,13 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="nota_red">
+      <div class="note_red" xmlns="http://www.w3.org/1999/xhtml">
+	<xsl:apply-templates />
+      </div>
+  </xsl:template>
+
+
   <xsl:template match="lista_osob" >
     <div class="person-list" xmlns="http://www.w3.org/1999/xhtml">
       <div class="h3" xmlns="http://www.w3.org/1999/xhtml">
@@ -348,7 +355,6 @@
 
   <xsl:template match="uwaga" />
 
-  <xsl:template match="nota_red" />
 
   <!--pominięcie tych metadanych-->
   <xsl:template match="rdf:RDF" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
@@ -373,6 +379,15 @@
   <xsl:template match="ilustr" >
     <img>
       <xsl:attribute name="src"><xsl:value-of select="@src"/>.<xsl:choose><xsl:when test="@extbitmap"><xsl:value-of select="@extbitmap"/></xsl:when><xsl:otherwise><xsl:value-of select="@ext"/></xsl:otherwise></xsl:choose></xsl:attribute>
+    </img>
+  </xsl:template>
+
+  <xsl:template match="img">
+    <img rel="math formula">
+      <xsl:attribute name="src">
+	<xsl:value-of select="text()"/>
+      </xsl:attribute>
+      <xsl:attribute name="class">latex</xsl:attribute>
     </img>
   </xsl:template>
 

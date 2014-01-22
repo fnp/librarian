@@ -19,7 +19,7 @@ from mimetypes import guess_type
 
 from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
 from librarian.cover import WLCover, FutureOfCopyrightCover
-
+from librarian.latex import LatexFragment
 from librarian import functions, get_resource
 
 functions.reg_person_name()
@@ -330,6 +330,23 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     return output_html, toc, chars
 
 
+def render_latex(wldoc, prefix="latex"):
+    """
+    Renders <latex>CODE</latex> as images and returns
+    (changed_wldoc, [ (epub_filepath1, latexfragment_object1), ... ]
+"""
+    root = wldoc.edoc.getroot()
+    latex_nodes = root.findall(".//latex")
+    images = []
+    for ln in latex_nodes:
+        fragment = LatexFragment(ln.text, resize=40)
+        images.append((os.path.join(prefix, fragment.filename), fragment))
+        ln.tag = "img"
+        ln.text = os.path.join(prefix, fragment.filename)
+        
+    return wldoc, images
+        
+
 def transform(wldoc, verbose=False,
               style=None, html_toc=False,
               sample=None, cover=None, flags=None, resources=None,
@@ -443,6 +460,12 @@ def transform(wldoc, verbose=False,
     if not style:
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))
+
+    document, latex_images = render_latex(document)
+    for image in latex_images:
+        zip.write(image[1].path, os.path.join('OPS', image[0]))
+        image[1].remove()
+
     if resources:
         if os.path.isdir(resources):
             for dp, dirs, files in os.walk(resources):
