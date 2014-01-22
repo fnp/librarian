@@ -1,0 +1,33 @@
+\usepackage[MeX]{polski}
+
+\newcommand{\rightsinfostr}[2][] {
+    \ifx&#1&%
+        #2
+    \else
+        Ten utwór jest udostępniony na licencji
+        \href{#1}{#2}.
+    \fi
+}
+
+
+\renewcommand{\maketitle}{}
+
+\newcommand{\editorialsection}{
+  \begin{figure}[b!]
+  {
+    \footnotesize
+    \color{theme}
+    \noindent \rule{\linewidth}{0.4pt}
+
+    \rightsinfo
+    \vspace{.6em}
+
+    \editors
+
+    \vspace{.6em}
+    \coverby
+
+    \color{black}
+  }
+  \end{figure}
+}

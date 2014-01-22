@@ -371,3 +371,13 @@ p.footer {
     margin-top: 2em;
 }
 
+img.latex {
+    display: inline;
+}
+
+.note_red {
+    display: block;
+    width: 50%;
+    float: right;
+    background-color: #d0d0d0;
+}
