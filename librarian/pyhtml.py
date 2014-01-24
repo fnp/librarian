@@ -13,15 +13,6 @@ from copy import deepcopy
 
 IMAGE_THUMB_WIDTH = 300
 
-try:
-    from fnpdjango.utils.text.slughifi import slughifi
-    def naglowek_to_anchor(naglowek):
-        return slughifi(naglowek.text)
-except ImportError:
-    from urllib import quote
-    def naglowek_to_anchor(naglowek):
-        return quote(re.sub(r" +", " ", naglowek.text.strip()))
-
 class EduModule(Xmill):
     def __init__(self, options=None):
         super(EduModule, self).__init__(options)
@@ -64,11 +55,14 @@ class EduModule(Xmill):
     handle_tytul_dziela = tag('em', 'title')
     handle_slowo_obce = tag('em', 'foreign')
 
+    def naglowek_to_anchor(self, naglowek):
+        return self.options['urlmapper'].naglowek_to_anchor(naglowek)
+
     def handle_nazwa_utworu(self, element):
         toc = []
         for naglowek in element.getparent().findall('.//naglowek_rozdzial'):
             a = etree.Element("a")
-            a.attrib["href"] = "#" + naglowek_to_anchor(naglowek)
+            a.attrib["href"] = "#" + self.naglowek_to_anchor(naglowek)
             a.text = naglowek.text
             atxt = etree.tostring(a, encoding=unicode)
             toc.append("<li>%s</li>" % atxt)
@@ -78,7 +72,10 @@ class EduModule(Xmill):
 
     def handle_naglowek_rozdzial(self, element):
         return_to_top = u"<a href='#top' class='top-link'>wróć do spisu treści</a>"
-        pre, post = tag_open_close("h2", id=naglowek_to_anchor(element))
+        pre, post = tag_open_close("h2", id=self.naglowek_to_anchor(element))
+        url = self.options['urlmapper'].get_help_url(element)
+        if url:
+            post = " <a class='help' href='%s'>?</a>" % (url,) + post
         return return_to_top + pre, post
 
     def handle_naglowek_podrozdzial(self, element):
@@ -111,8 +108,22 @@ class EduModule(Xmill):
         else: pomoce = ''
 
         forma = ''.join(element.xpath('forma/text()'))
+        get_forma_url = self.options['urlmapper'].get_forma_url
+        forms = []
+        for form_name in forma.split(','):
+            name = form_name.strip()
+            url = get_forma_url(name)
+            if url:
+                forms.append("<a href='%s'>%s</a>" % (url, name))
+            else:
+                forms.append(name)
+        forma = ', '.join(forms)
+        if forma:
+            forma = '<section class="infobox kind"><h1>Metoda</h1><p>%s</p></section>' % forma
 
         czas = ''.join(element.xpath('czas/text()'))
+        if czas:
+            czas = '<section class="infobox time"><h1>Czas</h1><p>%s min</p></section>' % czas
 
         counter = self.activity_counter
 
@@ -131,8 +142,8 @@ class EduModule(Xmill):
 u"""%(wskazowki)s
  </div>
  <aside class="info">
-  <section class="infobox time"><h1>Czas</h1><p>%(czas)s min</p></section>
-  <section class="infobox kind"><h1>Metoda</h1><p>%(forma)s</p></section>
+  %(czas)s
+  %(forma)s
   %(pomoce)s
  </aside>
  <div class="clearboth"></div>
@@ -182,12 +193,11 @@ u"""%(wskazowki)s
             if surl is None:
                 # print '** missing src on <slowniczek>, setting default'
                 surl = 'http://edukacjamedialna.edu.pl/lekcje/slowniczek/'
-            sxml = None
-            if surl:
-                sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
+            sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
+
             self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
             pre, post = '<div class="slowniczek">', '</div>'
-            if self.options['wldoc'].book_info.url.slug != 'slowniczek':
+            if not self.options['wldoc'].book_info.url.slug.startswith('slowniczek'):
                 post += u'<p class="see-more"><a href="%s">Zobacz cały słowniczek.</a></p>' % surl
             return pre, post
 
@@ -228,9 +238,9 @@ u"""%(wskazowki)s
                     subgen = EduModule(self.options)
                     definiens_s = subgen.generate(definiens)
             else:
-                print '!! Missing definiendum in source:', element.text
+                print "!! Missing definiendum in source: '%s'" % element.text
 
-        return u"<dt>", u"</dt>" + definiens_s
+        return u"<dt id='%s'>" % self.naglowek_to_anchor(element), u"</dt>" + definiens_s
 
     def handle_definiens(self, element):
         return u"<dd>", u"</dd>"
@@ -623,7 +633,7 @@ class EduModuleFormat(Format):
         order = dict(reversed(k) for k in enumerate(self.PRIMARY_MATERIAL_FORMATS))
         mats = self.materials_by_slug.get(slug, {}).items()
         if not mats:
-            pass # print "!! Material missing: '%s'" % slug
+            print "!! Material missing: '%s'" % slug
         return sorted(mats, key=lambda (x, y): order.get(x, x))
 
     def url_for_material(self, slug, fmt):
@@ -631,6 +641,18 @@ class EduModuleFormat(Format):
 
     def url_for_image(self, slug, fmt, width=None):
         return self.url_for_material(self, slug, fmt)
+
+    def text_to_anchor(self, text):
+        return re.sub(r" +", " ", text)
+
+    def naglowek_to_anchor(self, naglowek):
+        return self.text_to_anchor(naglowek.text.strip())
+
+    def get_forma_url(self, forma):
+        return None
+
+    def get_help_url(self, naglowek):
+        return None
 
 
 def transform(wldoc, stylesheet='edumed', options=None, flags=None, verbose=None):

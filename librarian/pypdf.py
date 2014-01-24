@@ -107,7 +107,7 @@ class EduModule(Xmill):
                 dc.authors_expert
         else:
             authors = getattr(dc, "authors_%s" % which)
-        return u', '.join(author.readable() for author in authors)
+        return u', '.join(author.readable() for author in authors if author)
 
     @escape(1)
     def get_title(self, element):
@@ -196,7 +196,7 @@ class EduModule(Xmill):
 
     def handle_naglowek_rozdzial(self, element):
         if not self.options['teacher']:
-            if element.text.startswith((u'Wiedza', u'Zadania', u'Słowniczek')):
+            if element.text.startswith((u'Wiedza', u'Zadania', u'Słowniczek', u'Dla ucznia')):
                 self.state['mute'] = False
             else:
                 self.state['mute'] = True
@@ -206,7 +206,17 @@ class EduModule(Xmill):
 
     def handle_naglowek_podrozdzial(self, element):
         self.activity_counter = 0
+        if not self.options['teacher']:
+            if element.text.startswith(u'Dla ucznia'):
+                self.state['mute'] = False
+                return None
+            elif element.text.startswith(u'Dla nauczyciela'):
+                self.state['mute'] = True
+                return None
+            elif self.state['mute']:
+                return None
         return self.handle_texcommand(element)
+    handle_naglowek_podrozdzial.unmuter = True
 
     def handle_uwaga(self, _e):
         return None
@@ -298,9 +308,7 @@ class EduModule(Xmill):
             if surl is None:
                 # print '** missing src on <slowniczek>, setting default'
                 surl = 'http://edukacjamedialna.edu.pl/lekcje/slowniczek/'
-            sxml = None
-            if surl:
-                sxml = etree.fromstring(self.options['wldoc'].provider.by_uri(surl).get_string())
+            sxml = etree.fromstring(self.options['wldoc'].provider.by_uri(surl).get_string())
             self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
 
         listcmd = {'num': 'enumerate',
@@ -398,6 +406,7 @@ class EduModule(Xmill):
         frmt = self.options['format']
         name = element.attrib.get('nazwa', '').strip()
         image = frmt.get_image(name.strip())
+        name = image.get_filename().rsplit('/', 1)[-1]
         img_path = "obraz/%s" % name.replace("_", "")
         frmt.attachments[img_path] = image
         return cmd("obraz", parms=[img_path])(self)

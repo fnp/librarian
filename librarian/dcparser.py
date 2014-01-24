@@ -167,6 +167,7 @@ class WorkInfo(object):
         Field( DCNS('creator.expert'), 'authors_expert', as_person, salias='author', required=False, multiple=True),
         Field( DCNS('creator.scenario'), 'authors_scenario', as_person, salias='author', required=False, multiple=True),
         Field( DCNS('creator.textbook'), 'authors_textbook', as_person, salias='author', required=False, multiple=True),
+        Field( DCNS('requires'), 'requires', required=False, multiple=True),
         Field( DCNS('title'), 'title'),
         Field( DCNS('type'), 'type', required=False),
 
