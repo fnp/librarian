@@ -556,8 +556,7 @@ def transform(wldoc, verbose=False,
         rmtree(tmpdir)
         if cwd is not None:
             os.chdir(cwd)
-
-    zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
+    zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True, xml_declaration = True, encoding='UTF-8'))
     title = document.book_info.title
     attributes = "dtb:uid", "dtb:depth", "dtb:totalPageCount", "dtb:maxPageNumber"
     for st in attributes:
@@ -574,7 +573,7 @@ def transform(wldoc, verbose=False,
         toc.add(u"Spis treści", "toc.html", index=1)
         zip.writestr('OPS/toc.html', toc.html().encode('utf-8'))
     toc.write_to_xml(nav_map)
-    zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))
+    zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True, xml_declaration = True, encoding='UTF-8'))
     zip.close()
 
     return OutputFile.from_filename(output_file.name)
