@@ -565,7 +565,7 @@ def transform(wldoc, verbose=False,
         meta.set('name', st)
         meta.set('content', '0')
         toc_file[0].append(meta)
-    toc_file[0][0].set('content', ''.join((title, 'WolneLektury.pl')))
+    toc_file[0][0].set('content', str(document.book_info.url))
     toc_file[0][1].set('content', str(toc.depth()))
     set_inner_xml(toc_file[1], ''.join(('<text>', title, '</text>')))
 
