@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wl="http://wolnelektury.pl/functions">
   <xsl:output method="html" version="1.0" omit-xml-declaration="no" />
 
   <xsl:template match="/">
@@ -15,13 +15,16 @@
         <dc:subject>
           <xsl:apply-templates select="//dc:identifier.url" />
         </dc:subject>
-        <dc:creator>
-          <xsl:apply-templates select="//dc:creator" />
+        <dc:creator opf:role="aut">
+        	<xsl:attribute name="opf:file-as">
+            	<xsl:value-of select="//dc:creator" />
+            </xsl:attribute>
+            <xsl:apply-templates select="//dc:creator" mode="person"/>
         </dc:creator>
         <dc:publisher>
           <xsl:apply-templates select="//dc:publisher" />
         </dc:publisher>
-        <dc:date xsi:type="dcterms:W3CDTF">
+        <dc:date opf:event="publication">
           <xsl:apply-templates select="//dc:date" />
         </dc:date>
       </metadata>
@@ -45,6 +48,10 @@
     <dc:title>
       <xsl:value-of select="." />
     </dc:title>
+  </xsl:template>
+  
+  <xsl:template match="text()" mode="person">
+    <xsl:value-of select="wl:person_name(.)" />
   </xsl:template>
 
 </xsl:stylesheet>
