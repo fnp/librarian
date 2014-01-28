@@ -311,7 +311,9 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
     toc = TOC()
     for element in chunk_xml[0]:
-        if element.tag in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+        if element.tag in ("naglowek_czesc"):
+            toc.add(node_name(element), "part%d.html#book-text" % chunk_no)
+        elif element.tag in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
             toc.add(node_name(element), "part%d.html" % chunk_no)
         elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
             subnumber = toc.add(node_name(element), "part%d.html" % chunk_no, level=1, is_part=False)
