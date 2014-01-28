@@ -331,6 +331,7 @@
 <!-- = INLINE TAGS                                  = -->
 <!-- = (contain other inline tags and special tags) = -->
 <!-- ================================================ -->
+<xsl:strip-space elements="wyroznienie|akap|nota"/>
 
 <xsl:template mode="inline"
     match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|punkt|www|nota_red">
