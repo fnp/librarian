@@ -6,8 +6,8 @@
     <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
       <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf">
         <xsl:apply-templates select="//dc:title" />
-        <dc:language xsi:type="dcterms:RFC3066">
-          <xsl:apply-templates select="//dc:language" />
+        <dc:language>
+          <xsl:apply-templates select="//dc:language" mode="language" />
         </dc:language>
         <dc:identifier id="BookId" opf:scheme="URI">
           <xsl:apply-templates select="//dc:identifier.url" />
@@ -19,7 +19,7 @@
         	<xsl:attribute name="opf:file-as">
             	<xsl:value-of select="//dc:creator" />
             </xsl:attribute>
-            <xsl:apply-templates select="//dc:creator" mode="person"/>
+            <xsl:apply-templates select="//dc:creator" mode="person" />
         </dc:creator>
         <dc:publisher>
           <xsl:apply-templates select="//dc:publisher" />
@@ -52,6 +52,10 @@
   
   <xsl:template match="text()" mode="person">
     <xsl:value-of select="wl:person_name(.)" />
+  </xsl:template>
+  
+  <xsl:template match="text()" mode="language">
+    <xsl:value-of select="wl:lang_code_3to2(.)" />
   </xsl:template>
 
 </xsl:stylesheet>

@@ -22,6 +22,7 @@ from librarian.cover import DefaultEbookCover
 from librarian import functions, get_resource
 
 functions.reg_person_name()
+functions.reg_lang_code_3to2()
 
 
 def inner_xml(node):
