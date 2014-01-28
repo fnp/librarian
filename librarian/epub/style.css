@@ -126,7 +126,7 @@ p
 
 .anchor sup
 {
-	vertical-align: text-top;
+	line-height: 0;
 	font-size: 0.7em;
 }	
 
