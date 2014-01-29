@@ -291,47 +291,18 @@ def chop(main_text):
     main_xml_part = part_xml[0] # master
 
     last_node_part = False
-    
-    # the below loops are workaround for a problem with epubs in drama ebooks without acts
-    is_scene = False
-    for one_part in main_text:
-    	name = one_part.tag
-        if name in ('naglowek_scena'):
-            is_scene = True
-            break
-    if is_scene is True:
-        is_scene_with_acts = False
-        for one_part in main_text:
-            if one_part.tag == 'naglowek_akt':
-                is_scene_with_acts = True
-                break
-    else:
-        is_scene_with_acts = False
-    
     for one_part in main_text:
         name = one_part.tag
-        if is_scene_with_acts is False and is_scene is True:
-            if name == 'naglowek_czesc':
-                yield part_xml
-                last_node_part = True
-                main_xml_part[:] = [deepcopy(one_part)]
-            elif not last_node_part and name in ("naglowek_scena"):
-                yield part_xml
-                main_xml_part[:] = [deepcopy(one_part)]
-            else:
-                main_xml_part.append(deepcopy(one_part))
-                last_node_part = False
+        if name == 'naglowek_czesc':
+            yield part_xml
+            last_node_part = True
+            main_xml_part[:] = [deepcopy(one_part)]
+        elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+            yield part_xml
+            main_xml_part[:] = [deepcopy(one_part)]
         else:
-            if name == 'naglowek_czesc':
-                yield part_xml
-                last_node_part = True
-                main_xml_part[:] = [deepcopy(one_part)]
-            elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-                yield part_xml
-                main_xml_part[:] = [deepcopy(one_part)]
-            else:
-                main_xml_part.append(deepcopy(one_part))
-                last_node_part = False            
+            main_xml_part.append(deepcopy(one_part))
+            last_node_part = False
     yield part_xml
 
 
