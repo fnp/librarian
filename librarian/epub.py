@@ -291,18 +291,41 @@ def chop(main_text):
     main_xml_part = part_xml[0] # master
 
     last_node_part = False
+    
+    # the below loop are workaround for a problem with epubs in drama ebooks without acts
+    is_scene = False
+    is_act = False
     for one_part in main_text:
         name = one_part.tag
-        if name == 'naglowek_czesc':
-            yield part_xml
-            last_node_part = True
-            main_xml_part[:] = [deepcopy(one_part)]
-        elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-            yield part_xml
-            main_xml_part[:] = [deepcopy(one_part)]
+        if name == 'naglowek_scena':
+            is_scene = True
+        elif name == 'naglowek_akt':
+            is_act = True
+    
+    for one_part in main_text:
+        name = one_part.tag
+        if is_act is False and is_scene is True:
+            if name == 'naglowek_czesc':
+                yield part_xml
+                last_node_part = True
+                main_xml_part[:] = [deepcopy(one_part)]
+            elif not last_node_part and name in ("naglowek_scena"):
+                yield part_xml
+                main_xml_part[:] = [deepcopy(one_part)]
+            else:
+                main_xml_part.append(deepcopy(one_part))
+                last_node_part = False
         else:
-            main_xml_part.append(deepcopy(one_part))
-            last_node_part = False
+            if name == 'naglowek_czesc':
+                yield part_xml
+                last_node_part = True
+                main_xml_part[:] = [deepcopy(one_part)]
+            elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+                yield part_xml
+                main_xml_part[:] = [deepcopy(one_part)]
+            else:
+                main_xml_part.append(deepcopy(one_part))
+                last_node_part = False            
     yield part_xml
 
 
