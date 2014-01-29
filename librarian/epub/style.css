@@ -250,6 +250,11 @@ div.didaskalia
 	font-style: italic;
 }
 
+.note
+{
+    margin-bottom: 1.5em;
+}
+
 .dedication, .dedication .paragraph
 {
     text-align: right;
