@@ -78,6 +78,7 @@ def replace_characters(node):
     def replace_chars(text):
         if text is None:
             return None
+        #text = re.sub(r"(?<=\s\w)\s+", u"\u00a0", text) #fix for hanging single letter conjunctions – for future use.
         return text.replace(u"\ufeff", u"")\
                    .replace("---", u"\u2014")\
                    .replace("--", u"\u2013")\
