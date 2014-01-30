@@ -244,15 +244,16 @@ div.didaskalia
 	padding-bottom: 1.5em;
 }
 
-.note, .note .paragraph
+.note
 {
 	text-align: right;
 	font-style: italic;
+	margin-bottom: 1.5em;
 }
 
-.note
+.note .paragraph
 {
-    margin-bottom: 1.5em;
+    text-align: justify;
 }
 
 .dedication, .dedication .paragraph
