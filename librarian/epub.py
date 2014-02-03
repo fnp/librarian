@@ -330,6 +330,12 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     return output_html, toc, chars
 
 
+def flatten_image_paths(wldoc):
+    root = wldoc.edoc.getroot()
+    for node in root.findall(".//ilustr"):
+        node.attrib['src'] = os.path.basename(node.attrib['src'])
+    return wldoc
+
 def render_latex(wldoc, prefix="latex"):
     """
     Renders <latex>CODE</latex> as images and returns
@@ -397,6 +403,8 @@ def transform(wldoc, verbose=False,
             main_text = wldoc.edoc.getroot()[0]
             if main_text.tag == RDFNS('RDF'):
                 main_text = None
+
+        flatten_image_paths(wldoc)
 
         if main_text is not None:
             for chunk_xml in chop(main_text):
