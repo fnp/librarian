@@ -286,6 +286,9 @@ def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=N
             cwd = None
         os.chdir(temp)
 
+        if resources:
+            os.putenv("TEXINPUTS", "::.:%s" % resources)
+
         if verbose:
             p = call(['xelatex', tex_path])
         else:
