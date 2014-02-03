@@ -20,9 +20,6 @@ class Book2Cover(Book2Anything):
                 help='Set width.'),
         Option('-H', '--height', action='store', type='int', dest='height', default=None,
                 help='Set height.'),
-        Option('-l', '--with-logo', dest='with_logo',
-                action='store_true', default=False,
-                help='Add WL logo in white box.'),
     ]
 
     @staticmethod
