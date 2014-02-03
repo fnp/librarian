@@ -222,7 +222,7 @@ def add_anchors(root):
 def raw_printable_text(element):
     working = copy.deepcopy(element)
     for e in working.findall('a'):
-        if e.get('class') == 'annotation':
+        if e.get('class') in ('annotation', 'theme-begin'):
             e.text = ''
     return etree.tostring(working, method='text', encoding=unicode).strip()
 
