@@ -379,5 +379,10 @@ img.latex {
     display: block;
     width: 50%;
     float: right;
+    clear: both;
+    margin: 10pt;
+    padding: 0pt 5pt;
     background-color: #d0d0d0;
+    font-style: italic;
+    font-size: 0.8em;
 }

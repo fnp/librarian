@@ -122,7 +122,7 @@
 
   <xsl:template match="podtytul" />
 
-  <xsl:template match="naglowek_czesc|srodtytul">
+  <xsl:template match="naglowek_czesc">
     <h2 class="h2" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
@@ -148,7 +148,7 @@
     </h2>
   </xsl:template>
 
-  <xsl:template match="naglowek_podpodrozdzial">
+  <xsl:template match="naglowek_podpodrozdzial|srodtytul">
     <a xmlns="http://www.w3.org/1999/xhtml"></a>
     <div class="p" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
@@ -380,6 +380,7 @@
     <img>
       <xsl:attribute name="src"><xsl:value-of select="@src"/>.<xsl:choose><xsl:when test="@extbitmap"><xsl:value-of select="@extbitmap"/></xsl:when><xsl:otherwise><xsl:value-of select="@ext"/></xsl:otherwise></xsl:choose></xsl:attribute>
     </img>
+    <xsl:apply-templates />
   </xsl:template>
 
   <xsl:template match="img">
