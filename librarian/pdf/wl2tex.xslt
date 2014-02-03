@@ -331,6 +331,7 @@
 <!-- = INLINE TAGS                                  = -->
 <!-- = (contain other inline tags and special tags) = -->
 <!-- ================================================ -->
+
 <xsl:strip-space elements="nota|akap|wyroznienie"/>
 
 <xsl:template mode="inline"
