@@ -20,10 +20,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{multicol}
+\usepackage[landscape]{geometry}
+\usepackage[explicit]{titlesec}
+\usepackage{titletoc}
+\usepackage{fancyhdr}
+\usepackage[MeX]{polski}
+
 \usepackage{trace}
 \usepackage{caption}
 \usepackage{tabularx}
-\usepackage[MeX]{polski}
 \usepackage{icomma}
 \usepackage[xetex]{graphicx}
 \usepackage[silent]{fontspec} % silent - no warnings, quiet - warn only to log
@@ -33,9 +38,8 @@
 \usepackage{xcolor}
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
-\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex,linktocpage]{hyperref}
+\usepackage[colorlinks=false,linkcolor=white,pdfborder={0,0,0},setpagesize=false,urlcolor=black,xetex,linktocpage]{hyperref}
 %\usepackage{hyperref}
-\usepackage{fancyhdr}
 \usepackage{endnotes}
 %\usepackage{fnpos}
 \usepackage{printlen}
@@ -46,12 +50,7 @@
 
 \usepackage{chngcntr}
 \counterwithout{footnote}{chapter}
-
-\usepackage[explicit]{titlesec}
 \usepackage{microtype}
-
-\usepackage[landscape]{geometry}
-
 
 
 %%% Hyphenation opts:
@@ -163,29 +162,46 @@ Mapping=tex-text
 %\renewcommand{\thechapter}{}
 %\renewcommand{\chaptername}{}
 
-% • chapter •
-\makeatletter\newenvironment{chaptertitlebox}{%
-   \begin{lrbox}{\@tempboxa}\begin{minipage}[t][\dimexpr\textheight-0.5cm\relax]{\dimexpr\linewidth-0.5\columnsep\relax}}{\end{minipage}\end{lrbox}%
+% • chapter • • • • • • • • • •
+\makeatletter\newenvironment{chaptertitlebox}{   \begin{lrbox}{\@tempboxa}\begin{minipage}[t][\dimexpr\textheight-0.5cm\relax]{\dimexpr\linewidth-0.5\columnsep\relax}}{\end{minipage}\end{lrbox}%
    \colorbox{graybg}{\raisebox{1cm}{\usebox{\@tempboxa}}}
-}\makeatother
+}
 
+\newcommand{\nochapternumbers}{
+  \renewcommand{\thesection}{\@arabic \c@section .}
+}
+\makeatother
+
+\nochapternumbers
+\startcontents[chapter]
 \titleformat{\chapter}[block]%
 {\begin{chaptertitlebox}}%
 {}{0pt}%
-{:E #1}%
+{\Huge{}\headfont\color{white}#1%
+\newline\printcontents[chapter]{}{1}{}%
+}%
 [\end{chaptertitlebox}]
 
 \titlespacing*{\chapter}{0pt}{0pt}{0pt}
 
 
-% • section •
+% • section • • • • • • • • • • • • • • • 
 \titleformat{\section}[runin]%
-{\large\headfont}%
-{}{0pt}{\makebox[\linewidth][l]{\color{headcolor}\raggedright{}#1}%
+{\large\headfont%\nochapternumbers
+}%
+{}{0pt}{\makebox[\linewidth][l]{\color{headcolor}\raggedright{}\thesection
+    #1}%
 % this is just to make the spacing between section and following
 % text right (newlines produce strange amount of space
 \\\makebox[\linewidth][l]{~}}%
 
+\titlecontents{section}[0pt]{\headfont\large\color{white}}%
+{\thecontentslabel}{\contentsmargin{0pt}}%
+{\hfill\color{white}{\thecontentspage }}
+
+
+% \fboxsep=0pt % for framebox
+% ramki wkokół elementów \fbox{}
 %\titlespacing*{\section}{0pt}{0pt}{2\baselineskip}
 
 
@@ -542,7 +558,9 @@ Mapping=tex-text
 
 
 \newcommand{\naglowekrozdzial}[1]{%
-\chapter[#1]{\MakeUppercase{#1}\theautorrozdzialu{}}
+\startcontents[chapter]
+%
+\chapter[#1]{\MakeUppercase{#1}\theautorrozdzialu{}}%
 \renewcommand{\theautorrozdzialu}{}%
 }
 
