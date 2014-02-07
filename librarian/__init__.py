@@ -72,6 +72,7 @@ XINS = XMLNamespace("http://www.w3.org/2001/XInclude")
 XHTMLNS = XMLNamespace("http://www.w3.org/1999/xhtml")
 NCXNS = XMLNamespace("http://www.daisy.org/z3986/2005/ncx/")
 OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
+PLMETNS = XMLNamespace("http://dl.psnc.pl/schemas/plmet/")
 
 WLNS = EmptyNamespace()
 

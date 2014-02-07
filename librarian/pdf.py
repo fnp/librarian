@@ -28,6 +28,7 @@ from librarian.parser import WLDocument
 from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
 from librarian.cover import DefaultEbookCover
+from .sponsor import sponsor_logo
 
 
 functions.reg_substitute_entities()
@@ -247,10 +248,22 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         style_filename = get_stylesheet("wl2tex")
         style = etree.parse(style_filename)
 
-        texml = document.transform(style)
-
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
+
+        for sponsor in book_info.sponsors:
+            ins = etree.Element("data-sponsor", name=sponsor)
+            logo = sponsor_logo(sponsor)
+            if logo:
+                fname = 'sponsor-%s' % os.path.basename(logo)
+                shutil.copy(logo, os.path.join(temp, fname))
+                ins.set('src', fname)
+            root.insert(0, ins)
+                
+        if book_info.sponsor_note:
+            root.set("sponsor-note", book_info.sponsor_note)
+
+        texml = document.transform(style)
 
         if cover:
             with open(os.path.join(temp, 'cover.png'), 'w') as f:

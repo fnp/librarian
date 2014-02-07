@@ -10,7 +10,7 @@ import re
 from librarian.util import roman_to_int
 
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
-                       XMLNS, WLURI, WLNS)
+                       XMLNS, WLURI, WLNS, PLMETNS)
 
 import lxml.etree as etree # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
@@ -242,6 +242,9 @@ class WorkInfo(object):
         Field( DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
+
+        Field( PLMETNS('digitisationSponsor'), 'sponsors', multiple=True, default=[]),
+        Field( WLNS('digitisationSponsorNote'), 'sponsor_note', required=False),
     )
 
     @classmethod
