@@ -60,8 +60,8 @@
         <env name="document">
             <xsl:if test="@data-cover-width">
                 <cmd name="makecover">
-                    <parm><xsl:value-of select="210 * @data-cover-width div @data-cover-height" />mm</parm>
                     <parm>210mm</parm>
+                    <parm><xsl:value-of select="210 * @data-cover-height div @data-cover-width" />mm</parm>
                 </cmd>
             </xsl:if>
                 <xsl:if test="@thanks">
