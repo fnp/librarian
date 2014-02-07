@@ -13,14 +13,19 @@ class Book2Txt(Book2Anything):
     ext = "txt"
     uses_cover = False
     uses_provider = False
-    parser_args = [
+    parser_options = [
         Option('-i', '--ignore-dublin-core', dest='parse_dublincore', 
                 action='store_false', default=True,
                 help='don\'t try to parse dublin core metadata')
     ]
-    transform_args = [
+    transform_options = [
         Option('-w', '--wrap', action='store', type='int', dest='wrapping', default=0,
                 help='set line wrap column')
+    ]
+    transform_flags = [
+        Option('-r', '--raw', dest='raw-text', 
+                action='store_true', default=False,
+                help='Produce raw text, without any surrounding info.')
     ]
     transform = WLDocument.as_text
 
