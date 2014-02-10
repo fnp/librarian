@@ -37,7 +37,7 @@
 
 
 
-<strofa>Między nami nic nie było!/
+<strofa>Między nami <begin id="b1"/><motyw id="m1">Nicość</motyw>nic nie było!<end id="e1"/>/
 Żadnych zwierzeń, wyznań żadnych!/
 Nic nas z sobą nie łączyło ---/
 Prócz wiosennych marzeń zdradnych;</strofa>

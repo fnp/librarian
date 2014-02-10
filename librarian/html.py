@@ -134,14 +134,17 @@ def extract_fragments(input_filename):
                 fragment = Fragment(id=element.get('fid'), themes=element.text)
 
                 # Append parents
-                if element.getparent().get('id', None) != 'book-text':
-                    parents = [element.getparent()]
-                    while parents[-1].getparent().get('id', None) != 'book-text':
-                        parents.append(parents[-1].getparent())
+                parent = element.getparent()
+                parents = []
+                while parent.get('id', None) != 'book-text':
+                    cparent = copy.deepcopy(parent)
+                    cparent.text = None
+                    parents.append(cparent)
+                    parent = parent.getparent()
 
-                    parents.reverse()
-                    for parent in parents:
-                        fragment.append('start', parent)
+                parents.reverse()
+                for parent in parents:
+                    fragment.append('start', parent)
 
                 open_fragments[fragment.id] = fragment
 
