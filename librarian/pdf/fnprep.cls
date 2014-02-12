@@ -20,7 +20,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{multicol}
-\usepackage[landscape]{geometry}
+%\usepackage[landscape]{geometry}
 \usepackage[explicit]{titlesec}
 \usepackage{titletoc}
 \usepackage{fancyhdr}
@@ -84,6 +84,18 @@
 %%     includehead]{geometry}
 %% \fi
 
+\usepackage[%
+  paperwidth=297mm,%
+  paperheight=210mm,%
+  top=22.578mm,%
+  left=15mm,%
+  right=20mm,%
+  bottom=24.439mm,%
+  headsep=19pt,% 2x grid(14) - 9 (text font size)
+]{geometry}%
+\setlength\columnsep{10mm}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%% Fonts
 
 \setmainfont[
@@ -95,8 +107,9 @@ SmallCapsFont = Lato-Regular,
 SmallCapsFeatures={Letters=SmallCaps},
 Mapping=tex-text
 ]{Lato-Regular}
+\newfontface\latoblack{Lato-Black}
 \newfontface\headfont{LeagueGothic-Regular}
-
+%% Lato Light 
 
 \setlength{\parindent}{3mm}
 \setlength{\parskip}{0mm}
@@ -106,6 +119,56 @@ Mapping=tex-text
 % \Large - troche większy tekst headingowy (spis treści)
 % \huge - pagina tytuł rozdziału
 % \Huge - naglowek na szarym tle
+
+% grid 14, normal 9/12, 
+% sródtytuły leage 10/8 14
+% XXXX pagina: (mała? nie uzywana!)league 8, kerning 60 -› (30, 90), przy nowoczesna polska 100
+% pagina: 28pt od top: 10mm  CMY 0 75 100
+% kolumna-›teskt base 2xgrid
+% tabela header 14pt, LEAGE GOT RE [pad: left:3mm, 1,41mm od góry 
+% tabela  rynna 5mm
+% tabela kreska 0.7pt pomarancz, potem 0.5pt też pomarańcz
+% tabela tekst: 8.5/11pt lato regular (wtedy pomaranczem wyróżnienia)
+% kern 5
+% (bez gridu) (abo 8.5/11pt reglar) , poza interlinią 1mm odpycha enter
+% 
+% footer: --||-- 
+% footer LATO BLACK 15 -- pagina(strona) TYLKO Z PRAWEJ
+% footer srodek. league gothic  10  k70 
+% toc:wstep leag gothic 38  kern 75
+% toc: 11pkt na grid 7 
+% marginesy: top: 22.578 mm bottom 24.439mm rynna 10; out 20mm, ins
+% 15mm
+% sród->text base 2xgrid
+% toc: wstep->text 3xgrid,
+% toc: left: 25mm  right: 25mm
+% toc długość tytułu (łamanie) 10m od końca 
+% toc: od numeru enspace (indent)
+% footer 2xgrid od dołu 9.7mm
+% master toc: margin left: -width - 10 / 2 ; 136mm [3x łam]
+% footnotes SOURCE SANS PRO 8/11pt semibold na gridzie (ale nie musi) spacing
+% 100 
+% master toc: 11pt/21pt leage na pół-grid (jak ejst mniejsze
+% --licencja to 10pt!)
+% master toc head 15pt, 
+% master toc wpisy: 11pt - (można 11pt + black)
+% TYtUL leag gothi  46pt
+% 
+% sponsorzy np 9pt
+\newcommand{\headingbig}{\fontsize{28}{28}\selectfont}
+\renewcommand{\Huge}{\fontsize{38}{42}\selectfont}
+\renewcommand{\huge}{\fontsize{15}{21}\selectfont}
+\renewcommand{\LARGE}{\fontsize{14}{14}\selectfont}
+\renewcommand{\large}{\fontsize{10}{21}\selectfont}
+\renewcommand{\Large}{\fontsize{11}{14}\selectfont}
+\newcommand{\TOCtext}{\fontsize{11}{21}\selectfont}
+\renewcommand{\normalsize}{\fontsize{9}{14}\selectfont}
+\renewcommand{\footnotesize}{\fontsize{8}{10.5}\selectfont} % 
+\renewcommand{\scriptsize}{\fontsize{8.5}{11}\selectfont}
+\newcommand{\titlesize}{\fontsize{46}{46}\selectfont}
+\newcommand{\footerbig}{\fontsize{15}{15}\selectfont}
+\newcommand{\footernormal}{\fontsize{10}{10}\selectfont}
+
 
 %% \renewcommand{\normalsize}{\fontsize{10.4}{14.28}\addfontfeature{LetterSpace=3.0}\selectfont}
 %% \renewcommand{\large}{\fontsize{14}{14.28}\addfontfeature{LetterSpace=3.0,Letters=Uppercase}\selectfont} % srodtytul
@@ -121,7 +184,7 @@ Mapping=tex-text
 \definecolor{stoK}{cmyk}{0,0,0,1}
 \definecolor{theme}{gray}{.3}
 \definecolor{headcolor}{HTML}{EA5F21}
-\definecolor{graybg}{HTML}{737372}
+\definecolor{graybg}{cmyk}{0,0,0,0.55}
 %\color{stoK}
 
 % • • • • • • • • METADATA • •
@@ -139,10 +202,10 @@ Mapping=tex-text
 \fancyhf{}
 \renewcommand{\chaptermark}[1]{\markboth{\MakeTextUppercase{#1}}{}}
 % on the odd right : chapter title
-\fancyhead[LE,RO]{{\color{headcolor}\headfont\huge\leftmark}}
-\fancyfoot[LE,RO]{{\headfont\Large\thepage}}
-\fancyfoot[LO]{{\headfont\normalfont\MakeTextUppercase{\@title}}}
-\fancyfoot[RE]{{\headfont\normalfont\MakeTextUppercase{\@address}}}
+\fancyhead[LE,RO]{{\color{headcolor}\headfont\headingbig\leftmark}}
+\fancyfoot[RO]{{\color{gray}\latoblack\footerbig\thepage}}
+\fancyfoot[RE]{{\color{gray}\headfont\footernormal\MakeTextUppercase{\@title}}}
+\fancyfoot[LO]{{\color{gray}\headfont\footernormal\MakeTextUppercase{\@address}}}
 
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
@@ -152,8 +215,8 @@ Mapping=tex-text
 \makeatletter
 \fancypagestyle{plain}{%
 \fancyhf{}
-\fancyfoot[LE,RO]{{\headfont\Large\thepage}}
-\fancyfoot[LO]{{\headfont\normalfont\MakeTextUppercase{\@title}}}
+\fancyfoot[RO]{{\color{gray}\latoblack\footerbig\thepage}}
+\fancyfoot[LO]{{\color{gray}\headfont\footernormal\MakeTextUppercase{\@address}}}
 }
 \makeatother
 
