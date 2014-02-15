@@ -126,6 +126,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \pagestyle{plain}
 \usepackage{fancyhdr}
+\usepackage{marginnote}
+
 
 \makeatletter
 
@@ -237,6 +239,13 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \footnotesize
     \color{theme}
     \noindent \rule{\linewidth}{0.4pt}
+
+    \ifdefined\sponsors
+        \marginnote{%
+            \centering%
+            \sponsors%
+        }
+    \fi
 
     \rightsinfo
     \vspace{.6em}

@@ -12,7 +12,7 @@ class Book2Pdf(Book2Anything):
     ext = "pdf"
     uses_cover = True
     uses_provider = True
-    transform_args = [
+    transform_options = [
         Option('-t', '--save-tex', dest='save_tex', metavar='FILE',
                 help='path to save the intermediary LaTeX file to'),
         Option('-m', '--morefloats', dest='morefloats', metavar='old/new/none',

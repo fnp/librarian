@@ -134,14 +134,17 @@ def extract_fragments(input_filename):
                 fragment = Fragment(id=element.get('fid'), themes=element.text)
 
                 # Append parents
-                if element.getparent().get('id', None) != 'book-text':
-                    parents = [element.getparent()]
-                    while parents[-1].getparent().get('id', None) != 'book-text':
-                        parents.append(parents[-1].getparent())
+                parent = element.getparent()
+                parents = []
+                while parent.get('id', None) != 'book-text':
+                    cparent = copy.deepcopy(parent)
+                    cparent.text = None
+                    parents.append(cparent)
+                    parent = parent.getparent()
 
-                    parents.reverse()
-                    for parent in parents:
-                        fragment.append('start', parent)
+                parents.reverse()
+                for parent in parents:
+                    fragment.append('start', parent)
 
                 open_fragments[fragment.id] = fragment
 
@@ -177,25 +180,22 @@ def extract_fragments(input_filename):
 
 
 def add_anchor(element, prefix, with_link=True, with_target=True, link_text=None):
+    parent = element.getparent()
+    index = parent.index(element)
+
     if with_link:
         if link_text is None:
             link_text = prefix
         anchor = etree.Element('a', href='#%s' % prefix)
         anchor.set('class', 'anchor')
         anchor.text = unicode(link_text)
-        if element.text:
-            anchor.tail = element.text
-            element.text = u''
-        element.insert(0, anchor)
+        parent.insert(index, anchor)
 
     if with_target:
         anchor_target = etree.Element('a', name='%s' % prefix)
         anchor_target.set('class', 'target')
         anchor_target.text = u' '
-        if element.text:
-            anchor_target.tail = element.text
-            element.text = u''
-        element.insert(0, anchor_target)
+        parent.insert(index, anchor_target)
 
 
 def any_ancestor(element, test):
@@ -225,7 +225,7 @@ def add_anchors(root):
 def raw_printable_text(element):
     working = copy.deepcopy(element)
     for e in working.findall('a'):
-        if e.get('class') == 'annotation':
+        if e.get('class') in ('annotation', 'theme-begin'):
             e.text = ''
     return etree.tostring(working, method='text', encoding=unicode).strip()
 

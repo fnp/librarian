@@ -248,9 +248,11 @@ class WLCover(Cover):
     logo_width = 140
 
     bar_width = 35
+    bar_color = '#000'
+    box_position = 'middle'
     background_color = '#444'
     author_color = '#444'
-    default_background = get_resource('res/cover.png')
+    background_img = get_resource('res/cover.png')
     format = 'JPEG'
 
     epoch_colors = {
@@ -266,11 +268,25 @@ class WLCover(Cover):
         u'Współczesność': '#06393d',
     }
 
-    def __init__(self, book_info, format=None, width=None, height=None, with_logo=False):
+    kind_box_position = {
+        u'Liryka': 'top',
+        u'Epika': 'bottom',
+    }
+
+    def __init__(self, book_info, format=None, width=None, height=None):
         super(WLCover, self).__init__(book_info, format=format, width=width, height=height)
-        self.kind = book_info.kind
-        self.epoch = book_info.epoch
-        self.with_logo = with_logo
+        # Set box position.
+        self.box_position = book_info.cover_box_position or \
+            self.kind_box_position.get(book_info.kind, self.box_position)
+        # Set bar color.
+        if book_info.cover_bar_color == 'none':
+            self.bar_width = 0
+        else:
+            self.bar_color = book_info.cover_bar_color or \
+                self.epoch_colors.get(book_info.epoch, self.bar_color)
+        # Set title color.
+        self.title_color = self.epoch_colors.get(book_info.epoch, self.title_color)
+
         if book_info.cover_url:
             url = book_info.cover_url
             bg_src = None
@@ -278,22 +294,69 @@ class WLCover(Cover):
                 bg_src = URLOpener().open(url)
             self.background_img = StringIO(bg_src.read())
             bg_src.close()
-        else:
-            self.background_img = self.default_background
 
     def pretty_author(self):
         return self.author.upper()
+
+    def add_box(self, img):
+        if self.box_position == 'none':
+            return img
+
+        metr = Metric(self, self.scale)
+
+        # Write author name.
+        box = TextBox(metr.title_box_width, metr.height, padding_y=metr.box_padding_y)
+        author_font = ImageFont.truetype(
+            self.author_font_ttf, metr.author_font_size)
+        box.text(self.pretty_author(),
+                 font=author_font,
+                 line_height=metr.author_lineskip,
+                 color=self.author_color,
+                 shadow_color=self.author_shadow,
+                )
+
+        box.skip(metr.box_above_line)
+        box.draw.line((metr.box_line_left, box.height, metr.box_line_right, box.height),
+                fill=self.author_color, width=metr.box_line_width)
+        box.skip(metr.box_below_line)
+
+        # Write title.
+        title_font = ImageFont.truetype(
+            self.title_font_ttf, metr.title_font_size)
+        box.text(self.pretty_title(),
+                 line_height=metr.title_lineskip,
+                 font=title_font,
+                 color=self.title_color,
+                 shadow_color=self.title_shadow,
+                )
+
+        box_img = box.image()
+
+        # Find box position.
+        if self.box_position == 'top':
+            box_top = metr.box_top_margin
+        elif self.box_position == 'bottom':
+            box_top = metr.height - metr.box_bottom_margin - box_img.size[1]
+        else:   # Middle.
+            box_top = (metr.height - box_img.size[1]) / 2
+
+        box_left = metr.bar_width + (metr.width - metr.bar_width -
+                        box_img.size[0]) / 2
+
+        # Draw the white box.
+        ImageDraw.Draw(img).rectangle((box_left, box_top,
+            box_left + box_img.size[0], box_top + box_img.size[1]),
+            fill='#fff')
+        # Paste the contents into the white box.
+        img.paste(box_img, (box_left, box_top), box_img)
+        return img
 
     def image(self):
         metr = Metric(self, self.scale)
         img = Image.new('RGB', (metr.width, metr.height), self.background_color)
         draw = ImageDraw.Draw(img)
 
-        if self.epoch in self.epoch_colors:
-            epoch_color = self.epoch_colors[self.epoch]
-        else:
-            epoch_color = '#000'
-        draw.rectangle((0, 0, metr.bar_width, metr.height), fill=epoch_color)
+        draw.rectangle((0, 0, metr.bar_width, metr.height), fill=self.bar_color)
 
         if self.background_img:
             src = Image.open(self.background_img)
@@ -318,61 +381,7 @@ class WLCover(Cover):
             img.paste(src, (metr.bar_width, 0))
             del src
 
-        box = TextBox(metr.title_box_width, metr.height, padding_y=metr.box_padding_y)
-        author_font = ImageFont.truetype(
-            self.author_font_ttf, metr.author_font_size)
-        box.text(self.pretty_author(),
-                 font=author_font,
-                 line_height=metr.author_lineskip,
-                 color=self.author_color,
-                 shadow_color=self.author_shadow,
-                )
-
-        box.skip(metr.box_above_line)
-        box.draw.line((metr.box_line_left, box.height, metr.box_line_right, box.height),
-                fill=self.author_color, width=metr.box_line_width)
-        box.skip(metr.box_below_line)
-
-        title_font = ImageFont.truetype(
-            self.title_font_ttf, metr.title_font_size)
-        box.text(self.pretty_title(),
-                 line_height=metr.title_lineskip,
-                 font=title_font,
-                 color=epoch_color,
-                 shadow_color=self.title_shadow,
-                )
-
-        if self.with_logo:
-            logo = Image.open(get_resource('res/wl-logo-mono.png'))
-            logo = logo.resize((metr.logo_width, logo.size[1] * metr.logo_width / logo.size[0]), Image.ANTIALIAS)
-            alpha = logo.split()[3]
-            alpha = ImageEnhance.Brightness(alpha).enhance(.75)
-            logo.putalpha(alpha)
-            box.skip(metr.logo_top + logo.size[1])
-
-        box_img = box.image()
-
-        if self.kind == 'Liryka':
-            # top
-            box_top = metr.box_top_margin
-        elif self.kind == 'Epika':
-            # bottom
-            box_top = metr.height - metr.box_bottom_margin - box_img.size[1]
-        else:
-            # center
-            box_top = (metr.height - box_img.size[1]) / 2
-
-        box_left = metr.bar_width + (metr.width - metr.bar_width -
-                        box_img.size[0]) / 2
-        draw.rectangle((box_left, box_top,
-            box_left + box_img.size[0], box_top + box_img.size[1]),
-            fill='#fff')
-        img.paste(box_img, (box_left, box_top), box_img)
-
-        if self.with_logo:
-            img.paste(logo, 
-                (box_left + (box_img.size[0] - logo.size[0]) / 2,
-                    box_top + box_img.size[1] - metr.box_padding_y - logo.size[1]), mask=logo)
+        img = self.add_box(img)
 
         return img
 

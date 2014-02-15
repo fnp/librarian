@@ -10,7 +10,7 @@ import re
 from librarian.util import roman_to_int
 
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
-                       XMLNS, WLURI)
+                       XMLNS, WLURI, WLNS, PLMETNS)
 
 import lxml.etree as etree # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
@@ -242,6 +242,9 @@ class WorkInfo(object):
         Field( DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
         Field( DCNS('rights.license'), 'license', required=False),
         Field( DCNS('rights'), 'license_description'),
+
+        Field( PLMETNS('digitisationSponsor'), 'sponsors', multiple=True, default=[]),
+        Field( WLNS('digitisationSponsorNote'), 'sponsor_note', required=False),
     )
 
     @classmethod
@@ -448,6 +451,9 @@ class BookInfo(WorkInfo):
         Field( DCNS('relation.coverImage.url'), 'cover_url', required=False),
         Field( DCNS('relation.coverImage.attribution'), 'cover_by', required=False),
         Field( DCNS('relation.coverImage.source'), 'cover_source', required=False),
+        # WLCover-specific.
+        Field( WLNS('coverBarColor'), 'cover_bar_color', required=False),
+        Field( WLNS('coverBoxPosition'), 'cover_box_position', required=False),
     )
 
 

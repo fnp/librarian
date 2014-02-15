@@ -17,7 +17,7 @@ class Book2Html(Book2Anything):
                 action='store_false', default=True,
                 help='output raw text for use in templates')
     ]
-    parser_args = [
+    parser_options = [
         Option('-i', '--ignore-dublin-core', dest='parse_dublincore', 
                 action='store_false', default=True,
                 help='don\'t try to parse dublin core metadata')

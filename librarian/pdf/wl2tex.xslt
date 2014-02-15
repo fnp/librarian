@@ -110,6 +110,24 @@
                     \def\funders{Publikację ufundowali i ufundowały:
                         <TeXML escape="1"><xsl:value-of select="@funders" /></TeXML>.}
                 </xsl:if>
+
+                <xsl:if test="@sponsor-note|data-sponsor">
+                    \def\sponsors{
+                        \scriptsize
+                        <xsl:choose>
+                            <xsl:when test="@sponsor-note">
+                                <TeXML escape="1"><xsl:value-of select="@sponsor-note" /></TeXML>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                Sfinansowano ze~środków:
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                        \vspace{1em}
+
+                        <xsl:apply-templates select="data-sponsor" mode="sponsor" />
+                    }
+                </xsl:if>
             </TeXML>
 
             <cmd name="editorialsection" />
@@ -404,6 +422,18 @@
     </xsl:if>
 </xsl:template>
 
+<xsl:template match="data-sponsor" mode="sponsor">
+    <cmd name="par"><parm>
+    <xsl:choose>
+        <xsl:when test="@src">
+            \includegraphics[height=0.25\textwidth,width=0.25\textwidth,keepaspectratio]{<xsl:value-of select="@src" />}
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="@name" />
+        </xsl:otherwise>
+    </xsl:choose>
+    </parm></cmd>
+</xsl:template>
 
 <!-- ============== -->
 <!-- = ADDED TAGS = -->

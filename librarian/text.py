@@ -45,6 +45,8 @@ def transform(wldoc, flags=None, **options):
     if flags:
         for flag in flags:
             document.edoc.getroot().set(flag, 'yes')
+    if 'wrapping' in options:
+        options['wrapping'] = str(options['wrapping'])
 
     result = document.transform(style, **options)
 
