@@ -218,12 +218,18 @@ div.didaskalia
 .paragraph
 {
 	text-align: justify;
-	margin: 0
+	margin: 0;
+	text-indent: 1.2em;
 }
 
-.paragraph + .paragraph
+h1 + .paragraph, h2 + .paragraph
 {
-	text-indent: 1.2em;
+	text-indent: 0;
+}
+
+h2 + .paragraph:first-letter
+{
+    font-size: 1.6em;
 }
 
 .motto
