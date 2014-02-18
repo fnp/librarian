@@ -20,7 +20,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{multicol}
-%\usepackage[landscape]{geometry}
 \usepackage[explicit]{titlesec}
 \usepackage{titletoc}
 \usepackage{fancyhdr}
@@ -41,6 +40,19 @@
 \usepackage[colorlinks=false,linkcolor=white,pdfborder={0,0,0},setpagesize=false,urlcolor=black,xetex,linktocpage]{hyperref}
 %\usepackage{hyperref}
 \usepackage{endnotes}
+\let\footnote=\endnote
+\newcommand{\printfootnotes}{%
+  \markboth{\MakeTextUppercase{Przypisy}}{}
+  \renewcommand{\enoteheading}{}
+  \begingroup
+  \cleardoublepage
+  \parindent 0pt
+  \parskip 2ex
+  \def\enotesize{\normalsize}
+  \theendnotes
+  \endgroup
+}
+
 %\usepackage{fnpos}
 \usepackage{printlen}
 \usepackage{calc}
@@ -62,39 +74,19 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%% Paper size
-%\setlength\baselineskip{7.14pt}
-%% \ifcutafivepaper
-%%   \usepackage[%
-%%     paperwidth=160mm,%
-%%     paperheight=225mm,%
-%%     text={117mm,162mm},%
-%%     top=30mm,%
-%%     headsep=8mm,%
-%%     left=23mm,%
-%%     right=30mm]{geometry}%
-%% \else
-%%   \usepackage[%
-%%     top=\dimexpr14.5mm+\baselineskip-16pt\relax, % margin will be smaller to accomodate for bigger header (16pt)
-%%     headsep=3\baselineskip,
-%%     headheight=16pt,
-%%     bottom=26.3mm,%
-%%     inner=14.5mm,%
-%%     outer=22.5mm,%
-%%     textheight=\dimexpr7.14pt*(32*2+1)\relax,%
-%%     includehead]{geometry}
-%% \fi
 
 \usepackage[%
   paperwidth=297mm,%
   paperheight=210mm,%
-  top=22.578mm,%
+  top=\dimexpr22.578mm+28pt\relax,%
   left=15mm,%
   right=20mm,%
   bottom=24.439mm,%
-  headsep=19pt,% 2x grid(14) - 9 (text font size)
+  headsep=47pt,% 2x grid(14) - 9 (text font size) + 28pt
 ]{geometry}%
 \setlength\columnsep{10mm}
-
+\newlength\szpaltawidth
+\setlength\szpaltawidth{80mm}
 
 %%%%%%%%%%%%%%%%%%%%%%%% Fonts
 
