@@ -151,7 +151,7 @@ Mapping=tex-text
 \renewcommand{\Huge}{\fontsize{38}{42}\selectfont}
 \renewcommand{\huge}{\fontsize{15}{21}\selectfont}
 \renewcommand{\LARGE}{\fontsize{14}{14}\selectfont}
-\renewcommand{\large}{\fontsize{10}{21}\selectfont}
+\renewcommand{\large}{\fontsize{10}{14}\selectfont} % 21
 \renewcommand{\Large}{\fontsize{11}{14}\selectfont}
 \newcommand{\TOCtext}{\fontsize{11}{21}\selectfont}
 \renewcommand{\normalsize}{\fontsize{9}{14}\selectfont}
@@ -218,10 +218,20 @@ Mapping=tex-text
 %\renewcommand{\chaptername}{}
 
 % • chapter • • • • • • • • • •
-\makeatletter\newenvironment{chaptertitlebox}{   \begin{lrbox}{\@tempboxa}\begin{minipage}[t][\dimexpr\textheight-0.5cm\relax]{\dimexpr\linewidth-0.5\columnsep\relax}}{\end{minipage}\end{lrbox}%
-   \colorbox{graybg}{\raisebox{1cm}{\usebox{\@tempboxa}}}
-}
 
+
+%% \newsavebox{\chaptitlebox}
+%% \newenvironment{chaptertitlebox}%
+%% {\begin{lrbox}{\chaptitlebox}\begin{minipage}{\dimexpr\linewidth-0.5\columnsep\relax}}%
+%% {\vfill\end{minipage}\end{lrbox}%
+%% \vspace{-5mm}\colorbox{graybg}{\usebox{\chaptitlebox}}%
+%% } 
+
+%% \begin{lrbox}{\@tempboxa}\begin{minipage}[t][\dimexpr\textheight-0.5cm\relax]{\dimexpr\linewidth-0.5\columnsep\relax}}{\end{minipage}\end{lrbox}%
+%%    \colorbox{graybg}{\raisebox{1cm}{\usebox{\@tempboxa}}}
+%% }
+
+\makeatletter
 \newcommand{\nochapternumbers}{
   \renewcommand{\thesection}{\@arabic \c@section .}
 }
@@ -229,30 +239,37 @@ Mapping=tex-text
 
 \nochapternumbers
 \startcontents[chapter]
-\titleformat{\chapter}[block]%
-{\begin{chaptertitlebox}}%
-{}{0pt}%
-{\Huge{}\headfont\color{white}#1%
-\newline\printcontents[chapter]{}{1}{}%
-}%
-[\end{chaptertitlebox}]
+
+\newcommand{\chapterblock}[1]{%
+\clearpage%
+\addcontentsline{toc}{chapter}{#1}%
+\setlength{\fboxsep}{0pt}%
+\noindent\colorbox{graybg}{%
+\rule{0pt}{28pt}%
+\hspace{2.5mm}%
+\begin{minipage}[t][\dimexpr\textheight-28pt\relax]{\dimexpr\szpaltawidth-5mm\relax}%
+\Huge{}\headfont\color{white}#1%
+\vspace{\dimexpr21mm-11mm\relax}%
+\par{\printcontents[chapter]{}{1}{}}
+\end{minipage}%(testing)%\rule{0.1pt}{\baselineskip}%
+\hspace{2.5mm}}%
+\vspace{\dimexpr-\parskip-11pt\relax}%
+}
 
 \titlespacing*{\chapter}{0pt}{0pt}{0pt}
-
 
 % • section • • • • • • • • • • • • • • • 
 \titleformat{\section}[runin]%
 {\large\headfont%\nochapternumbers
 }%
-{}{0pt}{\makebox[\linewidth][l]{\color{headcolor}\raggedright{}\thesection
-    #1}%
+{}{0pt}{\makebox[\linewidth][l]{\color{headcolor}\raggedright{}\thesection\enskip #1}%
 % this is just to make the spacing between section and following
 % text right (newlines produce strange amount of space
-\\\makebox[\linewidth][l]{~}}%
+\makebox[\linewidth][l]{~}}%
 
-\titlecontents{section}[0pt]{\headfont\large\color{white}}%
-{\thecontentslabel}{\contentsmargin{0pt}}%
-{\hfill\color{white}{\thecontentspage }}
+\titlecontents{section}[0pt]{\headfont\Large\color{white}}%
+{\thecontentslabel\enspace}{\contentsmargin{0pt}}%
+{\hfill\color{white}{\thecontentspage}}
 
 
 % \fboxsep=0pt % for framebox
@@ -614,9 +631,9 @@ Mapping=tex-text
 
 \newcommand{\naglowekrozdzial}[1]{%
 \startcontents[chapter]
+\markboth{#1}{}
 %
-\chapter[#1]{\MakeUppercase{#1}\theautorrozdzialu{}}%
-\renewcommand{\theautorrozdzialu}{}%
+\chapterblock{#1}
 }
 
 \newcommand{\naglowekosoba}[1]{%
@@ -625,7 +642,6 @@ Mapping=tex-text
 \newcommand{\naglowekpodrozdzial}[1]{%
 \section{#1}\nopagebreak%
 }
-
 \newcommand{\miejsceczas}[1]{%
 \par{\emph{#1}}%
 }
