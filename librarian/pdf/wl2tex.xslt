@@ -437,6 +437,56 @@
   </TeXML>
 </xsl:template>
 
+<!-- TODO: this needs parameters, but we need to determine which
+     - cols: number of cols?
+     - first: is first column special?
+
+ -->
+<xls:template match="tabela">
+  <cmd name="begin"><parm>tabela</parm> </cmd>
+  <xsl:apply-templates mode="tabela"/>
+  <cmd name="end"><parm>tabela</parm> </cmd>
+</xls:template>
+
+<xsl:template match="r" mode="tabela">
+  <xsl:choose>
+    <xsl:when test="position() = 1">
+      <cmd name="tabelanaglowek"><parm>
+	<xsl:apply-templates mode="tabelanaglowek"/>
+      </parm></cmd>
+    </xsl:when>
+    <xsl:otherwise>
+      <cmd name="tabelawiersz"><parm>
+	<xsl:apply-templates mode="tabelawiersz"/>
+      </parm></cmd>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template match="c" mode="tabelanaglowek">
+  <xsl:if test="position() > 1">&amp;</xsl:if>
+  <cmd name="tabelakomnaglowek"><parm>
+    <xsl:apply-templates mode="inline"/>
+  </parm></cmd>
+</xsl:template>
+
+<xsl:template match="c" mode="tabelawiersz">
+  <xsl:choose>
+    <xsl:when test="position() = 1">
+      <cmd name="tabelakompierwsza"><parm>
+	<xsl:apply-templates mode="inline"/>
+      </parm></cmd>
+    </xsl:when>
+    <xsl:otherwise>
+      &amp;<cmd name="tabelakom"><parm>
+	<xsl:apply-templates mode="inline"/>
+      </parm></cmd>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+
+
 
 <xsl:template match="tablewrap">
   <cmd name="begin"><parm>table</parm><opt>h!</opt></cmd>

@@ -769,3 +769,34 @@ Mapping=tex-text
 \newcommand{\link}[2]{\href{#1}{\uline{#2}\footnote{#1}}}
 
 \newcommand{\www}[1]{{\normalfont\href{#1}{#1}}}
+
+% TABELA %
+
+\newenvironment{tabela}[0]%
+{\begin{longtable}{p{40mm}@{\hspace{5mm}}p{65mm}@{\hspace{5mm}}p{65mm}@{\hspace{5mm}}p{65mm}}}%
+{\end{longtable}}
+
+\newcommand{\formatkomnaglowek}[1]% reset format
+             {{\LARGE\headfont\color{headcolor}\MakeTextUppercase{#1}}}
+\newcommand{\formatkompierwsza}[1]% reset format
+             {{\LARGE\headfont\color{graybg}\MakeTextUppercase{#1}}}
+\newcommand{\formatkom}[1]{\scriptsize{}#1} % nop
+
+\newcommand{\tabelanaglowek}[1]{%
+    #1
+    \\[4mm]
+    \endhead
+}
+
+\newcommand{\tabelawiersz}[1]{
+    \cmidrule[0.7pt](r{5mm}){1-1}
+    \cmidrule[0.7pt](r{5mm}){2-2}
+    \cmidrule[0.7pt](r{5mm}){3-3}
+    \cmidrule[0.7pt](r{5mm}){4-4} \\[3mm]
+    #1
+    \\[4mm]
+}
+
+\newcommand{\tabelakomnaglowek}[1]{\formatkomnaglowek{#1}}
+\newcommand{\tabelakompierwsza}[1]{\formatkompierwsza{#1}}
+\newcommand{\tabelakom}[1]{\formatkom{#1}}
