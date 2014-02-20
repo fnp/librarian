@@ -61,11 +61,13 @@
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
-\LoadClass[a4paper,oneside]{book}
+%\LoadClass[a4paper,oneside]{book}
+\LoadClass[a4paper]{book}
 
 
 \usepackage{trace}
 
+\usepackage{tabularx}
 \usepackage[MeX]{polski}
 
 \usepackage[xetex]{graphicx}
@@ -75,7 +77,9 @@
 
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
-\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
+\usepackage[hyphens]{url}
+%\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex,unicode]{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=blue,xetex,unicode]{hyperref}
 
 \ifenablewlfont
 \setmainfont [
@@ -149,9 +153,12 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
+% CAUTION! Manually entered text.
+%\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
+\rfoot[{\footnotesize \thepage}]{{\footnotesize \textsc{\@author} \emph{Dlaczego nie warto blokować użycia komercyjnego\ldots}}}
 \cfoot{}
-\rfoot{{\footnotesize \thepage}}
+%\rfoot{{\footnotesize \thepage}}
+\lfoot[{\footnotesize \textsc{\@author} \emph{Dlaczego nie warto blokować użycia komercyjnego\ldots}}]{{\footnotesize \thepage}}
 
 \clubpenalty=100000
 \widowpenalty=100000
@@ -203,22 +210,30 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \footnotesize
     \color{theme}
 
-    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
-        \href{http://www.wolnelektury.pl}{\xbox{\includegraphics[width=\textwidth]{wl-logo.png}}}
+    \noindent \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
+        %\href{http://prawokultury.pl}{\xbox{\includegraphics[width=1in]{prawokultury-logo.png}}}
+        \href{http://koed.org.pl}{\xbox{\includegraphics[height=.55in]{koedlogo.png}}}
     \end{minipage}
-    \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
+    \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
+        \raggedright
+        %\xbox{\includegraphics[width=1.6in]{trust-logo.eps}}
+        \href{http://nowoczesnapolska.org.pl}{\xbox{\includegraphics[height=.55in]{nowoczesnapolska.org.pl.png}}}
+        \vspace{.5em}
+    \end{minipage}
+
+%    \begin{minipage}[t]{.45\textwidth}\vspace{0pt}
 
     \ifflaglessadvertising
     \else
-        \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
-        \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
+        %\noindent Ten rozdział pochodzi z książki \emph{\@title}, która zostanie opublikowana w portalu
+        %\href{http://prawokultury.pl/}{prawokultury.pl}.
         \vspace{.5em}
     \fi
 
-    Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
-    przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
+ %   Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
+  %  przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
 
-    \end{minipage}
+ %   \end{minipage}
     \noindent \rule{\linewidth}{0.4pt}
 
     \vspace{.6em}
@@ -236,9 +251,9 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \rightsinfo
     \vspace{.6em}
 
-    Źródło: \href{\bookurl}{\bookurl}
+    %Źródło: \href{\bookurl}{\bookurl}
 
-    \vspace{.6em}
+    %\vspace{.6em}
     \sourceinfo
 
     \description
@@ -272,7 +287,8 @@ Letters={Uppercase}
 }
 
 \newcommand{\typosection}[1]{%
-{\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{2}#1}}
+%{\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{2}#1}}
+{\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{1.7}#1}}
 %{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
 }
 
@@ -295,7 +311,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\nazwautworu}[1]{%
-\section*{\typosection{#1}}%
+\section*{\raggedright{\typosection{#1}}}%
 }
 
 \newcommand{\podtytul}[1]{%
@@ -329,6 +345,7 @@ Letters={Uppercase}
 
 \newcommand{\dlugicytat}[1]{%
 \begin{quotation}%
+\raggedright%
 #1%
 \end{quotation}%
 }
@@ -371,21 +388,24 @@ Letters={Uppercase}
 \subsection*{\typosubsection{#1}}%
 }
 \newcommand{\srodtytul}[1]{%
-\subsection*{\typosubsection{#1}}%
+\par{\typosubsubsection{#1}}%
+%\subsection*{\typosubsection{#1}}%
 }
 
 \newcommand{\naglowekscena}[1]{%
 \subsubsection*{\typosubsubsection{#1}}%
 }
 \newcommand{\naglowekrozdzial}[1]{%
-\subsubsection*{\typosubsubsection{#1}}%
+\subsection*{\raggedright \typosubsection{#1}}%
+%\subsubsection*{\typosubsubsection{#1}}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
 \par{\textsc{#1}}\nopagebreak%
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
-\par{#1}\nopagebreak%
+\subsubsection*{\typosubsubsection{#1}}%
+%\par{#1}\nopagebreak%
 }
 
 \newcommand{\miejsceczas}[1]{%
@@ -490,3 +510,26 @@ Letters={Uppercase}
 \fi
 }
 
+
+\newcommand{\www}[1]{%
+%\href{#1}{#1}%
+\url{#1}%
+}
+\newcommand{\listanum}[1]{%
+\begin{enumerate}%
+#1%
+\end{enumerate}%
+}
+\newcommand{\listapunkt}[1]{%
+\begin{itemize}%
+#1%
+\end{itemize}%
+}
+\newcommand{\punkt}[1]{%
+\item #1%
+}
+\newcommand{\ilustr}[2]{%
+\vspace{1em}%
+\par{\noindent\includegraphics[width=\textwidth]{#1}}%
+\vspace{1em}%
+}

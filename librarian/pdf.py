@@ -35,6 +35,8 @@ functions.reg_strip()
 functions.reg_starts_white()
 functions.reg_ends_white()
 functions.reg_texcommand()
+functions.reg_urlquote()
+functions.reg_breakurl()
 
 STYLESHEETS = {
     'wl2tex': 'pdf/wl2tex.xslt',
@@ -83,7 +85,7 @@ def substitute_hyphens(doc):
     insert_tags(doc,
                 re.compile("(?<=[^-\s])-(?=[^-\s])"),
                 "dywiz",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+                exclude=[DCNS("identifier.url"), DCNS("rights.license"), 'www']
                 )
 
 
@@ -147,7 +149,8 @@ def parse_creator(doc):
     and adds *_parsed versions with forenames first.
     """
     for person in doc.xpath("|".join('//dc:'+(tag) for tag in (
-                    'creator', 'contributor.translator')),
+                    'creator', 'contributor.translator',
+                    'contributor.editor', 'contributor.technical_editor')),
                     namespaces = {'dc': str(DCNS)})[::-1]:
         if not person.text:
             continue
@@ -248,6 +251,9 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
 
+        for ilustr in document.edoc.findall("//ilustr"):
+            shutil.copy(ilustr.get("src"), temp)
+
         if cover:
             with open(os.path.join(temp, 'cover.png'), 'w') as f:
                 bound_cover.save(f)
@@ -266,6 +272,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
+        #shutil.copy(get_resource('res/prawokultury-logo.png'), temp)
+        #shutil.copy(get_resource('res/trust-logo.eps'), temp)
+        shutil.copy(get_resource('res/nowoczesnapolska.org.pl.png'), temp)
+        shutil.copy(get_resource('res/koedlogo.png'), temp)
 
         try:
             cwd = os.getcwd()

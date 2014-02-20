@@ -155,16 +155,16 @@
             \href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
             Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
         <xsl:if test=".//dc:rights.license">
-            \def\rightsinfo{Ten utwór jest udostepniony na licencji
-            \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
+            \def\rightsinfo{Ten utwór jest udostępniony na licencji\\
+            \href{<xsl:value-of select=".//dc:rights.license" />}{<TeXML escape="1"><xsl:apply-templates select=".//dc:rights" mode="inline" /></TeXML>}.}
         </xsl:if>
 
         \def\sourceinfo{
             <xsl:if test=".//dc:source">
-                Tekst opracowany na podstawie: <xsl:apply-templates select=".//dc:source" mode="inline" />
+                Tekst opracowany na podstawie: <TeXML escape="1"><xsl:apply-templates select=".//dc:source" mode="inline" /></TeXML>
                 \vspace{.6em}
             </xsl:if>}
-        \def\description{<xsl:apply-templates select=".//dc:description" mode="inline" />}
+        \def\description{\raggedright <TeXML escape="1"><xsl:apply-templates select=".//dc:description" mode="inline" /></TeXML>}
     </TeXML>
 </xsl:template>
 
@@ -229,6 +229,76 @@
     </cmd>
 </xsl:template>
 
+
+<xsl:template match="tabela|tabelka">
+    <cmd name="par" />
+    <cmd name="vspace"><parm>1em</parm></cmd>
+    <group><cmd name="raggedright" />
+    <env name="tabularx">
+      <parm><cmd name="textwidth"/></parm>
+        <xsl:choose>
+        <xsl:when test="@ramka='1' or @ramki='1'">
+        <parm><spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/></parm>
+        <cmd name="hline" />
+        <xsl:apply-templates mode="wiersze-ramki"/>
+        </xsl:when>
+        <xsl:otherwise>
+        <parm>XXXXX</parm>
+        <xsl:apply-templates/>
+        </xsl:otherwise>
+        </xsl:choose>
+    </env>
+    </group>
+    <cmd name="vspace"><parm>1em</parm></cmd>
+</xsl:template>
+<xsl:template match="wiersz" mode="wiersze-ramki">
+    <xsl:apply-templates />
+    <spec cat="esc"/><spec cat="esc"/>
+    <cmd name="hline" gr="0" />
+</xsl:template>
+<xsl:template match="wiersz">
+    <xsl:apply-templates />
+    <spec cat="esc"/><spec cat="esc"/>
+</xsl:template>
+
+<xsl:template match="kol">
+    <xsl:apply-templates mode="inline"/>
+    <xsl:if test="position() &lt; last()">
+    <spec cat="align"/>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="punkt">
+    <cmd name="punkt"><parm>
+        <xsl:choose>
+        <xsl:when test=".//akap">
+            <xsl:apply-templates />
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:apply-templates mode="inline"/>
+        </xsl:otherwise>
+        </xsl:choose>
+    </parm></cmd>
+</xsl:template>
+<xsl:template match="lista">
+    <xsl:if test="@typ='num'">
+        <cmd name="listanum">
+            <parm><xsl:apply-templates /></parm>
+        </cmd>
+    </xsl:if>
+    <xsl:if test="@typ='punkt'">
+        <cmd name="listapunkt">
+            <parm><xsl:apply-templates /></parm>
+        </cmd>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="ilustr">
+    <cmd name="ilustr">
+        <parm><xsl:value-of select="@src" /></parm>
+        <parm><xsl:value-of select="@alt" /></parm>
+    </cmd>
+</xsl:template>
 
 <!-- ========================================== -->
 <!-- = PARAGRAPH TAGS                         = -->
@@ -323,6 +393,13 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="www" mode="inline">
+    <cmd name="href">
+        <parm><xsl:value-of select="wl:urlquote(text())" /></parm>
+        <parm><cmd name="url"><parm><xsl:value-of select="text()" /></parm></cmd></parm>
+    </cmd>
+</xsl:template>
+
 
 
 <xsl:template match="tytul_dziela" mode="inline">
@@ -377,11 +454,29 @@
 </xsl:template>
 
 <xsl:template name="editors">
-    <xsl:if test="@editors">
+    <!--xsl:if test="@editors">
         <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
         <xsl:value-of select="@editors" />
         <xsl:text>.</xsl:text>
+    </xsl:if-->
+    <xsl:if test=".//dc:contributor.editor_parsed">
+    <cmd name="par"><parm>Redakcja literacka:
+    <xsl:for-each select=".//dc:contributor.editor_parsed">
+        <xsl:if test="position() != 1">, </xsl:if>
+        <xsl:apply-templates mode="inline" />
+    </xsl:for-each>
+    </parm></cmd>
     </xsl:if>
+    <xsl:if test=".//dc:contributor.technical_editor_parsed">
+    <cmd name="par"><parm>Redakcja techniczna:
+    <xsl:for-each select=".//dc:contributor.technical_editor_parsed">
+        <xsl:if test="position() != 1">, </xsl:if>
+        <xsl:apply-templates mode="inline" />
+    </xsl:for-each>
+    </parm></cmd>
+    </xsl:if>
+
+
 </xsl:template>
 
 <xsl:template name="translators">
@@ -415,6 +510,8 @@
         <xsl:apply-templates mode="inline" />
     </group>
 </xsl:template>
+
+
 
 <!-- ================ -->
 <!-- = IGNORED TAGS = -->

@@ -5,6 +5,7 @@
 #
 from lxml import etree
 import re
+from urllib import quote
 
 from librarian.dcparser import Person
 
@@ -103,4 +104,33 @@ def reg_texcommand():
         return re.sub(r'[^a-zA-Z]', '', text).strip()
     _register_function(texcommand)
 
+
+def reg_urlquote():
+    def urlquote(content, text):
+        """ Quotes URLs """
+        if isinstance(text, list):
+            text = ''.join(text)
+        return quote(text.encode('utf-8'), safe="/:")
+    _register_function(urlquote)
+
+def reg_breakurl():
+    def breakurl(content, text):
+        """ Allows breaks in urls """
+        if isinstance(text, list):
+            text = ''.join(text)
+        chunks = text.split("/")
+        e = etree.Element("span")
+        e.text = chunks[0]
+        ret = etree.Element("span")
+        ret.append(e)
+        for chunk in chunks[1:]:
+            ret.append(etree.Element("span", text="/"))
+            ret[-1].text = "/"
+            ret.append(etree.Element("cmd", {"name": "linebreak"}))
+            ret[-1].append(etree.Element("opt"))
+            ret[-1][-1].text = "1"
+            ret[-1].tail = chunk
+        return ret
+        #return re.sub(r'(/)([^/])', r'\1\\-\2', text)
+    _register_function(breakurl)
 
