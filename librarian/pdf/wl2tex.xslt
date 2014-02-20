@@ -167,12 +167,12 @@
 
 <xsl:template match="rdf:RDF" mode="titlepage">
     <TeXML escape="0">
-        \def\authors{<xsl:call-template name="authors" />}
+        \def\authors{<TeXML escape="1"><xsl:call-template name="authors" /></TeXML>}
         \author{\authors}
-        \title{<xsl:apply-templates select=".//dc:title" mode="inline" />}
-        \def\translatorsline{<xsl:call-template name="translators" />}
+        \title{<TeXML escape="1"><xsl:apply-templates select=".//dc:title" mode="inline" /></TeXML>}
+        \def\translatorsline{<TeXML escape="1"><xsl:call-template name="translators" /></TeXML>}
 
-        \def\bookurl{<xsl:value-of select=".//dc:identifier.url" />}
+        \def\bookurl{<TeXML escape="1"><xsl:value-of select=".//dc:identifier.url" /></TeXML>}
 
         \def\rightsinfo{Ten utwór nie jest objęty majątkowym prawem autorskim i~znajduje się w~domenie
             publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
@@ -183,15 +183,15 @@
             Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
         <xsl:if test=".//dc:rights.license">
             \def\rightsinfo{Ten utwór jest udostepniony na licencji
-            \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
+            \href{<xsl:value-of select=".//dc:rights.license" />}{<TeXML escape="1"><xsl:apply-templates select=".//dc:rights" mode="inline" /></TeXML>}.}
         </xsl:if>
 
         \def\sourceinfo{
             <xsl:if test=".//dc:source">
-                Tekst opracowany na podstawie: <xsl:apply-templates select=".//dc:source" mode="inline" />
+                Tekst opracowany na podstawie: <TeXML escape="1"><xsl:apply-templates select=".//dc:source" mode="inline" /></TeXML>
                 \vspace{.6em}
             </xsl:if>}
-        \def\description{<xsl:apply-templates select=".//dc:description" mode="inline" />}
+        \def\description{<TeXML escape="1"><xsl:apply-templates select=".//dc:description" mode="inline" /></TeXML>}
     </TeXML>
 </xsl:template>
 
