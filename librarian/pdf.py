@@ -206,7 +206,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         if cover:
             if cover is True:
                 cover = DefaultEbookCover
-            bound_cover = cover(book_info)
+            bound_cover = cover(book_info, width=1200)
             root.set('data-cover-width', str(bound_cover.width))
             root.set('data-cover-height', str(bound_cover.height))
             if bound_cover.uses_dc_cover:
@@ -267,7 +267,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         if cover:
             with open(os.path.join(temp, 'cover.png'), 'w') as f:
-                bound_cover.save(f)
+                bound_cover.save(f, quality=80)
 
         del document # no longer needed large object :)
 
