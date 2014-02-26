@@ -564,6 +564,8 @@ class Przyporzadkuj(Exercise):
                 'data-target': lista.attrib['cel'],
                 'class': 'subject'
             }
+            if lista.attrib.get('krotkie'):
+                self.options = {'short': True}
             self.options = {'subject': True}
         else:
             attrs = {}
@@ -576,7 +578,10 @@ class Przyporzadkuj(Exercise):
             if self.options['handles']:
                 return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib.get('rozw', ''), self.piece_counter, self.piece_counter), '</li>'
             else:
-                return '<li data-solution="%s" data-no="%s" class="question-piece draggable">' % (element.attrib.get('rozw', ''), self.piece_counter), '</li>'
+                extra_class = ""
+                if self.options['short']:
+                    extra_class += ' short'
+                return '<li data-solution="%s" data-no="%s" class="question-piece draggable%s">' % (element.attrib.get('rozw', ''), self.piece_counter, extra_class), '</li>'
 
         elif self.options['predicate']:
             if self.options['min']:
