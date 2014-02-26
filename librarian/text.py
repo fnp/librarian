@@ -84,7 +84,7 @@ def transform(wldoc, flags=None, **options):
             source = ""
             contributors = ""
             funders = ""
-        return OutputFile.from_string((TEMPLATE % {
+        result = (TEMPLATE % {
             'description': description,
             'url': url,
             'license_description': license_description,
@@ -92,7 +92,8 @@ def transform(wldoc, flags=None, **options):
             'source': source,
             'contributors': contributors,
             'funders': funders,
-        }).encode('utf-8'))
+        }).encode('utf-8')
     else:
-        return OutputFile.from_string(unicode(result).encode('utf-8'))
+        result = unicode(result).encode('utf-8')
+    return OutputFile.from_string("\r\n".join(result.splitlines()))
 

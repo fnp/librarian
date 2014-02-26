@@ -22,6 +22,7 @@ from librarian.cover import DefaultEbookCover
 from librarian import functions, get_resource
 
 functions.reg_person_name()
+functions.reg_lang_code_3to2()
 
 
 def inner_xml(node):
@@ -77,6 +78,7 @@ def replace_characters(node):
     def replace_chars(text):
         if text is None:
             return None
+        #text = re.sub(r"(?<=\s\w)\s+", u"\u00a0", text) #fix for hanging single letter conjunctions – for future use.
         return text.replace(u"\ufeff", u"")\
                    .replace("---", u"\u2014")\
                    .replace("--", u"\u2013")\
@@ -290,18 +292,41 @@ def chop(main_text):
     main_xml_part = part_xml[0] # master
 
     last_node_part = False
+    
+    # the below loop are workaround for a problem with epubs in drama ebooks without acts
+    is_scene = False
+    is_act = False
     for one_part in main_text:
         name = one_part.tag
-        if name == 'naglowek_czesc':
-            yield part_xml
-            last_node_part = True
-            main_xml_part[:] = [deepcopy(one_part)]
-        elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
-            yield part_xml
-            main_xml_part[:] = [deepcopy(one_part)]
+        if name == 'naglowek_scena':
+            is_scene = True
+        elif name == 'naglowek_akt':
+            is_act = True
+    
+    for one_part in main_text:
+        name = one_part.tag
+        if is_act is False and is_scene is True:
+            if name == 'naglowek_czesc':
+                yield part_xml
+                last_node_part = True
+                main_xml_part[:] = [deepcopy(one_part)]
+            elif not last_node_part and name in ("naglowek_scena"):
+                yield part_xml
+                main_xml_part[:] = [deepcopy(one_part)]
+            else:
+                main_xml_part.append(deepcopy(one_part))
+                last_node_part = False
         else:
-            main_xml_part.append(deepcopy(one_part))
-            last_node_part = False
+            if name == 'naglowek_czesc':
+                yield part_xml
+                last_node_part = True
+                main_xml_part[:] = [deepcopy(one_part)]
+            elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+                yield part_xml
+                main_xml_part[:] = [deepcopy(one_part)]
+            else:
+                main_xml_part.append(deepcopy(one_part))
+                last_node_part = False            
     yield part_xml
 
 
@@ -310,7 +335,9 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
     toc = TOC()
     for element in chunk_xml[0]:
-        if element.tag in ("naglowek_czesc", "naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+        if element.tag in ("naglowek_czesc"):
+            toc.add(node_name(element), "part%d.html#book-text" % chunk_no)
+        elif element.tag in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
             toc.add(node_name(element), "part%d.html" % chunk_no)
         elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
             subnumber = toc.add(node_name(element), "part%d.html" % chunk_no, level=1, is_part=False)
@@ -336,7 +363,7 @@ def transform(wldoc, verbose=False,
 
     sample=n: generate sample e-book (with at least n paragraphs)
     cover: a cover.Cover factory or True for default
-    flags: less-advertising, without-fonts, working-copy
+    flags: less-advertising, without-fonts, working-copy, with-full-fonts
     """
 
     def transform_file(wldoc, chunk_counter=1, first=True, sample=None):
@@ -540,21 +567,23 @@ def transform(wldoc, verbose=False,
 
         os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
         for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-            optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
-                              get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]
-            if verbose:
-                print "Running font-optimizer"
-                subprocess.check_call(optimizer_call)
+            if not flags or not 'with-full-fonts' in flags:
+                optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
+                              get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]              
+                if verbose:
+                    print "Running font-optimizer"
+                    subprocess.check_call(optimizer_call)
+                else:
+                    subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
             else:
-                subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
+                zip.write(get_resource('fonts/' + fname), os.path.join('OPS', fname))
             manifest.append(etree.fromstring(
-                '<item id="%s" href="%s" media-type="font/ttf" />' % (fname, fname)))
+                '<item id="%s" href="%s" media-type="application/x-font-truetype" />' % (fname, fname)))
         rmtree(tmpdir)
         if cwd is not None:
             os.chdir(cwd)
-
-    zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
+    zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True, xml_declaration = True, encoding='UTF-8'))
     title = document.book_info.title
     attributes = "dtb:uid", "dtb:depth", "dtb:totalPageCount", "dtb:maxPageNumber"
     for st in attributes:
@@ -562,7 +591,7 @@ def transform(wldoc, verbose=False,
         meta.set('name', st)
         meta.set('content', '0')
         toc_file[0].append(meta)
-    toc_file[0][0].set('content', ''.join((title, 'WolneLektury.pl')))
+    toc_file[0][0].set('content', str(document.book_info.url))
     toc_file[0][1].set('content', str(toc.depth()))
     set_inner_xml(toc_file[1], ''.join(('<text>', title, '</text>')))
 
@@ -571,7 +600,7 @@ def transform(wldoc, verbose=False,
         toc.add(u"Spis treści", "toc.html", index=1)
         zip.writestr('OPS/toc.html', toc.html().encode('utf-8'))
     toc.write_to_xml(nav_map)
-    zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True))
+    zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True, xml_declaration = True, encoding='UTF-8'))
     zip.close()
 
     return OutputFile.from_filename(output_file.name)

@@ -7,6 +7,7 @@ from lxml import etree
 import re
 
 from librarian.dcparser import Person
+from librarian import get_resource
 
 def _register_function(f):
     """ Register extension function with lxml """
@@ -102,5 +103,21 @@ def reg_texcommand():
             text = ''.join(text)
         return re.sub(r'[^a-zA-Z]', '', text).strip()
     _register_function(texcommand)
+    
+def reg_lang_code_3to2():
+	def lang_code_3to2(context, text):
+		"""Convert 3-letter language code to 2-letter code"""
+		result = ''
+		text = ''.join(text)
+		with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
+			for line in f:
+				list = line.strip().split('|')
+				if list[0] == text:
+					result=list[2]
+		if result == '':
+			return text
+		else:
+			return result
+	_register_function(lang_code_3to2)
 
 
