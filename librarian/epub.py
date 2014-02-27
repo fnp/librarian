@@ -499,7 +499,7 @@ def transform(wldoc, verbose=False,
             '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
         manifest.append(etree.fromstring(
             '<item id="cover-image" href="%s" media-type="%s" />' % (cover_name, bound_cover.mime_type())))
-        spine.insert(0, etree.fromstring('<itemref idref="cover" linear="no" />'))
+        spine.insert(0, etree.fromstring('<itemref idref="cover"/>'))
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
         guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
 
