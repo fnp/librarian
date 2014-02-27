@@ -214,7 +214,12 @@ class Cover(object):
         return self.exts[self.format]
 
     def save(self, *args, **kwargs):
-        return self.final_image().save(format=self.format, quality=95, *args, **kwargs)
+        default_kwargs = {
+                'format': self.format,
+                'quality': 95,
+        }
+        default_kwargs.update(kwargs)
+        return self.final_image().save(*args, **default_kwargs)
 
     def output_file(self, *args, **kwargs):
         imgstr = StringIO()

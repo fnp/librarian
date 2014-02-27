@@ -4,9 +4,20 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+import inspect
 import optparse
+import os
+import sys
 
 from librarian import packagers
+try:
+    from collections import OrderedDict
+except ImportError:
+    try:
+        from django.utils.datastructures import SortedDict
+        OrderedDict = SortedDict
+    except ImportError:
+        OrderedDict = dict
 
 
 if __name__ == '__main__':
@@ -20,34 +31,54 @@ if __name__ == '__main__':
         help='print status messages to stdout')
     parser.add_option('-O', '--output-dir', dest='output_dir', metavar='DIR', default='',
                       help='specifies the directory for output')
-    parser.add_option('--bookoteka', action='store_true', dest='bookoteka', default=False,
-                      help='prepare files for Bookoteka')
-    parser.add_option('--gandalf', action='store_true', dest='gandalf', default=False,
-                      help='prepare EPUB files for Gandalf')
-    parser.add_option('--gandalf-pdf', action='store_true', dest='gandalf_pdf', default=False,
-                      help='prepare PDF files for Gandalf')
-    parser.add_option('--virtualo', action='store_true', dest='virtualo', default=False,
-                      help='prepare files for Virtualo API')
-    parser.add_option('--prestigio', action='store_true', dest='prestigio', default=False,
-                      help='prepare files for Prestigio')
-    parser.add_option('--prestigio-pdf', action='store_true', dest='prestigio_pdf', default=False,
-                      help='prepare PDF files for Prestigio')
+    parser.add_option('-f', '--force-overwrite',
+        action='store_true',
+        dest='overwrite',
+        default=False,
+        help='rebuild the file even if it already exists')
+    parser.add_option('-p', '--packages',
+        dest='packages',
+        metavar='package,...',
+        default='',
+        help='lists packages to build')
+    parser.add_option('-m', '--packages-modules',
+        dest='packages_modules', metavar='path.to.module,...',
+        default='librarian.partners',
+        help='modules with packages definitions to load')
+    parser.add_option('-l', '--list-packages',
+        action='store_true',
+        dest='list_packages',
+        default=False,
+        help='lists available packages')
 
     options, input_filenames = parser.parse_args()
+    packages = OrderedDict()
 
-    if len(input_filenames) < 1:
+    sys.path.insert(0, os.getcwd())
+    for module_name in options.packages_modules.split(','):
+        if not module_name:
+            continue
+        module = __import__(module_name, globals(), locals(), ['*'])
+        for package_name in dir(module):
+            package = getattr(module, package_name)
+            if inspect.isclass(package) and issubclass(package, packagers.Packager):
+                packages[package_name] = package
+    if not packages:
+        print 'No packages found!'
+
+    if options.list_packages:
+        print 'Available packages:'
+        for package_name, package in packages.items():
+            print ' ', package_name
+        exit(0)
+
+    if len(input_filenames) < 1 or not options.packages:
         parser.print_help()
         exit(1)
 
-    if options.bookoteka:
-        packagers.BookotekaEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
-    if options.gandalf:
-        packagers.GandalfEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
-    if options.gandalf_pdf:
-        packagers.GandalfPdfPackager.prepare(input_filenames, options.output_dir, options.verbose)
-    if options.virtualo:
-        packagers.VirtualoPackager.prepare(input_filenames, options.output_dir, options.verbose)
-    if options.prestigio:
-        packagers.PrestigioEpubPackager.prepare(input_filenames, options.output_dir, options.verbose)
-    if options.prestigio_pdf:
-        packagers.PrestigioPdfPackager.prepare(input_filenames, options.output_dir, options.verbose)
+    used_packages = [packages[p] for p in options.packages.split(',')]
+    for package in used_packages:
+        if options.verbose:
+            print 'Package:', package.__name__
+        package.prepare(input_filenames,
+            options.output_dir, options.verbose, options.overwrite)

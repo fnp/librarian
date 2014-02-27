@@ -95,5 +95,5 @@ def transform(wldoc, flags=None, **options):
         }).encode('utf-8')
     else:
         result = unicode(result).encode('utf-8')
-    return OutputFile.from_string("\r\n".join(result.splitlines()))
+    return OutputFile.from_string("\r\n".join(result.splitlines()) + "\r\n")
 
