@@ -249,7 +249,7 @@ class TOC(object):
 
             nav_label = nav_map.makeelement(NCXNS('navLabel'))
             text = nav_map.makeelement(NCXNS('text'))
-            text.text = child.name
+            text.text = re.sub(r'\n', ' ', child.name)
             nav_label.append(text)
             nav_point.append(nav_label)
 
