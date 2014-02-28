@@ -310,7 +310,7 @@ def chop(main_text):
                 yield part_xml
                 last_node_part = True
                 main_xml_part[:] = [deepcopy(one_part)]
-            elif not last_node_part and name in ("naglowek_scena"):
+            elif not last_node_part and name == "naglowek_scena":
                 yield part_xml
                 main_xml_part[:] = [deepcopy(one_part)]
             else:
@@ -335,7 +335,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
     toc = TOC()
     for element in chunk_xml[0]:
-        if element.tag in ("naglowek_czesc"):
+        if element.tag == "naglowek_czesc":
             toc.add(node_name(element), "part%d.html#book-text" % chunk_no)
         elif element.tag in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
             toc.add(node_name(element), "part%d.html" % chunk_no)
