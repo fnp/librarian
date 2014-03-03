@@ -13,8 +13,9 @@
 \RequirePackage{xifthen}
 \RequirePackage{environ} % environments with \BODY, for wyimek
 
-
+\PassOptionsToClass{landscape,twoside}{report}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
+
 \ProcessOptions\relax
 \LoadClass{report}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,6 +25,10 @@
 \usepackage{titletoc}
 \usepackage{fancyhdr}
 \usepackage[MeX]{polski}
+
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{colortbl}
 
 \usepackage{trace}
 \usepackage{caption}
@@ -42,6 +47,7 @@
 \usepackage{endnotes}
 \let\footnote=\endnote
 \newcommand{\printfootnotes}{%
+  \outmulticols
   \markboth{\MakeTextUppercase{Przypisy}}{}
   \renewcommand{\enoteheading}{}
   \begingroup
@@ -171,6 +177,11 @@ Mapping=tex-text
 %% \renewcommand{\footnotesize}{\addfontfeature{LetterSpace=1.0}\fontsize{9}{10.74}\selectfont}
 
 
+% • • • • • • • • Multicols  •
+\newif\ifinmulticols \inmulticolsfalse
+
+\newcommand{\inmulticols}[0]{\ifinmulticols{}\else\begin{multicols*}{3}\inmulticolstrue\fi}
+\newcommand{\outmulticols}[0]{\ifinmulticols{}\end{multicols*}\clearpage\inmulticolsfalse\else\fi}
 
 % • • • • • • • • • COLORS • •
 \definecolor{stoK}{cmyk}{0,0,0,1}
@@ -178,6 +189,8 @@ Mapping=tex-text
 \definecolor{headcolor}{HTML}{EA5F21}
 \definecolor{graybg}{cmyk}{0,0,0,0.55}
 %\color{stoK}
+
+\arrayrulecolor{headcolor}
 
 % • • • • • • • • METADATA • •
 
@@ -427,33 +440,33 @@ Mapping=tex-text
 
   %% \paperheight=210mm
 
-  \newgeometry{paperwidth=297mm,paperheight=210mm}
-  \pdfpageheight=210mm
-  \pdfpagewidth=297mm
+  %% \newgeometry{paperwidth=297mm,paperheight=210mm}
+  %% \pdfpageheight=210mm
+  %% \pdfpagewidth=297mm
 
-  \thispagestyle{empty}
-  \newlength{\PictHOffset}
-  \newlength{\PictVOffset}
-  \setlength{\PictHOffset}{1in}
-  \addtolength{\PictHOffset}{\hoffset}
-  \addtolength{\PictHOffset}{\oddsidemargin}
+  %% \thispagestyle{empty}
+  %% \newlength{\PictHOffset}
+  %% \newlength{\PictVOffset}
+  %% \setlength{\PictHOffset}{1in}
+  %% \addtolength{\PictHOffset}{\hoffset}
+  %% \addtolength{\PictHOffset}{\oddsidemargin}
 
-  \setlength{\PictVOffset}{1in}
-  \addtolength{\PictVOffset}{\voffset}
-  \addtolength{\PictVOffset}{\topmargin}
-  \addtolength{\PictVOffset}{\headheight}
-  \addtolength{\PictVOffset}{\headsep}
-  \addtolength{\PictVOffset}{\topskip}
+  %% \setlength{\PictVOffset}{1in}
+  %% \addtolength{\PictVOffset}{\voffset}
+  %% \addtolength{\PictVOffset}{\topmargin}
+  %% \addtolength{\PictVOffset}{\headheight}
+  %% \addtolength{\PictVOffset}{\headsep}
+  %% \addtolength{\PictVOffset}{\topskip}
 
-  \addtolength{\PictVOffset}{-\paperheight}
+  %% \addtolength{\PictVOffset}{-\paperheight}
 
-  \noindent\hspace*{-\PictHOffset}%
-  \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
-      \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.pdf}}}
+  %% \noindent\hspace*{-\PictHOffset}%
+  %% \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
+  %%     \includegraphics[height=\pdfpageheight,width=\pdfpagewidth]{cover.pdf}}}
 
-  \restoregeometry
-  \pdfpageheight=210mm
-  \pdfpagewidth=148mm
+  %% \restoregeometry
+  %% \pdfpageheight=210mm
+  %% \pdfpagewidth=148mm
 
   }
 
@@ -461,52 +474,50 @@ Mapping=tex-text
   %\vspace{\paperheight}
   \thispagestyle{empty}
   \cleardoublepage
-  \setcounter{page}{1}
-  \thispagestyle{empty}
-  \begin{center}
-  \intro
-  {
-    \begin{spacing}{1.4}
-    \Huge \noindent \thetitle
-    \end{spacing}
-  }
-  \end{center}
+  %% \setcounter{page}{1}
+  %% \thispagestyle{empty}
+  %% \begin{center}
+  %% {
+  %%   \begin{spacing}{1.4}
+  %%   \Huge \noindent \thetitle
+  %%   \end{spacing}
+  %% }
+  %% \end{center}
 
-  \vspace{\baselineskip}
+  %% \vspace{\baselineskip}
 
-  \begin{center}
-    \intro
-    {
-      \huge \noindent
-      \theauthor
+  %% \begin{center}
+  %%   \intro
+  %%   {
+  %%     \huge \noindent
+  %%     \theauthor
 
-    }
-  \end{center}
-                  %\emph{\thankyou}\\
-                  %\indent\emph{You made this book possible.}
-  \vspace{7\baselineskip}
+  %%   }
+  %% \end{center}
+  %%                 %\emph{\thankyou}\\
+  %%                 %\indent\emph{You made this book possible.}
+  %% \vspace{7\baselineskip}
 
-  \begin{center}
-    \includegraphics[scale=.2]{logo.eps}
-  \end{center}
+  %% \begin{center}
+  %%   \includegraphics[scale=.2]{logo.eps}
+  %% \end{center}
 
 }
 
 
 \newcommand{\editorialsection}{
   \clearpage
-  \thispagestyle{empty}
-  {
-    \setlength{\parindent}{0mm}
-    \small
-  \input{editorial}
-  }
+  %% \thispagestyle{empty}
+  %% {
+  %%   \setlength{\parindent}{0mm}
+  %%   \small
+  %% \input{editorial}
+  %% }
 }
 
 \renewcommand*\contentsname{Spis treści}
 \newcommand{\spistresci}{
 {
-  \intro
   \setcounter{tocdepth}{0}
   \tableofcontents
   \newpage
@@ -630,6 +641,7 @@ Mapping=tex-text
 
 
 \newcommand{\naglowekrozdzial}[1]{%
+\inmulticols%
 \startcontents[chapter]
 \markboth{#1}{}
 %
@@ -640,6 +652,7 @@ Mapping=tex-text
 \par{\textsc{#1}}\nopagebreak%
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
+\inmulticols%
 \section{#1}\nopagebreak%
 }
 \newcommand{\miejsceczas}[1]{%
@@ -650,6 +663,7 @@ Mapping=tex-text
 }
 
 \newcommand{\akap}[1]{%
+\inmulticols%
 #1
 
 % newline here needed, we don't use \par cause it ignores \noindent before
@@ -684,6 +698,11 @@ Mapping=tex-text
 \newcommand{\werswciety}[2][1em]{%
 \hspace*{#1}#2%
 }
+
+\newcommand{\pa}[1]{\NoCaseChange{\endnote{#1}}}
+\newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
+\newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
+\newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}
 
 
 \newcommand{\mat}[1]{$#1$}
@@ -757,8 +776,8 @@ Mapping=tex-text
 
 
 \newcommand{\lista}[1]{%
+\inmulticols%
 \begin{compactenum}
-%\setlength{\parskip}{\parindent}
 #1
 \end{compactenum}
 }
@@ -770,10 +789,13 @@ Mapping=tex-text
 
 \newcommand{\www}[1]{{\normalfont\href{#1}{#1}}}
 
+
+
 % TABELA %
 
 \newenvironment{tabela}[0]%
-{\begin{longtable}{p{40mm}@{\hspace{5mm}}p{65mm}@{\hspace{5mm}}p{65mm}@{\hspace{5mm}}p{65mm}}}%
+{\renewcommand{\inmulticols}{\relax}%
+\begin{longtable}{p{40mm}@{\hspace{5mm}}p{65mm}@{\hspace{5mm}}p{65mm}@{\hspace{5mm}}p{65mm}}}%
 {\end{longtable}}
 
 \newcommand{\formatkomnaglowek}[1]% reset format
@@ -789,11 +811,11 @@ Mapping=tex-text
 }
 
 \newcommand{\tabelawiersz}[1]{
-    \cmidrule[0.7pt](r{5mm}){1-1}
-    \cmidrule[0.7pt](r{5mm}){2-2}
-    \cmidrule[0.7pt](r{5mm}){3-3}
-    \cmidrule[0.7pt](r{5mm}){4-4} \\[3mm]
-    #1
+    \cmidrule[0.7pt](r{5mm}){1-1}%
+    \cmidrule[0.7pt](r{5mm}){2-2}%
+    \cmidrule[0.7pt](r{5mm}){3-3}%
+    \cmidrule[0.7pt](r{5mm}){4-4} \\[1mm]
+#1
     \\[4mm]
 }
 

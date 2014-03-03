@@ -335,7 +335,7 @@
 <xsl:strip-space elements="nota|akap|wyroznienie"/>
 
 <xsl:template mode="inline"
-    match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|punkt|www|nota_red">
+    match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|lista|punkt|www|nota_red">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
@@ -442,15 +442,17 @@
      - first: is first column special?
 
  -->
-<xls:template match="tabela">
+<xsl:template match="tabela">
+  <cmd name="outmulticols"></cmd>
   <cmd name="begin"><parm>tabela</parm> </cmd>
   <xsl:apply-templates mode="tabela"/>
   <cmd name="end"><parm>tabela</parm> </cmd>
-</xls:template>
+</xsl:template>
 
 <xsl:template match="r" mode="tabela">
+<!--  R<xsl:value-of select="count(preceding-sibling::*)" />-->
   <xsl:choose>
-    <xsl:when test="position() = 1">
+    <xsl:when test="count(preceding-sibling::*) = 0">
       <cmd name="tabelanaglowek"><parm>
 	<xsl:apply-templates mode="tabelanaglowek"/>
       </parm></cmd>
@@ -464,21 +466,22 @@
 </xsl:template>
 
 <xsl:template match="c" mode="tabelanaglowek">
-  <xsl:if test="position() > 1">&amp;</xsl:if>
+  <xsl:if test="count(preceding-sibling::*) > 0"><spec cat="align"/></xsl:if>
   <cmd name="tabelakomnaglowek"><parm>
     <xsl:apply-templates mode="inline"/>
   </parm></cmd>
 </xsl:template>
 
 <xsl:template match="c" mode="tabelawiersz">
+
   <xsl:choose>
-    <xsl:when test="position() = 1">
+    <xsl:when test="count(preceding-sibling::*) = 0">
       <cmd name="tabelakompierwsza"><parm>
 	<xsl:apply-templates mode="inline"/>
       </parm></cmd>
     </xsl:when>
     <xsl:otherwise>
-      &amp;<cmd name="tabelakom"><parm>
+      <spec cat="align"/><cmd name="tabelakom"><parm>
 	<xsl:apply-templates mode="inline"/>
       </parm></cmd>
     </xsl:otherwise>

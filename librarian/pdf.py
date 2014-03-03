@@ -30,6 +30,7 @@ from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
 from librarian.cover import WLCover
 
+import itertools, operator
 
 functions.reg_substitute_entities()
 functions.reg_strip()
@@ -95,6 +96,29 @@ def fix_hanging(doc):
                 exclude=[DCNS("identifier.url"), DCNS("rights.license")]
                 )
 
+def fake_tables(doc):
+    for tabela in doc.findall("//tabela"):
+        # are we dealing with a table of proper structure?
+        # two levels of same tags, and all tags on second level 
+        # must be of same count.
+        def tag_count(m, k):
+            m[k.tag] = m.get(k.tag, 0) + 1
+            return m
+
+        child_tags = reduce(tag_count, list(tabela), {})
+        if len(child_tags) != 1: 
+            return
+        grandchild_tags = reduce(tag_count, itertools.chain(*[list(c) for c in tabela]), {})
+        if len(grandchild_tags) != 1:
+            return
+        if len(set(grandchild_tags.values())) != 1:
+            return
+
+        for row in tabela:
+            row.tag = 'r'
+            for col in row:
+                col.tag = 'c'
+    return
 
 def move_motifs_inside(doc):
     """ moves motifs to be into block elements """
@@ -241,6 +265,7 @@ def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=N
         # hack the tree
         move_motifs_inside(document.edoc)
         hack_motifs(document.edoc)
+        fake_tables(document.edoc)
         parse_creator(document.edoc)
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
@@ -275,6 +300,7 @@ def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=N
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('pdf/wlpub.cls'), temp)
+        shutil.copy(get_resource('pdf/fnprep.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
         shutil.copy(get_resource('res/cover.jpg'), temp)
         if resources:
