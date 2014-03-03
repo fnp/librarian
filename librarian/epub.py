@@ -21,9 +21,27 @@ from librarian.cover import DefaultEbookCover
 
 from librarian import functions, get_resource
 
+from librarian.hyphenator import Hyphenator
+
 functions.reg_person_name()
 functions.reg_lang_code_3to2()
 
+hyph = Hyphenator(get_resource('res/hyph-dictionaries/hyph_pl_PL.dic'))
+
+def hyphenate_and_fix_conjunctions(source_tree):
+    """ hyphenate only powiesc, opowiadanie and wywiad tag"""
+    texts = etree.XPath('//*[self::powiesc|self::opowiadanie|self::wywiad]//text()')(source_tree)
+    for t in texts:
+        parent = t.getparent()
+        newt = ''
+        wlist = re.compile(r'\w+|[^\w]', re.UNICODE).findall(t)
+        for w in wlist:
+            newt += hyph.inserted(w, u'\u00AD')       
+        newt = re.sub(r'(?<=\s\w)\s+', u'\u00A0', newt)
+        if t.is_text:
+            parent.text = newt
+        elif t.is_tail:
+            parent.tail = newt
 
 def inner_xml(node):
     """ returns node's text and children as a string
@@ -78,7 +96,6 @@ def replace_characters(node):
     def replace_chars(text):
         if text is None:
             return None
-        #text = re.sub(r"(?<=\s\w)\s+", u"\u00a0", text) #fix for hanging single letter conjunctions – for future use.
         return text.replace(u"\ufeff", u"")\
                    .replace("---", u"\u2014")\
                    .replace("--", u"\u2013")\
@@ -370,7 +387,8 @@ def transform(wldoc, verbose=False,
         """ processes one input file and proceeds to its children """
 
         replace_characters(wldoc.edoc.getroot())
-
+        hyphenate_and_fix_conjunctions(wldoc.edoc.getroot())
+        
         # every input file will have a TOC entry,
         # pointing to starting chunk
         toc = TOC(wldoc.book_info.title, "part%d.html" % chunk_counter)
