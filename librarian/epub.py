@@ -16,7 +16,7 @@ import zipfile
 from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
-from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
+from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, DCNS, OutputFile
 from librarian.cover import DefaultEbookCover
 
 from librarian import functions, get_resource
@@ -26,23 +26,42 @@ from librarian.hyphenator import Hyphenator
 functions.reg_person_name()
 functions.reg_lang_code_3to2()
 
-hyph = Hyphenator(get_resource('res/hyph-dictionaries/hyph_pl_PL.dic'))
-
-def hyphenate_and_fix_conjunctions(source_tree):
+def set_hyph_language(source_tree):
+    def get_short_lng_code(text):
+        result = ''
+        text = ''.join(text)
+        with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
+            for line in f:
+                list = line.strip().split('|')
+                if list[0] == text:
+                    result=list[2]
+        if result == '':
+            return text
+        else:
+            return result
+    bibl_lng = etree.XPath('//dc:language//text()', namespaces = {'dc':str(DCNS)})(source_tree)
+    short_lng = get_short_lng_code(bibl_lng[0])   
+    try:
+        return Hyphenator(get_resource('res/hyph-dictionaries/hyph_' + short_lng + '.dic'))
+    except:
+        pass
+    
+def hyphenate_and_fix_conjunctions(source_tree, hyph):
     """ hyphenate only powiesc, opowiadanie and wywiad tag"""
-    texts = etree.XPath('//*[self::powiesc|self::opowiadanie|self::wywiad]//text()')(source_tree)
-    for t in texts:
-        parent = t.getparent()
-        newt = ''
-        wlist = re.compile(r'\w+|[^\w]', re.UNICODE).findall(t)
-        for w in wlist:
-            newt += hyph.inserted(w, u'\u00AD')       
-        newt = re.sub(r'(?<=\s\w)\s+', u'\u00A0', newt)
-        if t.is_text:
-            parent.text = newt
-        elif t.is_tail:
-            parent.tail = newt
-
+    if hyph is not None:
+        texts = etree.XPath('//*[self::powiesc|self::opowiadanie|self::wywiad]//text()')(source_tree)
+        for t in texts:
+            parent = t.getparent()
+            newt = ''
+            wlist = re.compile(r'\w+|[^\w]', re.UNICODE).findall(t)
+            for w in wlist:
+                newt += hyph.inserted(w, u'\u00AD')       
+            newt = re.sub(r'(?<=\s\w)\s+', u'\u00A0', newt)
+            if t.is_text:
+                parent.text = newt
+            elif t.is_tail:
+                parent.tail = newt
+        
 def inner_xml(node):
     """ returns node's text and children as a string
 
@@ -387,7 +406,10 @@ def transform(wldoc, verbose=False,
         """ processes one input file and proceeds to its children """
 
         replace_characters(wldoc.edoc.getroot())
-        hyphenate_and_fix_conjunctions(wldoc.edoc.getroot())
+        
+        hyphenator = set_hyph_language(wldoc.edoc.getroot())
+        hyphenate_and_fix_conjunctions(wldoc.edoc.getroot(), hyphenator)
+        
         
         # every input file will have a TOC entry,
         # pointing to starting chunk
