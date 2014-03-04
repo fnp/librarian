@@ -47,9 +47,8 @@ def set_hyph_language(source_tree):
         pass
     
 def hyphenate_and_fix_conjunctions(source_tree, hyph):
-    """ hyphenate only powiesc, opowiadanie and wywiad tag"""
     if hyph is not None:
-        texts = etree.XPath('//*[self::powiesc|self::opowiadanie|self::wywiad]//text()')(source_tree)
+        texts = etree.XPath('/utwor/*[2]//text()')(source_tree)
         for t in texts:
             parent = t.getparent()
             newt = ''
