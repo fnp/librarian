@@ -251,7 +251,7 @@ Mapping=tex-text
 \makeatother
 
 \nochapternumbers
-\startcontents[chapter]
+%\startcontents[chapter] % ??? XXX
 
 \newcommand{\chapterblock}[1]{%
 \clearpage%
@@ -263,7 +263,7 @@ Mapping=tex-text
 \begin{minipage}[t][\dimexpr\textheight-28pt\relax]{\dimexpr\szpaltawidth-5mm\relax}%
 \Huge{}\headfont\color{white}#1%
 \vspace{\dimexpr21mm-11mm\relax}%
-\par{\printcontents[chapter]{}{1}{}}
+\par{\color{white}\printcontents[chapter]{}{1}{}}
 \end{minipage}%(testing)%\rule{0.1pt}{\baselineskip}%
 \hspace{2.5mm}}%
 \vspace{\dimexpr-\parskip-11pt\relax}%
@@ -518,7 +518,7 @@ Mapping=tex-text
 \renewcommand*\contentsname{Spis treści}
 \newcommand{\spistresci}{
 {
-  \setcounter{tocdepth}{0}
+%  \setcounter{tocdepth}{0}
   \tableofcontents
   \newpage
 }
