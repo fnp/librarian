@@ -209,7 +209,7 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=None,
-              cover=None, cover_file=None, flags=None, customizations=None, documentclass='wl', resources=None):
+              cover=None, cover_file=None, flags=None, customizations=None, documentclass='wl', resources=None, tworuns=False):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
@@ -315,12 +315,13 @@ def transform(wldoc, verbose=False, save_tex=None, save_texml=None, morefloats=N
         if resources:
             os.putenv("TEXINPUTS", "::.:%s" % resources)
 
-        if verbose:
-            p = call(['xelatex', tex_path])
-        else:
-            p = call(['xelatex', '-interaction=batchmode', tex_path], stdout=PIPE, stderr=PIPE)
-        if p:
-            raise ParseError("Error parsing .tex file")
+        for run in range(1 + (tworuns and 1 or 0)):
+            if verbose:
+                p = call(['xelatex', tex_path])
+            else:
+                p = call(['xelatex', '-interaction=batchmode', tex_path], stdout=PIPE, stderr=PIPE)
+            if p:
+                raise ParseError("Error parsing .tex file")
 
         if cwd is not None:
             os.chdir(cwd)

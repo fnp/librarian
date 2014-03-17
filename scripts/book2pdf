@@ -29,6 +29,8 @@ class Book2Pdf(Book2Anything):
                help='LaTeX document class options'),
         Option('-e', '--cover-file', dest='cover_file', metavar='FILE',
                help='Cover image file'),
+        Option('-2', '--two-runs', dest='tworuns', action='store_true', default=False,
+               help='two runs of (Xe)Latex'),
     ]
 
 
