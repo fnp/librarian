@@ -390,7 +390,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
         replace_by_verse(chunk_xml)
         html_tree = xslt(chunk_xml, get_resource('epub/xsltScheme.xsl'))
         chars = used_chars(html_tree.getroot())
-        output_html = etree.tostring(html_tree, method="html", pretty_print=True)
+        output_html = etree.tostring(html_tree, method="html", encoding='UTF-8', pretty_print=True)
     return output_html, toc, chars
 
 
@@ -422,7 +422,7 @@ def transform(wldoc, verbose=False,
             html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'))
             chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/title.html',
-                 etree.tostring(html_tree, method="html", pretty_print=True))
+                 etree.tostring(html_tree, method="html", encoding='UTF-8', pretty_print=True))
             # add a title page TOC entry
             toc.add(u"Strona tytułowa", "title.html")
         elif wldoc.book_info.parts:
@@ -433,7 +433,7 @@ def transform(wldoc, verbose=False,
             else:
                 html_tree = xslt(wldoc.edoc, get_resource('epub/xsltChunkTitle.xsl'))
                 chars = used_chars(html_tree.getroot())
-                html_string = etree.tostring(html_tree, method="html", pretty_print=True)
+                html_string = etree.tostring(html_tree, method="html", encoding='UTF-8', pretty_print=True)
             zip.writestr('OPS/part%d.html' % chunk_counter, html_string)
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
@@ -529,7 +529,7 @@ def transform(wldoc, verbose=False,
         cover_tree = etree.parse(get_resource('epub/cover.html'))
         cover_tree.find('//' + XHTMLNS('img')).set('src', cover_name)
         zip.writestr('OPS/cover.html', etree.tostring(
-                        cover_tree, method="html", pretty_print=True))
+                        cover_tree, method="html", encoding='UTF-8', pretty_print=True))
 
         if bound_cover.uses_dc_cover:
             if document.book_info.cover_by:
@@ -578,7 +578,7 @@ def transform(wldoc, verbose=False,
         html_tree = xslt(annotations, get_resource('epub/xsltAnnotations.xsl'))
         chars = chars.union(used_chars(html_tree.getroot()))
         zip.writestr('OPS/annotations.html', etree.tostring(
-                            html_tree, method="html", pretty_print=True))
+                            html_tree, method="html", encoding='UTF-8', pretty_print=True))
 
     toc.add("Wesprzyj Wolne Lektury", "support.html")
     manifest.append(etree.fromstring(
@@ -597,7 +597,7 @@ def transform(wldoc, verbose=False,
     html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'))
     chars.update(used_chars(html_tree.getroot()))
     zip.writestr('OPS/last.html', etree.tostring(
-                        html_tree, method="html", pretty_print=True))
+                        html_tree, method="html", encoding='UTF-8', pretty_print=True))
 
     if not flags or not 'without-fonts' in flags:
         # strip fonts
