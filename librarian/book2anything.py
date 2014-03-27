@@ -56,6 +56,9 @@ class Book2Anything(object):
         parser.add_option('-v', '--verbose', 
                 action='store_true', dest='verbose', default=False,
                 help='print status messages to stdout')
+        parser.add_option('-t', '--html-toc', 
+                action='store_true', dest='html_toc', default=False,
+                help='with inline html toc')
         parser.add_option('-d', '--make-dir',
                 action='store_true', dest='make_dir', default=False,
                 help='create a directory for author and put the output file in it')
@@ -97,6 +100,8 @@ class Book2Anything(object):
         if transform_flags:
             transform_args['flags'] = transform_flags
         # Add cover support, if any.
+        if options.html_toc:
+            transform_args['html_toc'] = True
         if cls.uses_cover:
             if options.image_cache:
                 def cover_class(*args, **kwargs):
