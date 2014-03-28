@@ -58,7 +58,10 @@ class Book2Anything(object):
                 help='print status messages to stdout')
         parser.add_option('-t', '--html-toc', 
                 action='store_true', dest='html_toc', default=False,
-                help='with inline html toc')
+                help='with inline html toc [book2epub only]')
+        parser.add_option('-k', '--use-kindlegen', 
+                action='store_true', dest='use_kindlegen', default=False,
+                help='use kindlegen tool [book2mobi only]')
         parser.add_option('-d', '--make-dir',
                 action='store_true', dest='make_dir', default=False,
                 help='create a directory for author and put the output file in it')
@@ -100,8 +103,10 @@ class Book2Anything(object):
         if transform_flags:
             transform_args['flags'] = transform_flags
         # Add cover support, if any.
-        if options.html_toc:
+        if options.html_toc and cls.ext == 'epub':
             transform_args['html_toc'] = True
+        if options.use_kindlegen and cls.ext == 'mobi':
+            transform_args['use_kindlegen'] = True
         if cls.uses_cover:
             if options.image_cache:
                 def cover_class(*args, **kwargs):
