@@ -102,11 +102,13 @@ class Book2Anything(object):
                     if flag.value(options)]
         if transform_flags:
             transform_args['flags'] = transform_flags
-        # Add cover support, if any.
+        if options.verbose:
+            transform_args['verbose'] = True        
         if options.html_toc and cls.ext == 'epub':
             transform_args['html_toc'] = True
         if options.use_kindlegen and cls.ext == 'mobi':
             transform_args['use_kindlegen'] = True
+        # Add cover support, if any.
         if cls.uses_cover:
             if options.image_cache:
                 def cover_class(*args, **kwargs):
