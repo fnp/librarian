@@ -427,7 +427,7 @@ def transform(wldoc, verbose=False,
             chars = used_chars(html_tree.getroot())
             zip.writestr('OPS/title.html',
                  etree.tostring(html_tree, pretty_print = True,
-                	xml_declaration = True,
+                    xml_declaration = True,
                     encoding = "utf-8",
                     doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
                             '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'))
@@ -442,7 +442,7 @@ def transform(wldoc, verbose=False,
                 html_tree = xslt(wldoc.edoc, get_resource('epub/xsltChunkTitle.xsl'))
                 chars = used_chars(html_tree.getroot())
                 html_string = etree.tostring(html_tree, 
-                	pretty_print = True,
+                    pretty_print = True,
                     xml_declaration = True,
                     encoding = "utf-8",
                     doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
@@ -543,7 +543,7 @@ def transform(wldoc, verbose=False,
         cover_tree.find('//' + XHTMLNS('img')).set('src', cover_name)
         zip.writestr('OPS/cover.html', etree.tostring(
                         cover_tree, pretty_print = True, xml_declaration = True, encoding = "utf-8",
-                    	doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
+                        doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
                             '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'))
 
         if bound_cover.uses_dc_cover:
@@ -594,9 +594,9 @@ def transform(wldoc, verbose=False,
         chars = chars.union(used_chars(html_tree.getroot()))
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, pretty_print = True,
-                    		xml_declaration = True,
-                    		encoding = "utf-8",
-                    		doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
+                            xml_declaration = True,
+                            encoding = "utf-8",
+                            doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
                             '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'))
 
     toc.add("Wesprzyj Wolne Lektury", "support.html")
@@ -617,9 +617,9 @@ def transform(wldoc, verbose=False,
     chars.update(used_chars(html_tree.getroot()))
     zip.writestr('OPS/last.html', etree.tostring(
                         html_tree, pretty_print = True,
-                    	xml_declaration = True,
-                    	encoding = "utf-8",
-                    	doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
+                        xml_declaration = True,
+                        encoding = "utf-8",
+                        doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
                             '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'))
 
     if not flags or not 'without-fonts' in flags:
