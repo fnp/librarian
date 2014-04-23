@@ -10,8 +10,6 @@ import subprocess
 from tempfile import NamedTemporaryFile
 
 from librarian import OutputFile
-from librarian.cover import DefaultEbookCover
-from librarian import get_resource
 
 
 def transform(wldoc, verbose=False, sample=None, cover=None,
@@ -26,14 +24,9 @@ def transform(wldoc, verbose=False, sample=None, cover=None,
 
     document = deepcopy(wldoc)
     del wldoc
-    book_info = document.book_info
-
-    if not flags:
-        flags = []
-    flags = list(flags)
 
     epub = document.as_epub(verbose=verbose, sample=sample,
-                            html_toc=True, cover=True, flags=flags)
+                            html_toc=True, cover=cover or True, flags=flags)
     if verbose:
         kwargs = {}
     else:

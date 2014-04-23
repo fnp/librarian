@@ -17,6 +17,11 @@ class Book2Epub(Book2Anything):
                 action='store_true', default=False,
                 help='mark the output as a working copy')
         ]
+    transform_options = [
+        Option('-t', '--html-toc',
+                action='store_true', dest='html_toc', default=False,
+                help='with inline html toc')
+        ]
 
 
 if __name__ == '__main__':

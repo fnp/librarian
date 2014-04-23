@@ -4,7 +4,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from librarian.book2anything import Book2Anything
+from librarian.book2anything import Book2Anything, Option
 
 
 class Book2Mobi(Book2Anything):
@@ -13,6 +13,12 @@ class Book2Mobi(Book2Anything):
     uses_cover = True
     cover_optional = False
     uses_provider = True
+
+    transform_options = [
+        Option('-k', '--use-kindlegen',
+                action='store_true', dest='use_kindlegen', default=False,
+                help='use kindlegen tool instead of Calibre')
+        ]
 
 
 if __name__ == '__main__':
