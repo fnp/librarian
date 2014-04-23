@@ -31,13 +31,8 @@
   </xsl:template>
 
   <xsl:template match="pa|pe|pr|pt" mode="przypis">
-    <p id="annotation-{@number}" class="annotation" xmlns="http://www.w3.org/1999/xhtml">
-    	<a href="part{@part}.html#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml">
-        	<xsl:value-of select="@number" />
-        </a>. 
-        <xsl:apply-templates />
-        <xsl:if test="name()='pa'"> [przypis autorski]</xsl:if>
-    </p>
+    <p id="annotation-{@number}" class="annotation" xmlns="http://www.w3.org/1999/xhtml"><a href="part{@part}.html#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml"><xsl:value-of select="@number" /></a>. <xsl:apply-templates /><xsl:if test="name()='pa'"> [przypis autorski]</xsl:if></p>
+    <xsl:text>&#xa;</xsl:text>
   </xsl:template>
 
   <xsl:template match="slowo_obce">

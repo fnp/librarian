@@ -16,13 +16,54 @@ import zipfile
 from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
-from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, OutputFile
+from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, DCNS, OutputFile
 from librarian.cover import DefaultEbookCover
 
 from librarian import functions, get_resource
 
+from librarian.hyphenator import Hyphenator
+
 functions.reg_person_name()
 functions.reg_lang_code_3to2()
+
+
+def set_hyph_language(source_tree):
+    def get_short_lng_code(text):
+        result = ''
+        text = ''.join(text)
+        with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
+            for line in f:
+                list = line.strip().split('|')
+                if list[0] == text:
+                    result = list[2]
+        if result == '':
+            return text
+        else:
+            return result
+    bibl_lng = etree.XPath('//dc:language//text()',
+                           namespaces={'dc': str(DCNS)})(source_tree)
+    short_lng = get_short_lng_code(bibl_lng[0])
+    try:
+        return Hyphenator(get_resource('res/hyph-dictionaries/hyph_' +
+                                       short_lng + '.dic'))
+    except:
+        pass
+
+
+def hyphenate_and_fix_conjunctions(source_tree, hyph):
+    if hyph is not None:
+        texts = etree.XPath('/utwor/*[2]//text()')(source_tree)
+        for t in texts:
+            parent = t.getparent()
+            newt = ''
+            wlist = re.compile(r'\w+|[^\w]', re.UNICODE).findall(t)
+            for w in wlist:
+                newt += hyph.inserted(w, u'\u00AD')
+            newt = re.sub(r'(?<=\s\w)\s+', u'\u00A0', newt)
+            if t.is_text:
+                parent.text = newt
+            elif t.is_tail:
+                parent.tail = newt
 
 
 def inner_xml(node):
@@ -34,6 +75,7 @@ def inner_xml(node):
 
     nt = node.text if node.text is not None else ''
     return ''.join([nt] + [etree.tostring(child) for child in node])
+
 
 def set_inner_xml(node, text):
     """ sets node's text and children from a string
@@ -78,7 +120,6 @@ def replace_characters(node):
     def replace_chars(text):
         if text is None:
             return None
-        #text = re.sub(r"(?<=\s\w)\s+", u"\u00a0", text) #fix for hanging single letter conjunctions – for future use.
         return text.replace(u"\ufeff", u"")\
                    .replace("---", u"\u2014")\
                    .replace("--", u"\u2013")\
@@ -99,7 +140,7 @@ def find_annotations(annotations, source, part_no):
     for child in source:
         if child.tag in ('pe', 'pa', 'pt', 'pr'):
             annotation = deepcopy(child)
-            number = str(len(annotations)+1)
+            number = str(len(annotations) + 1)
             annotation.set('number', number)
             annotation.set('part', str(part_no))
             annotation.tail = ''
@@ -124,7 +165,7 @@ class Stanza(object):
     >>> print etree.tostring(s)
     <strofa><wers_normalny>a <b>c</b> <b>c</b></wers_normalny><wers_normalny>b<x>x/
     y</x>c</wers_normalny><wers_normalny>d</wers_normalny></strofa>
-    
+
     """
     def __init__(self, stanza_elem):
         self.stanza = stanza_elem
@@ -186,18 +227,17 @@ def add_to_manifest(manifest, partno):
     """ Adds a node to the manifest section in content.opf file """
 
     partstr = 'part%d' % partno
-    e = manifest.makeelement(OPFNS('item'), attrib={
-                                 'id': partstr,
-                                 'href': partstr + '.html',
-                                 'media-type': 'application/xhtml+xml',
-                             })
+    e = manifest.makeelement(
+        OPFNS('item'), attrib={'id': partstr, 'href': partstr + '.html',
+                               'media-type': 'application/xhtml+xml'}
+    )
     manifest.append(e)
 
 
 def add_to_spine(spine, partno):
     """ Adds a node to the spine section in content.opf file """
 
-    e = spine.makeelement(OPFNS('itemref'), attrib={'idref': 'part%d' % partno});
+    e = spine.makeelement(OPFNS('itemref'), attrib={'idref': 'part%d' % partno})
     spine.append(e)
 
 
@@ -211,7 +251,7 @@ class TOC(object):
     def add(self, name, part_href, level=0, is_part=True, index=None):
         assert level == 0 or index is None
         if level > 0 and self.children:
-            return self.children[-1].add(name, part_href, level-1, is_part)
+            return self.children[-1].add(name, part_href, level - 1, is_part)
         else:
             t = TOC(name)
             t.part_href = part_href
@@ -249,7 +289,10 @@ class TOC(object):
 
             nav_label = nav_map.makeelement(NCXNS('navLabel'))
             text = nav_map.makeelement(NCXNS('text'))
-            text.text = child.name
+            if child.name is not None:
+                text.text = re.sub(r'\n', ' ', child.name)
+            else:
+                text.text = child.name
             nav_label.append(text)
             nav_point.append(nav_label)
 
@@ -266,7 +309,7 @@ class TOC(object):
             texts.append(
                 "<div style='margin-left:%dem;'><a href='%s'>%s</a></div>" %
                 (depth, child.href(), child.name))
-            texts.append(child.html_part(depth+1))
+            texts.append(child.html_part(depth + 1))
         return "\n".join(texts)
 
     def html(self):
@@ -289,10 +332,10 @@ def chop(main_text):
     # prepare a container for each chunk
     part_xml = etree.Element('utwor')
     etree.SubElement(part_xml, 'master')
-    main_xml_part = part_xml[0] # master
+    main_xml_part = part_xml[0]  # master
 
     last_node_part = False
-    
+
     # the below loop are workaround for a problem with epubs in drama ebooks without acts
     is_scene = False
     is_act = False
@@ -302,7 +345,7 @@ def chop(main_text):
             is_scene = True
         elif name == 'naglowek_akt':
             is_act = True
-    
+
     for one_part in main_text:
         name = one_part.tag
         if is_act is False and is_scene is True:
@@ -326,7 +369,7 @@ def chop(main_text):
                 main_xml_part[:] = [deepcopy(one_part)]
             else:
                 main_xml_part.append(deepcopy(one_part))
-                last_node_part = False            
+                last_node_part = False
     yield part_xml
 
 
@@ -352,7 +395,12 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
         replace_by_verse(chunk_xml)
         html_tree = xslt(chunk_xml, get_resource('epub/xsltScheme.xsl'))
         chars = used_chars(html_tree.getroot())
-        output_html = etree.tostring(html_tree, method="html", pretty_print=True)
+        output_html = etree.tostring(
+            html_tree, pretty_print=True, xml_declaration=True,
+            encoding="utf-8",
+            doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
+                    '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+        )
     return output_html, toc, chars
 
 
@@ -363,13 +411,16 @@ def transform(wldoc, verbose=False,
 
     sample=n: generate sample e-book (with at least n paragraphs)
     cover: a cover.Cover factory or True for default
-    flags: less-advertising, without-fonts, working-copy, with-full-fonts
+    flags: less-advertising, without-fonts, working-copy
     """
 
     def transform_file(wldoc, chunk_counter=1, first=True, sample=None):
         """ processes one input file and proceeds to its children """
 
         replace_characters(wldoc.edoc.getroot())
+
+        hyphenator = set_hyph_language(wldoc.edoc.getroot())
+        hyphenate_and_fix_conjunctions(wldoc.edoc.getroot(), hyphenator)
 
         # every input file will have a TOC entry,
         # pointing to starting chunk
@@ -379,8 +430,15 @@ def transform(wldoc, verbose=False,
             # write book title page
             html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'))
             chars = used_chars(html_tree.getroot())
-            zip.writestr('OPS/title.html',
-                 etree.tostring(html_tree, method="html", pretty_print=True))
+            zip.writestr(
+                'OPS/title.html',
+                etree.tostring(
+                    html_tree, pretty_print=True, xml_declaration=True,
+                    encoding="utf-8",
+                    doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"' +
+                            ' "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+                )
+            )
             # add a title page TOC entry
             toc.add(u"Strona tytułowa", "title.html")
         elif wldoc.book_info.parts:
@@ -391,7 +449,12 @@ def transform(wldoc, verbose=False,
             else:
                 html_tree = xslt(wldoc.edoc, get_resource('epub/xsltChunkTitle.xsl'))
                 chars = used_chars(html_tree.getroot())
-                html_string = etree.tostring(html_tree, method="html", pretty_print=True)
+                html_string = etree.tostring(
+                    html_tree, pretty_print=True, xml_declaration=True,
+                    encoding="utf-8",
+                    doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"' +
+                            ' "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+                )
             zip.writestr('OPS/part%d.html' % chunk_counter, html_string)
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
@@ -431,7 +494,6 @@ def transform(wldoc, verbose=False,
 
         return toc, chunk_counter, chars, sample
 
-
     document = deepcopy(wldoc)
     del wldoc
 
@@ -462,13 +524,19 @@ def transform(wldoc, verbose=False,
     mime.compress_type = zipfile.ZIP_STORED
     mime.extra = ''
     zip.writestr(mime, 'application/epub+zip')
-    zip.writestr('META-INF/container.xml', '<?xml version="1.0" ?><container version="1.0" ' \
-                       'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' \
-                       '<rootfiles><rootfile full-path="OPS/content.opf" ' \
-                       'media-type="application/oebps-package+xml" />' \
-                       '</rootfiles></container>')
-    zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
-    zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
+    zip.writestr(
+        'META-INF/container.xml',
+        '<?xml version="1.0" ?>'
+        '<container version="1.0" '
+        'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
+        '<rootfiles><rootfile full-path="OPS/content.opf" '
+        'media-type="application/oebps-package+xml" />'
+        '</rootfiles></container>'
+    )
+    zip.write(get_resource('res/wl-logo-small.png'),
+              os.path.join('OPS', 'logo_wolnelektury.png'))
+    zip.write(get_resource('res/jedenprocent.png'),
+              os.path.join('OPS', 'jedenprocent.png'))
     if not style:
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))
@@ -487,7 +555,11 @@ def transform(wldoc, verbose=False,
         cover_tree = etree.parse(get_resource('epub/cover.html'))
         cover_tree.find('//' + XHTMLNS('img')).set('src', cover_name)
         zip.writestr('OPS/cover.html', etree.tostring(
-                        cover_tree, method="html", pretty_print=True))
+            cover_tree, pretty_print=True, xml_declaration=True,
+            encoding="utf-8",
+            doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
+                    '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+        ))
 
         if bound_cover.uses_dc_cover:
             if document.book_info.cover_by:
@@ -499,18 +571,20 @@ def transform(wldoc, verbose=False,
             '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
         manifest.append(etree.fromstring(
             '<item id="cover-image" href="%s" media-type="%s" />' % (cover_name, bound_cover.mime_type())))
-        spine.insert(0, etree.fromstring('<itemref idref="cover" linear="no" />'))
+        spine.insert(0, etree.fromstring('<itemref idref="cover"/>'))
         opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
         guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
 
-
     annotations = etree.Element('annotations')
 
-    toc_file = etree.fromstring('<?xml version="1.0" encoding="utf-8"?><!DOCTYPE ncx PUBLIC ' \
-                               '"-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">' \
-                               '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" ' \
-                               'version="2005-1"><head></head><docTitle></docTitle><navMap>' \
-                               '</navMap></ncx>')
+    toc_file = etree.fromstring(
+        '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE ncx PUBLIC '
+        '"-//NISO//DTD ncx 2005-1//EN" '
+        '"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">'
+        '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" '
+        'version="2005-1"><head></head><docTitle></docTitle><navMap>'
+        '</navMap></ncx>'
+    )
     nav_map = toc_file[-1]
 
     if html_toc:
@@ -536,7 +610,11 @@ def transform(wldoc, verbose=False,
         html_tree = xslt(annotations, get_resource('epub/xsltAnnotations.xsl'))
         chars = chars.union(used_chars(html_tree.getroot()))
         zip.writestr('OPS/annotations.html', etree.tostring(
-                            html_tree, method="html", pretty_print=True))
+            html_tree, pretty_print=True, xml_declaration=True,
+            encoding="utf-8",
+            doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
+                    '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+        ))
 
     toc.add("Wesprzyj Wolne Lektury", "support.html")
     manifest.append(etree.fromstring(
@@ -555,7 +633,11 @@ def transform(wldoc, verbose=False,
     html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'))
     chars.update(used_chars(html_tree.getroot()))
     zip.writestr('OPS/last.html', etree.tostring(
-                        html_tree, method="html", pretty_print=True))
+        html_tree, pretty_print=True, xml_declaration=True,
+        encoding="utf-8",
+        doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
+                '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+    ))
 
     if not flags or not 'without-fonts' in flags:
         # strip fonts
@@ -567,23 +649,23 @@ def transform(wldoc, verbose=False,
 
         os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
         for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
-            if not flags or not 'with-full-fonts' in flags:
-                optimizer_call = ['perl', 'subset.pl', '--chars', ''.join(chars).encode('utf-8'),
-                              get_resource('fonts/' + fname), os.path.join(tmpdir, fname)]              
-                if verbose:
-                    print "Running font-optimizer"
-                    subprocess.check_call(optimizer_call)
-                else:
-                    subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
+            optimizer_call = ['perl', 'subset.pl', '--chars',
+                              ''.join(chars).encode('utf-8'),
+                              get_resource('fonts/' + fname),
+                              os.path.join(tmpdir, fname)]
+            if verbose:
+                print "Running font-optimizer"
+                subprocess.check_call(optimizer_call)
             else:
-                zip.write(get_resource('fonts/' + fname), os.path.join('OPS', fname))
+                subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
             manifest.append(etree.fromstring(
                 '<item id="%s" href="%s" media-type="application/x-font-truetype" />' % (fname, fname)))
         rmtree(tmpdir)
         if cwd is not None:
             os.chdir(cwd)
-    zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True, xml_declaration = True, encoding='UTF-8'))
+    zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True,
+                 xml_declaration=True, encoding="utf-8"))
     title = document.book_info.title
     attributes = "dtb:uid", "dtb:depth", "dtb:totalPageCount", "dtb:maxPageNumber"
     for st in attributes:
@@ -600,7 +682,8 @@ def transform(wldoc, verbose=False,
         toc.add(u"Spis treści", "toc.html", index=1)
         zip.writestr('OPS/toc.html', toc.html().encode('utf-8'))
     toc.write_to_xml(nav_map)
-    zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True, xml_declaration = True, encoding='UTF-8'))
+    zip.writestr('OPS/toc.ncx', etree.tostring(toc_file, pretty_print=True,
+                 xml_declaration=True, encoding="utf-8"))
     zip.close()
 
     return OutputFile.from_filename(output_file.name)
