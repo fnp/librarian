@@ -1493,7 +1493,7 @@ sub subset {
 
     $self->{features} = $options->{features};
 
-    my $uid = substr(sha1_hex("$filename $chars"), 0, 16);
+    my $uid = substr(sha1_hex(encode_utf8("$filename $chars")), 0, 16);
 
     if (not $self->{font}) {
         $self->preload($filename);
