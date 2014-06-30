@@ -230,8 +230,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             root.set('customizations', u','.join(customizations))
 
         # add editors info
-        root.set('editors', u', '.join(sorted(
-            editor.readable() for editor in document.editors())))
+        editors = document.editors()
+        if editors:
+            root.set('editors', u', '.join(sorted(
+                editor.readable() for editor in editors)))
         if document.book_info.funders:
             root.set('funders', u', '.join(document.book_info.funders))
         if document.book_info.thanks:

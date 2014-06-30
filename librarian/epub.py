@@ -502,8 +502,10 @@ def transform(wldoc, verbose=False,
             document.edoc.getroot().set(flag, 'yes')
 
     # add editors info
-    document.edoc.getroot().set('editors', u', '.join(sorted(
-        editor.readable() for editor in document.editors())))
+    editors = document.editors()
+    if editors:
+        document.edoc.getroot().set('editors', u', '.join(sorted(
+            editor.readable() for editor in editors)))
     if document.book_info.funders:
         document.edoc.getroot().set('funders', u', '.join(
             document.book_info.funders))
