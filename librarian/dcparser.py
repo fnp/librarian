@@ -245,6 +245,7 @@ class WorkInfo(object):
 
         Field( PLMETNS('digitisationSponsor'), 'sponsors', multiple=True, default=[]),
         Field( WLNS('digitisationSponsorNote'), 'sponsor_note', required=False),
+        Field( WLNS('developmentStage'), 'stage', required=False),
     )
 
     @classmethod
