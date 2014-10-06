@@ -40,6 +40,7 @@
                 <h3>Przypisy</h3>
                 <xsl:for-each select="descendant::*[self::pe or self::pa or self::pr or self::pt][not(parent::extra)]">
                     <div>
+                        <xsl:attribute name="class">fn-<xsl:value-of select="name()" /></xsl:attribute>
                         <a name="{concat('footnote-', generate-id(.))}" />
                         <a href="{concat('#anchor-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt]) + 1" />]</a>
                         <xsl:choose>

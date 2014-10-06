@@ -4,6 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
+import re
 import cStringIO
 import copy
 
@@ -292,17 +293,26 @@ def add_table_of_themes(root):
     root.insert(0, themes_div)
 
 
-
 def extract_annotations(html_path):
     """For each annotation, yields a tuple: anchor, text, html."""
     parser = etree.HTMLParser(encoding='utf-8')
     tree = etree.parse(html_path, parser)
     footnotes = tree.find('//*[@id="footnotes"]')
+    re_qualifier = re.compile(ur'[^\u2014]+\s+\((.+)\)\s+\u2014')
     if footnotes is not None:
         for footnote in footnotes.findall('div'):
-            anchor = footnote.find('a[@name]').get('name')
+            fn_type = footnote.get('class').split('-')[1]
+            anchor = footnote.find('a[@class="annotation"]').get('href')[1:]
             del footnote[:2]
-            text_str = etree.tostring(footnote, method='text', encoding='utf-8').strip()
-            html_str = etree.tostring(footnote, method='html', encoding='utf-8')
-            yield anchor, text_str, html_str
+            footnote.text = None
+            if len(footnote) and footnote[-1].tail == '\n':
+                footnote[-1].tail = None
+            text_str = etree.tostring(footnote, method='text', encoding=unicode).strip()
+            html_str = etree.tostring(footnote, method='html', encoding=unicode).strip()
+            qualifier = None
+            match = re_qualifier.match(text_str)
+            if match:
+                qualifier = match.group(1)
+
+            yield anchor, fn_type, qualifier, text_str, html_str
 
