@@ -42,7 +42,8 @@ def test_wlpicture():
 def test_picture_parts():
     wlp = picture.WLPicture.from_file(open(get_fixture('picture', 'angelus-novus.xml')))
     parts = list(wlp.partiter())
-    assert len(parts) == 5, "there should be %d parts of the picture" % 5
+    expect_parts = 4
+    assert len(parts) == expect_parts, "there should be %d parts of the picture" % expect_parts
     motifs = set()
     names = set()
 

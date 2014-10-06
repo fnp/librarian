@@ -36,7 +36,7 @@
   </sem>
   <sem type="object" object="skrzydło">
     <div type="area" x1="94" y1="148" x2="139" y2="205"/>
-    <div type="area" x1="209" y1="152" x2="252" y2="1041"/>
+    <!--div type="area" x1="209" y1="152" x2="252" y2="1041"/-->
   </sem>
  
 </picture>
