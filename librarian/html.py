@@ -298,7 +298,7 @@ def extract_annotations(html_path):
     parser = etree.HTMLParser(encoding='utf-8')
     tree = etree.parse(html_path, parser)
     footnotes = tree.find('//*[@id="footnotes"]')
-    re_qualifier = re.compile(ur'[^\u2014]+\s+\((.+)\)\s+\u2014')
+    re_qualifier = re.compile(ur'[^\u2014]+\s+\(([^\)]+)\)\s+\u2014')
     if footnotes is not None:
         for footnote in footnotes.findall('div'):
             fn_type = footnote.get('class').split('-')[1]

@@ -86,6 +86,14 @@ def test_annotations():
             ),
             'Standard footnote with qualifier and some emphasis.'),
 
+        ('<pe>Definiendum (łac.) --- definens (some) --- more text.</pe>', (
+            'pe',
+            'łac.',
+            'Definiendum (łac.) \u2014 definiens (some) \u2014 more text.',
+            '<p>Definiendum (łac.) \u2014 definiens (some) \u2014 more text.</p>',
+            ),
+            'Footnote with a second parentheses and mdash.'),
+
     )
 
     xml_src = '''<utwor><akap> %s </akap></utwor>''' % "".join(
