@@ -86,7 +86,7 @@ def test_annotations():
             ),
             'Standard footnote with qualifier and some emphasis.'),
 
-        ('<pe>Definiendum (łac.) --- definens (some) --- more text.</pe>', (
+        ('<pe>Definiendum (łac.) --- definiens (some) --- more text.</pe>', (
             'pe',
             'łac.',
             'Definiendum (łac.) \u2014 definiens (some) \u2014 more text.',
