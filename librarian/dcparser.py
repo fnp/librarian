@@ -230,7 +230,7 @@ class WorkInfo(object):
             salias='funder', multiple=True, default=[]),
         Field( DCNS('contributor.thanks'), 'thanks', required=False),
 
-        Field( DCNS('date'), 'created_at', as_date),
+        Field( DCNS('date'), 'created_at'),
         Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
         Field( DCNS('publisher'), 'publisher'),
 

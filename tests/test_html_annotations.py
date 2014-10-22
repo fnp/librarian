@@ -80,8 +80,8 @@ def test_annotations():
 
         ('<pe><slowo_obce>Definiendum</slowo_obce> (łac.) --- <slowo_obce>definiens</slowo_obce>.</pe>', (
             'pe',
-            'łac.', 
-            'Definiendum (łac.) \u2014 definiens.', 
+            'łac.',
+            'Definiendum (łac.) \u2014 definiens.',
             '<p><em class="foreign-word">Definiendum</em> (łac.) \u2014 <em class="foreign-word">definiens</em>.</p>'
             ),
             'Standard footnote with qualifier and some emphasis.'),
