@@ -294,7 +294,14 @@ def add_table_of_themes(root):
 
 
 def extract_annotations(html_path):
-    """For each annotation, yields a tuple: anchor, text, html."""
+    """Extracts annotations from HTML for annotations dictionary.
+
+    For each annotation, yields a tuple of:
+    anchor, footnote type, valid qualifiers, text, html.
+
+    """
+    from .fn_qualifiers import FN_QUALIFIERS
+
     parser = etree.HTMLParser(encoding='utf-8')
     tree = etree.parse(html_path, parser)
     footnotes = tree.find('//*[@id="footnotes"]')
@@ -309,10 +316,21 @@ def extract_annotations(html_path):
                 footnote[-1].tail = None
             text_str = etree.tostring(footnote, method='text', encoding=unicode).strip()
             html_str = etree.tostring(footnote, method='html', encoding=unicode).strip()
-            qualifier = None
+
             match = re_qualifier.match(text_str)
             if match:
-                qualifier = match.group(1)
+                qualifier_str = match.group(1)
+                qualifiers = []
+                for candidate in re.split('[;,]', qualifier_str):
+                    candidate = candidate.strip()
+                    if candidate in FN_QUALIFIERS:
+                        qualifiers.append(candidate)
+                    elif candidate.startswith('z '):
+                        subcandidate = candidate.split()[1]
+                        if subcandidate in FN_QUALIFIERS:
+                            qualifiers.append(subcandidate)
+            else:
+                qualifiers = []
 
-            yield anchor, fn_type, qualifier, text_str, html_str
+            yield anchor, fn_type, qualifiers, text_str, html_str
 

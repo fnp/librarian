@@ -23,7 +23,7 @@ def test_annotations():
 
         ('<pe/>', (
             'pe',
-            None, 
+            [], 
             '',
             '<p></p>'
             ),
@@ -32,7 +32,7 @@ def test_annotations():
         (
          '<pr>Definiendum --- definiens.</pr>', (
             'pr',
-            None, 
+            [], 
             'Definiendum \u2014 definiens.', 
             '<p>Definiendum \u2014 definiens.</p>'
             ),
@@ -40,7 +40,7 @@ def test_annotations():
 
         ('<pt><slowo_obce>Definiendum</slowo_obce> --- definiens.</pt>', (
             'pt',
-            None, 
+            [], 
             'Definiendum \u2014 definiens.', 
             '<p><em class="foreign-word">Definiendum</em> \u2014 definiens.</p>'
             ),
@@ -48,7 +48,7 @@ def test_annotations():
 
         ('<pr>Definiendum (łac.) --- definiens.</pr>', (
             'pr',
-            'łac.', 
+            ['łac.'], 
             'Definiendum (łac.) \u2014 definiens.', 
             '<p>Definiendum (łac.) \u2014 definiens.</p>'
             ),
@@ -56,7 +56,7 @@ def test_annotations():
 
         ('<pe><slowo_obce>Definiendum</slowo_obce> (łac.) --- definiens.</pe>', (
             'pe',
-            'łac.', 
+            ['łac.'], 
             'Definiendum (łac.) \u2014 definiens.', 
             '<p><em class="foreign-word">Definiendum</em> (łac.) \u2014 definiens.</p>'
             ),
@@ -64,7 +64,7 @@ def test_annotations():
 
         ('<pt> <slowo_obce>Definiendum</slowo_obce> (daw.) --- definiens.</pt>', (
             'pt',
-            'daw.', 
+            ['daw.'], 
             'Definiendum (daw.) \u2014 definiens.', 
             '<p> <em class="foreign-word">Definiendum</em> (daw.) \u2014 definiens.</p>'
             ),
@@ -72,7 +72,7 @@ def test_annotations():
 
         ('<pr>Definiendum (łac.) --- <slowo_obce>definiens</slowo_obce>.</pr>', (
             'pr',
-            'łac.', 
+            ['łac.'], 
             'Definiendum (łac.) \u2014 definiens.', 
             '<p>Definiendum (łac.) \u2014 <em class="foreign-word">definiens</em>.</p>'
             ),
@@ -80,7 +80,7 @@ def test_annotations():
 
         ('<pe><slowo_obce>Definiendum</slowo_obce> (łac.) --- <slowo_obce>definiens</slowo_obce>.</pe>', (
             'pe',
-            'łac.',
+            ['łac.'],
             'Definiendum (łac.) \u2014 definiens.',
             '<p><em class="foreign-word">Definiendum</em> (łac.) \u2014 <em class="foreign-word">definiens</em>.</p>'
             ),
@@ -88,11 +88,19 @@ def test_annotations():
 
         ('<pe>Definiendum (łac.) --- definiens (some) --- more text.</pe>', (
             'pe',
-            'łac.',
+            ['łac.'],
             'Definiendum (łac.) \u2014 definiens (some) \u2014 more text.',
             '<p>Definiendum (łac.) \u2014 definiens (some) \u2014 more text.</p>',
             ),
             'Footnote with a second parentheses and mdash.'),
+
+        ('<pe><slowo_obce>gemajna</slowo_obce> (daw., z niem. <slowo_obce>gemein</slowo_obce>: zwykły) --- częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu.</pe>', (
+            'pe',
+            ['daw.', 'niem.'],
+            'gemajna (daw., z niem. gemein: zwykły) \u2014 częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu.',
+            '<p><em class="foreign-word">gemajna</em> (daw., z niem. <em class="foreign-word">gemein</em>: zwykły) \u2014 częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu.</p>'
+            ),
+            'Footnote with multiple and qualifiers and emphasis.'),
 
     )
 
