@@ -39,6 +39,16 @@
 		<empty-line/><p>————————</p><empty-line/>
 	</xsl:template>
 
+	<xsl:template mode="para" match="tabela">
+		<table><xsl:apply-templates mode="para" /></table>
+	</xsl:template>
+	<xsl:template mode="para" match="wiersz">
+		<tr><xsl:apply-templates mode="para" /></tr>
+	</xsl:template>
+	<xsl:template mode="para" match="kol">
+		<td><xsl:apply-templates mode="inline" /></td>
+	</xsl:template>
+
 
 
 	<xsl:template mode="para" match="*"/>

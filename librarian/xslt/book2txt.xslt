@@ -233,6 +233,24 @@
 <xsl:apply-templates mode="inline" />
 </xsl:template>
 
+<xsl:template match="tabela">
+	<xsl:text>
+
+</xsl:text>
+<xsl:apply-templates/>
+<xsl:text>
+</xsl:text>
+</xsl:template>
+<xsl:template match="wiersz">
+	<xsl:apply-templates />
+	<xsl:text>
+</xsl:text>
+</xsl:template>
+<xsl:template match="kol">
+	<xsl:apply-templates mode="inline" />
+	<xsl:text>    </xsl:text>
+</xsl:template>
+
 
 <!-- ================================================ -->
 <!-- = INLINE TAGS                                  = -->

@@ -95,6 +95,17 @@ def fix_hanging(doc):
                 exclude=[DCNS("identifier.url"), DCNS("rights.license")]
                 )
 
+def fix_tables(doc):
+    for kol in doc.iter(tag='kol'):
+        if kol.tail is not None:
+            if not kol.tail.strip():
+                kol.tail = None
+    for table in doc.iter(tag='tabela'):
+        if table.get('ramka') == '1' or table.get('ramki') == '1':
+            table.set('_format', '|' + 'X|' * len(table[0]))
+        else:
+            table.set('_format', 'X' * len(table[0]))
+
 
 def move_motifs_inside(doc):
     """ moves motifs to be into block elements """
@@ -245,10 +256,12 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         parse_creator(document.edoc)
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
+        fix_tables(document.edoc)
 
         # wl -> TeXML
         style_filename = get_stylesheet("wl2tex")
         style = etree.parse(style_filename)
+        functions.reg_mathml_latex()
 
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')

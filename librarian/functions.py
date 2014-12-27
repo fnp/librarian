@@ -121,3 +121,24 @@ def reg_lang_code_3to2():
 	_register_function(lang_code_3to2)
 
 
+def mathml_latex(context, trees):
+    from librarian.embeds.mathml import MathML
+    text = MathML(trees[0]).to_latex().data
+    # Remove invisible multiplications, they produce unwanted spaces.
+    text = text.replace(u'\u2062', '')
+    return text
+
+def reg_mathml_latex():
+    _register_function(mathml_latex)
+
+def reg_mathml_epub(zipf):
+    from librarian.embeds.mathml import MathML
+    def mathml(context, trees):
+        data = MathML(trees[0]).to_latex().to_png().data
+        name = "math%d.png" % mathml.count
+        mathml.count += 1
+        zipf.writestr('OPS/' + name, data)
+        return name
+    mathml.count = 0
+    _register_function(mathml)
+

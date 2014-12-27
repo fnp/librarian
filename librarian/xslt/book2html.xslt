@@ -231,6 +231,20 @@
     <p class="motto_podpis"><xsl:apply-templates mode="inline" /></p>
 </xsl:template>
 
+<xsl:template match="tabela">
+    <table><xsl:apply-templates /></table>
+</xsl:template>
+<xsl:template match="wiersz">
+    <tr><xsl:apply-templates /></tr>
+</xsl:template>
+<xsl:template match="kol">
+    <td><xsl:apply-templates mode="inline" /></td>
+</xsl:template>
+
+<xsl:template match="mat">
+    <xsl:copy-of select="*" />
+</xsl:template>
+
 
 <!-- ================================================ -->
 <!-- = INLINE TAGS                                  = -->
@@ -244,7 +258,7 @@
 
 <!-- Other inline tags -->
 <xsl:template match="mat" mode="inline">
-    <em class="math"><xsl:apply-templates mode="inline" /></em>
+    <xsl:copy-of select="*" />
 </xsl:template>
 
 <xsl:template match="didask_tekst" mode="inline">

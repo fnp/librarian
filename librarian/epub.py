@@ -520,6 +520,8 @@ def transform(wldoc, verbose=False,
     output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub', delete=False)
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
+    functions.reg_mathml_epub(zip)
+
     # write static elements
     mime = zipfile.ZipInfo()
     mime.filename = 'mimetype'

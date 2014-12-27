@@ -73,6 +73,11 @@
 \usepackage{xunicode}
 \usepackage{xltxtra}
 
+\usepackage{longtable}
+\usepackage{tabu}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}

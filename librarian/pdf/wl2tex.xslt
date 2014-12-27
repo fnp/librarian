@@ -435,6 +435,59 @@
     </parm></cmd>
 </xsl:template>
 
+<xsl:template match="mat" mode="inline">
+    <TeXML escape="0">
+        <xsl:text>$</xsl:text>
+        <xsl:value-of select="wl:mathml_latex(.)" />
+        <xsl:text>$</xsl:text>
+    </TeXML>
+</xsl:template>
+
+<xsl:template match="mat">
+    <TeXML escape="0">
+        <xsl:text>$$</xsl:text>
+        <xsl:value-of select="wl:mathml_latex(.)" />
+        <xsl:text>$$</xsl:text>
+    </TeXML>
+</xsl:template>
+
+<xsl:template match="tabela|tabelka">
+    <cmd name="par" />
+    <cmd name="vspace"><parm>1em</parm></cmd>
+    <group><cmd name="raggedright" />
+    <env name="longtabu"> to <TeXML escape="0">\textwidth </TeXML>
+      <!--parm><cmd name="textwidth"/></parm-->
+      <parm><TeXML escape="0"><xsl:value-of select="@_format" /></TeXML></parm>
+        <xsl:choose>
+        <xsl:when test="@ramka='1' or @ramki='1'">
+          <cmd name="hline" />
+          <xsl:apply-templates mode="wiersze-ramki"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+        </xsl:choose>
+    </env>
+    </group>
+    <cmd name="vspace"><parm>1em</parm></cmd>
+</xsl:template>
+<xsl:template match="wiersz" mode="wiersze-ramki">
+    <xsl:apply-templates />
+    <spec cat="esc"/><spec cat="esc"/>
+    <cmd name="hline" gr="0" />
+</xsl:template>
+<xsl:template match="wiersz">
+    <xsl:apply-templates />
+    <spec cat="esc"/><spec cat="esc"/>
+</xsl:template>
+<xsl:template match="kol">
+    <xsl:apply-templates mode="inline"/>
+    <xsl:if test="position() &lt; last()">
+    <spec cat="align"/>
+    </xsl:if>
+</xsl:template>
+
+
 <!-- ============== -->
 <!-- = ADDED TAGS = -->
 <!-- ============== -->

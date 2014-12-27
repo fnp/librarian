@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0"  xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:wl="http://wolnelektury.pl/functions">
   <xsl:output method="html" version="1.0" encoding="utf-8" />
   <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
   <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
@@ -283,6 +283,31 @@
   <!--===========================================================-->
 
   <xsl:template match="motyw" />
+
+<xsl:template match="mat">
+    <img xmlns="http://www.w3.org/1999/xhtml">
+        <xsl:attribute name="src">
+            <xsl:value-of select="wl:mathml(.)" />
+        </xsl:attribute>
+    </img>
+</xsl:template>
+
+<xsl:template match="tabela">
+  <table xmlns="http://www.w3.org/1999/xhtml">
+    <xsl:apply-templates />
+  </table>
+</xsl:template>
+<xsl:template match="wiersz">
+  <tr xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates />
+  </tr>
+</xsl:template>
+<xsl:template match="kol">
+  <td xmlns="http://www.w3.org/1999/xhtml">
+     <xsl:apply-templates />
+  </td>
+</xsl:template>
+
 
   <!--===========================================================-->
   <!-- Tagi IGNOROWANE -->

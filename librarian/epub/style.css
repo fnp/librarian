@@ -368,3 +368,10 @@ p.minor-info {
 p.footer {
     margin-top: 2em;
 }
+
+table {
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid black;
+}
