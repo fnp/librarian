@@ -242,7 +242,7 @@
 </xsl:template>
 
 <xsl:template match="mat">
-    <xsl:copy-of select="*" />
+    <math xmlns="http://www.w3.org/1998/Math/MathML"><xsl:copy-of select="*" /></math>
 </xsl:template>
 
 
@@ -258,7 +258,7 @@
 
 <!-- Other inline tags -->
 <xsl:template match="mat" mode="inline">
-    <xsl:copy-of select="*" />
+    <math xmlns="http://www.w3.org/1998/Math/MathML"><xsl:copy-of select="*" /></math>
 </xsl:template>
 
 <xsl:template match="didask_tekst" mode="inline">

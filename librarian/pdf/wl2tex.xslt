@@ -36,7 +36,7 @@
         <xsl:choose>
             <xsl:when test="@morefloats = 'new'">
                 <TeXML escape="0">
-                    \usepackage[maxfloats=64]{morefloats}
+                    \usepackage[maxfloats=53]{morefloats}
                 </TeXML>
             </xsl:when>
             <xsl:when test="@morefloats = 'old'">
