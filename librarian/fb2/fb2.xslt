@@ -26,7 +26,7 @@
 		<FictionBook>
 			<xsl:apply-templates mode="outer"/>
 
-			<body name="footnotes">
+			<body name="notes">
 				<xsl:apply-templates mode="footnotes"/>
 			</body>
 		</FictionBook>
