@@ -142,6 +142,8 @@ class Cover(object):
         self.title = book_info.title
         if format is not None:
             self.format = format
+        if width and height:
+            self.height = height * self.width / width
         scale = max(float(width or 0) / self.width, float(height or 0) / self.height)
         if scale >= 1:
             self.scale = scale

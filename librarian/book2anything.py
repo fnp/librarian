@@ -125,7 +125,7 @@ class Book2Anything(object):
             if not (options.output_file or options.output_dir):
                 output_file = os.path.splitext(main_input)[0] + '.' + cls.ext
             else:
-                output_file = None
+                output_file = options.output_file
 
             # Do the transformation.
             doc = WLDocument.from_file(main_input, provider=provider, **parser_args)

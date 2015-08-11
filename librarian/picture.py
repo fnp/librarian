@@ -120,7 +120,7 @@ class WLPicture(object):
         data = data.replace(u'\ufeff', '')
 
         # assume images are in the same directory
-        if image_store is None and xmlfile.name is not None:
+        if image_store is None and getattr(xmlfile, 'name', None):
             image_store = ImageStore(path.dirname(xmlfile.name))
 
         try:
