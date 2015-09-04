@@ -50,6 +50,7 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None):
                 document.edoc.getroot().set(flag, 'yes')
 
         document.clean_ed_note()
+        document.clean_ed_note('abstrakt')
 
         if not options:
             options = {}

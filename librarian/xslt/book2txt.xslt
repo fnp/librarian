@@ -342,6 +342,7 @@
 <xsl:template match="extra|uwaga" mode="inline" />
 
 <xsl:template match="nota_red" />
+<xsl:template match="abstrakt" />
 
 <!-- ======== -->
 <!-- = TEXT = -->

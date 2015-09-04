@@ -501,6 +501,9 @@ def transform(wldoc, verbose=False,
         for flag in flags:
             document.edoc.getroot().set(flag, 'yes')
 
+    document.clean_ed_note()
+    document.clean_ed_note('abstrakt')
+
     # add editors info
     editors = document.editors()
     if editors:

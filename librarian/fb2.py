@@ -50,6 +50,9 @@ def transform(wldoc, verbose=False,
         for flag in flags:
             document.edoc.getroot().set(flag, 'yes')
 
+    document.clean_ed_note()
+    document.clean_ed_note('abstrakt')
+
     style_filename = os.path.join(os.path.dirname(__file__), 'fb2/fb2.xslt')
     style = etree.parse(style_filename)
 
