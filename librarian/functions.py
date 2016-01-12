@@ -9,6 +9,7 @@ import re
 from librarian.dcparser import Person
 from librarian import get_resource
 
+
 def _register_function(f):
     """ Register extension function with lxml """
     ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
@@ -16,7 +17,7 @@ def _register_function(f):
 
 
 def reg_substitute_entities():
-    ENTITY_SUBSTITUTIONS = [
+    entity_substitutions = [
         (u'---', u'—'),
         (u'--', u'–'),
         (u'...', u'…'),
@@ -28,7 +29,7 @@ def reg_substitute_entities():
         """XPath extension function converting all entites in passed text."""
         if isinstance(text, list):
             text = ''.join(text)
-        for entity, substitutution in ENTITY_SUBSTITUTIONS:
+        for entity, substitutution in entity_substitutions:
             text = text.replace(entity, substitutution)
         return text
 
@@ -103,22 +104,23 @@ def reg_texcommand():
             text = ''.join(text)
         return re.sub(r'[^a-zA-Z]', '', text).strip()
     _register_function(texcommand)
-    
+
+
 def reg_lang_code_3to2():
-	def lang_code_3to2(context, text):
-		"""Convert 3-letter language code to 2-letter code"""
-		result = ''
-		text = ''.join(text)
-		with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
-			for line in f:
-				list = line.strip().split('|')
-				if list[0] == text:
-					result=list[2]
-		if result == '':
-			return text
-		else:
-			return result
-	_register_function(lang_code_3to2)
+    def lang_code_3to2(context, text):
+        """Convert 3-letter language code to 2-letter code"""
+        result = ''
+        text = ''.join(text)
+        with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
+            for line in f:
+                list = line.strip().split('|')
+                if list[0] == text:
+                    result = list[2]
+        if result == '':
+            return text
+        else:
+            return result
+    _register_function(lang_code_3to2)
 
 
 def mathml_latex(context, trees):
@@ -128,11 +130,14 @@ def mathml_latex(context, trees):
     text = text.replace(u'\u2062', '')
     return text
 
+
 def reg_mathml_latex():
     _register_function(mathml_latex)
 
+
 def reg_mathml_epub(zipf):
     from librarian.embeds.mathml import MathML
+
     def mathml(context, trees):
         data = MathML(trees[0]).to_latex().to_png().data
         name = "math%d.png" % mathml.count
@@ -141,4 +146,3 @@ def reg_mathml_epub(zipf):
         return name
     mathml.count = 0
     _register_function(mathml)
-

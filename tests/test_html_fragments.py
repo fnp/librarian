@@ -14,7 +14,5 @@ def test_fragments():
     closed_fragments, open_fragments = extract_fragments(
         get_fixture('text', 'asnyk_miedzy_nami_expected.html'))
     assert not open_fragments
-    fragments_text = u"\n\n".join(u"%s: %s\n%s" % (f.id, f.themes, f)
-                                    for f in closed_fragments.values())
+    fragments_text = u"\n\n".join(u"%s: %s\n%s" % (f.id, f.themes, f) for f in closed_fragments.values())
     assert_equal(fragments_text, file(expected_output_file_path).read().decode('utf-8'))
-

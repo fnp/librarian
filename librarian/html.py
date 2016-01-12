@@ -23,11 +23,14 @@ STYLESHEETS = {
     'partial': 'xslt/wl2html_partial.xslt'
 }
 
+
 def get_stylesheet(name):
     return os.path.join(os.path.dirname(__file__), STYLESHEETS[name])
 
+
 def html_has_content(text):
     return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)
+
 
 def transform(wldoc, stylesheet='legacy', options=None, flags=None):
     """Transforms the WL document to XHTML.
@@ -55,21 +58,22 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None):
         if not options:
             options = {}
         result = document.transform(style, **options)
-        del document # no longer needed large object :)
+        del document  # no longer needed large object :)
 
         if html_has_content(result):
             add_anchors(result.getroot())
             add_table_of_themes(result.getroot())
             add_table_of_contents(result.getroot())
 
-            return OutputFile.from_string(etree.tostring(result, method='html',
-                xml_declaration=False, pretty_print=True, encoding='utf-8'))
+            return OutputFile.from_string(etree.tostring(
+                result, method='html', xml_declaration=False, pretty_print=True, encoding='utf-8'))
         else:
             return None
     except KeyError:
         raise ValueError("'%s' is not a valid stylesheet.")
     except (XMLSyntaxError, XSLTApplyError), e:
         raise ParseError(e)
+
 
 class Fragment(object):
     def __init__(self, id, themes):
@@ -99,7 +103,8 @@ class Fragment(object):
         result = []
         for event, element in self.closed_events():
             if event == 'start':
-                result.append(u'<%s %s>' % (element.tag, ' '.join('%s="%s"' % (k, v) for k, v in element.attrib.items())))
+                result.append(u'<%s %s>' % (
+                    element.tag, ' '.join('%s="%s"' % (k, v) for k, v in element.attrib.items())))
                 if element.text:
                     result.append(element.text)
             elif event == 'end':
@@ -129,7 +134,8 @@ def extract_fragments(input_filename):
     for event, element in etree.iterparse(buf, events=('start', 'end')):
         # Process begin and end elements
         if element.get('class', '') in ('theme-begin', 'theme-end'):
-            if not event == 'end': continue # Process elements only once, on end event
+            if not event == 'end':
+                continue  # Process elements only once, on end event
 
             # Open new fragment
             if element.get('class', '') == 'theme-begin':
@@ -164,7 +170,6 @@ def extract_fragments(input_filename):
             if element.tail:
                 for fragment_id in open_fragments:
                     open_fragments[fragment_id].append('text', element.tail)
-
 
         # Process all elements except begin and end
         else:
@@ -210,9 +215,10 @@ def any_ancestor(element, test):
 def add_anchors(root):
     counter = 1
     for element in root.iterdescendants():
-        if any_ancestor(element, lambda e: e.get('class') in ('note', 'motto', 'motto_podpis', 'dedication')
-        or e.get('id') == 'nota_red'
-        or e.tag == 'blockquote'):
+        def f(e):
+            return e.get('class') in ('note', 'motto', 'motto_podpis', 'dedication') or \
+                e.get('id') == 'nota_red' or e.tag == 'blockquote'
+        if any_ancestor(element, f):
             continue
 
         if element.tag == 'p' and 'verse' in element.get('class', ''):
@@ -237,7 +243,8 @@ def add_table_of_contents(root):
     counter = 1
     for element in root.iterdescendants():
         if element.tag in ('h2', 'h3'):
-            if any_ancestor(element, lambda e: e.get('id') in ('footnotes', 'nota_red') or e.get('class') in ('person-list',)):
+            if any_ancestor(element,
+                            lambda e: e.get('id') in ('footnotes', 'nota_red') or e.get('class') in ('person-list',)):
                 continue
 
             element_text = raw_printable_text(element)
@@ -260,9 +267,9 @@ def add_table_of_contents(root):
 
         if len(subsections):
             subsection_list = etree.SubElement(section_element, 'ol')
-            for n, subsection, text, _ in subsections:
+            for n1, subsection, subtext, _ in subsections:
                 subsection_element = etree.SubElement(subsection_list, 'li')
-                add_anchor(subsection_element, "s%d" % n, with_target=False, link_text=text)
+                add_anchor(subsection_element, "s%d" % n1, with_target=False, link_text=subtext)
 
     root.insert(0, toc)
 
@@ -271,7 +278,8 @@ def add_table_of_themes(root):
     try:
         from sortify import sortify
     except ImportError:
-        sortify = lambda x: x
+        def sortify(x):
+            return x
 
     book_themes = {}
     for fragment in root.findall('.//a[@class="theme-begin"]'):
@@ -334,4 +342,3 @@ def extract_annotations(html_path):
                 qualifiers = []
 
             yield anchor, fn_type, qualifiers, text_str, html_str
-

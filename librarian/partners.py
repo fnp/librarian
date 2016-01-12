@@ -13,19 +13,25 @@ New partners shouldn't be added here, but in the partners repository.
 """
 
 from librarian import packagers, cover
+from wolnelektury.utils import makedirs
+
 
 class GandalfEpub(packagers.EpubPackager):
     cover = cover.GandalfCover
 
+
 class GandalfPdf(packagers.PdfPackager):
     cover = cover.GandalfCover
+
 
 class BookotekaEpub(packagers.EpubPackager):
     cover = cover.BookotekaCover
 
+
 class PrestigioEpub(packagers.EpubPackager):
     cover = cover.PrestigioCover
     flags = ('less-advertising',)
+
 
 class PrestigioPdf(packagers.PdfPackager):
     cover = cover.PrestigioCover
@@ -51,7 +57,6 @@ class Virtualo(packagers.Packager):
         from librarian import DirDocProvider, ParseError
         from librarian.parser import WLDocument
         from copy import deepcopy
-        import os
         import os.path
 
         xml = etree.fromstring("""<?xml version="1.0" encoding="utf-8"?>
@@ -80,7 +85,7 @@ class Virtualo(packagers.Packager):
                 slug, ext = os.path.splitext(fname)
 
                 outfile_dir = os.path.join(output_dir, slug)
-                os.makedirs(os.path.join(output_dir, slug))
+                makedirs(os.path.join(output_dir, slug))
 
                 doc = WLDocument.from_file(main_input, provider=provider)
                 info = doc.book_info
@@ -97,17 +102,14 @@ class Virtualo(packagers.Packager):
                 cover.VirtualoCover(info).save(os.path.join(outfile_dir, slug+'.jpg'))
                 outfile = os.path.join(outfile_dir, '1.epub')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.epub')
-                doc.save_output_file(doc.as_epub(),
-                        output_path=outfile)
-                doc.save_output_file(doc.as_epub(doc, sample=25),
-                        output_path=outfile_sample)
+                doc.save_output_file(doc.as_epub(), output_path=outfile)
+                doc.save_output_file(doc.as_epub(doc, sample=25), output_path=outfile_sample)
                 outfile = os.path.join(outfile_dir, '1.mobi')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.mobi')
-                doc.save_output_file(doc.as_mobi(cover=cover.VirtualoCover),
-                        output_path=outfile)
+                doc.save_output_file(doc.as_mobi(cover=cover.VirtualoCover), output_path=outfile)
                 doc.save_output_file(
-                        doc.as_mobi(doc, cover=cover.VirtualoCover, sample=25),
-                        output_path=outfile_sample)
+                    doc.as_mobi(doc, cover=cover.VirtualoCover, sample=25),
+                    output_path=outfile_sample)
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
                 'file': main_input,

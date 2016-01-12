@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from lxml import etree
 from librarian import get_resource
-from . import TreeEmbed, create_embed, downgrades_to, converts_to
+from . import TreeEmbed, create_embed, downgrades_to
+
 
 class MathML(TreeEmbed):
     @downgrades_to('application/x-latex')

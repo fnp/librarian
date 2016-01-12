@@ -33,6 +33,7 @@ def test_passing_parse_dublincore_to_transform():
             parse_dublincore=False,
         ).as_html()
 
+
 def test_empty():
     assert not WLDocument.from_string(
             '<utwor />',

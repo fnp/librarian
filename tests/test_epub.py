@@ -25,7 +25,8 @@ def test_transform():
     for par in tree.findall("//p"):
         if par.text.startswith(u'Opracowanie redakcyjne i przypisy:'):
             editors_attribution = True
-            assert_equal(par.text.rstrip(),
+            assert_equal(
+                par.text.rstrip(),
                 u'Opracowanie redakcyjne i przypisy: '
                 u'Adam Fikcyjny, Aleksandra Sekuła, Olga Sutkowska.')
     assert_true(editors_attribution)

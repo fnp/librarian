@@ -10,6 +10,8 @@ import re
 import shutil
 import urllib
 
+from wolnelektury.utils import makedirs
+
 
 class UnicodeException(Exception):
     def __str__(self):
@@ -273,8 +275,7 @@ class OutputFile(object):
         """Save file to a path. Create directories, if necessary."""
 
         dirname = os.path.dirname(os.path.abspath(path))
-        if not os.path.isdir(dirname):
-            os.makedirs(dirname)
+        makedirs(dirname)
         shutil.copy(self.get_filename(), path)
 
 

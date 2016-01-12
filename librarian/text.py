@@ -29,6 +29,7 @@ Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowocz
 %(description)s%(contributors)s%(funders)s
 """
 
+
 def transform(wldoc, flags=None, **options):
     """
     Transforms input_file in XML to output_file in TXT.
@@ -59,10 +60,17 @@ def transform(wldoc, flags=None, **options):
             license_description = parsed_dc.license_description
             license = parsed_dc.license
             if license:
-                license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (license_description, license)        
+                license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (
+                    license_description, license)
             else:
-                license_description = u"Ten utwór nie jest objęty majątkowym prawem autorskim i znajduje się w domenie publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to te dodatkowe materiały udostępnione są na licencji Creative Commons Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL (http://creativecommons.org/licenses/by-sa/3.0/)"
-    
+                license_description = u"Ten utwór nie jest objęty majątkowym prawem autorskim i znajduje się " \
+                                      u"w domenie publicznej, co oznacza że możesz go swobodnie wykorzystywać, " \
+                                      u"publikować i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi " \
+                                      u"materiałami (przypisy, motywy literackie etc.), które podlegają prawu " \
+                                      u"autorskiemu, to te dodatkowe materiały udostępnione są na licencji " \
+                                      u"Creative Commons Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL " \
+                                      u"(http://creativecommons.org/licenses/by-sa/3.0/)"
+
             source = parsed_dc.source_name
             if source:
                 source = "\n\nTekst opracowany na podstawie: " + source
@@ -79,7 +87,6 @@ def transform(wldoc, flags=None, **options):
         else:
             description = 'Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).'
             url = '*' * 10
-            license = ""
             license_description = ""
             source = ""
             contributors = ""
@@ -96,4 +103,3 @@ def transform(wldoc, flags=None, **options):
     else:
         result = unicode(result).encode('utf-8')
     return OutputFile.from_string("\r\n".join(result.splitlines()) + "\r\n")
-

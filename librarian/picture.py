@@ -1,5 +1,5 @@
-
-from dcparser import (as_person, as_date, Field, WorkInfo, DCNS)
+# -*- coding: utf-8 -*-
+from dcparser import Field, WorkInfo, DCNS
 from librarian import (RDFNS, ValidationError, NoDublinCore, ParseError, WLURI)
 from xml.parsers.expat import ExpatError
 from os import path
@@ -10,14 +10,15 @@ import re
 from functools import *
 from operator import *
 
+
 class WLPictureURI(WLURI):
-    _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/obraz/'
-            '(?P<slug>[-a-z0-9]+)/?$')
+    _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/obraz/(?P<slug>[-a-z0-9]+)/?$')
 
     @classmethod
     def from_slug(cls, slug):
         uri = 'http://wolnelektury.pl/katalog/obraz/%s/' % slug
         return cls(uri)
+
 
 def as_wlpictureuri_strict(text):
     return WLPictureURI.strict(text)
@@ -39,15 +40,14 @@ class PictureInfo(WorkInfo):
         Field(DCNS('description.medium'), 'medium', required=False),
         Field(DCNS('description.dimensions'), 'original_dimensions', required=False),
         Field(DCNS('format'), 'mime_type', required=False),
-        Field(DCNS('identifier.url'), 'url', WLPictureURI,
-            strict=as_wlpictureuri_strict),
-        )
+        Field(DCNS('identifier.url'), 'url', WLPictureURI, strict=as_wlpictureuri_strict)
+    )
 
 
 class ImageStore(object):
     EXT = ['gif', 'jpeg', 'png', 'swf', 'psd', 'bmp'
-            'tiff', 'tiff', 'jpc', 'jp2', 'jpf', 'jb2', 'swc',
-            'aiff', 'wbmp', 'xbm']
+           'tiff', 'tiff', 'jpc', 'jp2', 'jpf', 'jb2', 'swc',
+           'aiff', 'wbmp', 'xbm']
     MIME = ['image/gif', 'image/jpeg', 'image/png',
             'application/x-shockwave-flash', 'image/psd', 'image/bmp',
             'image/tiff', 'image/tiff', 'application/octet-stream',
@@ -55,8 +55,8 @@ class ImageStore(object):
             'application/x-shockwave-flash', 'image/iff', 'image/vnd.wap.wbmp', 'image/xbm']
 
     def __init__(self, dir_):
+        super(ImageStore, self).__init__()
         self.dir = dir_
-        return super(ImageStore, self).__init__()
 
     def path(self, slug, mime_type):
         """
@@ -127,7 +127,7 @@ class WLPicture(object):
             parser = etree.XMLParser(remove_blank_text=False)
             tree = etree.parse(StringIO(data.encode('utf-8')), parser)
 
-            me =  cls(tree, parse_dublincore=parse_dublincore, image_store=image_store)
+            me = cls(tree, parse_dublincore=parse_dublincore, image_store=image_store)
             me.load_frame_info()
             return me
         except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
@@ -162,29 +162,31 @@ class WLPicture(object):
         def has_all_props(node, props):
             return reduce(and_, map(lambda prop: prop in node.attrib, props))
 
-        if has_all_props(area,  ['x1', 'x2', 'y1', 'y2']) == False:
+        if not has_all_props(area, ['x1', 'x2', 'y1', 'y2']):
             return None
-            
+
         def n(prop): return int(area.get(prop))
         return [[n('x1'), n('y1')], [n('x2'), n('y2')]]
-        
 
     def partiter(self):
         """
         Iterates the parts of this picture and returns them and their metadata
         """
         # omg no support for //sem[(@type='theme') or (@type='object')] ?
-        for part in list(self.edoc.iterfind("//sem[@type='theme']")) + list(self.edoc.iterfind("//sem[@type='object']")):
-            pd = {}
-            pd['type'] = part.get('type')
+        for part in list(self.edoc.iterfind("//sem[@type='theme']")) +\
+                list(self.edoc.iterfind("//sem[@type='object']")):
+            pd = {'type': part.get('type')}
 
             coords = self.get_sem_coords(part)
-            if coords is None: continue
+            if coords is None:
+                continue
             pd['coords'] = coords
 
             def want_unicode(x):
-                if not isinstance(x, unicode): return x.decode('utf-8')
-                else: return x
+                if not isinstance(x, unicode):
+                    return x.decode('utf-8')
+                else:
+                    return x
             pd['object'] = part.attrib['type'] == 'object' and want_unicode(part.attrib.get('object', u'')) or None
             pd['themes'] = part.attrib['type'] == 'theme' and [part.attrib.get('theme', u'')] or []
             yield pd

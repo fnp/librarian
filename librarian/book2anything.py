@@ -4,7 +4,6 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from collections import namedtuple
 import os.path
 import optparse
 
@@ -34,16 +33,15 @@ class Book2Anything(object):
     
     Subclass it for any format you want to convert to.
     """
-    format_name = None # Set format name, like "PDF".
-    ext = None # Set file extension, like "pdf".
-    uses_cover = False # Can it add a cover?
-    cover_optional = True # Only relevant if uses_cover
-    uses_provider = False # Does it need a DocProvider?
-    transform = None # Transform method. Uses WLDocument.as_{ext} by default.
-    parser_options = [] # List of Option objects for additional parser args.
-    transform_options = [] # List of Option objects for additional transform args.
-    transform_flags = [] # List of Option objects for supported transform flags.
-
+    format_name = None  # Set format name, like "PDF".
+    ext = None  # Set file extension, like "pdf".
+    uses_cover = False  # Can it add a cover?
+    cover_optional = True  # Only relevant if uses_cover
+    uses_provider = False  # Does it need a DocProvider?
+    transform = None  # Transform method. Uses WLDocument.as_{ext} by default.
+    parser_options = []  # List of Option objects for additional parser args.
+    transform_options = []  # List of Option objects for additional transform args.
+    transform_flags = []  # List of Option objects for supported transform flags.
 
     @classmethod
     def run(cls):
@@ -53,27 +51,21 @@ class Book2Anything(object):
 
         parser = optparse.OptionParser(usage=usage)
 
-        parser.add_option('-v', '--verbose', 
-                action='store_true', dest='verbose', default=False,
-                help='print status messages to stdout')
-        parser.add_option('-d', '--make-dir',
-                action='store_true', dest='make_dir', default=False,
-                help='create a directory for author and put the output file in it')
-        parser.add_option('-o', '--output-file',
-                dest='output_file', metavar='FILE',
-                help='specifies the output file')
-        parser.add_option('-O', '--output-dir',
-                dest='output_dir', metavar='DIR',
-                help='specifies the directory for output')
+        parser.add_option('-v', '--verbose', action='store_true', dest='verbose', default=False,
+                          help='print status messages to stdout')
+        parser.add_option('-d', '--make-dir', action='store_true', dest='make_dir', default=False,
+                          help='create a directory for author and put the output file in it')
+        parser.add_option('-o', '--output-file', dest='output_file', metavar='FILE',
+                          help='specifies the output file')
+        parser.add_option('-O', '--output-dir', dest='output_dir', metavar='DIR',
+                          help='specifies the directory for output')
         if cls.uses_cover:
             if cls.cover_optional:
-                parser.add_option('-c', '--with-cover', 
-                        action='store_true', dest='with_cover', default=False,
-                        help='create default cover')
-            parser.add_option('-C', '--image-cache',
-                    dest='image_cache', metavar='URL',
-                    help='prefix for image download cache' +
-                        (' (implies --with-cover)' if cls.cover_optional else ''))
+                parser.add_option('-c', '--with-cover', action='store_true', dest='with_cover', default=False,
+                                  help='create default cover')
+            parser.add_option('-C', '--image-cache', dest='image_cache', metavar='URL',
+                              help='prefix for image download cache' +
+                              (' (implies --with-cover)' if cls.cover_optional else ''))
         for option in cls.parser_options + cls.transform_options + cls.transform_flags:
             option.add(parser)
 
@@ -81,7 +73,7 @@ class Book2Anything(object):
 
         if len(input_filenames) < 1:
             parser.print_help()
-            return(1)
+            return 1
 
         # Prepare additional args for parser.
         parser_args = {}
@@ -92,8 +84,7 @@ class Book2Anything(object):
         for option in cls.transform_options:
             transform_args[option.name()] = option.value(options)
         # Add flags to transform_args, if any.
-        transform_flags = [flag.name() for flag in cls.transform_flags
-                    if flag.value(options)]
+        transform_flags = [flag.name() for flag in cls.transform_flags if flag.value(options)]
         if transform_flags:
             transform_args['flags'] = transform_flags
         if options.verbose:
@@ -106,7 +97,6 @@ class Book2Anything(object):
                 transform_args['cover'] = cover_class
             elif not cls.cover_optional or options.with_cover:
                 transform_args['cover'] = DefaultEbookCover
-
 
         # Do some real work
         try:
@@ -134,8 +124,7 @@ class Book2Anything(object):
                 transform = getattr(WLDocument, 'as_%s' % cls.ext)
             output = transform(doc, **transform_args)
 
-            doc.save_output_file(output,
-                output_file, options.output_dir, options.make_dir, cls.ext)
+            doc.save_output_file(output, output_file, options.output_dir, options.make_dir, cls.ext)
 
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {

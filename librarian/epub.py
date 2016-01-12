@@ -646,7 +646,7 @@ def transform(wldoc, verbose=False,
                 '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
     ))
 
-    if not flags or not 'without-fonts' in flags:
+    if not flags or 'without-fonts' not in flags:
         # strip fonts
         tmpdir = mkdtemp('-librarian-epub')
         try:

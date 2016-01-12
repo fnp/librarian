@@ -5,6 +5,7 @@
 #
 from librarian import get_resource
 
+
 def sponsor_logo(name):
     return {
         'Narodowe Centrum Kultury': get_resource('res/sponsors/nck.png')

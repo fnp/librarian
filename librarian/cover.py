@@ -4,7 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import re
-from PIL import Image, ImageFont, ImageDraw, ImageFilter, ImageEnhance
+from PIL import Image, ImageFont, ImageDraw, ImageFilter
 from StringIO import StringIO
 from librarian import get_resource, OutputFile, URLOpener
 
@@ -181,8 +181,7 @@ class Cover(object):
             
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size)
-        tbox.text(self.pretty_author(), self.author_color, author_font,
-            metr.author_lineskip, self.author_shadow)
+        tbox.text(self.pretty_author(), self.author_color, author_font, metr.author_lineskip, self.author_shadow)
         text_img = tbox.image()
         img.paste(text_img, (metr.author_margin_left, top), text_img)
 
@@ -193,8 +192,7 @@ class Cover(object):
             )
         title_font = ImageFont.truetype(
             self.title_font_ttf, metr.title_font_size)
-        tbox.text(self.pretty_title(), self.title_color, title_font,
-            metr.title_lineskip, self.title_shadow)
+        tbox.text(self.pretty_title(), self.title_color, title_font, metr.title_lineskip, self.title_shadow)
         text_img = tbox.image()
         img.paste(text_img, (metr.title_margin_left, top), text_img)
 
@@ -319,12 +317,11 @@ class WLCover(Cover):
                  font=author_font,
                  line_height=metr.author_lineskip,
                  color=self.author_color,
-                 shadow_color=self.author_shadow,
-                )
+                 shadow_color=self.author_shadow)
 
         box.skip(metr.box_above_line)
         box.draw.line((metr.box_line_left, box.height, metr.box_line_right, box.height),
-                fill=self.author_color, width=metr.box_line_width)
+                      fill=self.author_color, width=metr.box_line_width)
         box.skip(metr.box_below_line)
 
         # Write title.
@@ -334,8 +331,7 @@ class WLCover(Cover):
                  line_height=metr.title_lineskip,
                  font=title_font,
                  color=self.title_color,
-                 shadow_color=self.title_shadow,
-                )
+                 shadow_color=self.title_shadow)
 
         box_img = box.image()
 
@@ -347,13 +343,11 @@ class WLCover(Cover):
         else:   # Middle.
             box_top = (metr.height - box_img.size[1]) / 2
 
-        box_left = metr.bar_width + (metr.width - metr.bar_width -
-                        box_img.size[0]) / 2
+        box_left = metr.bar_width + (metr.width - metr.bar_width - box_img.size[0]) / 2
 
         # Draw the white box.
-        ImageDraw.Draw(img).rectangle((box_left, box_top,
-            box_left + box_img.size[0], box_top + box_img.size[1]),
-            fill='#fff')
+        ImageDraw.Draw(img).rectangle(
+            (box_left, box_top, box_left + box_img.size[0], box_top + box_img.size[1]), fill='#fff')
         # Paste the contents into the white box.
         img.paste(box_img, (box_left, box_top), box_img)
         return img
@@ -412,12 +406,13 @@ class LogoWLCover(WLCover):
         gradient_mask = Image.new('L', (metr.width - metr.bar_width, metr.gradient_height))
         draw = ImageDraw.Draw(gradient_mask)
         for line in range(0, metr.gradient_height):
-            draw.line((0, line, metr.width - metr.bar_width, line), fill=int(255 * self.gradient_opacity * line / metr.gradient_height))
-        img.paste(gradient, 
-            (metr.bar_width, metr.height - metr.gradient_height), mask=gradient_mask)
+            draw.line(
+                (0, line, metr.width - metr.bar_width, line),
+                fill=int(255 * self.gradient_opacity * line / metr.gradient_height))
+        img.paste(gradient, (metr.bar_width, metr.height - metr.gradient_height), mask=gradient_mask)
 
         cursor = metr.width - metr.gradient_logo_margin_right
-        logo_top = metr.height - metr.gradient_height / 2  - metr.gradient_logo_height / 2
+        logo_top = metr.height - metr.gradient_height / 2 - metr.gradient_logo_height / 2
         for logo_path in self.gradient_logos[::-1]:
             logo = Image.open(get_resource(logo_path))
             logo = logo.resize(
@@ -514,4 +509,3 @@ class GandalfCover(Cover):
 
 
 DefaultEbookCover = LogoWLCover
-

@@ -4,8 +4,10 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
-from librarian import pdf, epub, mobi, DirDocProvider, ParseError, cover
+from librarian import pdf, epub, mobi, DirDocProvider, ParseError
 from librarian.parser import WLDocument
+
+from wolnelektury.utils import makedirs
 
 
 class Packager(object):
@@ -23,19 +25,14 @@ class Packager(object):
         slug, ext = os.path.splitext(fname)
 
         if output_dir != '':
-            try:
-                os.makedirs(output_dir)
-            except:
-                pass
+            makedirs(output_dir)
         outfile = os.path.join(output_dir, slug + '.' + cls.ext)
         if os.path.exists(outfile) and not overwrite:
             return
 
         doc = WLDocument.from_file(main_input, provider=provider)
-        output_file = cls.transform(doc,
-                cover=cls.cover, flags=cls.flags)
+        output_file = cls.transform(doc, cover=cls.cover, flags=cls.flags)
         doc.save_output_file(output_file, output_path=outfile)
-
 
     @classmethod
     def prepare(cls, input_filenames, output_dir='', verbose=False, overwrite=False):
@@ -56,9 +53,11 @@ class EpubPackager(Packager):
     converter = epub
     ext = 'epub'
 
+
 class MobiPackager(Packager):
     converter = mobi
     ext = 'mobi'
+
 
 class PdfPackager(Packager):
     converter = pdf

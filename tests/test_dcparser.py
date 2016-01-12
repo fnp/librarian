@@ -11,6 +11,7 @@ from tests.utils import get_all_fixtures
 import codecs
 from datetime import date
 
+
 def check_dcparser(xml_file, result_file):
     xml = file(xml_file).read()
     result = codecs.open(result_file, encoding='utf-8').read()
@@ -46,6 +47,7 @@ def test_serialize():
     for fixture in get_all_fixtures('dcparser', '*.xml'):
         yield check_serialize, fixture
 
+
 def test_asdate():
     assert_equals(dcparser.as_date(u"2010-10-03"), date(2010, 10, 03))
     assert_equals(dcparser.as_date(u"2011"), date(2011, 1, 1))
@@ -55,4 +57,3 @@ def test_asdate():
     assert_equals(dcparser.as_date(u"ok. 1813-1814"), date(1813, 1, 1))
     assert_equals(dcparser.as_date(u"ok.1876-ok.1886"), date(1876, 1, 1))
     assert_equals(dcparser.as_date(u"1893/1894"), date(1893, 1, 1))
-    
