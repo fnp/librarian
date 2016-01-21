@@ -10,7 +10,7 @@ import re
 import shutil
 import urllib
 
-from wolnelektury.utils import makedirs
+from util import makedirs
 
 
 class UnicodeException(Exception):

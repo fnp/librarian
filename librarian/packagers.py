@@ -7,7 +7,7 @@ import os
 from librarian import pdf, epub, mobi, DirDocProvider, ParseError
 from librarian.parser import WLDocument
 
-from wolnelektury.utils import makedirs
+from util import makedirs
 
 
 class Packager(object):

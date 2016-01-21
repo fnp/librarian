@@ -13,7 +13,7 @@ New partners shouldn't be added here, but in the partners repository.
 """
 
 from librarian import packagers, cover
-from wolnelektury.utils import makedirs
+from util import makedirs
 
 
 class GandalfEpub(packagers.EpubPackager):

@@ -2,6 +2,8 @@
 # by Paul Winkler 
 # http://code.activestate.com/recipes/81611-roman-numerals/
 # PSFL (GPL compatible)
+import os
+
 
 def int_to_roman(input):
     """
@@ -115,3 +117,8 @@ def roman_to_int(input):
         return sum
     else:
         raise ValueError, 'input is not a valid roman numeral: %s' % input
+
+
+def makedirs(path):
+    if not os.path.isdir(path):
+        os.makedirs(path)
