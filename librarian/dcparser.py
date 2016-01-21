@@ -40,7 +40,7 @@ class Person(object):
             surname = parts[0]
             names = []
         elif len(parts) != 2:
-            raise ValueError("Invalid person name. There should be at most one comma: \"%s\"." % text)
+            raise ValueError("Invalid person name. There should be at most one comma: \"%s\"." % text.encode('utf-8'))
         else:
             surname = parts[0]
             if len(parts[1]) == 0:
