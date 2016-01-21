@@ -16,10 +16,13 @@
           <xsl:apply-templates select="//dc:identifier.url" />
         </dc:subject>
         <dc:creator opf:role="aut">
-        	<xsl:attribute name="opf:file-as">
-            	<xsl:value-of select="//dc:creator" />
-            </xsl:attribute>
-            <xsl:apply-templates select="//dc:creator" mode="person" />
+          <xsl:attribute name="opf:file-as">
+            <xsl:value-of select="//dc:creator" />
+          </xsl:attribute>
+          <xsl:for-each select="//dc:creator/text()">
+              <xsl:value-of select="wl:person_name(.)"/>
+              <xsl:if test="not(position() = last())">, </xsl:if>
+          </xsl:for-each>
         </dc:creator>
         <dc:publisher>
           <xsl:apply-templates select="//dc:publisher" />

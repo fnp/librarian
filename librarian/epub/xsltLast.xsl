@@ -48,7 +48,7 @@
                   <xsl:value-of select="//dc:identifier.url" />
               </xsl:attribute>
               <xsl:attribute name="title">
-                  <xsl:value-of select="wl:person_name(//dc:creator/text())" />, <xsl:value-of select="//dc:title" />
+                  <xsl:for-each select="//dc:creator/text()"><xsl:value-of select="wl:person_name(.)"/>, </xsl:for-each><xsl:value-of select="//dc:title" />
               </xsl:attribute>
               <xsl:value-of select="//dc:identifier.url" />
           </a></p>
