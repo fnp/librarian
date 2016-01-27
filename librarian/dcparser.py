@@ -46,7 +46,7 @@ class Person(object):
             if len(parts[1]) == 0:
                 # there is no non-whitespace data after the comma
                 raise ValueError("Found a comma, but no names given: \"%s\" -> %r." % (text, parts))
-            names = [name for name in parts[1].split() if len(name)]  # all non-whitespace tokens
+            names = parts[1].split()
         return cls(surname, *names)
 
     def readable(self):
