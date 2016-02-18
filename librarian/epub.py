@@ -406,7 +406,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
 def transform(wldoc, verbose=False,
               style=None, html_toc=False,
-              sample=None, cover=None, flags=None):
+              sample=None, cover=None, flags=None, hyphenate=False):
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
@@ -419,8 +419,9 @@ def transform(wldoc, verbose=False,
 
         replace_characters(wldoc.edoc.getroot())
 
-        hyphenator = set_hyph_language(wldoc.edoc.getroot())
-        hyphenate_and_fix_conjunctions(wldoc.edoc.getroot(), hyphenator)
+        if hyphenate:
+            hyphenator = set_hyph_language(wldoc.edoc.getroot())
+            hyphenate_and_fix_conjunctions(wldoc.edoc.getroot(), hyphenator)
 
         # every input file will have a TOC entry,
         # pointing to starting chunk
