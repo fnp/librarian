@@ -51,19 +51,21 @@ def set_hyph_language(source_tree):
 
 
 def hyphenate_and_fix_conjunctions(source_tree, hyph):
-    if hyph is not None:
-        texts = etree.XPath('/utwor/*[2]//text()')(source_tree)
-        for t in texts:
-            parent = t.getparent()
+    texts = etree.XPath('/utwor/*[2]//text()')(source_tree)
+    for t in texts:
+        parent = t.getparent()
+        if hyph is not None:
             newt = ''
             wlist = re.compile(r'\w+|[^\w]', re.UNICODE).findall(t)
             for w in wlist:
                 newt += hyph.inserted(w, u'\u00AD')
-            newt = re.sub(r'(?<=\s\w)\s+', u'\u00A0', newt)
-            if t.is_text:
-                parent.text = newt
-            elif t.is_tail:
-                parent.tail = newt
+        else:
+            newt = t
+        newt = re.sub(r'(?<=\s\w)\s+', u'\u00A0', newt)
+        if t.is_text:
+            parent.text = newt
+        elif t.is_tail:
+            parent.tail = newt
 
 
 def inner_xml(node):
@@ -419,9 +421,8 @@ def transform(wldoc, verbose=False,
 
         replace_characters(wldoc.edoc.getroot())
 
-        if hyphenate:
-            hyphenator = set_hyph_language(wldoc.edoc.getroot())
-            hyphenate_and_fix_conjunctions(wldoc.edoc.getroot(), hyphenator)
+        hyphenator = set_hyph_language(wldoc.edoc.getroot()) if hyphenate else None
+        hyphenate_and_fix_conjunctions(wldoc.edoc.getroot(), hyphenator)
 
         # every input file will have a TOC entry,
         # pointing to starting chunk
