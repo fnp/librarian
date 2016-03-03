@@ -231,7 +231,10 @@ u"""%(wskazowki)s
         # let's pull definiens from another document
         if self.options['slowniczek_xml'] is not None and (nxt is None or nxt.tag != 'definiens'):
             sxml = self.options['slowniczek_xml']
-            defloc = sxml.xpath("//definiendum[text()='%s']" % element.text)
+            if "'" in (element.text or ''):
+                defloc = sxml.xpath("//definiendum[text()=\"%s\"]" % (element.text or '').strip())
+            else:
+                defloc = sxml.xpath("//definiendum[text()='%s']" % (element.text or '').strip())
             if defloc:
                 definiens = defloc[0].getnext()
                 if definiens.tag == 'definiens':
