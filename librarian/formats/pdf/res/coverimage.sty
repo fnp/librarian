@@ -1,0 +1,23 @@
+\newcommand{\makecover}[1]{
+% parametry: wysokosc po obcieciu, ile obciac z dolu
+        \newlength{\PictHOffset}
+        \newlength{\PictVOffset}
+        \setlength{\PictHOffset}{1in}
+        \addtolength{\PictHOffset}{\hoffset}
+        \addtolength{\PictHOffset}{\oddsidemargin}
+
+        \setlength{\PictVOffset}{1.166in}
+        %\setlength{\PictVOffset}{0pt}
+        \addtolength{\PictVOffset}{\voffset}
+        \addtolength{\PictVOffset}{\topmargin}
+        \addtolength{\PictVOffset}{\headheight}
+        \addtolength{\PictVOffset}{\headsep}
+        \addtolength{\PictVOffset}{\topskip}
+        \addtolength{\PictVOffset}{-#1}
+
+        \noindent\hspace*{-\PictHOffset}%
+        \raisebox{\PictVOffset}[0pt][0pt]{\makebox[0pt][l]{%
+            \includegraphics[width=210mm,height=#1]{cover.png}}}
+
+        \vspace{-\PictVOffset}
+}

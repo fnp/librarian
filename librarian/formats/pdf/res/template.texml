@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
+    <TeXML escape="0">
+        \documentclass{wl}
+        \usepackage{style}
+        \usepackage{coverimage}
+
+        <env name="document">
+            <cmd name="makecover" />
+        </env>
+    </TeXML>
+</TeXML>

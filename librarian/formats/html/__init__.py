@@ -22,7 +22,7 @@ class HtmlFormat(Format):
         super(HtmlFormat, self).__init__(doc)
         self.standalone = standalone
 
-    def build(self):
+    def build(self, files_path=None):
         if self.standalone:
             tmpl = get_resource("formats/html/res/html_standalone.html")
         else:
@@ -30,6 +30,7 @@ class HtmlFormat(Format):
         t = etree.parse(tmpl)
 
         ctx = Context(format=self)
+        ctx.files_path = files_path
         ctx.toc = TOC()
         ctx.toc_level = 0
         ctx.footnotes = Footnotes()
@@ -39,7 +40,7 @@ class HtmlFormat(Format):
 
         t.find('.//div[@id="content"]').extend(
             self.render(self.doc.edoc.getroot(), ctx))
-        t.find('.//div[@id="toc"]').append(ctx.toc.render())
+        #t.find('.//div[@id="toc"]').append(ctx.toc.render())
         t.find('.//div[@id="footnotes"]').extend(ctx.footnotes.output)
 
         return OutputFile.from_string(etree.tostring(
@@ -65,6 +66,12 @@ class NaturalText(TreeRenderer):
 
 class LiteralText(TreeRenderer):
     pass
+
+
+class Silent(TreeRenderer):
+    def render_text(self, text, ctx):
+        root, inner = self.text_container()
+        return root
 
 
 class Footnotes(object):
@@ -122,6 +129,7 @@ class TOC(object):
 # Renderers
 
 HtmlFormat.renderers.register(core.Aside, None, NaturalText('aside'))
+HtmlFormat.renderers.register(core.Aside, 'comment', Silent())
 
 class AsideFootnote(NaturalText):
     def render(self, element, ctx):
@@ -132,13 +140,60 @@ class AsideFootnote(NaturalText):
         return root
 HtmlFormat.renderers.register(core.Aside, 'footnote', AsideFootnote())
 
+
+class Header(NaturalText):
+    def render(self, element, ctx):
+        root = super(Header, self).render(element, ctx)
+        if ctx.toc_level == 1:
+            d = etree.SubElement(root, 'div', {'class': "page-header"})
+            d.insert(0, root[0])
+        else:
+            root[0].tag = 'h2'
+            if root[0].text:
+                d = etree.SubElement(root[0], 'a', {'id': root[0].text, 'style': 'pointer: hand; color:#ddd; font-size:.8em'})
+                #d.text = "per"
+        return root
+
        
-HtmlFormat.renderers.register(core.Header, None, NaturalText('h1'))
+HtmlFormat.renderers.register(core.Header, None, Header('h1'))
 
 
 HtmlFormat.renderers.register(core.Div, None, NaturalText('div'))
+
+class DivDefined(NaturalText):
+    def render(self, element, ctx):
+        output = super(DivDefined, self).render(element, ctx)
+        output[0].text = (output[0].text or '') + ':'
+        output[0].attrib['id'] = output[0].text # not so cool?
+        return output
+
+HtmlFormat.renderers.register(core.Div, 'defined', DivDefined('dt', {'style': 'display: inline-block'}))
+
+
+class DivImage(NaturalText):
+    def render(self, element, ctx):
+        output = super(DivImage, self).render(element, ctx)
+        src = element.attrib.get('src', '')
+        if src.startswith('file://'):
+            src = ctx.files_path + src[7:]
+        output[0].attrib['src'] = src
+        output[0].attrib['style'] = 'display: block; width: 60%; margin: 3em auto'
+        return output
+
+HtmlFormat.renderers.register(core.Div, 'img', DivImage('img'))
+
 HtmlFormat.renderers.register(core.Div, 'item', NaturalText('li'))
 HtmlFormat.renderers.register(core.Div, 'list', NaturalText('ul'))
+HtmlFormat.renderers.register(core.Div, 'list.enum', NaturalText('ol'))
+
+class DivListDefinitions(NaturalText):
+    def render(self, element, ctx):
+        output = super(DivListDefinitions, self).render(element, ctx)
+        #if ctx.toc_level > 2:
+        #    output[0].attrib['style'] = 'float: right'
+        return output
+
+HtmlFormat.renderers.register(core.Div, 'list.definitions', DivListDefinitions('ul'))
 HtmlFormat.renderers.register(core.Div, 'p', NaturalText('p'))
 
 
@@ -158,6 +213,7 @@ HtmlFormat.renderers.register(core.Span, None, NaturalText('span'))
 HtmlFormat.renderers.register(core.Span, 'cite', NaturalText('cite'))
 HtmlFormat.renderers.register(core.Span, 'cite.code', LiteralText('code'))
 HtmlFormat.renderers.register(core.Span, 'emph', NaturalText('em'))
+HtmlFormat.renderers.register(core.Span, 'emp', NaturalText('strong'))
 
 class SpanUri(LiteralText):
     def render(self, element, ctx):
@@ -165,3 +221,14 @@ class SpanUri(LiteralText):
         root[0].attrib['href'] = element.text
         return root
 HtmlFormat.renderers.register(core.Span, 'uri', SpanUri('a'))
+
+class SpanLink(LiteralText):
+    def render(self, element, ctx):
+        root = super(SpanLink, self).render(element, ctx)
+        src = element.attrib.get('href', '')
+        if src.startswith('file://'):
+            src = ctx.files_path + src[7:]
+        root[0].attrib['href'] = src
+        return root
+HtmlFormat.renderers.register(core.Span, 'link', SpanLink('a'))
+

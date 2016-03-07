@@ -21,11 +21,22 @@ class Document(object):
 
         if not isinstance(root_elem, Section):
             if root_elem.tag != SSTNS('section'):
-                raise ValidationError("Invalid root element. Found '%s', should be '%s'" % (
-                    root_elem.tag, SSTNS('section')))
+                if root_elem.tag == 'section':
+                    for element in root_elem.iter():
+                        if element.tag in ('section', 'header', 'div', 'span', 'aside', 'metadata'):
+                            element.tag = str(SSTNS(element.tag))
+
+                    parser = SSTParser()
+                    tree = etree.parse(StringIO(etree.tostring(root_elem)), parser)
+                    tree.xinclude()
+                    self.edoc = tree
+                else:
+                    raise ValueError("Invalid root element. Found '%s', should be '%s'" % (
+                        root_elem.tag, SSTNS('section')))
             else:
-                raise ValidationError("Invalid class of root element. "
+                raise ValueError("Invalid class of root element. "
                     "Use librarian.parser.SSTParser.")
+        #print etree.tostring(self.edoc.getroot())
 
     @classmethod
     def from_string(cls, xml, *args, **kwargs):
@@ -47,6 +58,8 @@ class Document(object):
             data = data.decode('utf-8')
 
         data = data.replace(u'\ufeff', '')
+        # This is bad. The editor shouldn't spew unknown HTML entities.
+        data = data.replace(u'&nbsp;', u'\u00a0')
 
         parser = SSTParser()
         tree = etree.parse(StringIO(data.encode('utf-8')), parser)
