@@ -36,7 +36,7 @@
         <xsl:choose>
             <xsl:when test="@morefloats = 'new'">
                 <TeXML escape="0">
-                    \usepackage[maxfloats=64]{morefloats}
+                    \usepackage[maxfloats=32]{morefloats}
                 </TeXML>
             </xsl:when>
             <xsl:when test="@morefloats = 'old'">
@@ -60,8 +60,8 @@
         <env name="document">
             <xsl:if test="@data-cover-width">
                 <cmd name="makecover">
-                    <parm><xsl:value-of select="210 * @data-cover-width div @data-cover-height" />mm</parm>
                     <parm>210mm</parm>
+                    <parm><xsl:value-of select="210 * @data-cover-height div @data-cover-width" />mm</parm>
                 </cmd>
             </xsl:if>
             <cmd name="maketitle" />
@@ -89,7 +89,7 @@
 
             <TeXML escape="0">
                 \def\coverby{
-                <xsl:if test="@data-cover-by">Okładka na podstawie: 
+                <!--xsl:if test="@data-cover-by">Okładka na podstawie: 
                     <xsl:choose>
                     <xsl:when test="@data-cover-source">
                         \href{\datacoversource}{\datacoverby}
@@ -98,7 +98,7 @@
                         \datacoverby{}
                     </xsl:otherwise>
                     </xsl:choose>
-                </xsl:if>
+                </xsl:if-->
                 }
                 \def\editors{<xsl:call-template name="editors" />}
             </TeXML>
@@ -234,16 +234,17 @@
     <cmd name="par" />
     <cmd name="vspace"><parm>1em</parm></cmd>
     <group><cmd name="raggedright" />
-    <env name="tabularx">
-      <parm><cmd name="textwidth"/></parm>
+    <env name="longtabu"> to <TeXML escape="0">\textwidth </TeXML>
+      <!--parm><cmd name="textwidth"/></parm-->
+      <parm><TeXML escape="0"><xsl:value-of select="@_format" /></TeXML></parm>
         <xsl:choose>
         <xsl:when test="@ramka='1' or @ramki='1'">
-        <parm><spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/>X<spec cat="vert"/></parm>
+        <!--parm><spec cat="vert"/>X[1,l]<spec cat="vert"/>X[1,l]<spec cat="vert"/>X[1,l]<spec cat="vert"/>X[1,l]<spec cat="vert"/>X[1,l]<spec cat="vert"/></parm-->
         <cmd name="hline" />
         <xsl:apply-templates mode="wiersze-ramki"/>
         </xsl:when>
         <xsl:otherwise>
-        <parm>XXXXX</parm>
+        <!--parm>XXXXX</parm-->
         <xsl:apply-templates/>
         </xsl:otherwise>
         </xsl:choose>

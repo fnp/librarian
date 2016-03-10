@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+#
+from librarian.book2anything import Book2Anything, Option
+
+
+class Book2Pdf(Book2Anything):
+    format_name = "PDF"
+    ext = "pdf"
+    uses_cover = True
+    uses_provider = True
+    transform_options = [
+        Option('-t', '--save-tex', dest='save_tex', metavar='FILE',
+                help='path to save the intermediary LaTeX file to'),
+        Option('-m', '--morefloats', dest='morefloats', metavar='old/new/none',
+                help='force morefloats in old (<1.0c), new (>=1.0c) or none')
+    ]
+
+
+if __name__ == '__main__':
+    Book2Pdf.run()

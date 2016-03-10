@@ -40,7 +40,7 @@
             <p class="info">[Kopia robocza]</p>
           </xsl:if>
 
-          <xsl:if test="not(utwor/@less-advertising)">
+          <!--xsl:if test="not(utwor/@less-advertising)">
             <p class="info">
               <a>
                   <xsl:attribute name="href">
@@ -54,10 +54,11 @@
 
           <p class="info">
             Utwór opracowany został w&#160;ramach projektu<a href="http://www.wolnelektury.pl/"> Wolne Lektury</a> przez<a href="http://www.nowoczesnapolska.org.pl/"> fundację Nowoczesna Polska</a>.
-          </p>
+          </p-->
 
           <p class="footer info">
-            <a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a>
+            <!--a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a-->
+            <a href="http://koed.org.pl"><img src="logo_koed.png" alt="Koalicja Otwartej Edukacji" /></a>
           </p>
         </div>
       </body>

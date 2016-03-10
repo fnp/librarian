@@ -43,7 +43,7 @@
               </xsl:choose>
           </p>
 
-          <p class="info">Źródło: <a>
+          <!--p class="info">Źródło: <a>
               <xsl:attribute name="href">
                   <xsl:value-of select="//dc:identifier.url" />
               </xsl:attribute>
@@ -51,7 +51,7 @@
                   <xsl:value-of select="wl:person_name(//dc:creator/text())" />, <xsl:value-of select="//dc:title" />
               </xsl:attribute>
               <xsl:value-of select="//dc:identifier.url" />
-          </a></p>
+          </a></p-->
 
           <xsl:if test="//dc:source" >
             <p class="info">Tekst opracowany na podstawie: <xsl:value-of select="//dc:source" /></p>
@@ -81,12 +81,12 @@
             </p>
           </xsl:if>
 
-          <div class="info">
+          <!--div class="info">
           <img src="jedenprocent.png" alt="Logo 1%" />
           <div>Przekaż 1% podatku na rozwój Wolnych Lektur.</div>
           <div>Nazwa organizacji: Fundacja Nowoczesna Polska</div>
           <div>KRS 0000070056</div>
-          </div>
+          </div-->
 
           <p class="info">&#160;</p>
           <p class="minor info">

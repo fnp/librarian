@@ -435,8 +435,9 @@ def transform(wldoc, verbose=False,
                        '<rootfiles><rootfile full-path="OPS/content.opf" ' \
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
-    zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
-    zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
+    #zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
+    zip.write(get_resource('res/koedlogo.png'), os.path.join('OPS', 'logo_koed.png'))
+    #zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
     if not style:
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))

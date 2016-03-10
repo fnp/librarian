@@ -25,7 +25,7 @@ class Person(object):
 
     @classmethod
     def from_text(cls, text):
-        parts = [ token.strip() for token in text.split(',') ]
+        parts = [ token.strip() for token in text.rsplit(',', 1) ]
         if len(parts) == 1:
             surname = parts[0]
             names = []

@@ -96,6 +96,18 @@ def fix_hanging(doc):
                 exclude=[DCNS("identifier.url"), DCNS("rights.license")]
                 )
 
+def fix_tables(doc):
+    for kol in doc.iter(tag='kol'):
+        if kol.tail is not None:
+            if not kol.tail.strip():
+                kol.tail = None
+    for table in doc.iter(tag='tabela'):
+        if table.get('ramka') == '1' or table.get('ramki') == '1':
+            table.set('_format', '|' + 'X|' * len(table[0]))
+        else:
+            table.set('_format', 'X' * len(table[0]))
+            
+
 
 def move_motifs_inside(doc):
     """ moves motifs to be into block elements """
@@ -187,7 +199,7 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None):
+              cover=None, flags=None, customizations=None, ilustr_path=''):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
@@ -208,7 +220,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         if cover:
             if cover is True:
                 cover = WLCover
-            bound_cover = cover(book_info)
+            bound_cover = cover(book_info, width=2400)
             root.set('data-cover-width', str(bound_cover.width))
             root.set('data-cover-height', str(bound_cover.height))
             if bound_cover.uses_dc_cover:
@@ -241,6 +253,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         parse_creator(document.edoc)
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
+	fix_tables(document.edoc)
 
         # wl -> TeXML
         style_filename = get_stylesheet("wl2tex")
@@ -252,7 +265,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         temp = mkdtemp('-wl2pdf')
 
         for ilustr in document.edoc.findall("//ilustr"):
-            shutil.copy(ilustr.get("src"), temp)
+            shutil.copy(os.path.join(ilustr_path, ilustr.get("src")), temp)
 
         if cover:
             with open(os.path.join(temp, 'cover.png'), 'w') as f:
@@ -274,8 +287,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         shutil.copy(get_resource('res/wl-logo.png'), temp)
         #shutil.copy(get_resource('res/prawokultury-logo.png'), temp)
         #shutil.copy(get_resource('res/trust-logo.eps'), temp)
-        shutil.copy(get_resource('res/nowoczesnapolska.org.pl.png'), temp)
-        shutil.copy(get_resource('res/koedlogo.png'), temp)
+        shutil.copy(get_resource('res/fnp-logo.eps'), temp)
+        shutil.copy(get_resource('res/koed-logo.eps'), temp)
 
         try:
             cwd = os.getcwd()

@@ -67,7 +67,8 @@
 
 \usepackage{trace}
 
-\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{tabu}
 \usepackage[MeX]{polski}
 
 \usepackage[xetex]{graphicx}
@@ -90,7 +91,7 @@ BoldFont = JunicodeWL-Regular,
 BoldItalicFont = JunicodeWL-Italic,
 SmallCapsFont = JunicodeWL-Regular,
 SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-Numbers=OldStyle,
+%Numbers=OldStyle,
 Scale=1.04,
 LetterSpace=-1.0
 ] {JunicodeWL}
@@ -142,7 +143,9 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \setlength{\marginparsep}{2em}
 \setlength{\marginparwidth}{8.5em}
-\setlength{\oddsidemargin}{0pt}
+%\setlength{\oddsidemargin}{0pt}
+\setlength{\oddsidemargin}{\evensidemargin}
+\setlength{\evensidemargin}{18pt}
 \setlength{\voffset}{0pt}
 \setlength{\topmargin}{0pt}
 \setlength{\headheight}{0pt}
@@ -153,12 +156,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-% CAUTION! Manually entered text.
 %\lfoot{{\footnotesize \textsc{\@author} \emph{\@title}}}
-\rfoot[{\footnotesize \thepage}]{{\footnotesize \textsc{\@author} \emph{Dlaczego nie warto blokować użycia komercyjnego\ldots}}}
+%\rfoot[{\footnotesize \thepage}]{{\footnotesize \textsc{\@author} \emph{\@title}}}
+\lfoot[{\footnotesize \thepage}]{}
 \cfoot{}
 %\rfoot{{\footnotesize \thepage}}
-\lfoot[{\footnotesize \textsc{\@author} \emph{Dlaczego nie warto blokować użycia komercyjnego\ldots}}]{{\footnotesize \thepage}}
+%\lfoot[{\footnotesize \textsc{\@author} \emph{\@title}}]{{\footnotesize \thepage}}
+\rfoot[]{{\footnotesize \thepage}}
+
 
 \clubpenalty=100000
 \widowpenalty=100000
@@ -206,18 +211,20 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \renewcommand{\maketitle}{
     {
-    \thispagestyle{empty}
+    % \thispagestyle{empty}
+    \setcounter{page}{1}
+
     \footnotesize
     \color{theme}
 
     \noindent \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
         %\href{http://prawokultury.pl}{\xbox{\includegraphics[width=1in]{prawokultury-logo.png}}}
-        \href{http://koed.org.pl}{\xbox{\includegraphics[height=.55in]{koedlogo.png}}}
+        \href{http://koed.org.pl}{\xbox{\includegraphics[height=.55in]{koed-logo.eps}}}
     \end{minipage}
     \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
         \raggedright
         %\xbox{\includegraphics[width=1.6in]{trust-logo.eps}}
-        \href{http://nowoczesnapolska.org.pl}{\xbox{\includegraphics[height=.55in]{nowoczesnapolska.org.pl.png}}}
+        \href{http://nowoczesnapolska.org.pl}{\xbox{\includegraphics[height=.55in]{fnp-logo.eps}}}
         \vspace{.5em}
     \end{minipage}
 
@@ -345,7 +352,7 @@ Letters={Uppercase}
 
 \newcommand{\dlugicytat}[1]{%
 \begin{quotation}%
-\raggedright%
+%\raggedright%
 #1%
 \end{quotation}%
 }
@@ -364,7 +371,8 @@ Letters={Uppercase}
 \par{#1}%
 \begin{itemize}%
 #2%
-\end{itemize}%
+\end{itemize}
+
 }
 
 \newcommand{\nagloweklisty}[1]{%
@@ -380,11 +388,11 @@ Letters={Uppercase}
 }
 
 \newcommand{\naglowekakt}[1]{%
-\pagebreak
+\newpage
 \subsection*{\typosubsection{#1}}%
 }
 \newcommand{\naglowekczesc}[1]{%
-\pagebreak
+\newpage
 \subsection*{\typosubsection{#1}}%
 }
 \newcommand{\srodtytul}[1]{%
@@ -450,7 +458,8 @@ Letters={Uppercase}
 }
 
 \ifshowfootnotes
-  \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
+  %\newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
+  \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
   \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}
@@ -530,6 +539,6 @@ Letters={Uppercase}
 }
 \newcommand{\ilustr}[2]{%
 \vspace{1em}%
-\par{\noindent\includegraphics[width=\textwidth]{#1}}%
-\vspace{1em}%
+\par{\noindent\includegraphics[width=\linewidth]{#1}}%
+\vspace{1em}
 }

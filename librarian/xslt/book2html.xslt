@@ -485,6 +485,49 @@
 </xsl:template>
 
 
+<xsl:template match="tabela">
+    <table><xsl:apply-templates /></table>
+</xsl:template>
+<xsl:template match="wiersz">
+    <tr><xsl:apply-templates /></tr>
+</xsl:template>
+<xsl:template match="kol">
+    <td><xsl:apply-templates mode="inline" /></td>
+</xsl:template>
+
+<xsl:template match="ilustr" mode="inline">
+    <xsl:apply-templates select="."/>
+</xsl:template>
+
+<xsl:template match="ilustr">
+    <img>
+        <xsl:attribute name="src">
+            <xsl:value-of select="@src" />
+        </xsl:attribute>
+                <xsl:attribute name="alt">
+                            <xsl:value-of select="@alt" />
+                                    </xsl:attribute>
+                                <xsl:attribute name="title">
+                                                            <xsl:value-of select="@alt" />
+                                                                                                </xsl:attribute>
+
+
+    </img>
+</xsl:template>
+<xsl:template match="lista[@typ='num']">
+    <ol><xsl:apply-templates /></ol>
+</xsl:template>
+<xsl:template match="lista[@typ='punkt']">
+    <ul><xsl:apply-templates /></ul>
+    </xsl:template>
+<xsl:template match="punkt">
+    <li><xsl:apply-templates mode="inline" /></li>
+        </xsl:template>
+
+
+
+
+
 <!-- ========================================== -->
 <!-- = PARAGRAPH TAGS                         = -->
 <!-- = (can contain inline and special tags)  = -->
@@ -507,9 +550,10 @@
 </xsl:template>
 
 <!-- Section headers (included in index)-->
-<xsl:template match="naglowek_akt|naglowek_czesc|srodtytul">
+<xsl:template match="naglowek_akt|naglowek_czesc">
   <xsl:call-template name="section-anchor"/>
-    <h2><xsl:apply-templates mode="inline" /></h2>
+    <h2>
+        <xsl:apply-templates mode="inline" /></h2>
 </xsl:template>
 
 <xsl:template match="naglowek_scena|naglowek_rozdzial">
@@ -521,6 +565,13 @@
       <xsl:call-template name="section-anchor"/>
     <h4><xsl:apply-templates mode="inline" /></h4>
 </xsl:template>
+
+<xsl:template match="srodtytul">
+  <xsl:call-template name="section-anchor"/>
+      <h5>
+                                          <xsl:apply-templates mode="inline" /></h5>
+                                          </xsl:template>
+
 
 <!-- Other paragraph tags -->
 <xsl:template match="miejsce_czas">
@@ -641,6 +692,14 @@
     <em class="person"><xsl:apply-templates mode="inline" /></em>
 </xsl:template>
 
+<xsl:template match="www" mode="inline">
+    <a>
+        <xsl:attribute name="href">
+            <xsl:value-of select="text()"/>
+        </xsl:attribute>
+        <xsl:value-of select="text()"/>
+    </a>
+</xsl:template>
 
 <!-- ============================================== -->
 <!-- = STANDALONE TAGS                            = -->
