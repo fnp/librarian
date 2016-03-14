@@ -199,7 +199,7 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None):
+              cover=None, flags=None, customizations=None, ilustr_path=''):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
@@ -267,6 +267,9 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
+
+        for ilustr in document.edoc.findall("//ilustr"):
+            shutil.copy(os.path.join(ilustr_path, ilustr.get("src")), temp)
 
         for sponsor in book_info.sponsors:
             ins = etree.Element("data-sponsor", name=sponsor)

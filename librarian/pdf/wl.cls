@@ -538,3 +538,8 @@ Letters={Uppercase}
 \fi
 }
 
+\newcommand{\ilustr}[2]{%
+\vspace{1em}%
+\par{\noindent\includegraphics[width=\linewidth]{#1}}%
+\vspace{1em}
+}

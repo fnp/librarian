@@ -256,6 +256,12 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="ilustr">
+    <cmd name="ilustr">
+        <parm><xsl:value-of select="@src" /></parm>
+        <parm><xsl:value-of select="@alt" /></parm>
+    </cmd>
+</xsl:template>
 
 <!-- ========================================== -->
 <!-- = PARAGRAPH TAGS                         = -->
