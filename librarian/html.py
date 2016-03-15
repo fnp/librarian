@@ -57,6 +57,7 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None):
 
         if not options:
             options = {}
+        options.setdefault('gallery', "''")
         result = document.transform(style, **options)
         del document  # no longer needed large object :)
 

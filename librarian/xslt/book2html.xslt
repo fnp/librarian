@@ -119,7 +119,7 @@
 <xsl:template match="ilustr">
     <img>
         <xsl:attribute name="src">
-            <xsl:value-of select="@src" />
+            <xsl:value-of select="$gallery" /><xsl:value-of select="@src" />
         </xsl:attribute>
         <xsl:attribute name="alt">
             <xsl:value-of select="@alt" />
