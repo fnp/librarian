@@ -406,9 +406,8 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     return output_html, toc, chars
 
 
-def transform(wldoc, verbose=False,
-              style=None, html_toc=False,
-              sample=None, cover=None, flags=None, hyphenate=False):
+def transform(wldoc, verbose=False, style=None, html_toc=False,
+              sample=None, cover=None, flags=None, hyphenate=False, ilustr_path=''):
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
@@ -526,6 +525,9 @@ def transform(wldoc, verbose=False,
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
     functions.reg_mathml_epub(zip)
+
+    for filename in os.listdir(ilustr_path):
+        zip.write(os.path.join(ilustr_path, filename), os.path.join('OPS', filename))
 
     # write static elements
     mime = zipfile.ZipInfo()
