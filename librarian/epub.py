@@ -528,11 +528,12 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
 
     functions.reg_mathml_epub(zip)
 
-    for filename in os.listdir(ilustr_path):
+    for i, filename in enumerate(os.listdir(ilustr_path)):
         file_path = os.path.join(ilustr_path, filename)
         zip.write(file_path, os.path.join('OPS', filename))
+        image_id = 'image%s' % i
         manifest.append(etree.fromstring(
-            '<item id="%s" href="%s" media-type="%s" />' % (filename, filename, guess_type(file_path)[0])))
+            '<item id="%s" href="%s" media-type="%s" />' % (image_id, filename, guess_type(file_path)[0])))
 
     # write static elements
     mime = zipfile.ZipInfo()
