@@ -11,6 +11,8 @@ import re
 import subprocess
 from StringIO import StringIO
 from copy import deepcopy
+from mimetypes import guess_type
+
 from lxml import etree
 import zipfile
 from tempfile import mkdtemp, NamedTemporaryFile
@@ -527,7 +529,10 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
     functions.reg_mathml_epub(zip)
 
     for filename in os.listdir(ilustr_path):
-        zip.write(os.path.join(ilustr_path, filename), os.path.join('OPS', filename))
+        file_path = os.path.join(ilustr_path, filename)
+        zip.write(file_path, os.path.join('OPS', filename))
+        manifest.append(etree.fromstring(
+            '<item id="%s" href="%s" media-type="%s" />' % (filename, filename, guess_type(file_path)[0])))
 
     # write static elements
     mime = zipfile.ZipInfo()
