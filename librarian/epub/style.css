@@ -1,3 +1,6 @@
+@page {
+  margin: 5pt;
+}
 @font-face {
     font-family: "DejaVu Serif";
     font-weight: normal;
@@ -44,17 +47,8 @@ a img {
     border: 0;
 }
 
-#book-text
-{
-    margin: 2em;
-}
-
-@media amzn-kf8
-{
-   #book-text
-    {
-        margin: 0;
-    }
+#book-text {
+    margin: 0;
 }
 
 /* =================================================== */
