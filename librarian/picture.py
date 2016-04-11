@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from operator import and_
+
 from dcparser import Field, WorkInfo, DCNS
 from librarian import (RDFNS, ValidationError, NoDublinCore, ParseError, WLURI)
 from xml.parsers.expat import ExpatError
@@ -7,8 +9,6 @@ from StringIO import StringIO
 from lxml import etree
 from lxml.etree import (XMLSyntaxError, XSLTApplyError, Element)
 import re
-from functools import *
-from operator import *
 
 
 class WLPictureURI(WLURI):
@@ -96,6 +96,7 @@ class WLPicture(object):
             self.picture_info = PictureInfo.from_element(self.rdf_elem)
         else:
             self.picture_info = None
+        self.frame = None
 
     @classmethod
     def from_string(cls, xml, *args, **kwargs):
