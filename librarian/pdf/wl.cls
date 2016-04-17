@@ -433,7 +433,7 @@ Letters={Uppercase}
 \par{\textsc{#1}}\nopagebreak%
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
-\par{#1}\nopagebreak%
+\vspace{5ex}\par{#1}\nopagebreak%
 }
 
 \newcommand{\miejsceczas}[1]{%
