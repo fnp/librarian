@@ -4,7 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from lxml import etree
-from librarian import IOFile, RDFNS, DCNS, Format
+from librarian import IOFile, Format
 from xmlutils import Xmill, tag, tagged, ifoption, tag_open_close
 from librarian import functions
 import re
@@ -12,6 +12,7 @@ import random
 from copy import deepcopy
 
 IMAGE_THUMB_WIDTH = 300
+
 
 class EduModule(Xmill):
     def __init__(self, options=None):
@@ -99,13 +100,16 @@ class EduModule(Xmill):
             opis = ''
 
         n = element.xpath('wskazowki')
-        if n: wskazowki = submill.generate(n[0])
-
-        else: wskazowki = ''
+        if n:
+            wskazowki = submill.generate(n[0])
+        else:
+            wskazowki = ''
         n = element.xpath('pomoce')
 
-        if n: pomoce = submill.generate(n[0])
-        else: pomoce = ''
+        if n:
+            pomoce = submill.generate(n[0])
+        else:
+            pomoce = ''
 
         forma = ''.join(element.xpath('forma/text()'))
         get_forma_url = self.options['urlmapper'].get_forma_url
@@ -128,27 +132,28 @@ class EduModule(Xmill):
         counter = self.activity_counter
 
         if element.getnext().tag == 'aktywnosc' or self.activity_last.getnext() == element:
-            counter_html = """<span class="act_counter">%(counter)d.</span>""" % locals()
+            counter_html = """<span class="act_counter">%(counter)d.</span>""" % {'counter': counter}
         else:
             counter_html = ''
 
         self.activity_last = element
 
-        return u"""
+        return (
+            u"""
 <div class="activity">
- <div class="text">
-  %(counter_html)s
-  %(opis)s""" % locals(), \
-u"""%(wskazowki)s
- </div>
- <aside class="info">
-  %(czas)s
-  %(forma)s
-  %(pomoce)s
- </aside>
- <div class="clearboth"></div>
+  <div class="text">
+    %(counter_html)s
+    %(opis)s""" % {'counter_html': counter_html, 'opis': opis},
+            u"""%(wskazowki)s
+  </div>
+  <aside class="info">
+    %(czas)s
+    %(forma)s
+    %(pomoce)s
+  </aside>
+  <div class="clearboth"></div>
 </div>
-""" % locals()
+""" % {'wskazowki': wskazowki, 'czas': czas, 'forma': forms, 'pomoce': pomoce})
 
     handle_opis = ifoption(sub_gen=True)(tag('div', 'description'))
     handle_wskazowki = ifoption(sub_gen=True)(tag('div', ('hints', 'teacher')))
@@ -181,7 +186,9 @@ u"""%(wskazowki)s
         return handler.generate(element)
 
     # Lists
-    def handle_lista(self, element, attrs={}):
+    def handle_lista(self, element, attrs=None):
+        if attrs is None:
+            attrs = {}
         ltype = element.attrib.get('typ', 'punkt')
         if not element.findall("punkt"):
             if ltype == 'czytelnia':
@@ -195,22 +202,25 @@ u"""%(wskazowki)s
                 surl = 'http://edukacjamedialna.edu.pl/lekcje/slowniczek/'
             sxml = etree.fromstring(self.options['provider'].by_uri(surl).get_string())
 
-            self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
+            self.options = {'slowniczek': True, 'slowniczek_xml': sxml}
             pre, post = '<div class="slowniczek">', '</div>'
             if not self.options['wldoc'].book_info.url.slug.startswith('slowniczek'):
                 post += u'<p class="see-more"><a href="%s">Zobacz cały słowniczek.</a></p>' % surl
             return pre, post
 
-        listtag = {'num': 'ol',
-               'punkt': 'ul',
-               'alfa': 'ul',
-               'czytelnia': 'ul'}[ltype]
+        listtag = {
+            'num': 'ol',
+            'punkt': 'ul',
+            'alfa': 'ul',
+            'czytelnia': 'ul'}[ltype]
 
         classes = attrs.get('class', '')
-        if classes: del attrs['class']
+        if classes:
+            del attrs['class']
 
         attrs_s = ' '.join(['%s="%s"' % kv for kv in attrs.items()])
-        if attrs_s: attrs_s = ' ' + attrs_s
+        if attrs_s:
+            attrs_s = ' ' + attrs_s
 
         return '<%s class="lista %s %s"%s>' % (listtag, ltype, classes, attrs_s), '</%s>' % listtag
 
@@ -253,8 +263,7 @@ u"""%(wskazowki)s
 
     def handle_tabela(self, element):
         has_frames = int(element.attrib.get("ramki", "0"))
-        if has_frames: frames_c = "framed"
-        else: frames_c = ""
+        frames_c = "framed" if has_frames else ""
         return u"""<table class="%s">""" % frames_c, u"</table>"
 
     def handle_wiersz(self, element):
@@ -273,14 +282,9 @@ u"""%(wskazowki)s
         elif 'material' in element.attrib:
             material_err = u' [BRAKUJĄCY MATERIAŁ]'
             slug = element.attrib['material']
-            make_url = lambda f: self.options['urlmapper'] \
-              .url_for_material(slug, f)
 
-            if 'format' in element.attrib:
-                formats = re.split(r"[, ]+",
-                               element.attrib['format'])
-            else:
-                formats = [None]
+            def make_url(f):
+                return self.options['urlmapper'].url_for_material(slug, f)
 
             formats = self.options['urlmapper'].materials(slug)
 
@@ -312,8 +316,10 @@ u"""%(wskazowki)s
         url = self.options['urlmapper'].url_for_image(slug, ext)
         thumb_url = self.options['urlmapper'].url_for_image(slug, ext, IMAGE_THUMB_WIDTH)
         e = etree.Element("a", attrib={"href": url, "class": "image"})
-        e.append(etree.Element("img", attrib={"src": thumb_url, "alt": alt,
-                    "width": str(IMAGE_THUMB_WIDTH)}))
+        e.append(etree.Element("img", attrib={
+            "src": thumb_url,
+            "alt": alt,
+            "width": str(IMAGE_THUMB_WIDTH)}))
         return etree.tostring(e, encoding=unicode), u""
 
     def handle_video(self, element):
@@ -331,10 +337,12 @@ u"""%(wskazowki)s
 
 class Exercise(EduModule):
     INSTRUCTION = ""
+
     def __init__(self, *args, **kw):
         self.question_counter = 0
         super(Exercise, self).__init__(*args, **kw)
         self.instruction_printed = False
+        self.piece_counter = None
 
     @tagged('div', 'description')
     def handle_opis(self, element):
@@ -375,7 +383,7 @@ class Exercise(EduModule):
         # Add a single <pytanie> tag if it's not there
         if not element.xpath(".//pytanie"):
             qpre, qpost = self.handle_pytanie(element)
-            pre = pre + qpre
+            pre += qpre
             post = qpost + post
         return pre, post
 
@@ -386,8 +394,7 @@ class Exercise(EduModule):
         self.question_counter += 1
         self.piece_counter = 0
         solution = element.attrib.get('rozw', None)
-        if solution: solution_s = ' data-solution="%s"' % solution
-        else: solution_s = ''
+        solution_s = ' data-solution="%s"' % solution if solution else ''
 
         handles = element.attrib.get('uchwyty', None)
         if handles:
@@ -395,8 +402,7 @@ class Exercise(EduModule):
             self.options = {'handles': handles}
 
         minimum = element.attrib.get('min', None)
-        if minimum: minimum_s = ' data-minimum="%d"' % int(minimum)
-        else: minimum_s = ''
+        minimum_s = ' data-minimum="%d"' % int(minimum) if minimum else ''
 
         return '<div class="question%s" data-no="%d" %s>' %\
             (add_class, self.question_counter, solution_s + minimum_s), \
@@ -413,7 +419,6 @@ class Exercise(EduModule):
             return ""
 
 
-
 class Wybor(Exercise):
     def handle_cwiczenie(self, element):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
@@ -428,7 +433,8 @@ class Wybor(Exercise):
                 break
             choices = p.xpath(".//*[@nazwa]")
             uniq = set()
-            for n in choices: uniq.add(n.attrib.get('nazwa', ''))
+            for n in choices:
+                uniq.add(n.attrib.get('nazwa', ''))
             if len(choices) != len(uniq):
                 is_single_choice = False
                 break
@@ -483,6 +489,7 @@ Overrides the returned content default handle_pytanie
 
 class Luki(Exercise):
     INSTRUCTION = u"Przeciągnij odpowiedzi i upuść w wybranym polu."
+
     def find_pieces(self, question):
         return question.xpath(".//luka")
 
@@ -579,19 +586,29 @@ class Przyporzadkuj(Exercise):
         if self.options['subject']:
             self.piece_counter += 1
             if self.options['handles']:
-                return '<li><span data-solution="%s" data-no="%s" class="question-piece draggable handle add-li">%s</span>' % (element.attrib.get('rozw', ''), self.piece_counter, self.piece_counter), '</li>'
+                return (
+                    '<li><span data-solution="%s" data-no="%s" '
+                    'class="question-piece draggable handle add-li">%s</span>' % (
+                        element.attrib.get('rozw', ''),
+                        self.piece_counter,
+                        self.piece_counter),
+                    '</li>')
             else:
                 extra_class = ""
                 if self.options['short']:
                     extra_class += ' short'
-                return '<li data-solution="%s" data-no="%s" class="question-piece draggable%s">' % (element.attrib.get('rozw', ''), self.piece_counter, extra_class), '</li>'
+                return '<li data-solution="%s" data-no="%s" class="question-piece draggable%s">' % (
+                    element.attrib.get('rozw', ''),
+                    self.piece_counter, extra_class), '</li>'
 
         elif self.options['predicate']:
             if self.options['min']:
                 placeholders = u'<li class="placeholder"></li>' * self.options['min']
             else:
                 placeholders = u'<li class="placeholder multiple"></li>'
-            return '<li data-predicate="%s">' % element.attrib.get('nazwa', ''), '<ul class="subjects">' + placeholders + '</ul></li>'
+            return (
+                '<li data-predicate="%s">' % element.attrib.get('nazwa', ''),
+                '<ul class="subjects">' + placeholders + '</ul></li>')
 
         else:
             return super(Przyporzadkuj, self).handle_punkt(element)
@@ -617,6 +634,7 @@ class EduModuleFormat(Format):
 
     def __init__(self, wldoc, **kwargs):
         super(EduModuleFormat, self).__init__(wldoc, **kwargs)
+        self.materials_by_slug = None
 
     def build(self):
         # Sort materials by slug.
@@ -638,7 +656,7 @@ class EduModuleFormat(Format):
 
     def materials(self, slug):
         """Returns a list of pairs: (ext, iofile)."""
-        order = dict(reversed(k) for k in enumerate(self.PRIMARY_MATERIAL_FORMATS))
+        order = {pmf: i for (i, pmf) in enumerate(self.PRIMARY_MATERIAL_FORMATS)}
         mats = self.materials_by_slug.get(slug, {}).items()
         if not mats:
             print "!! Material missing: '%s'" % slug
@@ -647,8 +665,9 @@ class EduModuleFormat(Format):
     def url_for_material(self, slug, fmt):
         return "%s.%s" % (slug, fmt)
 
+    # WTF: tutaj był błąd, ale nikomu to nie przeszkadzało?
     def url_for_image(self, slug, fmt, width=None):
-        return self.url_for_material(self, slug, fmt)
+        return self.url_for_material(slug, fmt)
 
     def text_to_anchor(self, text):
         return re.sub(r" +", " ", text)
