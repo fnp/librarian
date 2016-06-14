@@ -131,7 +131,7 @@ class EduModule(Xmill):
 
         counter = self.activity_counter
 
-        if element.getnext().tag == 'aktywnosc' or self.activity_last.getnext() == element:
+        if element.getnext().tag == 'aktywnosc' or (self.activity_last and self.activity_last.getnext() == element):
             counter_html = """<span class="act_counter">%(counter)d.</span>""" % {'counter': counter}
         else:
             counter_html = ''
@@ -153,7 +153,7 @@ class EduModule(Xmill):
   </aside>
   <div class="clearboth"></div>
 </div>
-""" % {'wskazowki': wskazowki, 'czas': czas, 'forma': forms, 'pomoce': pomoce})
+""" % {'wskazowki': wskazowki, 'czas': czas, 'forma': forma, 'pomoce': pomoce})
 
     handle_opis = ifoption(sub_gen=True)(tag('div', 'description'))
     handle_wskazowki = ifoption(sub_gen=True)(tag('div', ('hints', 'teacher')))

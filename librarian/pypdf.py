@@ -261,7 +261,7 @@ class EduModule(Xmill):
 
         counter = self.activity_counter
 
-        if element.getnext().tag == 'aktywnosc' or self.activity_last.getnext() == element:
+        if element.getnext().tag == 'aktywnosc' or (self.activity_last and self.activity_last.getnext() == element):
             counter_tex = """<cmd name="activitycounter"><parm>%(counter)d.</parm></cmd>""" % locals()
         else:
             counter_tex = ''
