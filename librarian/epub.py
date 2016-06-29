@@ -17,7 +17,6 @@ from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
 from librarian import RDFNS, WLNS, NCXNS, OPFNS, XHTMLNS, IOFile
-from librarian.cover import WLCover
 
 from librarian import functions, get_resource
 
@@ -396,11 +395,11 @@ def transform(wldoc, verbose=False,
                 add_to_spine(spine, chunk_counter)
                 chunk_counter += 1
 
-        for child in wldoc.parts():
-            child_toc, chunk_counter, chunk_chars, sample = transform_file(
-                child, chunk_counter, first=False, sample=sample)
-            toc.append(child_toc)
-            chars = chars.union(chunk_chars)
+        # for child in wldoc.parts():
+        #     child_toc, chunk_counter, chunk_chars, sample = transform_file(
+        #         child, chunk_counter, first=False, sample=sample)
+        #     toc.append(child_toc)
+        #     chars = chars.union(chunk_chars)
 
         return toc, chunk_counter, chars, sample
 
@@ -413,8 +412,8 @@ def transform(wldoc, verbose=False,
             document.edoc.getroot().set(flag, 'yes')
 
     # add editors info
-    document.edoc.getroot().set('editors', u', '.join(sorted(
-        editor.readable() for editor in document.editors())))
+    # document.edoc.getroot().set('editors', u', '.join(sorted(
+    #     editor.readable() for editor in document.editors())))
 
     opf = xslt(document.book_info.to_etree(), get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
@@ -442,9 +441,6 @@ def transform(wldoc, verbose=False,
     zip.write(style, os.path.join('OPS', 'style.css'))
 
     if cover:
-        if cover is True:
-            cover = WLCover
-
         cover_file = StringIO()
         bound_cover = cover(document.book_info)
         bound_cover.save(cover_file)

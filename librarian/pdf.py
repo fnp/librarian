@@ -173,6 +173,7 @@ def package_available(package, args='', verbose=False):
     return p == 0
 
 
+# not used
 def load_including_children(wldoc=None, provider=None, uri=None):
     """ Makes one big xml file with children inserted at end.
 
@@ -181,6 +182,7 @@ def load_including_children(wldoc=None, provider=None, uri=None):
 
     if uri and provider:
         f = provider.by_uri(uri)
+        # WTF DocProvider.by_uri() returns IOFile, so no .read() there
         text = f.read().decode('utf-8')
         f.close()
     elif wldoc is not None:
@@ -229,29 +231,8 @@ class PDFFormat(Format):
         """ For use in XSLT. """
         return u','.join(k for k, v in self.customization.items() if v)
 
-    def get_document(self):
-        document = load_including_children(self.wldoc)
-        root = document.edoc.getroot()
-        root.set('editors', u', '.join(sorted(
-            editor.readable() for editor in document.editors())))
-
-        # hack the tree
-        move_motifs_inside(document.edoc)
-        hack_motifs(document.edoc)
-        parse_creator(document.edoc)
-        substitute_hyphens(document.edoc)
-        fix_hanging(document.edoc)
-        return document
-
     def get_texml(self):
-        style_filename = get_stylesheet("wl2tex")
-        functions.reg_get(self)
-        try:
-            style = etree.parse(style_filename)
-            texml = self.get_document().transform(style)
-            return texml
-        except (XMLSyntaxError, XSLTApplyError), e:
-            raise ParseError(e)
+        raise NotImplementedError
 
     def get_tex_dir(self):
         texml = self.get_texml()

@@ -75,10 +75,7 @@ class WLDocument(object):
 
     @classmethod
     def from_file(cls, xmlfile, *args, **kwargs):
-        if isinstance(xmlfile, basestring):
-            iofile = IOFile.from_filename(xmlfile)
-        else:
-            iofile = IOFile.from_file(xmlfile)
+        iofile = IOFile.from_filename(xmlfile)
         return cls(iofile, *args, **kwargs)
 
 
@@ -102,15 +99,6 @@ class WLDocument(object):
                     ins.tail = chunks.pop()
                     elem.insert(0, ins)
                 elem.text = chunks.pop(0)
-
-    def parts(self):
-        if self.book_info is None:
-            raise NoDublinCore('No Dublin Core in document.')
-        if self.book_info.parts and self.provider is None:
-            raise NoProvider('No document provider supplied.')
-        for part_uri in self.book_info.parts:
-            yield self.from_file(self.provider.by_uri(part_uri),
-                    provider=self.provider)
 
     def chunk(self, path):
         # convert the path to XPath
@@ -173,21 +161,6 @@ class WLDocument(object):
             node.clear()
             node.tag = 'span'
             node.tail = tail
-
-    def editors(self):
-        """Returns a set of all editors for book and its children.
-
-        :returns: set of dcparser.Person objects
-        """
-        if self.book_info is None:
-            raise NoDublinCore('No Dublin Core in document.')
-        persons = set(self.book_info.editors +
-                        self.book_info.technical_editors)
-        for child in self.parts():
-            persons.update(child.editors())
-        if None in persons:
-            persons.remove(None)
-        return persons
 
     # Converters
 
