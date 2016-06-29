@@ -659,7 +659,7 @@ class EduModuleFormat(Format):
         order = {pmf: i for (i, pmf) in enumerate(self.PRIMARY_MATERIAL_FORMATS)}
         mats = self.materials_by_slug.get(slug, {}).items()
         if not mats:
-            print "!! Material missing: '%s'" % slug
+            print ("!! Material missing: '%s'" % slug).encode('utf-8')
         return sorted(mats, key=lambda (x, y): order.get(x, x))
 
     def url_for_material(self, slug, fmt):
