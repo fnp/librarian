@@ -113,12 +113,12 @@ class Cover(object):
     exts = {
         'JPEG': 'jpg',
         'PNG': 'png',
-        }
+    }
 
     mime_types = {
         'JPEG': 'image/jpeg',
         'PNG': 'image/png',
-        }
+    }
 
     def __init__(self, book_info, format=None):
         try:
@@ -154,24 +154,22 @@ class Cover(object):
         top = self.author_top
         tbox = TextBox(
             self.width - self.author_margin_left - self.author_margin_right,
-            self.height - top,
-            )
+            self.height - top)
         author_font = self.author_font or ImageFont.truetype(
             get_resource('fonts/DejaVuSerif.ttf'), 30)
         tbox.text(self.pretty_author(), self.author_color, author_font,
-            self.author_lineskip, self.author_shadow)
+                  self.author_lineskip, self.author_shadow)
         text_img = tbox.image()
         img.paste(text_img, (self.author_margin_left, top), text_img)
 
         top += text_img.size[1] + self.title_top
         tbox = TextBox(
             self.width - self.title_margin_left - self.title_margin_right,
-            self.height - top,
-            )
+            self.height - top)
         title_font = self.author_font or ImageFont.truetype(
             get_resource('fonts/DejaVuSerif.ttf'), 40)
         tbox.text(self.pretty_title(), self.title_color, title_font,
-            self.title_lineskip, self.title_shadow)
+                  self.title_lineskip, self.title_shadow)
         text_img = tbox.image()
         img.paste(text_img, (self.title_margin_left, top), text_img)
 

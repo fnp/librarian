@@ -21,7 +21,6 @@ from subprocess import call, PIPE
 
 from Texml.processor import process
 from lxml import etree
-from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
@@ -39,11 +38,12 @@ STYLESHEETS = {
     'wl2tex': 'pdf/wl2tex.xslt',
 }
 
+
 def insert_tags(doc, split_re, tagname, exclude=None):
     """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree
 
-    >>> t = etree.fromstring('<a><b>A-B-C</b>X-Y-Z</a>');
-    >>> insert_tags(t, re.compile('-'), 'd');
+    >>> t = etree.fromstring('<a><b>A-B-C</b>X-Y-Z</a>')
+    >>> insert_tags(t, re.compile('-'), 'd')
     >>> print etree.tostring(t)
     <a><b>A<d/>B<d/>C</b>X<d/>Y<d/>Z</a>
     """
@@ -87,10 +87,14 @@ def fix_hanging(doc):
 
 def move_motifs_inside(doc):
     """ moves motifs to be into block elements """
-    for master in doc.xpath('//powiesc|//opowiadanie|//liryka_l|//liryka_lp|//dramat_wierszowany_l|//dramat_wierszowany_lp|//dramat_wspolczesny'):
+    main_tags = ('powiesc', 'opowiadanie', 'liryka_l', 'liryka_lp',
+                 'dramat_wierszowany_l', 'dramat_wierszowany_lp', 'dramat_wspolczesny')
+    for master in doc.xpath('|'.join('//' + tag for tag in main_tags)):
         for motif in master.xpath('motyw'):
             for sib in motif.itersiblings():
-                if sib.tag not in ('sekcja_swiatlo', 'sekcja_asterysk', 'separator_linia', 'begin', 'end', 'motyw', 'extra', 'uwaga'):
+                special_tags = ('sekcja_swiatlo', 'sekcja_asterysk', 'separator_linia',
+                                'begin', 'end', 'motyw', 'extra', 'uwaga')
+                if sib.tag not in special_tags:
                     # motif shouldn't have a tail - it would be untagged text
                     motif.tail = None
                     motif.getparent().remove(motif)
@@ -136,9 +140,10 @@ def parse_creator(doc):
     Finds all dc:creator and dc.contributor.translator tags
     and adds *_parsed versions with forenames first.
     """
-    for person in doc.xpath("|".join('//dc:'+(tag) for tag in (
-                    'creator', 'contributor.translator')),
-                    namespaces = {'dc': str(DCNS)})[::-1]:
+    persons = doc.xpath(
+        "|".join('//dc:' + tag for tag in ('creator', 'contributor.translator')),
+        namespaces={'dc': str(DCNS)})[::-1]
+    for person in persons:
         if not person.text:
             continue
         p = Person.from_text(person.text)
@@ -193,8 +198,7 @@ def load_including_children(wldoc=None, provider=None, uri=None):
 
     text = re.sub(ur"([\u0400-\u04ff]+)", ur"<alien>\1</alien>", text)
 
-    document = WLDocument.from_string(text,
-                parse_dublincore=True, provider=provider)
+    document = WLDocument.from_string(text, parse_dublincore=True, provider=provider)
     document.swap_endlines()
 
     for child_uri in document.book_info.parts:
@@ -246,8 +250,8 @@ class PDFFormat(Format):
         # Copy style
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(self.style, os.path.join(temp, 'style.sty'))
-        #for sfile in ['wasysym.sty', 'uwasyvar.fd', 'uwasy.fd']:
-        #    shutil.copy(get_resource(os.path.join('res/wasysym', sfile)), temp)
+        # for sfile in ['wasysym.sty', 'uwasyvar.fd', 'uwasy.fd']:
+        #     shutil.copy(get_resource(os.path.join('res/wasysym', sfile)), temp)
 
         # Save attachments
         if self.cover:
@@ -263,13 +267,13 @@ class PDFFormat(Format):
             cwd = None
         os.chdir(temp)
 
+        p = None
         if self.verbose:
-            for i in range(self.tex_passes):
+            for i in xrange(self.tex_passes):
                 p = call(['xelatex', tex_path])
         else:
-            for i in range(self.tex_passes):
-                p = call(['xelatex', '-interaction=batchmode', tex_path],
-                            stdout=PIPE, stderr=PIPE)
+            for i in xrange(self.tex_passes):
+                p = call(['xelatex', '-interaction=batchmode', tex_path], stdout=PIPE, stderr=PIPE)
         if p:
             raise ParseError("Error parsing .tex file: %s" % tex_path)
 

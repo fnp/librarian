@@ -41,7 +41,6 @@ class Xmill(object):
             output = flt(output)
         return output
 
-
     def generate(self, document):
         """Generate text from node using handlers defined in class."""
         output = self._handle_element(document)
@@ -61,18 +60,17 @@ class Xmill(object):
         """
         self._options.append(opts)
 
-
     def _handle_for_element(self, element):
         ns = None
         tagname = None
-#        from nose.tools import set_trace
+        # from nose.tools import set_trace
 
         if element.tag[0] == '{':
             for nshort, nhref in element.nsmap.items():
                 try:
                     if element.tag.index('{%s}' % nhref) == 0:
                         ns = nshort
-                        tagname  = element.tag[len('{%s}' % nhref):]
+                        tagname = element.tag[len('{%s}' % nhref):]
                         break
                 except ValueError:
                     pass
@@ -96,19 +94,22 @@ class Xmill(object):
 
         while True:
             sibling = element.getnext()
-            if sibling is not None: return sibling  # found a new branch to dig into
+            if sibling is not None:
+                return sibling  # found a new branch to dig into
             element = element.getparent()
-            if element is None: return None  # end of tree
+            if element is None:
+                return None  # end of tree
 
     def _handle_element(self, element):
-        if isinstance(element, etree._Comment): return None
-        
-        handler = self._handle_for_element(element)
-        if self.state.get('mute') and not getattr(handler, 'unmuter', False): return None
-        # How many scopes
-        try:
-            options_scopes = len(self._options)
+        if isinstance(element, etree._Comment):
+            return None
 
+        handler = self._handle_for_element(element)
+        if self.state.get('mute') and not getattr(handler, 'unmuter', False):
+            return None
+        # How many scopes
+        options_scopes = len(self._options)
+        try:
             if handler is None:
                 pre = [self.filter_text(element.text)]
                 post = [self.filter_text(element.tail)]
@@ -129,19 +130,20 @@ class Xmill(object):
         finally:
             # clean up option scopes if necessary
             self._options = self._options[0:options_scopes]
-            
+
         return out
 
 
 def tag_open_close(name_, classes_=None, **attrs):
     u"""Creates tag beginning and end.
-    
+
     >>> tag_open_close("a", "klass", x=u"ą<")
     (u'<a x="\\u0105&lt;" class="klass">', u'</a>')
 
     """
     if classes_:
-        if isinstance(classes_, (tuple, list)): classes_ = ' '.join(classes_)
+        if isinstance(classes_, (tuple, list)):
+            classes_ = ' '.join(classes_)
         attrs['class'] = classes_
 
     e = etree.Element(name_)
@@ -150,6 +152,7 @@ def tag_open_close(name_, classes_=None, **attrs):
         e.attrib[k] = v
     pre, post = etree.tostring(e, encoding=unicode).split(u"> <")
     return pre + u">", u"<" + post
+
 
 def tag(name_, classes_=None, **attrs):
     """Returns a handler which wraps node contents in tag `name', with class attribute
@@ -165,13 +168,16 @@ def tagged(name, classes=None, **attrs):
     set to `classes' and other attributes according to keyword paramters
     """
     if classes:
-        if isinstance(classes, (tuple,list)): classes = ' '.join(classes)
+        if isinstance(classes, (tuple, list)):
+            classes = ' '.join(classes)
         attrs['class'] = classes
-    a = ''.join([' %s="%s"' % (k,v) for (k,v) in attrs.items()])
+    a = ''.join([' %s="%s"' % (k, v) for (k, v) in attrs.items()])
+
     def _decor(f):
         def _wrap(self, element):
             r = f(self, element)
-            if r is None: return
+            if r is None:
+                return
 
             prepend = "<%s%s>" % (name, a)
             append = "</%s>" % name
@@ -195,6 +201,7 @@ def ifoption(**options):
             return f(self, *args, **kw)
         return _handler
     return _decor
+
 
 def flatten(l, ltypes=(list, tuple)):
     """flatten function from BasicPropery/BasicTypes package

@@ -251,7 +251,7 @@ class EduModule(Xmill):
                     subgen = EduModule(self.options)
                     definiens_s = subgen.generate(definiens)
             else:
-                print "!! Missing definiendum in source: '%s'" % element.text
+                print ("!! Missing definiendum in source: '%s'" % element.text).encode('utf-8')
 
         return u"<dt id='%s'>" % self.naglowek_to_anchor(element), u"</dt>" + definiens_s
 

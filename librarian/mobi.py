@@ -9,7 +9,6 @@ import subprocess
 from tempfile import NamedTemporaryFile
 
 from librarian import IOFile
-from librarian.cover import WLCover
 from librarian import get_resource
 
 
@@ -28,8 +27,8 @@ def transform(wldoc, verbose=False,
     book_info = document.book_info
 
     # provide a cover by default
-    if not cover:
-        cover = WLCover
+    # if not cover:
+    #     cover = WLCover
     cover_file = NamedTemporaryFile(suffix='.png', delete=False)
     bound_cover = cover(book_info)
     bound_cover.save(cover_file)
@@ -43,8 +42,8 @@ def transform(wldoc, verbose=False,
     if not flags:
         flags = []
     flags = list(flags) + ['without-fonts']
-    epub = document.as_epub(verbose=verbose, sample=sample, html_toc=True,
-            flags=flags, style=get_resource('mobi/style.css'))
+    epub = document.as_epub(
+        verbose=verbose, sample=sample, html_toc=True, flags=flags, style=get_resource('mobi/style.css'))
 
     if verbose:
         kwargs = {}
@@ -54,7 +53,8 @@ def transform(wldoc, verbose=False,
 
     output_file = NamedTemporaryFile(prefix='librarian', suffix='.mobi', delete=False)
     output_file.close()
-    subprocess.check_call(['ebook-convert', epub.get_filename(), output_file.name,
-            '--no-inline-toc', '--cover=%s' % cover_file.name], **kwargs)
+    subprocess.check_call(
+        ['ebook-convert', epub.get_filename(), output_file.name, '--no-inline-toc', '--cover=%s' % cover_file.name],
+        **kwargs)
     os.unlink(cover_file.name)
     return IOFile.from_filename(output_file.name)

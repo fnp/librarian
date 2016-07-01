@@ -17,10 +17,11 @@ functions.reg_person_name()
 
 def sectionify(tree):
     """Finds section headers and adds a tree of _section tags."""
-    sections = ['naglowek_czesc',
-            'naglowek_akt', 'naglowek_rozdzial', 'naglowek_scena',
-            'naglowek_podrozdzial']
-    section_level = dict((v,k) for (k,v) in enumerate(sections))
+    sections = [
+        'naglowek_czesc',
+        'naglowek_akt', 'naglowek_rozdzial', 'naglowek_scena',
+        'naglowek_podrozdzial']
+    section_level = {v: k for (k, v) in enumerate(sections)}
 
     # We can assume there are just subelements an no text at section level.
     for level, section_name in reversed(list(enumerate(sections))):

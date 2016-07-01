@@ -18,8 +18,7 @@ from urllib2 import urlopen
 
 from lxml import etree
 
-from xmlutils import Xmill, tag, tagged, ifoption, tag_open_close
-from librarian.dcparser import Person
+from xmlutils import Xmill, ifoption, tag_open_close
 from librarian import DCNS, get_resource, IOFile
 from librarian import functions
 from pdf import PDFFormat, substitute_hyphens, fix_hanging
@@ -33,7 +32,8 @@ def escape(really):
             prefix = (u'<TeXML escape="%d">' % (really and 1 or 0))
             postfix = u'</TeXML>'
             if isinstance(value, list):
-                import pdb; pdb.set_trace()
+                import pdb
+                pdb.set_trace()
             if isinstance(value, tuple):
                 return prefix + value[0], value[1] + postfix
             else:
@@ -87,16 +87,15 @@ class EduModule(Xmill):
         return values
 
     def handle_rdf__RDF(self, _):
-        "skip metadata in generation"
+        """skip metadata in generation"""
         return
 
     @escape(True)
     def get_rightsinfo(self, element):
         rights_lic = self.get_dc(element, 'rights.license', True)
-        return u'<cmd name="rightsinfostr">' + \
-          (rights_lic and u'<opt>%s</opt>' % rights_lic or '') +\
-          u'<parm>%s</parm>' % self.get_dc(element, 'rights', True) +\
-          u'</cmd>'
+        return u'<cmd name="rightsinfostr">' + (rights_lic and u'<opt>%s</opt>' % rights_lic or '') + \
+            u'<parm>%s</parm>' % self.get_dc(element, 'rights', True) + \
+            u'</cmd>'
 
     @escape(True)
     def get_authors(self, element, which=None):
@@ -116,30 +115,30 @@ class EduModule(Xmill):
     def handle_utwor(self, element):
         lines = [
             u'''
-    <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
-        <TeXML escape="0">
-        \\documentclass[%s]{wl}
-        \\usepackage{style}''' % self.options['customization_str'],
-    self.options['has_cover'] and '\usepackage{makecover}',
-    (self.options['morefloats'] == 'new' and '\usepackage[maxfloats=64]{morefloats}') or
-    (self.options['morefloats'] == 'old' and '\usepackage{morefloats}') or
-    (self.options['morefloats'] == 'none' and
-     u'''\\IfFileExists{morefloats.sty}{
-            \\usepackage{morefloats}
-        }{}'''),
-    u'''\\def\\authors{%s}''' % self.get_authors(element),
-    u'''\\def\\authorsexpert{%s}''' % self.get_authors(element, 'expert'),
-    u'''\\def\\authorsscenario{%s}''' % self.get_authors(element, 'scenario'),
-    u'''\\def\\authorstextbook{%s}''' % self.get_authors(element, 'textbook'),
-    
-    u'''\\author{\\authors}''',
-    u'''\\title{%s}''' % self.get_title(element),
-    u'''\\def\\bookurl{%s}''' % self.options['wldoc'].book_info.url.canonical(),
-    u'''\\def\\rightsinfo{%s}''' % self.get_rightsinfo(element),
-    u'</TeXML>']
+                <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">
+                <TeXML escape="0">
+                \\documentclass[%s]{wl}
+                \\usepackage{style}''' % self.options['customization_str'],
+            self.options['has_cover'] and '\usepackage{makecover}',
+            (self.options['morefloats'] == 'new' and '\usepackage[maxfloats=64]{morefloats}') or
+            (self.options['morefloats'] == 'old' and '\usepackage{morefloats}') or
+            (self.options['morefloats'] == 'none' and
+                u'''\\IfFileExists{morefloats.sty}{
+                \\usepackage{morefloats}
+                }{}'''),
+            u'''\\def\\authors{%s}''' % self.get_authors(element),
+            u'''\\def\\authorsexpert{%s}''' % self.get_authors(element, 'expert'),
+            u'''\\def\\authorsscenario{%s}''' % self.get_authors(element, 'scenario'),
+            u'''\\def\\authorstextbook{%s}''' % self.get_authors(element, 'textbook'),
+
+            u'''\\author{\\authors}''',
+            u'''\\title{%s}''' % self.get_title(element),
+            u'''\\def\\bookurl{%s}''' % self.options['wldoc'].book_info.url.canonical(),
+            u'''\\def\\rightsinfo{%s}''' % self.get_rightsinfo(element),
+            u'</TeXML>'
+        ]
 
         return u"".join(filter(None, lines)), u'</TeXML>'
-
 
     @escape(1)
     def handle_powiesc(self, element):
@@ -154,45 +153,42 @@ class EduModule(Xmill):
         return u'<TeXML escape="1"><cmd name="%s"><parm>' % cmd, u'</parm></cmd></TeXML>'
 
     handle_akap = \
-    handle_akap = \
-    handle_akap_cd = \
-    handle_akap_cd = \
-    handle_akap_dialog = \
-    handle_akap_dialog = \
-    handle_autor_utworu = \
-    handle_dedykacja = \
-    handle_didaskalia = \
-    handle_didask_tekst = \
-    handle_dlugi_cytat = \
-    handle_dzielo_nadrzedne = \
-    handle_lista_osoba = \
-    handle_mat = \
-    handle_miejsce_czas = \
-    handle_motto = \
-    handle_motto_podpis = \
-    handle_naglowek_akt = \
-    handle_naglowek_czesc = \
-    handle_naglowek_listy = \
-    handle_naglowek_osoba = \
-    handle_naglowek_scena = \
-    handle_nazwa_utworu = \
-    handle_nota = \
-    handle_osoba = \
-    handle_pa = \
-    handle_pe = \
-    handle_podtytul = \
-    handle_poezja_cyt = \
-    handle_pr = \
-    handle_pt = \
-    handle_sekcja_asterysk = \
-    handle_sekcja_swiatlo = \
-    handle_separator_linia = \
-    handle_slowo_obce = \
-    handle_srodtytul = \
-    handle_tytul_dziela = \
-    handle_wyroznienie = \
-    handle_dywiz = \
-    handle_texcommand
+        handle_akap_cd = \
+        handle_akap_dialog = \
+        handle_autor_utworu = \
+        handle_dedykacja = \
+        handle_didaskalia = \
+        handle_didask_tekst = \
+        handle_dlugi_cytat = \
+        handle_dzielo_nadrzedne = \
+        handle_lista_osoba = \
+        handle_mat = \
+        handle_miejsce_czas = \
+        handle_motto = \
+        handle_motto_podpis = \
+        handle_naglowek_akt = \
+        handle_naglowek_czesc = \
+        handle_naglowek_listy = \
+        handle_naglowek_osoba = \
+        handle_naglowek_scena = \
+        handle_nazwa_utworu = \
+        handle_nota = \
+        handle_osoba = \
+        handle_pa = \
+        handle_pe = \
+        handle_podtytul = \
+        handle_poezja_cyt = \
+        handle_pr = \
+        handle_pt = \
+        handle_sekcja_asterysk = \
+        handle_sekcja_swiatlo = \
+        handle_separator_linia = \
+        handle_slowo_obce = \
+        handle_srodtytul = \
+        handle_tytul_dziela = \
+        handle_wyroznienie = \
+        handle_dywiz = \
+        handle_texcommand
 
     def handle_naglowek_rozdzial(self, element):
         if not self.options['teacher']:
@@ -220,6 +216,7 @@ class EduModule(Xmill):
 
     def handle_uwaga(self, _e):
         return None
+
     def handle_extra(self, _e):
         return None
 
@@ -247,13 +244,16 @@ class EduModule(Xmill):
             opis = ''
 
         n = element.xpath('wskazowki')
-        if n: wskazowki = submill.generate(n[0])
-
-        else: wskazowki = ''
+        if n:
+            wskazowki = submill.generate(n[0])
+        else:
+            wskazowki = ''
         n = element.xpath('pomoce')
 
-        if n: pomoce = submill.generate(n[0])
-        else: pomoce = ''
+        if n:
+            pomoce = submill.generate(n[0])
+        else:
+            pomoce = ''
 
         forma = ''.join(element.xpath('forma/text()'))
 
@@ -296,7 +296,7 @@ class EduModule(Xmill):
     def handle_forma(self, *_):
         return
 
-    def handle_lista(self, element, attrs={}):
+    def handle_lista(self, element, attrs=None):
         ltype = element.attrib.get('typ', 'punkt')
         if not element.findall("punkt"):
             if ltype == 'czytelnia':
@@ -309,13 +309,15 @@ class EduModule(Xmill):
                 # print '** missing src on <slowniczek>, setting default'
                 surl = 'http://edukacjamedialna.edu.pl/lekcje/slowniczek/'
             sxml = etree.fromstring(self.options['wldoc'].provider.by_uri(surl).get_string())
-            self.options = {'slowniczek': True, 'slowniczek_xml': sxml }
+            self.options = {'slowniczek': True, 'slowniczek_xml': sxml}
 
-        listcmd = {'num': 'enumerate',
-               'punkt': 'itemize',
-               'alfa': 'itemize',
-               'slowniczek': 'itemize',
-               'czytelnia': 'itemize'}[ltype]
+        listcmd = {
+            'num': 'enumerate',
+            'punkt': 'itemize',
+            'alfa': 'itemize',
+            'slowniczek': 'itemize',
+            'czytelnia': 'itemize'
+        }[ltype]
 
         return u'<env name="%s">' % listcmd, u'</env>'
 
@@ -334,7 +336,7 @@ class EduModule(Xmill):
 
         typ = element.attrib['typ']
         self.exercise_counter += 1
-        if not typ in exercise_handlers:
+        if typ not in exercise_handlers:
             return '(no handler)'
         self.options = {'exercise_counter': self.exercise_counter}
         handler = exercise_handlers[typ](self.options, self.state)
@@ -376,14 +378,13 @@ class EduModule(Xmill):
                 max_col = len(ks)
         self.options = {'columnts': max_col}
         # styling:
-                #        has_frames = int(element.attrib.get("ramki", "0"))
-                #        if has_frames: frames_c = "framed"
-                #        else: frames_c = ""
-                #        return u"""<table class="%s">""" % frames_c, u"</table>"
+        #     has_frames = int(element.attrib.get("ramki", "0"))
+        #     if has_frames: frames_c = "framed"
+        #     else: frames_c = ""
+        #     return u"""<table class="%s">""" % frames_c, u"</table>"
         return u'''
 <cmd name="begin"><parm>tabular</parm><parm>%s</parm></cmd>
-    ''' % ('l' * max_col), \
-    u'''<cmd name="end"><parm>tabular</parm></cmd>'''
+    ''' % ('l' * max_col), u'''<cmd name="end"><parm>tabular</parm></cmd>'''
 
     @escape(1)
     def handle_wiersz(self, element):
@@ -424,8 +425,7 @@ class EduModule(Xmill):
             print '!! unknown <video> url scheme:', url
             return
         name = m.group(1)
-        thumb = IOFile.from_string(urlopen
-            ("http://img.youtube.com/vi/%s/0.jpg" % name).read())
+        thumb = IOFile.from_string(urlopen("http://img.youtube.com/vi/%s/0.jpg" % name).read())
         img_path = "video/%s.jpg" % name.replace("_", "")
         self.options['format'].attachments[img_path] = thumb
         canon_url = "https://www.youtube.com/watch?v=%s" % name
@@ -436,6 +436,7 @@ class Exercise(EduModule):
     def __init__(self, *args, **kw):
         self.question_counter = 0
         super(Exercise, self).__init__(*args, **kw)
+        self.piece_counter = None
 
     handle_rozw_kom = ifoption(teacher=True)(cmd('akap'))
 
@@ -457,7 +458,7 @@ class Exercise(EduModule):
         # Add a single <pytanie> tag if it's not there
         if not element.xpath(".//pytanie"):
             qpre, qpost = self.handle_pytanie(element)
-            pre = pre + qpre
+            pre += qpre
             post = qpost + post
         return pre, post
 
@@ -493,7 +494,6 @@ class Exercise(EduModule):
             return self.solution_header() + etree.tostring(par)
 
 
-
 class Wybor(Exercise):
     def handle_cwiczenie(self, element):
         pre, post = super(Wybor, self).handle_cwiczenie(element)
@@ -508,7 +508,8 @@ class Wybor(Exercise):
                 break
             choices = p.xpath(".//*[@nazwa]")
             uniq = set()
-            for n in choices: uniq.add(n.attrib.get('nazwa', ''))
+            for n in choices:
+                uniq.add(n.attrib.get('nazwa', ''))
             if len(choices) != len(uniq):
                 is_single_choice = False
                 break
@@ -608,18 +609,19 @@ class PrawdaFalsz(Exercise):
         return pre, post
 
 
-
 def fix_lists(tree):
     lists = tree.xpath(".//lista")
     for l in lists:
         if l.text:
             p = l.getprevious()
             if p is not None:
-                if p.tail is None: p.tail = ''
+                if p.tail is None:
+                    p.tail = ''
                 p.tail += l.text
             else:
                 p = l.getparent()
-                if p.text is None: p.text = ''
+                if p.text is None:
+                    p.text = ''
                 p.text += l.text
             l.text = ''
     return tree
@@ -652,4 +654,3 @@ class EduModulePDFFormat(PDFFormat):
 
     def get_image(self, name):
         return self.wldoc.source.attachments[name]
-

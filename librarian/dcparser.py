@@ -10,7 +10,7 @@ import time
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
                        WLURI)
 
-import lxml.etree as etree # ElementTree API using libxml2
+import lxml.etree as etree  # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
 
 
@@ -25,7 +25,7 @@ class Person(object):
 
     @classmethod
     def from_text(cls, text):
-        parts = [ token.strip() for token in text.split(',') ]
+        parts = [token.strip() for token in text.split(',')]
         if len(parts) == 1:
             surname = parts[0]
             names = []
@@ -36,7 +36,7 @@ class Person(object):
             if len(parts[1]) == 0:
                 # there is no non-whitespace data after the comma
                 raise ValueError("Found a comma, but no names given: \"%s\" -> %r." % (text, parts))
-            names = [ name for name in parts[1].split() if len(name) ] # all non-whitespace tokens
+            names = [name for name in parts[1].split() if len(name)]  # all non-whitespace tokens
         return cls(surname, *names)
 
     def readable(self):
@@ -60,6 +60,7 @@ class Person(object):
     def __repr__(self):
         return 'Person(last_name=%r, first_names=*%r)' % (self.last_name, self.first_names)
 
+
 def as_date(text):
     try:
         try:
@@ -70,8 +71,10 @@ def as_date(text):
     except ValueError, e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
+
 def as_person(text):
     return Person.from_text(text)
+
 
 def as_unicode(text):
     if isinstance(text, unicode):
@@ -79,8 +82,10 @@ def as_unicode(text):
     else:
         return text.decode('utf-8')
 
+
 def as_wluri_strict(text):
     return WLURI.strict(text)
+
 
 class Field(object):
     def __init__(self, uri, attr_name, validator=as_unicode, strict=None, multiple=False, salias=None, **kwargs):
@@ -91,7 +96,7 @@ class Field(object):
         self.multiple = multiple
         self.salias = salias
 
-        self.required = kwargs.get('required', True) and not kwargs.has_key('default')
+        self.required = kwargs.get('required', True) and 'default' not in kwargs
         self.default = kwargs.get('default', [] if multiple else [None])
 
     def validate_value(self, val, strict=False):
@@ -104,7 +109,7 @@ class Field(object):
             if self.multiple:
                 if validator is None:
                     return val
-                return [ validator(v) if v is not None else v for v in val ]
+                return [validator(v) if v is not None else v for v in val]
             elif len(val) > 1:
                 raise ValidationError("Multiple values not allowed for field '%s'" % self.uri)
             elif len(val) == 0:
@@ -119,7 +124,7 @@ class Field(object):
     def validate(self, fdict, fallbacks=None, strict=False):
         if fallbacks is None:
             fallbacks = {}
-        if not fdict.has_key(self.uri):
+        if self.uri not in fdict:
             if not self.required:
                 # Accept single value for single fields and saliases.
                 if self.name in fallbacks:
@@ -145,7 +150,7 @@ class Field(object):
 
 
 class DCInfo(type):
-    def __new__(meta, classname, bases, class_dict):
+    def __new__(mcs, classname, bases, class_dict):
         fields = list(class_dict['FIELDS'])
 
         for base in bases[::-1]:
@@ -157,41 +162,41 @@ class DCInfo(type):
                         fields.insert(0, field)
 
         class_dict['FIELDS'] = tuple(fields)
-        return super(DCInfo, meta).__new__(meta, classname, bases, class_dict)
+        return super(DCInfo, mcs).__new__(mcs, classname, bases, class_dict)
 
 
 class WorkInfo(object):
     __metaclass__ = DCInfo
 
     FIELDS = (
-        Field( DCNS('creator.expert'), 'authors_expert', as_person, salias='author', required=False, multiple=True),
-        Field( DCNS('creator.methodologist'), 'authors_methodologist', as_person, salias='author', required=False, multiple=True),
-        Field( DCNS('creator.scenario'), 'authors_scenario', as_person, salias='author', required=False, multiple=True),
-        Field( DCNS('creator.textbook'), 'authors_textbook', as_person, salias='author', required=False, multiple=True),
-        Field( DCNS('requires'), 'requires', required=False, multiple=True),
-        Field( DCNS('title'), 'title'),
-        Field( DCNS('type'), 'type', required=False),
+        Field(DCNS('creator.expert'), 'authors_expert', as_person, salias='author', required=False, multiple=True),
+        Field(DCNS('creator.methodologist'), 'authors_methodologist', as_person, salias='author', required=False,
+              multiple=True),
+        Field(DCNS('creator.scenario'), 'authors_scenario', as_person, salias='author', required=False, multiple=True),
+        Field(DCNS('creator.textbook'), 'authors_textbook', as_person, salias='author', required=False, multiple=True),
+        Field(DCNS('requires'), 'requires', required=False, multiple=True),
+        Field(DCNS('title'), 'title'),
+        Field(DCNS('type'), 'type', required=False),
 
-        Field( DCNS('contributor.editor'), 'editors', \
-            as_person, salias='editor', multiple=True, default=[]),
-        Field( DCNS('contributor.technical_editor'), 'technical_editors',
-            as_person, salias='technical_editor', multiple=True, default=[]),
+        Field(DCNS('contributor.editor'), 'editors', as_person, salias='editor', multiple=True, default=[]),
+        Field(DCNS('contributor.technical_editor'), 'technical_editors', as_person, salias='technical_editor',
+              multiple=True, default=[]),
 
-        Field( DCNS('date'), 'created_at', as_date),
-        Field( DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
-        Field( DCNS('publisher'), 'publisher'),
+        Field(DCNS('date'), 'created_at', as_date),
+        Field(DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
+        Field(DCNS('publisher'), 'publisher'),
 
-        Field( DCNS('subject.competence'), 'competences', multiple=True, required=False),
-        Field( DCNS('subject.curriculum'), 'curriculum', multiple=True, required=False),
+        Field(DCNS('subject.competence'), 'competences', multiple=True, required=False),
+        Field(DCNS('subject.curriculum'), 'curriculum', multiple=True, required=False),
 
-        Field( DCNS('language'), 'language'),
-        Field( DCNS('description'), 'description', required=False),
+        Field(DCNS('language'), 'language'),
+        Field(DCNS('description'), 'description', required=False),
 
-        Field( DCNS('source'), 'source_name', required=False),
-        Field( DCNS('source.URL'), 'source_url', required=False),
-        Field( DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
-        Field( DCNS('rights.license'), 'license', required=False),
-        Field( DCNS('rights'), 'license_description'),
+        Field(DCNS('source'), 'source_name', required=False),
+        Field(DCNS('source.URL'), 'source_url', required=False),
+        Field(DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
+        Field(DCNS('rights.license'), 'license', required=False),
+        Field(DCNS('rights'), 'license_description'),
     )
 
     @classmethod
@@ -203,8 +208,8 @@ class WorkInfo(object):
     def from_file(cls, xmlfile, *args, **kwargs):
         desc_tag = None
         try:
-            iter = etree.iterparse(xmlfile, ['start', 'end'])
-            for (event, element) in iter:
+            elements = etree.iterparse(xmlfile, ['start', 'end'])
+            for (event, element) in elements:
                 if element.tag == RDFNS('RDF') and event == 'start':
                     desc_tag = element
                     break
@@ -214,7 +219,7 @@ class WorkInfo(object):
                     Check if there are rdf:RDF and rdf:Description tags.")
 
             # continue 'till the end of RDF section
-            for (event, element) in iter:
+            for (event, element) in elements:
                 if element.tag == RDFNS('RDF') and event == 'end':
                     break
 
@@ -252,13 +257,13 @@ class WorkInfo(object):
         self.fmap = {}
 
         for field in self.FIELDS:
-            value = field.validate(dc_fields, fallbacks=fallbacks,
-                            strict=strict)
+            value = field.validate(dc_fields, fallbacks=fallbacks, strict=strict)
             if field.multiple:
                 value = getattr(self, 'prop_' + field.name, []) + value
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
-            if field.salias: self.fmap[field.salias] = field
+            if field.salias:
+                self.fmap[field.salias] = field
 
     def __getattribute__(self, name):
         try:
@@ -266,7 +271,8 @@ class WorkInfo(object):
             value = object.__getattribute__(self, 'prop_'+field.name)
             if field.name == name:
                 return value
-            else: # singular alias
+            else:
+                # singular alias
                 if not field.multiple:
                     raise "OUCH!! for field %s" % name
 
@@ -279,7 +285,8 @@ class WorkInfo(object):
             field = object.__getattribute__(self, 'fmap')[name]
             if field.name == name:
                 object.__setattr__(self, 'prop_'+field.name, newvalue)
-            else: # singular alias
+            else:
+                # singular alias
                 if not field.multiple:
                     raise "OUCH! while setting field %s" % name
 
@@ -291,13 +298,13 @@ class WorkInfo(object):
         """Update using field_dict. Verify correctness, but don't check if all
         required fields are present."""
         for field in self.FIELDS:
-            if field_dict.has_key(field.name):
+            if field.name in field_dict:
                 setattr(self, field.name, field_dict[field.name])
 
-    def to_etree(self, parent = None):
+    def to_etree(self, parent=None):
         """XML representation of this object."""
-        #etree._namespace_map[str(self.RDF)] = 'rdf'
-        #etree._namespace_map[str(self.DC)] = 'dc'
+        # etree._namespace_map[str(self.RDF)] = 'rdf'
+        # etree._namespace_map[str(self.DC)] = 'dc'
 
         if parent is None:
             root = etree.Element(RDFNS('RDF'))
@@ -313,7 +320,8 @@ class WorkInfo(object):
             v = getattr(self, field.name, None)
             if v is not None:
                 if field.multiple:
-                    if len(v) == 0: continue
+                    if len(v) == 0:
+                        continue
                     for x in v:
                         e = etree.Element(field.uri)
                         if x is not None:
@@ -327,16 +335,16 @@ class WorkInfo(object):
         return root
 
     def serialize(self):
-        rdf = {}
-        rdf['about'] = { 'uri': RDFNS('about'), 'value': self.about }
+        rdf = {'about': {'uri': RDFNS('about'), 'value': self.about}}
 
         dc = {}
         for field in self.FIELDS:
             v = getattr(self, field.name, None)
             if v is not None:
                 if field.multiple:
-                    if len(v) == 0: continue
-                    v = [ unicode(x) for x in v if x is not None ]
+                    if len(v) == 0:
+                        continue
+                    v = [unicode(x) for x in v if x is not None]
                 else:
                     v = unicode(v)
 
@@ -351,43 +359,38 @@ class WorkInfo(object):
 
             if v is not None:
                 if field.multiple:
-                    if len(v) == 0: continue
-                    v = [ unicode(x) for x in v if x is not None ]
+                    if len(v) == 0:
+                        continue
+                    v = [unicode(x) for x in v if x is not None]
                 else:
                     v = unicode(v)
                 result[field.name] = v
 
             if field.salias:
                 v = getattr(self, field.salias)
-                if v is not None: result[field.salias] = unicode(v)
+                if v is not None:
+                    result[field.salias] = unicode(v)
 
         return result
 
 
 class BookInfo(WorkInfo):
     FIELDS = (
-        Field( DCNS('audience'), 'audiences', salias='audience', multiple=True,
-                required=False),
+        Field(DCNS('audience'), 'audiences', salias='audience', multiple=True, required=False),
 
-        Field( DCNS('subject.period'), 'epochs', salias='epoch', multiple=True,
-                required=False),
-        Field( DCNS('subject.type'), 'kinds', salias='kind', multiple=True,
-                required=False),
-        Field( DCNS('subject.genre'), 'genres', salias='genre', multiple=True,
-                required=False),
+        Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True, required=False),
+        Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True, required=False),
+        Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True, required=False),
 
-        Field( DCNS('contributor.translator'), 'translators', \
-            as_person,  salias='translator', multiple=True, default=[]),
-        Field( DCNS('relation.hasPart'), 'parts',
-            WLURI, strict=as_wluri_strict, multiple=True, required=False),
-        Field( DCNS('relation.isVariantOf'), 'variant_of',
-            WLURI, strict=as_wluri_strict, required=False),
-        Field( DCNS('relation'), 'relations',
-            WLURI, strict=as_wluri_strict, multiple=True, required=False),
+        Field(DCNS('contributor.translator'), 'translators', as_person,  salias='translator', multiple=True,
+              default=[]),
+        Field(DCNS('relation.hasPart'), 'parts', WLURI, strict=as_wluri_strict, multiple=True, required=False),
+        Field(DCNS('relation.isVariantOf'), 'variant_of', WLURI, strict=as_wluri_strict, required=False),
+        Field(DCNS('relation'), 'relations', WLURI, strict=as_wluri_strict, multiple=True, required=False),
 
-        Field( DCNS('relation.coverImage.url'), 'cover_url', required=False),
-        Field( DCNS('relation.coverImage.attribution'), 'cover_by', required=False),
-        Field( DCNS('relation.coverImage.source'), 'cover_source', required=False),
+        Field(DCNS('relation.coverImage.url'), 'cover_url', required=False),
+        Field(DCNS('relation.coverImage.attribution'), 'cover_by', required=False),
+        Field(DCNS('relation.coverImage.source'), 'cover_source', required=False),
     )
 
 

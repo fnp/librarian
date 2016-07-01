@@ -8,9 +8,10 @@ import os
 import os.path
 from distutils.core import setup
 
+
 def whole_tree(prefix, path):
     files = []
-    for f in (f for f in os.listdir(os.path.join(prefix, path)) if not f[0]=='.'):
+    for f in (f for f in os.listdir(os.path.join(prefix, path)) if not f[0] == '.'):
         new_path = os.path.join(path, f)
         if os.path.isdir(os.path.join(prefix, new_path)):
             files.extend(whole_tree(prefix, new_path))
@@ -34,9 +35,12 @@ setup(
         'librarian.styles.wolnelektury',
         'librarian.styles.wolnelektury.partners',
     ],
-    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer') +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'res')},
+    package_data={
+        'librarian': (
+            ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
+            whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer') +
+            whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'res'))
+    },
     include_package_data=True,
     install_requires=['lxml>=2.2'],
     scripts=['scripts/book2html',

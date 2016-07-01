@@ -4,21 +4,20 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from librarian import picture, dcparser
-from lxml import etree
 from nose.tools import *
-from os.path import splitext
 from tests.utils import get_all_fixtures, get_fixture
-import codecs
 from os import path
+
 
 def test_wlpictureuri():
     uri = picture.WLPictureURI('http://wolnelektury.pl/katalog/obraz/angelus-novus')
+
 
 def check_load(xml_file):
     pi = dcparser.parse(xml_file, picture.PictureInfo)
     assert pi is not None
     assert isinstance(pi, picture.PictureInfo)
-    
+
 
 def test_load():
     for fixture in get_all_fixtures('picture', '*.xml'):
@@ -35,9 +34,10 @@ def test_wlpicture():
     assert wlp.slug == 'angelus-novus'
 
     assert path.exists(wlp.image_path)
-    
+
     f = wlp.image_file('r')
     f.close()
+
 
 def test_picture_parts():
     wlp = picture.WLPicture.from_file(open(get_fixture('picture', 'angelus-novus.xml')))
@@ -54,7 +54,5 @@ def test_picture_parts():
         if p['object']:
             names.add(p['object'])
 
-    assert motifs == set([u'anioł historii', u'spojrzenie']), "missing motifs, got: %s" % motifs
-    assert names == set([u'obraz cały', u'skrzydło']), 'missing objects, got: %s' % names
-    
-        
+    assert motifs == {u'anioł historii', u'spojrzenie'}, "missing motifs, got: %s" % motifs
+    assert names == {u'obraz cały', u'skrzydło'}, 'missing objects, got: %s' % names

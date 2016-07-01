@@ -3,7 +3,6 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import re
 from tempfile import NamedTemporaryFile
 from nose.tools import *
 from librarian import DirDocProvider
@@ -22,7 +21,6 @@ def test_transform():
     print tex
 
     # Check contributor list.
-    editors = re.search(ur'\\def\\editors\{'
-        ur'Opracowanie redakcyjne i przypisy: ([^}]*?)\.\s*\}', tex)
-    assert_equal(editors.group(1),
-        u"Adam Fikcyjny, Aleksandra Sekuła, Olga Sutkowska")
+    editors = re.search(
+        ur'\\def\\editors\{Opracowanie redakcyjne i przypisy: ([^}]*?)\.\s*\}', tex)
+    assert_equal(editors.group(1), u"Adam Fikcyjny, Aleksandra Sekuła, Olga Sutkowska")

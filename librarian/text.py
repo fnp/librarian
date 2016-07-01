@@ -29,6 +29,7 @@ Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowocz
 %(description)s%(contributors)s
 """
 
+
 def transform(wldoc, flags=None, **options):
     """
     Transforms input_file in XML to output_file in TXT.
@@ -53,21 +54,28 @@ def transform(wldoc, flags=None, **options):
             parsed_dc = document.book_info
             description = parsed_dc.description
             url = document.book_info.url
-    
+
             license_description = parsed_dc.license_description
             license = parsed_dc.license
             if license:
-                license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (license_description, license)        
+                license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % \
+                                      (license_description, license)
             else:
-                license_description = u"Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to te dodatkowe materiały udostępnione są na licencji Creative Commons Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL (http://creativecommons.org/licenses/by-sa/3.0/)"
-    
+                license_description = (
+                    u"Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie publicznej, "
+                    u"co oznacza że możesz go swobodnie wykorzystywać, publikować i rozpowszechniać. "
+                    u"Jeśli utwór opatrzony jest dodatkowymi materiałami (przypisy, motywy literackie etc.), "
+                    u"które podlegają prawu autorskiemu, to te dodatkowe materiały udostępnione są na licencji "
+                    u"Creative Commons Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL "
+                    u"(http://creativecommons.org/licenses/by-sa/3.0/)")
+
             source = parsed_dc.source_name
             if source:
                 source = "\n\nTekst opracowany na podstawie: " + source
             else:
                 source = ''
-    
-            contributors = ', '.join(person.readable() for person in 
+
+            contributors = ', '.join(person.readable() for person in
                                      sorted(set(p for p in (parsed_dc.technical_editors + parsed_dc.editors) if p)))
             if contributors:
                 contributors = "\n\nOpracowanie redakcyjne i przypisy: %s" % contributors
@@ -88,4 +96,3 @@ def transform(wldoc, flags=None, **options):
         }).encode('utf-8'))
     else:
         return IOFile.from_string(unicode(result).encode('utf-8'))
-

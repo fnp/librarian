@@ -45,4 +45,3 @@ def check_serialize(xml_file):
 def test_serialize():
     for fixture in get_all_fixtures('dcparser', '*.xml'):
         yield check_serialize, fixture
-

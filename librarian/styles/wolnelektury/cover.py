@@ -101,20 +101,17 @@ class WLCover(Cover):
                  font=self.author_font,
                  line_height=self.author_lineskip,
                  color=self.author_color,
-                 shadow_color=self.author_shadow,
-                )
+                 shadow_color=self.author_shadow)
 
         box.skip(10)
-        box.draw.line((75, box.height, 275, box.height),
-                fill=self.author_color, width=2)
+        box.draw.line((75, box.height, 275, box.height), fill=self.author_color, width=2)
         box.skip(15)
 
         box.text(self.pretty_title(),
                  line_height=self.title_lineskip,
                  font=self.title_font,
                  color=epoch_color,
-                 shadow_color=self.title_shadow,
-                )
+                 shadow_color=self.title_shadow)
         box_img = box.image()
 
         if self.kind == 'Liryka':
@@ -127,9 +124,9 @@ class WLCover(Cover):
             # center
             box_top = (self.height - box_img.size[1]) / 2
 
-        box_left = self.bar_width + (self.width - self.bar_width -
-                        box_img.size[0]) / 2
-        draw.rectangle((box_left, box_top,
+        box_left = self.bar_width + (self.width - self.bar_width - box_img.size[0]) / 2
+        draw.rectangle((
+            box_left, box_top,
             box_left + box_img.size[0], box_top + box_img.size[1]),
             fill='#fff')
         img.paste(box_img, (box_left, box_top), box_img)

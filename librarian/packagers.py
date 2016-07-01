@@ -8,38 +8,38 @@ from copy import deepcopy
 from lxml import etree
 from librarian import pdf, epub, DirDocProvider, ParseError, cover
 from librarian.parser import WLDocument
+from librarian.styles.wolnelektury.partners import cover
 
 
 class Packager(object):
     cover = None
     flags = None
+    converter = NotImplemented
+    ext = NotImplemented
 
     @classmethod
-    def prepare_file(cls, main_input, output_dir, verbose=False):
+    def prepare_file(cls, main_input, output_dir):
         path, fname = os.path.realpath(main_input).rsplit('/', 1)
         provider = DirDocProvider(path)
         slug, ext = os.path.splitext(fname)
 
         if output_dir != '':
-            try:
+            if not os.path.isdir(output_dir):
                 os.makedirs(output_dir)
-            except:
-                pass
         outfile = os.path.join(output_dir, slug + '.' + cls.ext)
 
         doc = WLDocument.from_file(main_input, provider=provider)
-        output_file = cls.converter.transform(doc,
-                cover=cls.cover, flags=cls.flags)
+        output_file = cls.converter.transform(doc, cover=cls.cover, flags=cls.flags)
         doc.save_output_file(output_file, output_path=outfile)
-
 
     @classmethod
     def prepare(cls, input_filenames, output_dir='', verbose=False):
+        main_input = None
         try:
             for main_input in input_filenames:
                 if verbose:
                     print main_input
-                cls.prepare_file(main_input, output_dir, verbose)
+                cls.prepare_file(main_input, output_dir)
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
                 'file': main_input,
@@ -52,6 +52,7 @@ class EpubPackager(Packager):
     converter = epub
     ext = 'epub'
 
+
 class PdfPackager(Packager):
     converter = pdf
     ext = 'pdf'
@@ -60,15 +61,19 @@ class PdfPackager(Packager):
 class GandalfEpubPackager(EpubPackager):
     cover = cover.GandalfCover
 
+
 class GandalfPdfPackager(PdfPackager):
     cover = cover.GandalfCover
+
 
 class BookotekaEpubPackager(EpubPackager):
     cover = cover.BookotekaCover
 
+
 class PrestigioEpubPackager(EpubPackager):
     cover = cover.PrestigioCover
     flags = ('less-advertising',)
+
 
 class PrestigioPdfPackager(PdfPackager):
     cover = cover.PrestigioCover
@@ -107,6 +112,7 @@ class VirtualoPackager(Packager):
                 <language>PL</language>
             </product>""")
 
+        main_input = None
         try:
             for main_input in input_filenames:
                 if verbose:
@@ -133,17 +139,13 @@ class VirtualoPackager(Packager):
                 cover.VirtualoCover(info).save(os.path.join(outfile_dir, slug+'.jpg'))
                 outfile = os.path.join(outfile_dir, '1.epub')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.epub')
-                doc.save_output_file(doc.as_epub(),
-                        output_path=outfile)
-                doc.save_output_file(doc.as_epub(doc, sample=25), 
-                        output_path=outfile_sample)
+                doc.save_output_file(doc.as_epub(), output_path=outfile)
+                doc.save_output_file(doc.as_epub(doc, sample=25), output_path=outfile_sample)
                 outfile = os.path.join(outfile_dir, '1.mobi')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.mobi')
-                doc.save_output_file(doc.as_mobi(cover=cover.VirtualoCover),
-                        output_path=outfile)
+                doc.save_output_file(doc.as_mobi(cover=cover.VirtualoCover), output_path=outfile)
                 doc.save_output_file(
-                        doc.as_mobi(doc, cover=cover.VirtualoCover, sample=25), 
-                        output_path=outfile_sample)
+                    doc.as_mobi(doc, cover=cover.VirtualoCover, sample=25), output_path=outfile_sample)
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {
                 'file': main_input,

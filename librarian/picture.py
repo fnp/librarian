@@ -1,5 +1,5 @@
-
-from dcparser import (as_person, as_date, Field, WorkInfo, DCNS)
+# -*- coding: utf-8 -*-
+from dcparser import Field, WorkInfo, DCNS
 from librarian import (RDFNS, ValidationError, NoDublinCore, ParseError, WLURI)
 from xml.parsers.expat import ExpatError
 from os import path
@@ -10,13 +10,13 @@ import re
 
 
 class WLPictureURI(WLURI):
-    _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/obraz/'
-            '(?P<slug>[-a-z0-9]+)/?$')
+    _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/obraz/(?P<slug>[-a-z0-9]+)/?$')
 
     @classmethod
     def from_slug(cls, slug):
         uri = 'http://wolnelektury.pl/katalog/obraz/%s/' % slug
         return cls(uri)
+
 
 def as_wlpictureuri_strict(text):
     return WLPictureURI.strict(text)
@@ -36,15 +36,15 @@ class PictureInfo(WorkInfo):
         Field(DCNS('description.medium'), 'medium', required=False),
         Field(DCNS('description.dimensions'), 'original_dimensions', required=False),
         Field(DCNS('format'), 'mime_type', required=False),
-        Field(DCNS('identifier.url'), 'url', WLPictureURI,
-            strict=as_wlpictureuri_strict),
-        )
+        Field(DCNS('identifier.url'), 'url', WLPictureURI, strict=as_wlpictureuri_strict),
+    )
 
 
 class ImageStore(object):
-    EXT = ['gif', 'jpeg', 'png', 'swf', 'psd', 'bmp'
-            'tiff', 'tiff', 'jpc', 'jp2', 'jpf', 'jb2', 'swc',
-            'aiff', 'wbmp', 'xbm']
+    EXT = [
+        'gif', 'jpeg', 'png', 'swf', 'psd', 'bmp'
+        'tiff', 'tiff', 'jpc', 'jp2', 'jpf', 'jb2', 'swc',
+        'aiff', 'wbmp', 'xbm']
     MIME = ['image/gif', 'image/jpeg', 'image/png',
             'application/x-shockwave-flash', 'image/psd', 'image/bmp',
             'image/tiff', 'image/tiff', 'application/octet-stream',
@@ -53,7 +53,7 @@ class ImageStore(object):
 
     def __init__(self, dir_):
         self.dir = dir_
-        return super(ImageStore, self).__init__()
+        super(ImageStore, self).__init__()
 
     def path(self, slug, mime_type):
         """
@@ -95,19 +95,15 @@ class WLPicture(object):
             self.picture_info = None
 
     @classmethod
-    def from_string(cls, xml, *args, **kwargs):
-        return cls.from_file(StringIO(xml), *args, **kwargs)
-
-    @classmethod
     def from_file(cls, xmlfile, parse_dublincore=True, image_store=None):
 
         # first, prepare for parsing
         if isinstance(xmlfile, basestring):
-            file = open(xmlfile, 'rb')
+            xmlfile = open(xmlfile, 'rb')
             try:
-                data = file.read()
+                data = xmlfile.read()
             finally:
-                file.close()
+                xmlfile.close()
         else:
             data = xmlfile.read()
 
@@ -121,7 +117,7 @@ class WLPicture(object):
             image_store = ImageStore(path.dirname(xmlfile.name))
 
         try:
-            parser = etree.XMLParser(remove_blank_text=False)
+            parser = etree.XMLParser()
             tree = etree.parse(StringIO(data.encode('utf-8')), parser)
 
             return cls(tree, parse_dublincore=parse_dublincore, image_store=image_store)
@@ -152,14 +148,11 @@ class WLPicture(object):
         Iterates the parts of this picture and returns them and their metadata
         """
         for part in self.edoc.iter("div"):
-            pd = {}
-            pd['type'] = part.get('type')
+            pd = {'themes': [], 'object': None, 'type': part.get('type')}
             if pd['type'] == 'area':
                 pd['coords'] = ((int(part.get('x1')), int(part.get('y1'))),
                                 (int(part.get('x2')), int(part.get('y2'))))
 
-            pd['themes'] = []
-            pd['object'] = None
             parent = part
             while True:
                 parent = parent.getparent()

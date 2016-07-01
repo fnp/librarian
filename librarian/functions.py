@@ -8,6 +8,7 @@ import re
 
 from librarian.dcparser import Person
 
+
 def _register_function(f):
     """ Register extension function with lxml """
     ns = etree.FunctionNamespace('http://wolnelektury.pl/functions')
@@ -15,12 +16,13 @@ def _register_function(f):
 
 
 ENTITY_SUBSTITUTIONS = [
-	(u'---', u'—'),
-	(u'--', u'–'),
-	(u'...', u'…'),
-	(u',,', u'„'),
-	(u'"', u'”'),
+    (u'---', u'—'),
+    (u'--', u'–'),
+    (u'...', u'…'),
+    (u',,', u'„'),
+    (u'"', u'”'),
 ]
+
 
 def substitute_entities(text):
     """XPath extension function converting all entites in passed text."""

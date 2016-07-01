@@ -1,9 +1,10 @@
-
+# -*- coding: utf-8 -*-
 from librarian import xmlutils
 from lxml import etree
 from librarian.pyhtml import EduModule
 from nose.tools import *
 from tests.utils import get_fixture
+
 
 def test_traversal():
     xml = etree.fromstring("<a><b>BBBB</b><c>CCCC</c></a>")
@@ -11,7 +12,6 @@ def test_traversal():
     assert_equals(hg.next(xml), xml[0])
     assert_equals(hg.next(xml[0]), xml[1])
     assert_equals(hg.next(xml[1]), None)
-
 
 
 class Foo(xmlutils.Xmill):
@@ -27,24 +27,23 @@ class Foo(xmlutils.Xmill):
 
     def handle_song(self, ele):
         if ele.getnext() is not None:
-            return "\n","--------------------\n"
-
+            return "\n", "--------------------\n"
 
 
 def test_xml_generation():
     xml = u"""<root>
-<songs>
-<song>
-<title>Oursoul</title>
-<artist>Hindi Zahra</artist>
-</song>
-<song>
-<title>Visitor</title>
-<artist>Portico Quartet</artist>
-</song>
-</songs>
-</root>
-"""
+        <songs>
+        <song>
+        <title>Oursoul</title>
+        <artist>Hindi Zahra</artist>
+        </song>
+        <song>
+        <title>Visitor</title>
+        <artist>Portico Quartet</artist>
+        </song>
+        </songs>
+        </root>
+    """
     txt = Foo().generate(etree.fromstring(xml))
     print txt
 
