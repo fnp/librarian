@@ -70,7 +70,7 @@ class WLDocument(object):
         if root_elem.tag != 'utwor':
             raise ValidationError("Invalid root element. Found '%s', should be 'utwor'" % root_elem.tag)
         if parse_dublincore:
-            self.book_info()
+            self.book_info
 
     @classmethod
     def from_string(cls, xml, *args, **kwargs):
