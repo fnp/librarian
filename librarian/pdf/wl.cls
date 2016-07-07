@@ -82,6 +82,13 @@
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
 
+\newfontfamily\alien[
+SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+Numbers=OldStyle,
+Scale=0.85,
+LetterSpace=-1.0
+] {DejaVu Serif}
+
 \ifenablewlfont
 \setmainfont [
 %ExternalLocation,
@@ -95,14 +102,6 @@ Numbers=OldStyle,
 Scale=1.04,
 LetterSpace=-1.0
 ] {JunicodeWL}
-
-\newfontfamily\alien[
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-Numbers=OldStyle,
-Scale=0.85,
-LetterSpace=-1.0
-] {DejaVu Serif}
-
 
 \defaultfontfeatures{
 SizeFeatures={
