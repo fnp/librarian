@@ -44,18 +44,18 @@ class EpubFormat(Format):
         mime.compress_type = zipfile.ZIP_STORED
         mime.extra = ''
         zip.writestr(mime, 'application/epub+zip')
-        zip.writestr('META-INF/container.xml', '<?xml version="1.0" ?><container version="1.0" ' \
-                       'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' \
-                       '<rootfiles><rootfile full-path="OPS/content.opf" ' \
-                       'media-type="application/oebps-package+xml" />' \
-                       '</rootfiles></container>')
+        zip.writestr('META-INF/container.xml', '<?xml version="1.0" ?><container version="1.0" '
+                     'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
+                     '<rootfiles><rootfile full-path="OPS/content.opf" '
+                     'media-type="application/oebps-package+xml" />'
+                     '</rootfiles></container>')
 
-        toc_file = etree.fromstring('<?xml version="1.0" encoding="utf-8"?><!DOCTYPE ncx PUBLIC ' \
-                               '"-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">' \
-                               '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" ' \
-                               'version="2005-1"><head></head><docTitle></docTitle><navMap>' \
-                               '</navMap></ncx>')
-        nav_map = toc_file[-1]
+        toc_file = etree.fromstring('<?xml version="1.0" encoding="utf-8"?><!DOCTYPE ncx PUBLIC '
+                                    '"-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">'
+                                    '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" '
+                                    'version="2005-1"><head></head><docTitle></docTitle><navMap>'
+                                    '</navMap></ncx>')
+        # nav_map = toc_file[-1]
 
         if self.cover is not None:
             cover = self.cover(self.doc)
@@ -71,9 +71,9 @@ class EpubFormat(Format):
 
             if cover.uses_dc_cover:
                 if self.doc.meta.get_one('cover_by'):
-                    document.edoc.getroot().set('data-cover-by', self.doc.meta.get_one('cover_by'))
+                    self.doc.edoc.getroot().set('data-cover-by', self.doc.meta.get_one('cover_by'))
                 if self.doc.meta.get_one('cover_source'):
-                    document.edoc.getroot().set('data-cover-source', self.doc.meta.get_one('cover_source'))
+                    self.doc.edoc.getroot().set('data-cover-source', self.doc.meta.get_one('cover_source'))
 
             manifest.append(etree.fromstring(
                 '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
@@ -82,7 +82,6 @@ class EpubFormat(Format):
             spine.insert(0, etree.fromstring('<itemref idref="cover" linear="no" />'))
             opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
             guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
-
 
         ctx = Context(format=self)
         ctx.toc = TOC()
@@ -110,17 +109,16 @@ class EpubFormat(Format):
 
         if len(ctx.footnotes.output):
             ctx.toc.add("Przypisy", "footnotes.html")
-            manifest.append(etree.Element(OPFNS('item'),
-                    id='footnotes', href='footnotes.html',
-                    **{'media-type': "application/xhtml+xml"}))
+            manifest.append(etree.Element(
+                OPFNS('item'), id='footnotes', href='footnotes.html',
+                **{'media-type': "application/xhtml+xml"}))
             spine.append(etree.Element('itemref', idref='footnotes'))
             wrap = etree.parse(get_resource('formats/epub/res/footnotes.html'))
             extend_element(wrap.find('//*[@id="footnotes"]'), ctx.footnotes.output)
             
-            #chars = chars.union(used_chars(html_tree.getroot()))
+            # chars = chars.union(used_chars(html_tree.getroot()))
             zip.writestr('OPS/footnotes.html', etree.tostring(
                                 wrap, method="html", pretty_print=True))
-
 
         zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
         ctx.toc.render(toc_file[-1])
@@ -180,8 +178,8 @@ class Footnotes(object):
 
     def append(self, items):
         self.counter += 1
-        e = etree.Element("a",
-            href="part%d.html#footnote-anchor-%d" % (int(items[0].get('part_no')), self.counter),
+        e = etree.Element(
+            "a", href="part%d.html#footnote-anchor-%d" % (int(items[0].get('part_no')), self.counter),
             id="footnote-%d" % self.counter,
             style="float:left;margin-right:1em")
         e.text = "[%d]" % self.counter
@@ -189,9 +187,8 @@ class Footnotes(object):
         self.output.append(e)
         for item in items:
             extend_element(self.output, item)
-        anchor = etree.Element("a",
-            id="footnote-anchor-%d" % self.counter,
-            href="footnotes.html#footnote-%d" % self.counter)
+        anchor = etree.Element(
+            "a", href="footnotes.html#footnote-%d" % self.counter, id="footnote-anchor-%d" % self.counter)
         anchor.text = "[%d]" % self.counter
         return anchor
 
@@ -239,7 +236,7 @@ class AsideR(EpubRenderer):
     def render(self, element, ctx):
         outputs = list(super(AsideR, self).render(element, ctx))
         anchor = ctx.footnotes.append(outputs)
-        wrapper, inside = self.text_container()  #etree.Element('_', part_no=str(ctx.part_no))
+        wrapper, inside = self.text_container()  # etree.Element('_', part_no=str(ctx.part_no))
         inside.append(anchor)
         yield wrapper
 EpubFormat.renderers.register(core.Aside, None, AsideR('div'))
@@ -276,4 +273,3 @@ EpubFormat.renderers.register(core.Section, None, SectionR())
 class SpanR(EpubRenderer):
     pass
 EpubFormat.renderers.register(core.Span, None, SpanR('span'))
-
