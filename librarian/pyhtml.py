@@ -131,7 +131,7 @@ class EduModule(Xmill):
 
         counter = self.activity_counter
 
-        if element.getnext().tag == 'aktywnosc' or (self.activity_last and self.activity_last.getnext() == element):
+        if element.getnext().tag == 'aktywnosc' or (len(self.activity_last) and self.activity_last.getnext() == element):
             counter_html = """<span class="act_counter">%(counter)d.</span>""" % {'counter': counter}
         else:
             counter_html = ''
