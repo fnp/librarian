@@ -4,11 +4,15 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
+import urllib
 from copy import deepcopy
+from mimetypes import guess_type
 from tempfile import NamedTemporaryFile
 import zipfile
+from urllib2 import urlopen
+
 from lxml import etree
-from librarian import OPFNS, NCXNS, XHTMLNS
+from librarian import OPFNS, NCXNS, XHTMLNS, DCNS
 from librarian import core
 from librarian.formats import Format
 from librarian.formats.cover.wolnelektury import WLCover
@@ -30,11 +34,28 @@ class EpubFormat(Format):
         if cover is not None:
             self.cover = cover
 
-    def build(self):
+    def build(self, ctx=None):
+
+        def add_file(url, file_id):
+            filename = url.rsplit('/', 1)[1]
+            if url.startswith('file://'):
+                url = ctx.files_path + urllib.quote(url[7:])
+            if url.startswith('/'):
+                url = 'http://milpeer.eu' + url
+            file_content = urlopen(url).read()
+            zip.writestr(os.path.join('OPS', filename), file_content)
+            manifest.append(etree.fromstring(
+                '<item id="%s" href="%s" media-type="%s" />' % (file_id, filename, guess_type(url)[0])))
+
         opf = etree.parse(get_resource('formats/epub/res/content.opf'))
         manifest = opf.find(OPFNS('manifest'))
         guide = opf.find(OPFNS('guide'))
         spine = opf.find(OPFNS('spine'))
+
+        author = ", ". join(self.doc.meta.get(DCNS('creator')) or '')
+        title = self.doc.meta.title()
+        opf.find('.//' + DCNS('creator')).text = author
+        opf.find('.//' + DCNS('title')).text = title
 
         output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub', delete=False)
         zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
@@ -58,6 +79,7 @@ class EpubFormat(Format):
         # nav_map = toc_file[-1]
 
         if self.cover is not None:
+            cover_image = self.doc.meta.get(DCNS('relation.coverimage.url'))[0]
             cover = self.cover(self.doc)
             cover_output = cover.build()
             cover_name = 'cover.%s' % cover.format_ext
@@ -83,10 +105,14 @@ class EpubFormat(Format):
             opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
             guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
 
-        ctx = Context(format=self)
+        if not ctx:
+            ctx = Context(format=self)
+        else:
+            ctx.format = self
         ctx.toc = TOC()
         ctx.toc_level = 0
         ctx.footnotes = Footnotes()
+        ctx.images = []
         ctx.part_no = 0
 
         wrap_tmpl = etree.parse(get_resource('formats/epub/res/chapter.html'))
@@ -106,6 +132,9 @@ class EpubFormat(Format):
                         'idref': partstr,
                     }))
             zip.writestr('OPS/%s.html' % partstr, etree.tostring(wrap, method='html'))
+
+        for i, url in enumerate(ctx.images):
+            add_file(url, 'image%s' % i)
 
         if len(ctx.footnotes.output):
             ctx.toc.add("Przypisy", "footnotes.html")
@@ -250,6 +279,22 @@ class DivR(EpubRenderer):
             inner.set('style', 'display: block;')
         return root, inner
 EpubFormat.renderers.register(core.Div, None, DivR('div'))
+
+
+class DivImageR(EpubRenderer):
+    def render(self, element, ctx):
+        src = element.attrib.get('src', '')
+        ctx.images.append(src)
+        src = src.rsplit('/', 1)[1]
+        return super(DivImageR, self).render(element, Context(ctx, src=src))
+
+    def container(self, ctx):
+        root, inner = super(DivImageR, self).container(ctx)
+        src = getattr(ctx, 'src', '')
+        inner.set('src', src)
+        # inner.set('style', 'display: block; width: 60%; margin: 3em auto')
+        return root, inner
+EpubFormat.renderers.register(core.Div, 'img', DivImageR('img'))
 
 
 class HeaderR(EpubRenderer):

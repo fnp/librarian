@@ -26,7 +26,7 @@ class Context(object):
         elif self._upctx is not None:
             return getattr(self._upctx, name)
         else:
-            raise AttributeError
+            raise AttributeError, "'%s' object has no attribute '%s'" % (type(self), name)
 
     def __setattr__(self, name, value):
         try:
