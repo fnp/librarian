@@ -22,6 +22,15 @@
 			<p><xsl:apply-templates mode="inline"/>
                 <xsl:if test="local-name() = 'pa'">
                     <xsl:text> [przypis autorski]</xsl:text>
+                </xsl:if>
+                <xsl:if test="local-name() = 'pt'">
+                    <xsl:text> [przypis tłumacza]</xsl:text>
+                </xsl:if>
+                <xsl:if test="local-name() = 'pr'">
+                    <xsl:text> [przypis redakcyjny]</xsl:text>
+                </xsl:if>
+                <xsl:if test="local-name() = 'pe'">
+                    <xsl:text> [przypis edytorski]</xsl:text>
                 </xsl:if></p>
 		</xsl:element>
 	</xsl:template>

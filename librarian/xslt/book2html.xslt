@@ -47,6 +47,9 @@
                             <xsl:when test="count(akap|akap_cd|strofa) = 0">
                                 <p><xsl:apply-templates select="text()|*" mode="inline" />
                                 <xsl:if test="name()='pa'"> [przypis autorski]</xsl:if>
+                                <xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if>
+                                <xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if>
+                                <xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if>
                                 </p>
                             </xsl:when>
                             <xsl:otherwise>

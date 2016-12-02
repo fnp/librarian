@@ -478,9 +478,9 @@ Letters={Uppercase}
 
 \ifshowfootnotes
   \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
-  \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
-  \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
-  \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}
+  \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1 [przypis edytorski]}}}
+  \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1 [przypis redakcyjny]}}}
+  \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1 [przypis tłumacza]}}}
 \else
   \newcommand{\pa}[1]{}
   \newcommand{\pe}[1]{}
