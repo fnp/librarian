@@ -34,6 +34,9 @@ class EpubFormat(Format):
         if cover is not None:
             self.cover = cover
 
+    def dc(self, tag):
+        return self.doc.meta.get_one(DCNS(tag))
+
     def build(self, ctx=None):
 
         def add_file(url, file_id):
@@ -52,7 +55,7 @@ class EpubFormat(Format):
         guide = opf.find(OPFNS('guide'))
         spine = opf.find(OPFNS('spine'))
 
-        author = ", ". join(self.doc.meta.get(DCNS('creator')) or '')
+        author = ", ". join(self.doc.meta.get(DCNS('creator')) or [])
         title = self.doc.meta.title()
         opf.find('.//' + DCNS('creator')).text = author
         opf.find('.//' + DCNS('title')).text = title
@@ -149,6 +152,31 @@ class EpubFormat(Format):
             # chars = chars.union(used_chars(html_tree.getroot()))
             zip.writestr('OPS/footnotes.html', etree.tostring(
                                 wrap, method="html", pretty_print=True))
+
+        footer_text = [
+            'Information about the resource',
+            'Publisher: %s' % self.dc('publisher'),
+            'Rights: %s' % self.dc('rights'),
+            'Intended audience: %s' % self.dc('audience'),
+            self.dc('description'),
+            'Resource prepared using MIL/PEER editing platform.',
+            'Source available at %s' % ctx.source_url,
+        ]
+        footer_wrap = deepcopy(wrap_tmpl)
+        footer_body = footer_wrap.find('//*[@id="book-text"]')
+        for line in footer_text:
+            footer_line = etree.Element('p')
+            footer_line.text = line
+            footer_body.append(footer_line)
+        manifest.append(manifest.makeelement(OPFNS('item'), attrib={
+            'id': 'footer',
+            'href': "footer.html",
+            'media-type': 'application/xhtml+xml',
+        }))
+        spine.append(spine.makeelement(OPFNS('itemref'), attrib={
+            'idref': 'footer',
+        }))
+        zip.writestr('OPS/footer.html', etree.tostring(footer_wrap, method='html'))
 
         zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True))
         ctx.toc.render(toc_file[-1])
