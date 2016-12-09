@@ -3,7 +3,6 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-import os
 import re
 import urllib
 from .utils import XMLNamespace
@@ -23,10 +22,16 @@ class UnicodeException(Exception):
             message = unicode(args, encoding='utf-8', errors='ignore')
         return message
 
+
 class ParseError(UnicodeException):
     pass
 
+
 class ValidationError(UnicodeException):
+    pass
+
+
+class BuildError(Exception):
     pass
 
 
@@ -53,8 +58,7 @@ class WLURI(object):
     slug = None
 
     example = 'http://wolnelektury.pl/katalog/lektura/template/'
-    _re_wl_uri = re.compile(r'http://(www\.)?wolnelektury.pl/katalog/lektura/'
-            '(?P<slug>[-a-z0-9]+)/?$')
+    _re_wl_uri = re.compile(r'http://(www\.)?wolnelektury.pl/katalog/lektura/(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):
         uri = unicode(uri)
@@ -93,4 +97,3 @@ class WLURI(object):
 class URLOpener(urllib.FancyURLopener):
     version = 'FNP Librarian (http://git.nowoczesnapolska.org.pl/?p=librarian.git)'
 urllib._urlopener = URLOpener()
-

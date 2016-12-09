@@ -126,6 +126,7 @@ class Cover(Format):
 
     logo_bottom = None
     logo_width = None
+    logo_file = get_resource('res/wl-logo.png')
     uses_dc_cover = False
 
     format = 'JPEG'
@@ -164,14 +165,17 @@ class Cover(Format):
 
         if self.background_img:
             background = Image.open(self.background_img)
-            img.paste(background, None, background)
-            del background
+            resized = background.resize((1024, background.height*1024/background.width), Image.ANTIALIAS)
+            resized = resized.convert('RGBA')
+            img.paste(resized, (0, 0), resized)
+            del background, resized
 
-        # WL logo
         if metr.logo_width:
-            logo = Image.open(get_resource('res/wl-logo.png'))
-            logo = logo.resize((metr.logo_width, logo.size[1] * metr.logo_width / logo.size[0]))
-            img.paste(logo, ((metr.width - metr.logo_width) / 2, img.size[1] - logo.size[1] - metr.logo_bottom))
+            logo = Image.open(self.logo_file)
+            logo = logo.resize((metr.logo_width, logo.size[1] * metr.logo_width / logo.size[0]), Image.ANTIALIAS)
+            logo = logo.convert('RGBA')
+            img.paste(logo, ((metr.width - metr.logo_width) / 2,
+                             img.size[1] - logo.size[1] - metr.logo_bottom), logo)
 
         top = metr.author_top
         tbox = TextBox(

@@ -15,7 +15,7 @@ from lxml import etree
 from librarian import OPFNS, NCXNS, XHTMLNS, DCNS
 from librarian import core
 from librarian.formats import Format
-from librarian.formats.cover.wolnelektury import WLCover
+from librarian.formats.cover.evens import EvensCover
 from librarian.output import OutputFile
 from librarian.renderers import Register, TreeRenderer, UnknownElement
 from librarian.utils import Context, get_resource, extend_element
@@ -25,7 +25,7 @@ class EpubFormat(Format):
     format_name = 'EPUB'
     format_ext = 'epub'
 
-    cover = WLCover
+    cover = EvensCover
     renderers = Register()
 
     def __init__(self, doc, cover=None, with_fonts=True):
@@ -79,8 +79,9 @@ class EpubFormat(Format):
         # nav_map = toc_file[-1]
 
         if self.cover is not None:
-            cover_image = self.doc.meta.get(DCNS('relation.coverimage.url'))[0]
+            # cover_image = self.doc.meta.get(DCNS('relation.coverimage.url'))[0]
             cover = self.cover(self.doc)
+            cover.set_images(ctx)
             cover_output = cover.build()
             cover_name = 'cover.%s' % cover.format_ext
             zip.writestr(os.path.join('OPS', cover_name), cover_output.get_string())
@@ -117,7 +118,7 @@ class EpubFormat(Format):
 
         wrap_tmpl = etree.parse(get_resource('formats/epub/res/chapter.html'))
         for e in self.render(self.doc.edoc.getroot(), ctx):
-            if not len(e) and not e.text.strip():
+            if not len(e) and not (e.text and e.text.strip()):
                 continue
             wrap = deepcopy(wrap_tmpl)
             extend_element(wrap.find('//*[@id="book-text"]'), e)
