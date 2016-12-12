@@ -4,6 +4,7 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
+import re
 import urllib
 from copy import deepcopy
 from mimetypes import guess_type
@@ -229,6 +230,24 @@ class EpubRenderer(TreeRenderer):
         yield wrapper
 
 
+class NaturalText(EpubRenderer):
+    def render_text(self, text, ctx):
+        root, inner = self.text_container()
+        chunks = re.split('(?<=\s\w) ', text)
+        inner.text = chunks[0]
+        for chunk in chunks[1:]:
+            x = etree.Entity("nbsp")
+            x.tail = chunk
+            inner.append(x)
+        return root
+
+
+class Silent(EpubRenderer):
+    def render_text(self, text, ctx):
+        root, inner = self.text_container()
+        return root
+
+
 class Footnotes(object):
     def __init__(self):
         self.counter = 0
@@ -290,7 +309,7 @@ class TOC(object):
 
 # Renderers
 
-class AsideR(EpubRenderer):
+class AsideR(NaturalText):
     def render(self, element, ctx):
         outputs = list(super(AsideR, self).render(element, ctx))
         anchor = ctx.footnotes.append(outputs)
@@ -299,8 +318,10 @@ class AsideR(EpubRenderer):
         yield wrapper
 EpubFormat.renderers.register(core.Aside, None, AsideR('div'))
 
+EpubFormat.renderers.register(core.Aside, 'comment', Silent())
 
-class DivR(EpubRenderer):
+
+class DivR(NaturalText):
     def container(self, ctx):
         root, inner = super(DivR, self).container(ctx)
         if getattr(ctx, 'inline', False):
@@ -308,6 +329,11 @@ class DivR(EpubRenderer):
             inner.set('style', 'display: block;')
         return root, inner
 EpubFormat.renderers.register(core.Div, None, DivR('div'))
+EpubFormat.renderers.register(core.Div, 'p', NaturalText('p'))
+
+EpubFormat.renderers.register(core.Div, 'list', NaturalText('ul'))
+EpubFormat.renderers.register(core.Div, 'list.enum', NaturalText('ol'))
+EpubFormat.renderers.register(core.Div, 'item', NaturalText('li'))
 
 
 class DivImageR(EpubRenderer):
@@ -326,13 +352,13 @@ class DivImageR(EpubRenderer):
 EpubFormat.renderers.register(core.Div, 'img', DivImageR('img'))
 
 
-class HeaderR(EpubRenderer):
+class HeaderR(NaturalText):
     def subcontext(self, element, ctx):
         return Context(ctx, inline=True)
 EpubFormat.renderers.register(core.Header, None, HeaderR('h1'))
 
 
-class SectionR(EpubRenderer):
+class SectionR(NaturalText):
     epub_separate = True
 
     def render(self, element, ctx):
@@ -344,6 +370,21 @@ class SectionR(EpubRenderer):
 EpubFormat.renderers.register(core.Section, None, SectionR())
 
 
-class SpanR(EpubRenderer):
+class SpanR(NaturalText):
     pass
 EpubFormat.renderers.register(core.Span, None, SpanR('span'))
+EpubFormat.renderers.register(core.Span, 'cite', SpanR('i'))
+EpubFormat.renderers.register(core.Span, 'emp', SpanR('b'))
+EpubFormat.renderers.register(core.Span, 'emph', SpanR('i'))
+
+
+class SpanLink(EpubRenderer):
+    def render(self, element, ctx):
+        parts = super(SpanLink, self).render(element, ctx)
+        for part in parts:
+            src = element.attrib.get('href', '')
+            if src.startswith('file://'):
+                src = ctx.files_path + src[7:]
+            part[0].attrib['href'] = src
+            yield part
+EpubFormat.renderers.register(core.Span, 'link', SpanLink('a'))
