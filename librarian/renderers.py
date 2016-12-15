@@ -71,7 +71,6 @@ class TreeRenderer(Renderer):
         return root
 
 
-
 class Register(object):
     """ Class-renderer register.
 

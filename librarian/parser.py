@@ -11,7 +11,7 @@ from . import core, meta
 class SSTParser(etree.XMLParser):
     """ XML parser using relevant element classes. """
     def __init__(self):
-        super(SSTParser, self).__init__(remove_blank_text=False)
+        super(SSTParser, self).__init__()
         lookup = etree.ElementNamespaceClassLookup()
         self.set_element_class_lookup(lookup)
 

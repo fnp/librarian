@@ -53,7 +53,6 @@ class Metadata(etree.ElementBase):
             return values[0]
         else:
             return None
-        
 
     # Specials.
 

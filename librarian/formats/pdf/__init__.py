@@ -4,7 +4,6 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import os
-import re
 import shutil
 from subprocess import call, PIPE
 from tempfile import NamedTemporaryFile, mkdtemp
@@ -16,7 +15,7 @@ from librarian import DCNS, XMLNamespace
 from librarian.formats import Format
 from librarian.output import OutputFile
 from librarian.renderers import Register, TreeRenderer
-from librarian.utils import Context, get_resource, extend_element
+from librarian.utils import Context, get_resource
 from librarian import core
 from PIL import Image
 from ..html import Silent
@@ -80,7 +79,8 @@ class PdfFormat(Format):
                     call(['convert', save_as + '_.' + ext, save_as])
                 else:
                     # JPEGs with bad density will break LaTeX with 'Dimension too large'.
-                    r = call(['convert', '-units', 'PixelsPerInch', save_as + '_.' + ext, '-density', '300', save_as + '_2.' + ext])
+                    r = call(['convert', '-units', 'PixelsPerInch', save_as + '_.' + ext, '-density', '300',
+                              save_as + '_2.' + ext])
                     if r:
                         shutil.move(save_as + '_.' + ext, save_as)
                     else:
@@ -124,7 +124,7 @@ class PdfFormat(Format):
             img = Image.open(self.get_file(build_ctx, 'cover.png'))
             size = img.size
 
-            if (size[1] > size[0]):
+            if size[1] > size[0]:
                 img = img.crop((0, 0, size[0], size[0]))
                 img.save(self.get_file(build_ctx, 'cover.png'), format=img.format, quality=90)
             size = img.size
@@ -146,14 +146,14 @@ class PdfFormat(Format):
             p[0].append(texml_cmd("noindent"))
             p[0].append(texml_cmd("nohyphens", author))
             p[0].append(texml_cmd("vspace", "1em"))
-            #p[0][-1].tail = author
+            # p[0][-1].tail = author
         if title:
             p = texml_cmd("par", "")
             grp.append(p)
             p[0].append(texml_cmd("Huge"))
             p[0].append(texml_cmd("noindent"))
             p[0].append(texml_cmd("nohyphens", title))
-            #p[0][-1].tail = title
+            # p[0][-1].tail = title
         doc.append(texml_cmd("vfill"))
         doc.append(texml_cmd("vfill"))
 
@@ -161,7 +161,7 @@ class PdfFormat(Format):
         cover_logo_url = getattr(build_ctx, 'cover_logo', None)
         # TEST
         # TODO: convert
-        #cover_logo_url = 'http://milpeer.mdrn.pl/media/dynamic/people/logo/nowoczesnapolska.org.pl.png'
+        # cover_logo_url = 'http://milpeer.mdrn.pl/media/dynamic/people/logo/nowoczesnapolska.org.pl.png'
         if cover_logo_url:
             self.add_file(build_ctx, 'coverlogo.png', cover_logo_url, image=True)
             size = Image.open(self.get_file(build_ctx, 'coverlogo.png')).size
@@ -183,11 +183,10 @@ class PdfFormat(Format):
         doc.append(texml_cmd("vspace", "1em"))
 
         for m, f in (
-            ('Publisher: ', DCNS('publisher')),
-            ('Rights: ', DCNS('rights')),
-            ('Intended audience: ', DCNS('audience')),
-            ('', DCNS('description')),
-            ):
+                ('Publisher: ', DCNS('publisher')),
+                ('Rights: ', DCNS('rights')),
+                ('Intended audience: ', DCNS('audience')),
+                ('', DCNS('description'))):
             v = self.doc.meta.get_one(f)
             if v:
                 e = texml_cmd("par", "")
@@ -195,7 +194,6 @@ class PdfFormat(Format):
                 e[0][0].tail = "%s%s" % (m, v)
                 doc.append(e)
                 doc.append(texml_cmd("vspace", "1em"))
-
 
         e = texml_cmd("par", "")
         e[0].append(texml_cmd("noindent"))
@@ -205,7 +203,7 @@ class PdfFormat(Format):
         doc.append(e)
 
         source_url = getattr(build_ctx, 'source_url', None)
-        #source_url = 'http://milpeer.mdrn.pl/documents/27/'
+        # source_url = 'http://milpeer.mdrn.pl/documents/27/'
         if source_url:
             e = texml_cmd("par", "")
             doc.append(e)
@@ -220,16 +218,14 @@ class PdfFormat(Format):
         texml = self.get_texml(ctx)
         tex_path = os.path.join(ctx.workdir, 'doc.tex')
         with open(tex_path, 'w') as fout:
-            #print etree.tostring(texml)
+            # print etree.tostring(texml)
             process(StringIO(etree.tostring(texml)), fout, 'utf-8')
 
-        #~ if self.save_tex:
-            #~ shutil.copy(tex_path, self.save_tex)
+        # if self.save_tex:
+        #     shutil.copy(tex_path, self.save_tex)
 
-
-
-        #for sfile in ['wasysym.sty', 'uwasyvar.fd', 'uwasy.fd']:
-        #    shutil.copy(get_resource(os.path.join('res/wasysym', sfile)), temp)
+        # for sfile in ['wasysym.sty', 'uwasyvar.fd', 'uwasy.fd']:
+        #     shutil.copy(get_resource(os.path.join('res/wasysym', sfile)), temp)
         return ctx.workdir
 
     def build(self, ctx=None, verbose=False):
@@ -247,9 +243,9 @@ class PdfFormat(Format):
         else:
             for i in range(self.tex_passes):
                 p = call(['xelatex', '-interaction=batchmode', tex_path],
-                            stdout=PIPE, stderr=PIPE)
+                         stdout=PIPE, stderr=PIPE)
         if p:
-            #raise ParseError("Error parsing .tex file: %s" % tex_path)
+            # raise ParseError("Error parsing .tex file: %s" % tex_path)
             raise RuntimeError("Error parsing .tex file: %s" % tex_path)
 
         if cwd is not None:
@@ -266,22 +262,23 @@ class PdfFormat(Format):
         return self.renderers.get_for(element).render(element, ctx)
 
 
-
-
 class CmdRenderer(TreeRenderer):
     def parms(self):
         return []
+
     def container(self):
         root = etree.Element(self.root_name)
         root.append(texml_cmd(self.tag_name, *(self.parms() + [""])))
         inner = root[0][-1]
         return root, inner
 
+
 class EnvRenderer(TreeRenderer):
     def container(self):
         root = etree.Element(self.root_name)
         inner = etree.SubElement(root, 'env', name=self.tag_name)
         return root, inner
+
 
 class GroupRenderer(CmdRenderer):
     def container(self):
@@ -311,6 +308,7 @@ PdfFormat.renderers.register(core.Header, None, CmdRenderer('section*'))
 
 PdfFormat.renderers.register(core.Div, None, CmdRenderer('par'))
 
+
 class ImgRenderer(CmdRenderer):
     def parms(self):
         return ["", ""]
@@ -324,8 +322,8 @@ class ImgRenderer(CmdRenderer):
         root[0][0].text = 'f%d.png' % nr
         try:
             size = Image.open(ctx.format.get_file(ctx, 'f%d.png' % nr)).size
-        except IOError: # not an image
-            del root[0];
+        except IOError:  # not an image
+            del root[0]
             return root
         root[0][1].text = '15cm'
         root[0][2].text = '%fcm' % (15.0 * size[1] / size[0])
@@ -340,21 +338,22 @@ PdfFormat.renderers.register(core.Div, 'list', EnvRenderer('itemize'))
 PdfFormat.renderers.register(core.Div, 'list.enum', EnvRenderer('enumerate'))
 
 
-
 PdfFormat.renderers.register(core.Span, None, TreeRenderer())
 PdfFormat.renderers.register(core.Span, 'cite', CmdRenderer('emph'))
 PdfFormat.renderers.register(core.Span, 'cite.code', CmdRenderer('texttt'))
 PdfFormat.renderers.register(core.Span, 'emp', CmdRenderer('textbf'))
 PdfFormat.renderers.register(core.Span, 'emph', CmdRenderer('emph'))
 
+
 class SpanUri(CmdRenderer):
     def parms(self):
         return [""]
+
     def render(self, element, ctx):
         root = super(SpanUri, self).render(element, ctx)
         src = element.text
         if src.startswith('file://'):
-           src = ctx.files_path + src[7:]
+            src = ctx.files_path + src[7:]
         root[0][0].text = src
         return root
 PdfFormat.renderers.register(core.Span, 'uri', SpanUri('href'))
@@ -363,19 +362,17 @@ PdfFormat.renderers.register(core.Span, 'uri', SpanUri('href'))
 class SpanLink(CmdRenderer):
     def parms(self):
         return [""]
+
     def render(self, element, ctx):
         root = super(SpanLink, self).render(element, ctx)
         src = element.attrib.get('href', '')
         if src.startswith('file://'):
-           src = ctx.files_path + src[7:]
+            src = ctx.files_path + src[7:]
         root[0][0].text = src
         return root
 PdfFormat.renderers.register(core.Span, 'link', SpanLink('href'))
 
 
-
-
 PdfFormat.renderers.register(core.Aside, None, TreeRenderer())
 PdfFormat.renderers.register(core.Aside, 'editorial', CmdRenderer('editorialpage'))
 PdfFormat.renderers.register(core.Aside, 'comment', Silent())
-

@@ -6,7 +6,7 @@
 from __future__ import with_statement
 from os.path import realpath, join, dirname
 import glob
-import os
+
 
 def get_fixture_dir(dir_name):
     """Returns path to fixtures directory dir_name."""

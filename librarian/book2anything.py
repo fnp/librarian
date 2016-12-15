@@ -32,10 +32,10 @@ class Book2Anything(object):
     
     Subclass it for any format you want to convert to.
     """
-    format_cls = None # A formats.Format subclass
-    document_options = [] # List of Option objects for document options.
-    format_options = [] # List of Option objects for format customization.
-    build_options = [] # List of Option objects for build options.
+    format_cls = None  # A formats.Format subclass
+    document_options = []  # List of Option objects for document options.
+    format_options = []  # List of Option objects for format customization.
+    build_options = []  # List of Option objects for build options.
 
     @classmethod
     def run(cls):
@@ -45,12 +45,14 @@ class Book2Anything(object):
 
         parser = optparse.OptionParser(usage=usage)
 
-        parser.add_option('-v', '--verbose', 
-                action='store_true', dest='verbose', default=False,
-                help='print status messages to stdout')
-        parser.add_option('-o', '--output-file',
-                dest='output_file', metavar='FILE',
-                help='specifies the output file')
+        parser.add_option(
+            '-v', '--verbose',
+            action='store_true', dest='verbose', default=False,
+            help='print status messages to stdout')
+        parser.add_option(
+            '-o', '--output-file',
+            dest='output_file', metavar='FILE',
+            help='specifies the output file')
         for option in cls.document_options + cls.format_options + cls.build_options:
             option.add(parser)
 
@@ -58,7 +60,7 @@ class Book2Anything(object):
 
         if len(input_filenames) < 1:
             parser.print_help()
-            return(1)
+            return 1
 
         # Prepare additional args for document.
         document_args = {}
@@ -79,18 +81,18 @@ class Book2Anything(object):
                 if options.verbose:
                     print main_input
 
-            # Do the transformation.
-            doc = Document.from_file(main_input, **document_args)
-            format_ = cls.format_cls(doc, **format_args)
+                # Do the transformation.
+                doc = Document.from_file(main_input, **document_args)
+                format_ = cls.format_cls(doc, **format_args)
 
-            # Where to write output?
-            if not options.output_file:
-                output_file = os.path.splitext(main_input)[0] + '.' + format_.format_ext
-            else:
-                output_file = None
+                # Where to write output?
+                if not options.output_file:
+                    output_file = os.path.splitext(main_input)[0] + '.' + format_.format_ext
+                else:
+                    output_file = None
             
-            output = format_.build(**build_args)
-            output.save_as(output_file)
+                output = format_.build(**build_args)
+                output.save_as(output_file)
 
         except ParseError, e:
             print '%(file)s:%(name)s:%(message)s' % {

@@ -18,10 +18,6 @@ class EvensCover(Cover):
     title_top = 30
     logo_bottom = 100
 
-    def __init__(self, doc, format=None, width=None, height=None):
-        super(EvensCover, self).__init__(doc, format=format, width=width, height=height)
-        self.doc = doc
-
     def set_images(self, ctx):
         cover_url = self.doc.meta.get(DCNS('relation.coverimage.url'))[0]
         if cover_url.startswith('file://'):

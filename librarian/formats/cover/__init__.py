@@ -4,9 +4,9 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 import re
-from PIL import Image, ImageFont, ImageDraw, ImageFilter, ImageEnhance
+from PIL import Image, ImageFont, ImageDraw, ImageFilter
 from StringIO import StringIO
-from librarian import DCNS, URLOpener
+from librarian import DCNS
 from librarian.output import OutputFile
 from librarian.utils import get_resource
 from librarian.formats import Format
@@ -143,6 +143,7 @@ class Cover(Format):
         }
 
     def __init__(self, doc, format=None, width=None, height=None):
+        super(Cover, self).__init__(doc)
         self.author = ", ".join(auth for auth in doc.meta.get(DCNS('creator')))
         self.title = doc.meta.title()
         if format is not None:
@@ -185,7 +186,8 @@ class Cover(Format):
             
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size)
-        tbox.text(self.pretty_author(), self.author_color, author_font,
+        tbox.text(
+            self.pretty_author(), self.author_color, author_font,
             metr.author_lineskip, self.author_shadow)
         text_img = tbox.image()
         img.paste(text_img, (metr.author_margin_left, top), text_img)
@@ -197,15 +199,16 @@ class Cover(Format):
             )
         title_font = ImageFont.truetype(
             self.title_font_ttf, metr.title_font_size)
-        tbox.text(self.pretty_title(), self.title_color, title_font,
+        tbox.text(
+            self.pretty_title(), self.title_color, title_font,
             metr.title_lineskip, self.title_shadow)
         text_img = tbox.image()
         img.paste(text_img, (metr.title_margin_left, top), text_img)
 
         return img
-        imgstr = StringIO()
-        img.save(imgstr, format=self.format, quality=95)
-        OutputFile.from_string(imgstr.getvalue())
+        # imgstr = StringIO()
+        # img.save(imgstr, format=self.format, quality=95)
+        # OutputFile.from_stringing(imgstr.getvalue())
 
     def mime_type(self):
         return self.mime_types[self.format]

@@ -31,6 +31,11 @@ class ValidationError(UnicodeException):
     pass
 
 
+# was deleted, but still used???
+class NoDublinCore(ValidationError):
+    pass
+
+
 class BuildError(Exception):
     pass
 

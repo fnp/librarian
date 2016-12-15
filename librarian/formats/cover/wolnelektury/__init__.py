@@ -4,6 +4,8 @@
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
 from PIL import Image, ImageFont, ImageDraw
+from PIL import ImageEnhance
+
 from librarian.utils import get_resource
 from .. import Cover, Metric, TextBox
 
@@ -60,15 +62,15 @@ class WLCover(Cover):
         self.epoch = doc.meta.get_one('epoch')
         self.with_logo = with_logo
         # TODO
-        if doc.meta.get('cover_url'):
-            url = doc.meta.get('cover_url')[0]
-            bg_src = None
-            if bg_src is None:
-                bg_src = URLOpener().open(url)
-            self.background_img = StringIO(bg_src.read())
-            bg_src.close()
-        else:
-            self.background_img = self.default_background
+        # if doc.meta.get('cover_url'):
+        #     url = doc.meta.get('cover_url')[0]
+        #     bg_src = None
+        #     if bg_src is None:
+        #         bg_src = URLOpener().open(url)
+        #     self.background_img = StringIO(bg_src.read())
+        #     bg_src.close()
+        # else:
+        self.background_img = self.default_background
 
     def pretty_author(self):
         return self.author.upper()
@@ -110,26 +112,29 @@ class WLCover(Cover):
         box = TextBox(metr.title_box_width, metr.height, padding_y=metr.box_padding_y)
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size)
-        box.text(self.pretty_author(),
-                 font=author_font,
-                 line_height=metr.author_lineskip,
-                 color=self.author_color,
-                 shadow_color=self.author_shadow,
-                )
+        box.text(
+            self.pretty_author(),
+            font=author_font,
+            line_height=metr.author_lineskip,
+            color=self.author_color,
+            shadow_color=self.author_shadow,
+        )
 
         box.skip(metr.box_above_line)
-        box.draw.line((metr.box_line_left, box.height, metr.box_line_right, box.height),
-                fill=self.author_color, width=metr.box_line_width)
+        box.draw.line(
+            (metr.box_line_left, box.height, metr.box_line_right, box.height),
+            fill=self.author_color, width=metr.box_line_width)
         box.skip(metr.box_below_line)
 
         title_font = ImageFont.truetype(
             self.title_font_ttf, metr.title_font_size)
-        box.text(self.pretty_title(),
-                 line_height=metr.title_lineskip,
-                 font=title_font,
-                 color=epoch_color,
-                 shadow_color=self.title_shadow,
-                )
+        box.text(
+            self.pretty_title(),
+            line_height=metr.title_lineskip,
+            font=title_font,
+            color=epoch_color,
+            shadow_color=self.title_shadow,
+        )
 
         if self.with_logo:
             logo = Image.open(get_resource('res/wl-logo-mono.png'))
@@ -151,15 +156,13 @@ class WLCover(Cover):
             # center
             box_top = (metr.height - box_img.size[1]) / 2
 
-        box_left = metr.bar_width + (metr.width - metr.bar_width -
-                        box_img.size[0]) / 2
-        draw.rectangle((box_left, box_top,
-            box_left + box_img.size[0], box_top + box_img.size[1]),
-            fill='#fff')
+        box_left = metr.bar_width + (metr.width - metr.bar_width - box_img.size[0]) / 2
+        draw.rectangle((box_left, box_top, box_left + box_img.size[0], box_top + box_img.size[1]), fill='#fff')
         img.paste(box_img, (box_left, box_top), box_img)
 
         if self.with_logo:
-            img.paste(logo, 
+            img.paste(
+                logo,
                 (box_left + (box_img.size[0] - logo.size[0]) / 2,
                     box_top + box_img.size[1] - metr.box_padding_y - logo.size[1]), mask=logo)
 

@@ -47,7 +47,6 @@ setup(
              'scripts/book2mobi',
              'scripts/book2pdf',
              'scripts/book2fb2',
-             'scripts/book2partner',
              'scripts/book2cover',
              'scripts/bookfragments',
              'scripts/genslugs'],

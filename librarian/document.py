@@ -34,9 +34,8 @@ class Document(object):
                     raise ValueError("Invalid root element. Found '%s', should be '%s'" % (
                         root_elem.tag, SSTNS('section')))
             else:
-                raise ValueError("Invalid class of root element. "
-                    "Use librarian.parser.SSTParser.")
-        #print etree.tostring(self.edoc.getroot())
+                raise ValueError("Invalid class of root element. Use librarian.parser.SSTParser.")
+        # print etree.tostring(self.edoc.getroot())
 
     @classmethod
     def from_string(cls, xml, *args, **kwargs):
