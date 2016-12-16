@@ -14,7 +14,7 @@ from librarian import get_resource
 
 
 def transform(wldoc, verbose=False,
-              sample=None, cover=None, flags=None):
+              sample=None, cover=None, flags=None, ilustr_path=None):
     """ produces a MOBI file
 
     wldoc: a WLDocument
@@ -43,8 +43,9 @@ def transform(wldoc, verbose=False,
     if not flags:
         flags = []
     flags = list(flags) + ['without-fonts']
-    epub = document.as_epub(verbose=verbose, sample=sample, html_toc=True,
-            flags=flags, style=get_resource('mobi/style.css'))
+    epub = document.as_epub(
+        verbose=verbose, sample=sample, html_toc=True,
+        flags=flags, style=get_resource('mobi/style.css'), ilustr_path=ilustr_path)
 
     if verbose:
         kwargs = {}

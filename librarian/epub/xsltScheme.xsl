@@ -73,6 +73,24 @@
     </div>
   </xsl:template>
 
+  <xsl:template match="ilustr" mode="inline">
+    <xsl:apply-templates select="." />
+  </xsl:template>
+
+  <xsl:template match="ilustr">
+    <img>
+      <xsl:attribute name="src">
+        <xsl:value-of select="@src" />
+      </xsl:attribute>
+      <xsl:attribute name="alt">
+        <xsl:value-of select="@alt" />
+      </xsl:attribute>
+      <xsl:attribute name="title">
+        <xsl:value-of select="@alt" />
+      </xsl:attribute>
+    </img>
+  </xsl:template>
+
   <!--===========================================================-->
   <!-- Tagi PARAGRAFOWE -->
   <!--===========================================================-->

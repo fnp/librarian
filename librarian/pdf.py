@@ -253,7 +253,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         parse_creator(document.edoc)
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
-	fix_tables(document.edoc)
+        fix_tables(document.edoc)
 
         # wl -> TeXML
         style_filename = get_stylesheet("wl2tex")

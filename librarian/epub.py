@@ -11,6 +11,8 @@ import re
 import subprocess
 from StringIO import StringIO
 from copy import deepcopy
+from mimetypes import guess_type
+
 from lxml import etree
 import zipfile
 from tempfile import mkdtemp, NamedTemporaryFile
@@ -329,9 +331,8 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
     return output_html, toc, chars
 
 
-def transform(wldoc, verbose=False,
-              style=None, html_toc=False,
-              sample=None, cover=None, flags=None):
+def transform(wldoc, verbose=False, style=None, html_toc=False,
+              sample=None, cover=None, flags=None, ilustr_path=''):
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
@@ -423,6 +424,14 @@ def transform(wldoc, verbose=False,
 
     output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub', delete=False)
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
+
+    if os.path.isdir(ilustr_path):
+        for i, filename in enumerate(os.listdir(ilustr_path)):
+            file_path = os.path.join(ilustr_path, filename)
+            zip.write(file_path, os.path.join('OPS', filename))
+            image_id = 'image%s' % i
+            manifest.append(etree.fromstring(
+                '<item id="%s" href="%s" media-type="%s" />' % (image_id, filename, guess_type(file_path)[0])))
 
     # write static elements
     mime = zipfile.ZipInfo()
