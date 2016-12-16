@@ -451,6 +451,8 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))
 
+    if cover is None:
+        cover = WLCover
     if cover:
         if cover is True:
             cover = WLCover
