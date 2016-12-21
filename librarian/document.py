@@ -11,14 +11,16 @@ from .parser import SSTParser
 
 
 class Document(object):
-    # Do I use meta_context?
     def __init__(self, edoc, meta_context=None):
         self.edoc = edoc
-
         root_elem = edoc.getroot()
+        # Do I use meta_context?
         if meta_context is not None:
             root_elem.meta_context = meta_context
+        self.validate()
 
+    def validate(self):
+        root_elem = self.edoc.getroot()
         if not isinstance(root_elem, Section):
             if root_elem.tag != SSTNS('section'):
                 if root_elem.tag == 'section':
@@ -30,12 +32,20 @@ class Document(object):
                     tree = etree.parse(StringIO(etree.tostring(root_elem)), parser)
                     tree.xinclude()
                     self.edoc = tree
+                    root_elem = self.edoc.getroot()
                 else:
                     raise ValueError("Invalid root element. Found '%s', should be '%s'" % (
                         root_elem.tag, SSTNS('section')))
             else:
                 raise ValueError("Invalid class of root element. Use librarian.parser.SSTParser.")
-        # print etree.tostring(self.edoc.getroot())
+        if len(root_elem) < 1 or root_elem[0].tag != SSTNS('metadata'):
+            raise ValueError("The first tag in section should be metadata")
+        if len(root_elem) < 2 or root_elem[1].tag != SSTNS('header'):
+            raise ValueError("The first tag after metadata should be header")
+        header = root_elem[1]
+        if not getattr(header, 'text', None) or not header.text.strip():
+            raise ValueError(
+                "The first header should contain the title in plain text (no links, emphasis etc.) and cannot be empty")
 
     @classmethod
     def from_string(cls, xml, *args, **kwargs):
