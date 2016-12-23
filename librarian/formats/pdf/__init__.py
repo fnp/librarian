@@ -332,6 +332,18 @@ class ImgRenderer(CmdRenderer):
 PdfFormat.renderers.register(core.Div, 'img', ImgRenderer('insertimage'))
 
 
+class VideoRenderer(CmdRenderer):
+    def render(self, element, ctx):
+        root = super(VideoRenderer, self).render(element, ctx)
+        url = 'https://www.youtube.com/watch?v=%s' % element.attrib.get('videoid')
+        link = texml_cmd('href', url, url)
+        root[0][0].text = None
+        root[0][0].append(link)
+        return root
+
+PdfFormat.renderers.register(core.Div, 'video', VideoRenderer('par'))
+
+
 PdfFormat.renderers.register(core.Div, 'defined', CmdRenderer('textbf'))
 PdfFormat.renderers.register(core.Div, 'item', CmdRenderer('item'))
 PdfFormat.renderers.register(core.Div, 'list', EnvRenderer('itemize'))

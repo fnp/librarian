@@ -187,6 +187,24 @@ class DivImage(NaturalText):
 
 HtmlFormat.renderers.register(core.Div, 'img', DivImage('img'))
 
+
+class DivVideo(NaturalText):
+    def render(self, element, ctx):
+        output = super(DivVideo, self).render(element, ctx)
+        video_id = element.attrib.get('videoid', '')
+        attribs = {
+            'width': '854',
+            'height': '480',
+            'src': '//www.youtube.com/embed/%s?controls=2&amp;rel=0&amp;showinfo=0&amp;theme=light' % video_id,
+            'frameborder': '0',
+            'allowfullscreen': '',
+        }
+        for attrib, value in attribs.iteritems():
+            output[0].attrib[attrib] = value
+        return output
+
+HtmlFormat.renderers.register(core.Div, 'video', DivVideo('iframe'))
+
 HtmlFormat.renderers.register(core.Div, 'item', NaturalText('li'))
 HtmlFormat.renderers.register(core.Div, 'list', NaturalText('ul'))
 HtmlFormat.renderers.register(core.Div, 'list.enum', NaturalText('ol'))

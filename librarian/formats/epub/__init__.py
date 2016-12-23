@@ -352,6 +352,21 @@ class DivImageR(EpubRenderer):
 EpubFormat.renderers.register(core.Div, 'img', DivImageR('img'))
 
 
+class DivVideoR(Silent):
+    def render(self, element, ctx):
+        src = 'https://www.youtube.com/watch?v=%s' % element.attrib.get('videoid', '')
+        return super(DivVideoR, self).render(element, Context(ctx, src=src))
+
+    def container(self, ctx):
+        root, inner = super(DivVideoR, self).container(ctx)
+        src = getattr(ctx, 'src', '')
+        link = etree.Element('a', {'href': src})
+        link.text = src
+        inner.append(link)
+        return root, inner
+EpubFormat.renderers.register(core.Div, 'video', DivVideoR('p'))
+
+
 class HeaderR(NaturalText):
     def subcontext(self, element, ctx):
         return Context(ctx, inline=True)
