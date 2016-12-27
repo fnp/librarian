@@ -20,6 +20,8 @@ class EvensCover(Cover):
 
     def set_images(self, ctx):
         cover_url = self.doc.meta.get(DCNS('relation.coverimage.url'))[0]
+        if not cover_url:
+            raise BuildError('No cover specified')
         if cover_url.startswith('file://'):
             cover_url = ctx.files_path + urllib.quote(cover_url[7:])
         try:

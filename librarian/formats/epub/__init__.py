@@ -13,7 +13,7 @@ import zipfile
 from urllib2 import urlopen
 
 from lxml import etree
-from librarian import OPFNS, NCXNS, XHTMLNS, DCNS
+from librarian import OPFNS, NCXNS, XHTMLNS, DCNS, BuildError
 from librarian import core
 from librarian.formats import Format
 from librarian.formats.cover.evens import EvensCover
@@ -340,6 +340,8 @@ class DivImageR(EpubRenderer):
     def render(self, element, ctx):
         src = element.attrib.get('src', '')
         ctx.images.append(src)
+        if '/' not in src:
+            raise BuildError('Bad image URL')
         src = src.rsplit('/', 1)[1]
         return super(DivImageR, self).render(element, Context(ctx, src=src))
 

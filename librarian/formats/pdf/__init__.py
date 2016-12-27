@@ -11,7 +11,7 @@ from lxml import etree
 from urllib import urlretrieve
 from StringIO import StringIO
 from Texml.processor import process
-from librarian import DCNS, XMLNamespace
+from librarian import DCNS, XMLNamespace, BuildError
 from librarian.formats import Format
 from librarian.output import OutputFile
 from librarian.renderers import Register, TreeRenderer
@@ -52,7 +52,8 @@ class PdfFormat(Format):
 
     def add_file(self, ctx, filename, url=None, path=None, image=False):
         from subprocess import call
-        assert url or path
+        if not url or path:
+            raise BuildError('No URL or path for image')
         save_as = os.path.join(ctx.workdir, filename)
         if path is not None:
             ext = path.rsplit('.', 1)[-1]

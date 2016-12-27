@@ -6,7 +6,7 @@
 import re
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
 from StringIO import StringIO
-from librarian import DCNS
+from librarian import DCNS, BuildError
 from librarian.output import OutputFile
 from librarian.utils import get_resource
 from librarian.formats import Format
@@ -165,6 +165,9 @@ class Cover(Format):
         img = Image.new('RGB', (metr.width, metr.height), self.background_color)
 
         if self.background_img:
+            IMG_EXT = ('png', 'jpg', 'jpeg')
+            if '.' not in self.background_img or self.background_img.rsplit('.')[1].lower() not in IMG_EXT:
+                raise BuildError('Wrong cover format, should be PNG or JPG')
             background = Image.open(self.background_img)
             resized = background.resize((1024, background.height*1024/background.width), Image.ANTIALIAS)
             resized = resized.convert('RGBA')
