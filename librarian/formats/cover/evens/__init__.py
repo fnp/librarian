@@ -22,18 +22,17 @@ class EvensCover(Cover):
         try:
             cover_url = self.doc.meta.get(DCNS('relation.coverimage.url'))[0]
         except IndexError:
-            raise BuildError('No cover specified (metadata field relation.coverimage.url missing)')
-        if not cover_url:
-            raise BuildError('No cover specified (metadata field relation.coverimage.url empty)')
-        if cover_url.startswith('file://'):
-            cover_url = ctx.files_path + urllib.quote(cover_url[7:])
-        IMG_EXT = ('png', 'jpg', 'jpeg', 'gif')
-        if '.' not in cover_url or cover_url.rsplit('.', 1)[1].lower() not in IMG_EXT:
-            raise BuildError('Wrong cover format, should be PNG, JPG or GIF')
-        try:
-            self.background_img = urlopen(cover_url)
-        except URLError:
-            raise BuildError('Cannot open the cover image: %s' % cover_url)
+            cover_url = False
+        if cover_url:
+            if cover_url.startswith('file://'):
+                cover_url = ctx.files_path + urllib.quote(cover_url[7:])
+            IMG_EXT = ('png', 'jpg', 'jpeg', 'gif')
+            if '.' not in cover_url or cover_url.rsplit('.', 1)[1].lower() not in IMG_EXT:
+                raise BuildError('Wrong cover format, should be PNG, JPG or GIF')
+            try:
+                self.background_img = urlopen(cover_url)
+            except URLError:
+                raise BuildError('Cannot open the cover image: %s' % cover_url)
 
         if getattr(ctx, 'cover_logo', None):
             self.logo_width = 150
