@@ -206,6 +206,7 @@ class DivVideo(NaturalText):
 HtmlFormat.renderers.register(core.Div, 'video', DivVideo('iframe'))
 
 HtmlFormat.renderers.register(core.Div, 'item', NaturalText('li'))
+HtmlFormat.renderers.register(core.Span, 'item', NaturalText('li'))
 HtmlFormat.renderers.register(core.Div, 'list', NaturalText('ul'))
 HtmlFormat.renderers.register(core.Div, 'list.enum', NaturalText('ol'))
 

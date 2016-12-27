@@ -334,6 +334,7 @@ EpubFormat.renderers.register(core.Div, 'p', NaturalText('p'))
 EpubFormat.renderers.register(core.Div, 'list', NaturalText('ul'))
 EpubFormat.renderers.register(core.Div, 'list.enum', NaturalText('ol'))
 EpubFormat.renderers.register(core.Div, 'item', NaturalText('li'))
+EpubFormat.renderers.register(core.Span, 'item', NaturalText('li'))
 
 
 class DivImageR(EpubRenderer):

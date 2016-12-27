@@ -73,6 +73,8 @@ class PdfFormat(Format):
             if url.startswith('/'):
                 url = 'http://milpeer.eu' + url
 
+            if '.' not in url:
+                raise BuildError('Linked file without extension: %s' % url)
             ext = url.rsplit('.', 1)[-1]
             if image:
                 urlretrieve(url, save_as + '_.' + ext)
@@ -347,6 +349,7 @@ PdfFormat.renderers.register(core.Div, 'video', VideoRenderer('par'))
 
 PdfFormat.renderers.register(core.Div, 'defined', CmdRenderer('textbf'))
 PdfFormat.renderers.register(core.Div, 'item', CmdRenderer('item'))
+PdfFormat.renderers.register(core.Span, 'item', CmdRenderer('item'))
 PdfFormat.renderers.register(core.Div, 'list', EnvRenderer('itemize'))
 PdfFormat.renderers.register(core.Div, 'list.enum', EnvRenderer('enumerate'))
 
