@@ -52,7 +52,7 @@ class PdfFormat(Format):
 
     def add_file(self, ctx, filename, url=None, path=None, image=False):
         from subprocess import call
-        if not url or path:
+        if not url and not path:
             raise BuildError('No URL or path for image')
         save_as = os.path.join(ctx.workdir, filename)
         if path is not None:
