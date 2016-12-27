@@ -28,7 +28,7 @@ class EvensCover(Cover):
         if cover_url.startswith('file://'):
             cover_url = ctx.files_path + urllib.quote(cover_url[7:])
         IMG_EXT = ('png', 'jpg', 'jpeg', 'gif')
-        if '.' not in cover_url or cover_url.rsplit('.')[1].lower() not in IMG_EXT:
+        if '.' not in cover_url or cover_url.rsplit('.', 1)[1].lower() not in IMG_EXT:
             raise BuildError('Wrong cover format, should be PNG, JPG or GIF')
         try:
             self.background_img = urlopen(cover_url)
