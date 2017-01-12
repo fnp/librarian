@@ -310,12 +310,14 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             cwd = None
         os.chdir(temp)
 
-        if verbose:
-            p = call(['xelatex', tex_path])
-        else:
-            p = call(['xelatex', '-interaction=batchmode', tex_path], stdout=PIPE, stderr=PIPE)
-        if p:
-            raise ParseError("Error parsing .tex file")
+        # some things work better when compiled twice
+        for run in xrange(2):
+            if verbose:
+                p = call(['xelatex', tex_path])
+            else:
+                p = call(['xelatex', '-interaction=batchmode', tex_path], stdout=PIPE, stderr=PIPE)
+            if p:
+                raise ParseError("Error parsing .tex file")
 
         if cwd is not None:
             os.chdir(cwd)

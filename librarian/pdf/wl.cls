@@ -442,14 +442,30 @@ Letters={Uppercase}
 \par{\emph{#1}}%
 }
 
+\usepackage{intcalc}
+\usepackage{color}
+\definecolor{gray}{RGB}{200,200,200}
+\newcounter{parnum}
+\newlength{\parnumwidth}
+\setlength{\parnumwidth}{3em}
+\newcommand{\N}{%
+  \leavevmode\refstepcounter{parnum}\reversemarginpar%
+  \marginnote{\textcolor{gray}{\small{\theparnum}}}%
+  \reversemarginpar}
+\newcommand{\Nw}{%
+  \leavevmode\refstepcounter{parnum}\reversemarginpar%
+  \ifnum\intcalcMod{\value{parnum}}{5}=0%
+  \marginnote{\textcolor{gray}{\small{\theparnum}}}%
+  \fi\reversemarginpar}
+
 \newcommand{\akap}[1]{%
-\par{#1}%
+\par{\N#1}%
 }
 \newcommand{\akapdialog}[1]{%
-\par{#1}%
+\par{\N#1}%
 }
 \newcommand{\akapcd}[1]{%
-\par{#1}%
+\par{\N#1}%
 }
 
 \newcommand{\mottopodpis}[1]{%
@@ -464,16 +480,16 @@ Letters={Uppercase}
 \par{\noindent{\ignorespaces#1\vspace{1em}}}%
 }
 
-\newcommand{\wers}[1]{#1}
+\newcommand{\wers}[1]{\Nw#1}
 
 \newcommand{\wersakap}[1]{%
-\hspace*{1em}#1%
+\Nw\hspace*{1em}#1%
 }
 \newcommand{\werscd}[1]{%
-\hspace*{8em}#1%
+\Nw\hspace*{8em}#1%
 }
 \newcommand{\werswciety}[2][1em]{%
-\hspace*{#1}#2%
+\Nw\hspace*{#1}#2%
 }
 
 \ifshowfootnotes
