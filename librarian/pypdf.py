@@ -29,7 +29,7 @@ def escape(really):
         def _wrap(*args, **kw):
             value = f(*args, **kw)
 
-            prefix = (u'<TeXML escape="%d">' % (really and 1 or 0))
+            prefix = (u'<TeXML escape="%d">' % (1 if really else 0))
             postfix = u'</TeXML>'
             if isinstance(value, list):
                 import pdb
@@ -108,9 +108,13 @@ class EduModule(Xmill):
             authors = getattr(dc, "authors_%s" % which)
         return u', '.join(author.readable() for author in authors if author)
 
-    @escape(1)
+    @escape(True)
     def get_title(self, element):
         return self.get_dc(element, 'title', True)
+
+    @escape(True)
+    def get_description(self, element):
+        return self.get_dc(element, 'description', single=True)
 
     def handle_utwor(self, element):
         lines = [
@@ -130,6 +134,7 @@ class EduModule(Xmill):
             u'''\\def\\authorsexpert{%s}''' % self.get_authors(element, 'expert'),
             u'''\\def\\authorsscenario{%s}''' % self.get_authors(element, 'scenario'),
             u'''\\def\\authorstextbook{%s}''' % self.get_authors(element, 'textbook'),
+            u'''\\def\\description{%s}''' % self.get_description(element),
 
             u'''\\author{\\authors}''',
             u'''\\title{%s}''' % self.get_title(element),
@@ -140,14 +145,14 @@ class EduModule(Xmill):
 
         return u"".join(filter(None, lines)), u'</TeXML>'
 
-    @escape(1)
+    @escape(True)
     def handle_powiesc(self, element):
         return u"""
     <env name="document">
     <cmd name="maketitle"/>
     """, """<cmd name="editorialsection" /></env>"""
 
-    @escape(1)
+    @escape(True)
     def handle_texcommand(self, element):
         cmd = functions.texcommand(element.tag)
         return u'<TeXML escape="1"><cmd name="%s"><parm>' % cmd, u'</parm></cmd></TeXML>'
@@ -386,11 +391,11 @@ class EduModule(Xmill):
 <cmd name="begin"><parm>tabular</parm><parm>%s</parm></cmd>
     ''' % ('l' * max_col), u'''<cmd name="end"><parm>tabular</parm></cmd>'''
 
-    @escape(1)
+    @escape(True)
     def handle_wiersz(self, element):
         return u"", u'<ctrl ch="\\"/>'
 
-    @escape(1)
+    @escape(True)
     def handle_kol(self, element):
         if element.getnext() is not None:
             return u"", u'<spec cat="align" />'

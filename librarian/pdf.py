@@ -81,7 +81,7 @@ def fix_hanging(doc):
     insert_tags(doc,
                 re.compile("(?<=\s\w)\s+"),
                 "nbsp",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+                exclude=[DCNS("identifier.url"), DCNS("rights.license"), DCNS("title"), DCNS("description")]
                 )
 
 
