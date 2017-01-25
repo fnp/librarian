@@ -83,7 +83,7 @@ class EduModule(Xmill):
     def get_dc(self, element, dc_field, single=False):
         values = map(lambda t: t.text, element.xpath("//dc:%s" % dc_field, namespaces={'dc': DCNS.uri}))
         if single:
-            return values[0]
+            return values[0] if len(values) else ''
         return values
 
     def handle_rdf__RDF(self, _):
@@ -114,7 +114,10 @@ class EduModule(Xmill):
 
     @escape(True)
     def get_description(self, element):
-        return self.get_dc(element, 'description', single=True)
+        desc = self.get_dc(element, 'description', single=True)
+        if not desc:
+            print '!! no descripton'
+        return desc
 
     def handle_utwor(self, element):
         lines = [
