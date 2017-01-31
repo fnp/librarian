@@ -93,7 +93,7 @@ class EduModule(Xmill):
     @escape(True)
     def get_rightsinfo(self, element):
         rights_lic = self.get_dc(element, 'rights.license', True)
-        return u'<cmd name="rightsinfostr">' + (rights_lic and u'<opt>%s</opt>' % rights_lic or '') + \
+        return u'<cmd name="rightsinfostr">' + (u'<opt>%s</opt>' % rights_lic if rights_lic else '') + \
             u'<parm>%s</parm>' % self.get_dc(element, 'rights', True) + \
             u'</cmd>'
 
@@ -116,8 +116,32 @@ class EduModule(Xmill):
     def get_description(self, element):
         desc = self.get_dc(element, 'description', single=True)
         if not desc:
-            print '!! no descripton'
+            print '!! no description'
         return desc
+
+    @escape(True)
+    def get_curriculum(self, element):
+        identifiers = self.get_dc(element, 'subject.curriculum')
+        if not identifiers:
+            return ''
+        try:
+            from curriculum.templatetags.curriculum_tags import curriculum
+            curr_elements = curriculum(identifiers)
+        except ImportError:
+            curr_elements = {'identifiers': identifiers}
+        items = ['Podstawa programowa:']
+        newline = '<ctrl ch="\\"/>\n'
+        if 'currset' in curr_elements:
+            for (course, level), types in curr_elements['currset'].iteritems():
+                lines = [u'%s, %s poziom edukacyjny' % (course, level)]
+                for type, currs in types.iteritems():
+                    lines.append(type)
+                    lines += [curr.title for curr in currs]
+                items.append(newline.join(lines))
+        else:
+            items += identifiers
+        return '\n<cmd name="vspace"><parm>.6em</parm></cmd>\n'.join(
+            '<cmd name="akap"><parm>%s</parm></cmd>' % item for item in items)
 
     def handle_utwor(self, element):
         lines = [
@@ -143,6 +167,7 @@ class EduModule(Xmill):
             u'''\\title{%s}''' % self.get_title(element),
             u'''\\def\\bookurl{%s}''' % self.options['wldoc'].book_info.url.canonical(),
             u'''\\def\\rightsinfo{%s}''' % self.get_rightsinfo(element),
+            u'''\\def\\curriculum{%s}''' % self.get_curriculum(element),
             u'</TeXML>'
         ]
 

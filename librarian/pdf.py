@@ -70,19 +70,30 @@ def insert_tags(doc, split_re, tagname, exclude=None):
 
 
 def substitute_hyphens(doc):
-    insert_tags(doc,
-                re.compile("(?<=[^-\s])-(?=[^-\s])"),
-                "dywiz",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license"), 'www']
-                )
+    insert_tags(
+        doc, re.compile("(?<=[^-\s])-(?=[^-\s])"), "dywiz",
+        exclude=[
+            DCNS("identifier.url"),
+            DCNS("rights.license"),
+            DCNS("title"),
+            DCNS("description"),
+            DCNS("subject.curriculum"),
+            'www',
+        ]
+    )
 
 
 def fix_hanging(doc):
-    insert_tags(doc,
-                re.compile("(?<=\s\w)\s+"),
-                "nbsp",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license"), DCNS("title"), DCNS("description")]
-                )
+    insert_tags(
+        doc, re.compile("(?<=\s\w)\s+"), "nbsp",
+        exclude=[
+            DCNS("identifier.url"),
+            DCNS("rights.license"),
+            DCNS("title"),
+            DCNS("description"),
+            DCNS("subject.curriculum"),
+        ]
+    )
 
 
 def move_motifs_inside(doc):
