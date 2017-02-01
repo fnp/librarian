@@ -32,20 +32,11 @@ class Document(object):
                     tree = etree.parse(StringIO(etree.tostring(root_elem)), parser)
                     tree.xinclude()
                     self.edoc = tree
-                    root_elem = self.edoc.getroot()
                 else:
                     raise ValueError("Invalid root element. Found '%s', should be '%s'" % (
                         root_elem.tag, SSTNS('section')))
             else:
                 raise ValueError("Invalid class of root element. Use librarian.parser.SSTParser.")
-        if len(root_elem) < 1 or root_elem[0].tag != SSTNS('metadata'):
-            raise ValueError("The first tag in section should be metadata")
-        if len(root_elem) < 2 or root_elem[1].tag != SSTNS('header'):
-            raise ValueError("The first tag after metadata should be header")
-        header = root_elem[1]
-        if not getattr(header, 'text', None) or not header.text.strip():
-            raise ValueError(
-                "The first header should contain the title in plain text (no links, emphasis etc.) and cannot be empty")
 
     @classmethod
     def from_string(cls, xml, *args, **kwargs):
