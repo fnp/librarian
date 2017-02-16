@@ -445,7 +445,7 @@ Letters={Uppercase}
 \usepackage{intcalc}
 \usepackage{color}
 \definecolor{gray}{RGB}{200,200,200}
-\newcounter{parnum}
+%\newcounter{parnum}
 \newlength{\parnumwidth}
 \setlength{\parnumwidth}{3em}
 \newcommand{\N}{%
@@ -457,6 +457,8 @@ Letters={Uppercase}
   \ifnum\intcalcMod{\value{parnum}}{5}=0%
   \marginnote{\textcolor{gray}{\small{\theparnum}}}%
   \fi\reversemarginpar}
+\renewcommand{\N}{}
+\renewcommand{\Nw}{}
 
 \newcommand{\akap}[1]{%
 \par{\N#1}%
