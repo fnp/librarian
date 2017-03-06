@@ -46,8 +46,12 @@
 				<version>0</version>
 			</document-info>
 			<publish-info>
-				<xsl:apply-templates mode="description"
-					select="dc:publisher"/>
+				<publisher>
+					<xsl:for-each select="//dc:publisher/text()">
+						<xsl:value-of select="."/>
+						<xsl:if test="not(position() = last())">; </xsl:if>
+					</xsl:for-each>
+				</publisher>
 			</publish-info>
 		</description>
 	</xsl:template>

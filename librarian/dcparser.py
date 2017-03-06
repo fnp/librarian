@@ -238,7 +238,7 @@ class WorkInfo(object):
 
         Field(DCNS('date'), 'created_at'),
         Field(DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
-        Field(DCNS('publisher'), 'publisher'),
+        Field(DCNS('publisher'), 'publisher', multiple=True),
 
         Field(DCNS('language'), 'language'),
         Field(DCNS('description'), 'description', required=False),

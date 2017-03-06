@@ -25,7 +25,10 @@
           </xsl:for-each>
         </dc:creator>
         <dc:publisher>
-          <xsl:apply-templates select="//dc:publisher" />
+          <xsl:for-each select="//dc:publisher/text()">
+            <xsl:value-of select="."/>
+            <xsl:if test="not(position() = last())">; </xsl:if>
+          </xsl:for-each>
         </dc:publisher>
         <dc:date opf:event="publication">
           <xsl:apply-templates select="//dc:date" />
