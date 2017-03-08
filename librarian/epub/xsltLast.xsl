@@ -57,6 +57,16 @@
             <p class="info">Tekst opracowany na podstawie: <xsl:value-of select="//dc:source" /></p>
           </xsl:if>
 
+          <xsl:if test=".//dc:publisher">
+            <p class="info">
+              Wydawca:
+              <xsl:for-each select="//dc:publisher/text()">
+                <xsl:value-of select="."/>
+                <xsl:if test="not(position() = last())">, </xsl:if>
+              </xsl:for-each>
+            </p>
+          </xsl:if>
+
           <xsl:if test="//dc:description" >
             <p class="info"><xsl:value-of select="//dc:description" /></p>
           </xsl:if>

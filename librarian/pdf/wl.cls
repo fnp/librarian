@@ -259,6 +259,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \vspace{.6em}
     \sourceinfo
 
+    \publisherinfo
+
     \description
     \vspace{.6em}
 

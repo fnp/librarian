@@ -24,7 +24,7 @@ Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dost
 
 Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowoczesna Polska.
 
-%(license_description)s.%(source)s
+%(license_description)s.%(source)s%(publisher)s
 
 %(description)s%(contributors)s%(funders)s
 """
@@ -84,6 +84,7 @@ def transform(wldoc, flags=None, **options):
             funders = ', '.join(parsed_dc.funders)
             if funders:
                 funders = u"\n\nPublikację ufundowali i ufundowały: %s." % funders
+            publisher = '\n\nWydawca: ' + ', '.join(parsed_dc.publisher)
         else:
             description = 'Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).'
             url = '*' * 10
@@ -91,6 +92,7 @@ def transform(wldoc, flags=None, **options):
             source = ""
             contributors = ""
             funders = ""
+            publisher = ""
         result = (TEMPLATE % {
             'description': description,
             'url': url,
@@ -99,6 +101,7 @@ def transform(wldoc, flags=None, **options):
             'source': source,
             'contributors': contributors,
             'funders': funders,
+            'publisher': publisher,
         }).encode('utf-8')
     else:
         result = unicode(result).encode('utf-8')

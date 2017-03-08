@@ -191,6 +191,17 @@
                 Tekst opracowany na podstawie: <TeXML escape="1"><xsl:apply-templates select=".//dc:source" mode="inline" /></TeXML>
                 \vspace{.6em}
             </xsl:if>}
+        \def\publisherinfo{
+            <xsl:if test=".//dc:publisher">
+                Wydawca:
+                <TeXML escape="1">
+                    <xsl:for-each select="//dc:publisher/text()">
+                        <xsl:value-of select="."/>
+                        <xsl:if test="not(position() = last())">, </xsl:if>
+                    </xsl:for-each>
+                </TeXML>
+                \vspace{.6em}
+            </xsl:if>}
         \def\description{<TeXML escape="1"><xsl:apply-templates select=".//dc:description" mode="inline" /></TeXML>}
     </TeXML>
 </xsl:template>
