@@ -107,7 +107,7 @@
                 </xsl:if>
                 \def\editors{<TeXML escape="1"><xsl:call-template name="editors" /></TeXML>}
                 <xsl:if test="@funders">
-                    \def\funders{Publikację ufundowali i ufundowały:
+                    \def\funders{Publikację wsparli i wsparły:
                         <TeXML escape="1"><xsl:value-of select="@funders" /></TeXML>.}
                 </xsl:if>
 

@@ -83,7 +83,7 @@ def transform(wldoc, flags=None, **options):
                 contributors = "\n\nOpracowanie redakcyjne i przypisy: %s." % contributors
             funders = ', '.join(parsed_dc.funders)
             if funders:
-                funders = u"\n\nPublikację ufundowali i ufundowały: %s." % funders
+                funders = u"\n\nPublikację wsparli i wsparły: %s." % funders
             publisher = '\n\nWydawca: ' + ', '.join(parsed_dc.publisher)
         else:
             description = 'Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).'

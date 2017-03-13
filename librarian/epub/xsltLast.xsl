@@ -117,7 +117,7 @@
 
   <xsl:template name="funders">
     <xsl:if test="@funders">
-        <p class="minor-info">Publikację ufundowali i ufundowały:
+        <p class="minor-info">Publikację wsparli i wsparły:
             <xsl:value-of select="@funders" />.</p>
     </xsl:if>
   </xsl:template>
