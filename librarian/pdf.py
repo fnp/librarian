@@ -200,7 +200,7 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None, ilustr_path=''):
+              cover=None, flags=None, customizations=None, ilustr_path='', latex_dir=False):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
@@ -304,6 +304,9 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
+
+        if latex_dir:
+            return temp
 
         try:
             cwd = os.getcwd()

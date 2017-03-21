@@ -210,6 +210,12 @@ class WLDocument(object):
             cover_class = DefaultEbookCover
         return cover_class(self.book_info, *args, **kwargs).output_file()
 
+    # for debugging only
+    def latex_dir(self, *args, **kwargs):
+        kwargs['latex_dir'] = True
+        from librarian import pdf
+        return pdf.transform(self, *args, **kwargs)
+
     def save_output_file(self, output_file, output_path=None, output_dir_path=None, make_author_dir=False, ext=None):
         if output_dir_path:
             save_path = output_dir_path
