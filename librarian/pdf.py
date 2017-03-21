@@ -18,6 +18,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 import re
 from copy import deepcopy
 from subprocess import call, PIPE
+from itertools import chain
 
 from Texml.processor import process
 from lxml import etree
@@ -102,7 +103,7 @@ def fix_tables(doc):
         if kol.tail is not None:
             if not kol.tail.strip():
                 kol.tail = None
-    for table in doc.iter(tag='tabela'):
+    for table in chain(doc.iter(tag='tabela'), doc.iter(tag='tabelka')):
         if table.get('ramka') == '1' or table.get('ramki') == '1':
             table.set('_format', '|' + 'X|' * len(table[0]))
         else:

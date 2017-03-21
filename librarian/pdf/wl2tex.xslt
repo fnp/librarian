@@ -472,7 +472,13 @@
     <cmd name="par" />
     <cmd name="vspace"><parm>1em</parm></cmd>
     <group><cmd name="raggedright" />
-    <env name="longtabu"> to <TeXML escape="0">\textwidth </TeXML>
+    <xsl:element name="env">
+        <xsl:attribute name="name">
+            <xsl:choose>
+                <xsl:when test="name(.)='tabela'">longtabu</xsl:when>
+                <xsl:otherwise>tabu</xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute> to <TeXML escape="0">\textwidth </TeXML>
       <!--parm><cmd name="textwidth"/></parm-->
       <parm><TeXML escape="0"><xsl:value-of select="@_format" /></TeXML></parm>
         <xsl:choose>
@@ -484,7 +490,7 @@
           <xsl:apply-templates/>
         </xsl:otherwise>
         </xsl:choose>
-    </env>
+    </xsl:element>
     </group>
     <cmd name="vspace"><parm>1em</parm></cmd>
 </xsl:template>
