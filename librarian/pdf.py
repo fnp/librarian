@@ -315,7 +315,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         os.chdir(temp)
 
         # some things work better when compiled twice
-        for run in xrange(2):
+        # but they are not enabled now (line numbers)
+        for run in xrange(1):
             if verbose:
                 p = call(['xelatex', tex_path])
             else:
