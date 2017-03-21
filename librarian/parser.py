@@ -16,12 +16,13 @@ import os
 import re
 from StringIO import StringIO
 
+
 class WLDocument(object):
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
 
     def __init__(self, edoc, parse_dublincore=True, provider=None, 
-                    strict=False, meta_fallbacks=None):
+                 strict=False, meta_fallbacks=None):
         self.edoc = edoc
         self.provider = provider
 
@@ -100,8 +101,7 @@ class WLDocument(object):
         if self.book_info is None:
             raise NoDublinCore('No Dublin Core in document.')
         for part_uri in self.book_info.parts:
-            yield self.from_file(self.provider.by_uri(part_uri),
-                    provider=self.provider)
+            yield self.from_file(self.provider.by_uri(part_uri), provider=self.provider)
 
     def chunk(self, path):
         # convert the path to XPath
@@ -122,7 +122,7 @@ class WLDocument(object):
                 parts.append(part)
             else:
                 tag, n = match.groups()
-                parts.append("*[%d][name() = '%s']" % (int(n)+1, tag) )
+                parts.append("*[%d][name() = '%s']" % (int(n)+1, tag))
 
         if parts[0] == '.':
             parts[0] = ''
@@ -135,7 +135,7 @@ class WLDocument(object):
     def update_dc(self):
         if self.book_info:
             parent = self.rdf_elem.getparent()
-            parent.replace( self.rdf_elem, self.book_info.to_etree(parent) )
+            parent.replace(self.rdf_elem, self.book_info.to_etree(parent))
 
     def serialize(self):
         self.update_dc()
@@ -148,18 +148,18 @@ class WLDocument(object):
             try:
                 xpath = self.path_to_xpath(key)
                 node = self.edoc.xpath(xpath)[0]
-                repl = etree.fromstring(u"<%s>%s</%s>" %(node.tag, data, node.tag) )
+                repl = etree.fromstring(u"<%s>%s</%s>" % (node.tag, data, node.tag))
                 node.getparent().replace(node, repl)
             except Exception, e:
-                unmerged.append( repr( (key, xpath, e) ) )
+                unmerged.append(repr((key, xpath, e)))
 
         return unmerged
 
-    def clean_ed_note(self):
+    def clean_ed_note(self, note_tag='nota_red'):
         """ deletes forbidden tags from nota_red """
 
-        for node in self.edoc.xpath('|'.join('//nota_red//%s' % tag for tag in
-                    ('pa', 'pe', 'pr', 'pt', 'begin', 'end', 'motyw'))):
+        for node in self.edoc.xpath('|'.join('//%s//%s' % (note_tag, tag) for tag in
+                                    ('pa', 'pe', 'pr', 'pt', 'begin', 'end', 'motyw'))):
             tail = node.tail
             node.clear()
             node.tag = 'span'
@@ -172,8 +172,7 @@ class WLDocument(object):
         """
         if self.book_info is None:
             raise NoDublinCore('No Dublin Core in document.')
-        persons = set(self.book_info.editors +
-                        self.book_info.technical_editors)
+        persons = set(self.book_info.editors + self.book_info.technical_editors)
         for child in self.parts():
             persons.update(child.editors())
         if None in persons:
@@ -211,15 +210,18 @@ class WLDocument(object):
             cover_class = WLCover
         return cover_class(self.book_info, *args, **kwargs).output_file()
 
-    def save_output_file(self, output_file, output_path=None,
-            output_dir_path=None, make_author_dir=False, ext=None):
+    # for debugging only
+    def latex_dir(self, *args, **kwargs):
+        kwargs['latex_dir'] = True
+        from librarian import pdf
+        return pdf.transform(self, *args, **kwargs)
+
+    def save_output_file(self, output_file, output_path=None, output_dir_path=None, make_author_dir=False, ext=None):
         if output_dir_path:
             save_path = output_dir_path
             if make_author_dir:
-                save_path = os.path.join(save_path,
-                        unicode(self.book_info.author).encode('utf-8'))
-            save_path = os.path.join(save_path,
-                                self.book_info.uri.slug)
+                save_path = os.path.join(save_path, unicode(self.book_info.author).encode('utf-8'))
+            save_path = os.path.join(save_path, self.book_info.uri.slug)
             if ext:
                 save_path += '.%s' % ext
         else:
