@@ -233,7 +233,7 @@
 <xsl:apply-templates mode="inline" />
 </xsl:template>
 
-<xsl:template match="tabela">
+<xsl:template match="tabela|tabelka">
 	<xsl:text>
 
 </xsl:text>

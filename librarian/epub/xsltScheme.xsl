@@ -310,7 +310,7 @@
     </img>
 </xsl:template>
 
-<xsl:template match="tabela">
+<xsl:template match="tabela|tabelka">
   <table xmlns="http://www.w3.org/1999/xhtml">
     <xsl:apply-templates />
   </table>

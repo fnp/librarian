@@ -39,7 +39,7 @@
 		<empty-line/><p>————————</p><empty-line/>
 	</xsl:template>
 
-	<xsl:template mode="para" match="tabela">
+	<xsl:template mode="para" match="tabela|tabelka">
 		<table><xsl:apply-templates mode="para" /></table>
 	</xsl:template>
 	<xsl:template mode="para" match="wiersz">

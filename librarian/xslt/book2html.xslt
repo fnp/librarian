@@ -252,7 +252,7 @@
     <p class="motto_podpis"><xsl:apply-templates mode="inline" /></p>
 </xsl:template>
 
-<xsl:template match="tabela">
+<xsl:template match="tabela|tabelka">
     <table><xsl:apply-templates /></table>
 </xsl:template>
 <xsl:template match="wiersz">
