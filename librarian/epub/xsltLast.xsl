@@ -57,7 +57,7 @@
             <p class="info">Tekst opracowany na podstawie: <xsl:value-of select="//dc:source" /></p>
           </xsl:if>
 
-          <xsl:if test=".//dc:publisher">
+          <xsl:if test="//dc:publisher">
             <p class="info">
               Wydawca:
               <xsl:for-each select="//dc:publisher/text()">

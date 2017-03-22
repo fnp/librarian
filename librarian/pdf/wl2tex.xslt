@@ -195,7 +195,7 @@
             <xsl:if test=".//dc:publisher">
                 Wydawca:
                 <TeXML escape="1">
-                    <xsl:for-each select="//dc:publisher/text()">
+                    <xsl:for-each select=".//dc:publisher/text()">
                         <xsl:value-of select="."/>
                         <xsl:if test="not(position() = last())">, </xsl:if>
                     </xsl:for-each>
