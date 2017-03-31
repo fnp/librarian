@@ -94,3 +94,4 @@ Later contributions:
 
  * Łukasz Rekucki <lrekucki@gmail.com>
  * Radek Czajka <radek.czajka@gmail.com>
+ * Jan Szejko <jan.szejko@nowoczesnapolska.org.pl>
