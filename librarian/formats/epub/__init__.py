@@ -35,8 +35,11 @@ class EpubFormat(Format):
         if cover is not None:
             self.cover = cover
 
-    def dc(self, tag):
-        return self.doc.meta.get_one(DCNS(tag))
+    def dc(self, tag, multiple=False):
+        if multiple:
+            return ', '.join(self.doc.meta.get(DCNS(tag)))
+        else:
+            return self.doc.meta.get_one(DCNS(tag))
 
     def build(self, ctx=None):
 
@@ -158,7 +161,7 @@ class EpubFormat(Format):
             'Information about the resource',
             'Publisher: %s' % self.dc('publisher'),
             'Rights: %s' % self.dc('rights'),
-            'Intended audience: %s' % self.dc('audience'),
+            'Intended audience: %s' % self.dc('audience', multiple=True),
             self.dc('description'),
             'Resource prepared using MIL/PEER editing platform.',
             'Source available at %s' % ctx.source_url,

@@ -185,12 +185,15 @@ class PdfFormat(Format):
         doc.append(texml_cmd("section*", "Information about the resource"))
         doc.append(texml_cmd("vspace", "1em"))
 
-        for m, f in (
-                ('Publisher: ', DCNS('publisher')),
-                ('Rights: ', DCNS('rights')),
-                ('Intended audience: ', DCNS('audience')),
-                ('', DCNS('description'))):
-            v = self.doc.meta.get_one(f)
+        for m, f, multiple in (
+                ('Publisher: ', DCNS('publisher'), False),
+                ('Rights: ', DCNS('rights'), False),
+                ('Intended audience: ', DCNS('audience'), True),
+                ('', DCNS('description'), False)):
+            if multiple:
+                v = ', '.join(self.doc.meta.get(f))
+            else:
+                v = self.doc.meta.get_one(f)
             if v:
                 e = texml_cmd("par", "")
                 e[0].append(texml_cmd("noindent"))
