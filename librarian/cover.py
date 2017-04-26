@@ -18,8 +18,9 @@ class Metric(object):
     def __getattr__(self, name):
         src = getattr(self._obj, name)
         if src and self._scale:
-            src = type(src)(self._scale * src)
-        return src
+            return type(src)(self._scale * src)
+        else:
+            return src
 
 
 class TextBox(object):
@@ -239,7 +240,7 @@ class WLCover(Cover):
     title_font_size = 30
     title_lineskip = 40
     title_box_width = 350
-    
+
     box_top_margin = 100
     box_bottom_margin = 100
     box_padding_y = 20
@@ -278,7 +279,7 @@ class WLCover(Cover):
         u'Epika': 'bottom',
     }
 
-    def __init__(self, book_info, format=None, width=None, height=None):
+    def __init__(self, book_info, format=None, width=None, height=None, bleed=0):
         super(WLCover, self).__init__(book_info, format=format, width=width, height=height)
         # Set box position.
         self.box_position = book_info.cover_box_position or \
@@ -291,6 +292,11 @@ class WLCover(Cover):
                 self.epoch_colors.get(book_info.epoch, self.bar_color)
         # Set title color.
         self.title_color = self.epoch_colors.get(book_info.epoch, self.title_color)
+
+        self.bleed = bleed
+        self.box_top_margin += bleed
+        self.box_bottom_margin += bleed
+        self.bar_width += bleed
 
         if book_info.cover_url:
             url = book_info.cover_url
@@ -352,6 +358,24 @@ class WLCover(Cover):
         img.paste(box_img, (box_left, box_top), box_img)
         return img
 
+    def add_cut_lines(self, img):
+        line_ratio = 0.5
+        if self.bleed == 0:
+            return img
+        metr = Metric(self, self.scale)
+        draw = ImageDraw.Draw(img)
+        for corner_x, corner_y in ((0, 0), (metr.width, 0), (0, metr.height), (metr.width, metr.height)):
+            dir_x = 1 if corner_x == 0 else -1
+            dir_y = 1 if corner_y == 0 else -1
+            for offset in (-1, 0, 1):
+                draw.line((corner_x, corner_y + dir_y * metr.bleed + offset,
+                           corner_x + dir_x * metr.bleed * line_ratio, corner_y + dir_y * metr.bleed +  offset),
+                          fill='black' if offset == 0 else 'white', width=1)
+                draw.line((corner_x + dir_x * metr.bleed + offset, corner_y,
+                           corner_x + dir_x * metr.bleed + offset, corner_y + dir_y * metr.bleed * line_ratio),
+                          fill='black' if offset == 0 else 'white', width=1)
+        return img
+
     def image(self):
         metr = Metric(self, self.scale)
         img = Image.new('RGB', (metr.width, metr.height), self.background_color)
@@ -384,6 +408,8 @@ class WLCover(Cover):
 
         img = self.add_box(img)
 
+        img = self.add_cut_lines(img)
+
         return img
 
 
@@ -399,6 +425,11 @@ class LogoWLCover(WLCover):
         'res/fnp-logo-white.png',
     ]
 
+    def __init__(self, *args, **kwargs):
+        super(LogoWLCover, self).__init__(*args, **kwargs)
+        self.gradient_height += self.bleed
+        self.gradient_logo_margin_right += self.bleed
+
     def image(self):
         img = super(LogoWLCover, self).image()
         metr = Metric(self, self.scale)
@@ -412,7 +443,7 @@ class LogoWLCover(WLCover):
         img.paste(gradient, (metr.bar_width, metr.height - metr.gradient_height), mask=gradient_mask)
 
         cursor = metr.width - metr.gradient_logo_margin_right
-        logo_top = metr.height - metr.gradient_height / 2 - metr.gradient_logo_height / 2
+        logo_top = metr.height - metr.gradient_height / 2 - metr.gradient_logo_height / 2 - metr.bleed / 2
         for logo_path in self.gradient_logos[::-1]:
             logo = Image.open(get_resource(logo_path))
             logo = logo.resize(
