@@ -203,6 +203,10 @@
                 \vspace{.6em}
             </xsl:if>}
         \def\description{<TeXML escape="1"><xsl:apply-templates select=".//dc:description" mode="inline" /></TeXML>}
+        <xsl:if test=".//meta[@id='pdf-id']">
+            <xsl:variable name="isbn" select=".//meta[@id='pdf-id']"/>
+            \def\isbn{ISBN <xsl:value-of select="substring-after($isbn, 'ISBN-')"/>}
+        </xsl:if>
     </TeXML>
 </xsl:template>
 

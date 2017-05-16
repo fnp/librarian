@@ -276,6 +276,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \coverby
     \fi
 
+    \ifdefined\isbn
+        \vspace{.6em}
+        \isbn
+    \fi
+
     \vspace{.6em}
     \emph{Wesprzyj Wolne Lektury!}
 

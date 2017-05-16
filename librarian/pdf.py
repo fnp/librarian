@@ -86,7 +86,7 @@ def substitute_hyphens(doc):
     insert_tags(doc,
                 re.compile("(?<=[^-\s])-(?=[^-\s])"),
                 "dywiz",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+                exclude=[DCNS("identifier.url"), DCNS("rights.license"), "meta"]
                 )
 
 
