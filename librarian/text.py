@@ -26,7 +26,7 @@ Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowocz
 
 %(license_description)s.%(source)s%(publisher)s
 
-%(description)s%(contributors)s%(funders)s
+%(description)s%(contributors)s%(funders)s%(isbn)s
 """
 
 
@@ -85,6 +85,11 @@ def transform(wldoc, flags=None, **options):
             if funders:
                 funders = u"\n\nPublikację wsparli i wsparły: %s." % funders
             publisher = '\n\nWydawca: ' + ', '.join(parsed_dc.publisher)
+            isbn_element = document.edoc.find("//meta[@id='txt-id']")
+            if isbn_element is not None:
+                isbn = isbn_element.text.replace('ISBN-', '\n\nISBN ')
+            else:
+                isbn = ''
         else:
             description = 'Publikacja zrealizowana w ramach projektu Wolne Lektury (http://wolnelektury.pl).'
             url = '*' * 10
@@ -93,6 +98,7 @@ def transform(wldoc, flags=None, **options):
             contributors = ""
             funders = ""
             publisher = ""
+            isbn = ""
         result = (TEMPLATE % {
             'description': description,
             'url': url,
@@ -102,6 +108,7 @@ def transform(wldoc, flags=None, **options):
             'contributors': contributors,
             'funders': funders,
             'publisher': publisher,
+            'isbn': isbn,
         }).encode('utf-8')
     else:
         result = unicode(result).encode('utf-8')

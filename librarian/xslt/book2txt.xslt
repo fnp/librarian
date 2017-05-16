@@ -21,6 +21,7 @@
 <xsl:if test="not (../@raw-text) and nazwa_utworu">
     <xsl:apply-templates select="autor_utworu|dzielo_nadrzedne|nazwa_utworu|podtytul" mode="header" />
     <xsl:call-template name="translators" />
+    <xsl:call-template name="isbn" />
     <xsl:text>
 </xsl:text>
 </xsl:if>
@@ -331,6 +332,14 @@
         </xsl:for-each>
         <xsl:text>
 </xsl:text>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template name="isbn">
+    <xsl:if test="//meta[@id='txt-id']">
+        <xsl:variable name="isbn" select="//meta[@id='txt-id']"/>
+        <text>
+ISBN </text><xsl:value-of select="substring-after($isbn, 'ISBN-')"/>
     </xsl:if>
 </xsl:template>
 
