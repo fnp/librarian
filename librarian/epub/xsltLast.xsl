@@ -8,6 +8,7 @@
   <xsl:output method="html" version="1.0" encoding="utf-8" />
   <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
   <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
+  <xsl:param name="outputtype"/>
 
   <xsl:template match="utwor">
     <html>
@@ -91,6 +92,12 @@
             </xsl:otherwise>
             </xsl:choose>
             </p>
+          </xsl:if>
+
+          <xsl:variable name="isbnId" select="concat($outputtype, '-id')"/>
+          <xsl:if test=".//meta[@id=$isbnId]">
+            <xsl:variable name="isbn" select=".//meta[@id=$isbnId]"/>
+            <p class="info">ISBN <xsl:value-of select="substring-after($isbn, 'ISBN-')"/></p>
           </xsl:if>
 
           <p class="info">&#160;</p>

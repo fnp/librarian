@@ -7,6 +7,7 @@
   <xsl:output method="html" version="1.0" encoding="utf-8" />
   <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
   <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
+  <xsl:param name="outputtype"/>
 
   <xsl:template match="/">
     <html>
@@ -59,6 +60,12 @@
           <p class="info">
             Utwór opracowany został w&#160;ramach projektu<a href="http://www.wolnelektury.pl/"> Wolne Lektury</a> przez<a href="http://www.nowoczesnapolska.org.pl/"> fundację Nowoczesna Polska</a>.
           </p>
+
+          <xsl:variable name="isbnId" select="concat($outputtype, '-id')"/>
+          <xsl:if test=".//meta[@id=$isbnId]">
+            <xsl:variable name="isbn" select=".//meta[@id=$isbnId]"/>
+            <p class="info">ISBN <xsl:value-of select="substring-after($isbn, 'ISBN-')"/></p>
+          </xsl:if>
 
           <p class="footer info">
             <a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a>

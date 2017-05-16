@@ -113,11 +113,13 @@ def node_name(node):
     return tempnode.text
 
 
-def xslt(xml, sheet):
+def xslt(xml, sheet, **kwargs):
     if isinstance(xml, etree._Element):
         xml = etree.ElementTree(xml)
     with open(sheet) as xsltf:
-        return xml.xslt(etree.parse(xsltf))
+        transform = etree.XSLT(etree.parse(xsltf))
+        params = dict((key, transform.strparam(value)) for key, value in kwargs.iteritems())
+        return transform(xml, **params)
 
 
 def replace_characters(node):
@@ -409,7 +411,7 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
 
 def transform(wldoc, verbose=False, style=None, html_toc=False,
-              sample=None, cover=None, flags=None, hyphenate=False, ilustr_path=''):
+              sample=None, cover=None, flags=None, hyphenate=False, ilustr_path='', output_type='epub'):
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
@@ -431,7 +433,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         chars = set()
         if first:
             # write book title page
-            html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'))
+            html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'), outputtype=output_type)
             chars = used_chars(html_tree.getroot())
             zip.writestr(
                 'OPS/title.html',
@@ -648,7 +650,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
         '<itemref idref="last" />'))
-    html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'))
+    html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'), outputtype=output_type)
     chars.update(used_chars(html_tree.getroot()))
     zip.writestr('OPS/last.html', etree.tostring(
         html_tree, pretty_print=True, xml_declaration=True,
@@ -675,7 +677,8 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                 print "Running font-optimizer"
                 subprocess.check_call(optimizer_call)
             else:
-                subprocess.check_call(optimizer_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                dev_null = open(os.devnull, 'w')
+                subprocess.check_call(optimizer_call, stdout=dev_null, stderr=dev_null)
             zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
             manifest.append(etree.fromstring(
                 '<item id="%s" href="%s" media-type="application/x-font-truetype" />' % (fname, fname)))
