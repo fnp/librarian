@@ -142,7 +142,7 @@ sub read
         {
             if ($pid == 1 && defined $apple_encodings[0][$eid])
             { $dat = TTF_word_utf8(pack("n*", map({$apple_encodings[0][$eid][$_]} unpack("C*", $dat)))); }
-            elsif ($pid == 2 && $eid == 2 && defined @cp_1252)
+            elsif ($pid == 2 && $eid == 2 && @cp_1252)
             { $dat = TTF_word_utf8(pack("n*", map({$cp_1252[0][$_]} unpack("C*", $dat)))); }
             elsif ($pid == 0 || $pid == 3 || ($pid == 2 && $eid == 1))
             { $dat = TTF_word_utf8($dat); }
@@ -185,7 +185,7 @@ sub out
                         { $str_trans = pack("C*",
                                 map({$apple_encodings[1][$eid]{$_} || 0x3F} unpack("n*",
                                 TTF_utf8_word($str_trans)))); }
-                        elsif ($pid == 2 && $eid == 2 && defined @cp_1252)
+                        elsif ($pid == 2 && $eid == 2 && @cp_1252)
                         { $str_trans = pack("C*",
                                 map({$cp_1252[1][$eid]{$_} || 0x3F} unpack("n*",
                                 TTF_utf8_word($str_trans)))); }
@@ -292,7 +292,7 @@ sub is_utf8
 {
     my ($self, $pid, $eid) = @_;
 
-    return ($utf8 && ($pid == 0 || $pid == 3 || ($pid == 2 && ($eid != 2 || defined @cp_1252))
+    return ($utf8 && ($pid == 0 || $pid == 3 || ($pid == 2 && ($eid != 2 || @cp_1252))
             || ($pid == 1 && defined $apple_encodings[$eid])));
 }
 
