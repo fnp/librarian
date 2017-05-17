@@ -310,6 +310,10 @@ class WorkInfo(object):
                     text = text.decode('utf-8')
                 val = TextPlus(text)
                 val.lang = e.attrib.get(XMLNS('lang'), lang)
+                if e.tag == 'meta':
+                    meta_id = e.attrib.get('id')
+                    if meta_id and meta_id.endswith('-id'):
+                        field_dict[meta_id] = [val.replace('ISBN-', 'ISBN ')]
             else:
                 val = e.text
             fv.append(val)
@@ -458,6 +462,11 @@ class BookInfo(WorkInfo):
         # WLCover-specific.
         Field(WLNS('coverBarColor'), 'cover_bar_color', required=False),
         Field(WLNS('coverBoxPosition'), 'cover_box_position', required=False),
+        Field('pdf-id',  'isbn_pdf',  required=False),
+        Field('epub-id', 'isbn_epub', required=False),
+        Field('mobi-id', 'isbn_mobi', required=False),
+        Field('txt-id',  'isbn_txt',  required=False),
+        Field('html-id', 'isbn_html', required=False),
     )
 
 

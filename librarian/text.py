@@ -85,9 +85,9 @@ def transform(wldoc, flags=None, **options):
             if funders:
                 funders = u"\n\nPublikację wsparli i wsparły: %s." % funders
             publisher = '\n\nWydawca: ' + ', '.join(parsed_dc.publisher)
-            isbn_element = document.edoc.find("//meta[@id='txt-id']")
-            if isbn_element is not None:
-                isbn = isbn_element.text.replace('ISBN-', '\n\nISBN ')
+            isbn = getattr(parsed_dc, 'isbn_html', None)
+            if isbn:
+                isbn = '\n\n' + isbn
             else:
                 isbn = ''
         else:
