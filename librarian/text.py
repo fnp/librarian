@@ -85,7 +85,7 @@ def transform(wldoc, flags=None, **options):
             if funders:
                 funders = u"\n\nPublikację wsparli i wsparły: %s." % funders
             publisher = '\n\nWydawca: ' + ', '.join(parsed_dc.publisher)
-            isbn = getattr(parsed_dc, 'isbn_html', None)
+            isbn = getattr(parsed_dc, 'isbn_txt', None)
             if isbn:
                 isbn = '\n\n' + isbn
             else:
