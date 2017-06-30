@@ -34,6 +34,11 @@
 			<xsl:apply-templates mode="inline"/>
 		</strong>
 	</xsl:template>
+	<xsl:template match="indeks_dolny" mode="inline">
+		<sub>
+			<xsl:apply-templates mode="inline"/>
+		</sub>
+	</xsl:template>
 
 	<!-- text -->
 	<xsl:template match="text()" mode="inline">

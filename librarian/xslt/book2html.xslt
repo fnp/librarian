@@ -300,6 +300,10 @@
     <em class="author-emphasis"><xsl:apply-templates mode="inline" /></em>
 </xsl:template>
 
+<xsl:template match="indeks_dolny" mode="inline">
+    <sub><xsl:apply-templates mode="inline" /></sub>
+</xsl:template>
+
 <xsl:template match="osoba" mode="inline">
     <em class="person"><xsl:apply-templates mode="inline" /></em>
 </xsl:template>

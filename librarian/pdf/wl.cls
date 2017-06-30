@@ -527,6 +527,9 @@ Letters={Uppercase}
 \newcommand{\wyroznienie}[1]{%
 \emph{#1}%
 }
+\newcommand{\indeksdolny}[1]{%
+\textsubscript{#1}%
+}
 
 \newcommand{\osoba}[1]{%
 #1%

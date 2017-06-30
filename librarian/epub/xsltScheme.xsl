@@ -264,6 +264,12 @@
     </em>
   </xsl:template>
 
+  <xsl:template match="indeks_dolny" >
+    <sub xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates />
+    </sub>
+  </xsl:template>
+
   <xsl:template match="osoba" >
     <em class="person" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />

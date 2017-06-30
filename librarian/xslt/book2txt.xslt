@@ -275,6 +275,10 @@
 <xsl:text>*</xsl:text><xsl:apply-templates mode="inline" /><xsl:text>*</xsl:text>
 </xsl:template>
 
+<xsl:template match="indeks_dolny" mode="inline">
+<xsl:apply-templates mode="inline" />
+</xsl:template>
+
 <xsl:template match="osoba" mode="inline">
 <xsl:apply-templates mode="inline" />
 </xsl:template>

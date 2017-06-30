@@ -329,6 +329,12 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template match="indeks_dolny">
+        <xsl:element name="sub">
+            <xsl:apply-templates select="@*|node()" />
+        </xsl:element>
+    </xsl:template>
+
     <xsl:template match="mat">
         <xsl:element name="math">
             <xsl:apply-templates select="@*|node()" />

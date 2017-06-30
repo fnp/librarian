@@ -36,6 +36,7 @@
         <wyroznienie />
         <osoba />
         <tytul_dziela />
+        <indeks_dolny />
     </inline-elements>
 
     <paragraph-elements element="p" mixed="true">
