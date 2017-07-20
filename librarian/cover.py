@@ -408,7 +408,7 @@ class WLCover(Cover):
 
         img = self.add_box(img)
 
-        img = self.add_cut_lines(img)
+        # img = self.add_cut_lines(img)
 
         return img
 
