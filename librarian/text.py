@@ -60,7 +60,7 @@ def transform(wldoc, flags=None, **options):
             license_description = parsed_dc.license_description
             license = parsed_dc.license
             if license:
-                license_description = u"Ten utwór jest udostepniony na licencji %s: \n%s" % (
+                license_description = u"Ten utwór jest udostępniony na licencji %s: \n%s" % (
                     license_description, license)
             else:
                 license_description = u"Ten utwór nie jest objęty majątkowym prawem autorskim i znajduje się " \

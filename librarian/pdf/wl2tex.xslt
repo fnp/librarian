@@ -182,7 +182,7 @@
             \href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
             Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
         <xsl:if test=".//dc:rights.license">
-            \def\rightsinfo{Ten utwór jest udostepniony na licencji
+            \def\rightsinfo{Ten utwór jest udostępniony na licencji
             \href{<xsl:value-of select=".//dc:rights.license" />}{<TeXML escape="1"><xsl:apply-templates select=".//dc:rights" mode="inline" /></TeXML>}.}
         </xsl:if>
 

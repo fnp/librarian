@@ -24,7 +24,7 @@
           <p class="info">
               <xsl:choose>
                   <xsl:when test="//dc:rights.license">
-                      Ten utwór jest udostepniony na licencji
+                      Ten utwór jest udostępniony na licencji
                       <a>
                           <xsl:attribute name="href">
                               <xsl:value-of select="//dc:rights.license" />
