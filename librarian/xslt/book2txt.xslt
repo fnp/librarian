@@ -180,7 +180,7 @@
         <xsl:when test="count(br) > 0">
             <xsl:call-template name="verse">
                 <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::text() | br[1]/preceding-sibling::node()" />
-                <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd'][1]" />
+                <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej'][1]" />
             </xsl:call-template>
             <xsl:for-each select="br">		
     			<!-- Each BR tag "consumes" text after it -->
@@ -188,14 +188,14 @@
                 <xsl:call-template name="verse">
                     <xsl:with-param name="verse-content"
                         select="following-sibling::text()[count(preceding-sibling::br) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />
-                    <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd')][1]" />
+                    <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej')][1]" />
                 </xsl:call-template>
             </xsl:for-each>
         </xsl:when>
         <xsl:otherwise>
             <xsl:call-template name="verse">
                 <xsl:with-param name="verse-content" select="text() | node()" />
-                <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd[1]" />
+                <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd|wers_do_prawej[1]" />
              </xsl:call-template>
         </xsl:otherwise>
     </xsl:choose>
@@ -224,6 +224,9 @@
             </xsl:choose>
         </xsl:when>
         <xsl:when test="name($verse-type) = 'wers_cd'">
+            <xsl:text>                        </xsl:text>
+        </xsl:when>
+        <xsl:when test="name($verse-type) = 'wers_do_prawej'">
             <xsl:text>                        </xsl:text>
         </xsl:when>
     </xsl:choose>

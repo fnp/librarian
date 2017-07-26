@@ -49,6 +49,7 @@
         <wers_cd />
         <wers_akap />
         <wers_wciety />
+        <wers_do_prawej />
     </paragraph-elements>
 
     <header-1-elements element="h1" mixed="true">

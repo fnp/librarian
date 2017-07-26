@@ -83,6 +83,7 @@ autor_utworu, dzielo_nadrzedne, nazwa_utworu, podtytul, tłumacz (z DC)]</akap>
 <wers_wciety typ="4">wers_wciety@typ=4</wers_wciety>/
 <wers_wciety typ="5">wers_wciety@typ=5</wers_wciety>/
 <wers_wciety typ="6">wers_wciety@typ=6</wers_wciety>/
+<wers_do_prawej>wers do prawej</wers_do_prawej>/
 <wers_cd>wers_cd</wers_cd>/
 <zastepnik_wersu />. . . . . . . . . . . . . . . .
 </strofa>

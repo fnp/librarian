@@ -51,7 +51,7 @@
                     <!-- First, collect all the tags up to first BR -->
                     <xsl:call-template name="verse">
                         <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::node()" />
-                        <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd'][1]" />
+                        <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej'][1]" />
                     </xsl:call-template>
 
                     <!-- Collect the rest of verses -->
@@ -61,7 +61,7 @@
                         <xsl:call-template name="verse">
                             <xsl:with-param name="verse-content"
                                 select="following-sibling::node()[count(preceding-sibling::br) = $lnum+1 and name() != 'br']" />
-                            <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd')][1]" />
+                            <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej')][1]" />
                         </xsl:call-template>
                     </xsl:for-each>
                 </xsl:when>
@@ -70,7 +70,7 @@
                 <xsl:otherwise>
                     <xsl:call-template name="verse">
                         <xsl:with-param name="verse-content" select="child::node()" />
-                        <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd[1]" />
+                        <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd|wers_do_prawej[1]" />
                     </xsl:call-template>
                 </xsl:otherwise>
 

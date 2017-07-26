@@ -207,6 +207,12 @@
     &#160;</div>
   </xsl:template>
 
+  <xsl:template match="wers_do_prawej">
+    <div class="verse" style='text-align: right;' xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates/>
+    &#160;</div>
+  </xsl:template>
+
   <xsl:template match="wers_wciety[@typ!='']">
     <div class="verse" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:attribute name="style">

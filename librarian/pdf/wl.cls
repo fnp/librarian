@@ -500,6 +500,9 @@ Letters={Uppercase}
 \newcommand{\werswciety}[2][1em]{%
 \Nw\hspace*{#1}#2%
 }
+\newcommand{\wersdoprawej}[1]{%
+\Nw\hspace*{\fill}#1%
+}
 
 \ifshowfootnotes
   \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
