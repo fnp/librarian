@@ -535,15 +535,8 @@ class Wybor(Exercise):
         if not pytania:
             pytania = [element]
         for p in pytania:
-            solutions = re.split(r"[, ]+", p.attrib.get('rozw', ''))
+            solutions = p.xpath(".//punkt[rozw='prawda']")
             if len(solutions) != 1:
-                is_single_choice = False
-                break
-            choices = p.xpath(".//*[@nazwa]")
-            uniq = set()
-            for n in choices:
-                uniq.add(n.attrib.get('nazwa', ''))
-            if len(choices) != len(uniq):
                 is_single_choice = False
                 break
 
@@ -551,8 +544,10 @@ class Wybor(Exercise):
         return pre, post
 
     def handle_punkt(self, element):
-        if self.options['exercise'] and element.attrib.get('nazwa', None):
+        if self.options['exercise'] and element.attrib.get('rozw', None):
             cmd = 'radio' if self.options['single'] else 'checkbox'
+            if element.attrib['rozw'] == 'prawda':
+                cmd += 'checked'
             return u'<cmd name="%s"/>' % cmd, ''
         else:
             return super(Wybor, self).handle_punkt(element)

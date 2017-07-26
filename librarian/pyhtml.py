@@ -427,15 +427,8 @@ class Wybor(Exercise):
         if not pytania:
             pytania = [element]
         for p in pytania:
-            solutions = re.split(r"[, ]+", p.attrib.get('rozw', ''))
+            solutions = p.xpath(".//punkt[rozw='prawda']")
             if len(solutions) != 1:
-                is_single_choice = False
-                break
-            choices = p.xpath(".//*[@nazwa]")
-            uniq = set()
-            for n in choices:
-                uniq.add(n.attrib.get('nazwa', ''))
-            if len(choices) != len(uniq):
                 is_single_choice = False
                 break
 
@@ -443,25 +436,21 @@ class Wybor(Exercise):
         return pre, post
 
     def handle_punkt(self, element):
-        if self.options['exercise'] and element.attrib.get('nazwa', None):
+        if self.options['exercise'] and element.attrib.get('rozw', None):
             qc = self.question_counter
             self.piece_counter += 1
             no = self.piece_counter
             eid = "q%(qc)d_%(no)d" % locals()
-            aname = element.attrib.get('nazwa', None)
+            sol = element.attrib.get('rozw', None)
+            params = {'qc': qc, 'no': no, 'sol': sol, 'eid': eid}
             if self.options['single']:
-                return u"""
-<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d" data-name="%(aname)s">
-<input type="radio" name="q%(qc)d" id="%(eid)s" value="%(aname)s" />
-<label for="%(eid)s">
-                """ % locals(), u"</label></li>"
+                input_tag = u'<input type="radio" name="q%(qc)d" id="%(eid)s" value="%(eid)s" />'
             else:
-                return u"""
-<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d" data-name="%(aname)s">
-<input type="checkbox" name="%(eid)s" id="%(eid)s" />
-<label for="%(eid)s">
-""" % locals(), u"</label></li>"
-
+                input_tag = u'<input type="checkbox" name="%(eid)s" id="%(eid)s" />'
+            return (u"""
+<li class="question-piece" data-qc="%(qc)d" data-no="%(no)d" data-sol="%(sol)s">
+                """ + input_tag + u"""
+<label for="%(eid)s">""") % params, u"</label></li>"
         else:
             return super(Wybor, self).handle_punkt(element)
 

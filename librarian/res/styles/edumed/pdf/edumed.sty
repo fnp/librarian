@@ -7,8 +7,12 @@
 \newcommand{\activityform}[1]{Forma: #1 \\}
 \newcommand{\activitytools}[1]{#1 \\}
 
-\newcommand*\checkbox{\item[\Square]}
+\newcommand{\checked}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}
+
+\newcommand*\checkbox{\item[\square]}
+\newcommand*\checkbox{\item[\checked]}
 \newcommand*\radio{\item[\Circle]}
+\newcommand*\radiochecked{\item[\odot]}
 
 
 \renewcommand{\naglowekrozdzial}[1]{%
