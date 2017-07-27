@@ -303,6 +303,10 @@
     <em class="author-emphasis"><xsl:apply-templates mode="inline" /></em>
 </xsl:template>
 
+<xsl:template match="wieksze_odstepy" mode="inline">
+    <em class="wieksze-odstepy"><xsl:apply-templates mode="inline" /></em>
+</xsl:template>
+
 <xsl:template match="indeks_dolny" mode="inline">
     <sub><xsl:apply-templates mode="inline" /></sub>
 </xsl:template>

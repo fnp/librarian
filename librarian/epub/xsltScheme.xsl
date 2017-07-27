@@ -270,6 +270,12 @@
     </em>
   </xsl:template>
 
+  <xsl:template match="wieksze_odstepy" >
+    <em class="wieksze-odstepy" xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates />
+    </em>
+  </xsl:template>
+
   <xsl:template match="indeks_dolny" >
     <sub xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />

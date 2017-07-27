@@ -39,6 +39,9 @@
 			<xsl:apply-templates mode="inline"/>
 		</sub>
 	</xsl:template>
+	<xsl:template match="wieksze_odstepy" mode="inline">
+		<xsl:apply-templates mode="inline"/>
+	</xsl:template>
 
 	<!-- text -->
 	<xsl:template match="text()" mode="inline">

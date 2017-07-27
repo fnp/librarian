@@ -282,6 +282,10 @@
 <xsl:apply-templates mode="inline" />
 </xsl:template>
 
+<xsl:template match="wieksze_odstepy" mode="inline">
+<xsl:apply-templates mode="inline" />
+</xsl:template>
+
 <xsl:template match="osoba" mode="inline">
 <xsl:apply-templates mode="inline" />
 </xsl:template>

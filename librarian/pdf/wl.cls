@@ -533,6 +533,11 @@ Letters={Uppercase}
 \newcommand{\indeksdolny}[1]{%
 \textsubscript{#1}%
 }
+\newcommand{\wiekszeodstepy}[1]{%
+\spaceskip 3\fontdimen2\font plus 3\fontdimen3\font minus 3\fontdimen4\font \relax%
+#1%
+\spaceskip \fontdimen2\font plus \fontdimen3\font minus \fontdimen4\font \relax%
+}
 
 \newcommand{\osoba}[1]{%
 #1%

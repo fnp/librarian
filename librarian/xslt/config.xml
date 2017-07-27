@@ -37,6 +37,7 @@
         <osoba />
         <tytul_dziela />
         <indeks_dolny />
+        <wieksze_odstepy />
     </inline-elements>
 
     <paragraph-elements element="p" mixed="true">

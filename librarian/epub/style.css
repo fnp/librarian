@@ -330,6 +330,12 @@ em.author-emphasis
     letter-spacing: 0.1em;
 }
 
+em.wieksze-odstepy
+{
+    font-style: normal;
+    word-spacing: 1em;
+}
+
 .person-list em.person
 {
     font-style: normal;
