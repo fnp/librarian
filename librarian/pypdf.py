@@ -535,7 +535,7 @@ class Wybor(Exercise):
         if not pytania:
             pytania = [element]
         for p in pytania:
-            solutions = p.xpath(".//punkt[rozw='prawda']")
+            solutions = p.xpath(".//punkt[@rozw='prawda']")
             if len(solutions) != 1:
                 is_single_choice = False
                 break
@@ -546,7 +546,7 @@ class Wybor(Exercise):
     def handle_punkt(self, element):
         if self.options['exercise'] and element.attrib.get('rozw', None):
             cmd = 'radio' if self.options['single'] else 'checkbox'
-            if element.attrib['rozw'] == 'prawda':
+            if self.options['teacher'] and element.attrib['rozw'] == 'prawda':
                 cmd += 'checked'
             return u'<cmd name="%s"/>' % cmd, ''
         else:

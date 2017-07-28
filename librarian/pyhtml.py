@@ -351,13 +351,18 @@ class Exercise(EduModule):
     def handle_rozw_kom(self, element):
         return u"""<div style="display:none" class="comment">""", u"""</div>"""
 
+    def extra_attributes(self):
+        return {}
+
     def handle_cwiczenie(self, element):
         self.options = {'exercise': element.attrib['typ']}
         self.question_counter = 0
         self.piece_counter = 0
 
+        extra_attrs = self.extra_attributes()
+
         pre = u"""
-<div class="exercise %(typ)s" data-type="%(typ)s">
+<div class="exercise %(typ)s" data-type="%(typ)s"%(extra_attrs)s>
 <form action="#" method="POST">
 <h3>Zadanie %(exercies_counter)d</h3>
 <div class="buttons">
@@ -368,7 +373,12 @@ class Exercise(EduModule):
 <input type="button" class="reset" value="reset"/>
 </div>
 
-""" % {'exercies_counter': self.options['exercise_counter'], 'typ': element.attrib['typ']}
+""" % {
+            'exercies_counter': self.options['exercise_counter'],
+            'typ': element.attrib['typ'],
+            'extra_attrs': ' ' + ' '.join(
+                'data-%s="%s"' % item for item in extra_attrs.iteritems()) if extra_attrs else '',
+        }
         post = u"""
 <div class="buttons">
 <span class="message"></span>
@@ -420,20 +430,22 @@ class Exercise(EduModule):
 
 
 class Wybor(Exercise):
+    def extra_attributes(self):
+        return {'subtype': 'single' if self.options['single'] else 'multiple'}
+
     def handle_cwiczenie(self, element):
-        pre, post = super(Wybor, self).handle_cwiczenie(element)
         is_single_choice = True
         pytania = element.xpath(".//pytanie")
         if not pytania:
             pytania = [element]
         for p in pytania:
-            solutions = p.xpath(".//punkt[rozw='prawda']")
+            solutions = p.xpath(".//punkt[@rozw='prawda']")
             if len(solutions) != 1:
                 is_single_choice = False
                 break
 
         self.options = {'single': is_single_choice}
-        return pre, post
+        return super(Wybor, self).handle_cwiczenie(element)
 
     def handle_punkt(self, element):
         if self.options['exercise'] and element.attrib.get('rozw', None):

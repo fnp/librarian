@@ -1,4 +1,5 @@
 \usepackage[MeX]{polski}
+\usepackage{amssymb}
 
 \newcommand{\activitycounter}[1]{\vspace{1em}\par{\huge{#1}}}
 
@@ -7,12 +8,13 @@
 \newcommand{\activityform}[1]{Forma: #1 \\}
 \newcommand{\activitytools}[1]{#1 \\}
 
-\newcommand{\checked}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}
+\newcommand{\cmarkboxed}{\rlap{\Square}{\raisebox{2pt}{\large\hspace{1pt}\checkmark}}%
+\hspace{-2.5pt}}
 
-\newcommand*\checkbox{\item[\square]}
-\newcommand*\checkbox{\item[\checked]}
+\newcommand*\checkbox{\item[\Square]}
+\newcommand*\checkboxchecked{\item[\cmarkboxed]}
 \newcommand*\radio{\item[\Circle]}
-\newcommand*\radiochecked{\item[\odot]}
+\newcommand*\radiochecked{\item[$\odot$]}
 
 
 \renewcommand{\naglowekrozdzial}[1]{%
