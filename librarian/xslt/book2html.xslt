@@ -193,6 +193,10 @@
     </p>
 </xsl:template>
 
+<xsl:template match="strofa" mode="inline">
+    <xsl:apply-templates select="." />
+</xsl:template>
+
 <xsl:template match="strofa">
     <div class="stanza">
       <xsl:call-template name="section-anchor"/>
@@ -256,7 +260,14 @@
 </xsl:template>
 
 <xsl:template match="tabela|tabelka">
-    <table><xsl:apply-templates /></table>
+    <xsl:choose>
+        <xsl:when test="@ramka = '1'">
+            <table class="border"><xsl:apply-templates /></table>
+        </xsl:when>
+        <xsl:otherwise>
+            <table><xsl:apply-templates /></table>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 <xsl:template match="wiersz">
     <tr><xsl:apply-templates /></tr>

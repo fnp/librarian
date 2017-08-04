@@ -306,6 +306,13 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="strofa" mode="inline">
+    <env name="minipage">
+        <parm><cmd name="linewidth" /></parm>
+        <parm><xsl:apply-templates select="." /></parm>
+    </env>
+</xsl:template>
+
 <xsl:template match="strofa">
   <cmd name="strofa"><parm>
     <xsl:choose>

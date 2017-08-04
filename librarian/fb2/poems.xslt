@@ -29,6 +29,10 @@
 		</stanza>
 	</xsl:template>
 
+	<xsl:template mode="inline" match="strofa">
+		<xsl:apply-templates select="." mode="para"/>
+	</xsl:template>
+
 	<!-- XXX: it should be done elsewhere but our cheap verse splitting
 		puts it here -->
 	<xsl:template match="motyw" mode="poem"/>

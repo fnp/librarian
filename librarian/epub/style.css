@@ -371,7 +371,8 @@ p.footer {
 
 table {
     border-collapse: collapse;
+    width: 100%;
 }
-td {
+table.border th, table.border td {
     border: 1px solid black;
 }

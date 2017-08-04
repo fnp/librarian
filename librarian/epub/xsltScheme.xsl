@@ -73,10 +73,6 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="ilustr" mode="inline">
-    <xsl:apply-templates select="." />
-  </xsl:template>
-
   <xsl:template match="ilustr">
     <img>
       <xsl:attribute name="src">
@@ -329,9 +325,14 @@
 </xsl:template>
 
 <xsl:template match="tabela|tabelka">
-  <table xmlns="http://www.w3.org/1999/xhtml">
-    <xsl:apply-templates />
-  </table>
+    <xsl:choose>
+        <xsl:when test="@ramka = '1'">
+            <table class="border" xmlns="http://www.w3.org/1999/xhtml"><xsl:apply-templates /></table>
+        </xsl:when>
+        <xsl:otherwise>
+            <table xmlns="http://www.w3.org/1999/xhtml"><xsl:apply-templates /></table>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 <xsl:template match="wiersz">
   <tr xmlns="http://www.w3.org/1999/xhtml">
