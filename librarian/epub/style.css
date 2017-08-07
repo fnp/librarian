@@ -376,3 +376,7 @@ table {
 table.border th, table.border td {
     border: 1px solid black;
 }
+
+th, td {
+    vertical-align: top;
+}
