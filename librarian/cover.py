@@ -369,7 +369,7 @@ class WLCover(Cover):
             dir_y = 1 if corner_y == 0 else -1
             for offset in (-1, 0, 1):
                 draw.line((corner_x, corner_y + dir_y * metr.bleed + offset,
-                           corner_x + dir_x * metr.bleed * line_ratio, corner_y + dir_y * metr.bleed +  offset),
+                           corner_x + dir_x * metr.bleed * line_ratio, corner_y + dir_y * metr.bleed + offset),
                           fill='black' if offset == 0 else 'white', width=1)
                 draw.line((corner_x + dir_x * metr.bleed + offset, corner_y,
                            corner_x + dir_x * metr.bleed + offset, corner_y + dir_y * metr.bleed * line_ratio),
@@ -539,4 +539,22 @@ class GandalfCover(Cover):
     format = 'PNG'
 
 
-DefaultEbookCover = LogoWLCover
+class KMLUCover(LogoWLCover):
+    gradient_logo_height = 58
+    gradient_logo_spacing = 25
+    gradient_logos = [
+        'res/kmlu-logo-white.png',
+        'res/wl-logo-white.png',
+        'res/fnp-logo-white.png',
+    ]
+
+
+COVER_CLASSES = {
+    'default': LogoWLCover,
+    'kmlu': KMLUCover,
+}
+
+
+def make_cover(book_info, *args, **kwargs):
+    cover_class = COVER_CLASSES[book_info.cover_class]
+    return cover_class(book_info, *args, **kwargs)

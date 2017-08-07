@@ -28,7 +28,7 @@ from librarian.dcparser import Person
 from librarian.parser import WLDocument
 from librarian import ParseError, DCNS, get_resource, OutputFile
 from librarian import functions
-from librarian.cover import DefaultEbookCover
+from librarian.cover import make_cover
 from .sponsor import sponsor_logo
 
 
@@ -220,7 +220,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         if cover:
             if cover is True:
-                cover = DefaultEbookCover
+                cover = make_cover
             bound_cover = cover(book_info, width=1200)
             root.set('data-cover-width', str(bound_cover.width))
             root.set('data-cover-height', str(bound_cover.height))

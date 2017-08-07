@@ -230,10 +230,10 @@ class WorkInfo(object):
         Field(DCNS('type'), 'type', required=False, multiple=True),
 
         Field(DCNS('contributor.editor'), 'editors',
-              as_person, salias='editor', multiple=True, default=[]),
+              as_person, salias='editor', multiple=True, required=False),
         Field(DCNS('contributor.technical_editor'), 'technical_editors',
-              as_person, salias='technical_editor', multiple=True, default=[]),
-        Field(DCNS('contributor.funding'), 'funders', salias='funder', multiple=True, default=[]),
+              as_person, salias='technical_editor', multiple=True, required=False),
+        Field(DCNS('contributor.funding'), 'funders', salias='funder', multiple=True, required=False),
         Field(DCNS('contributor.thanks'), 'thanks', required=False),
 
         Field(DCNS('date'), 'created_at'),
@@ -249,7 +249,7 @@ class WorkInfo(object):
         Field(DCNS('rights.license'), 'license', required=False),
         Field(DCNS('rights'), 'license_description'),
 
-        Field(PLMETNS('digitisationSponsor'), 'sponsors', multiple=True, default=[]),
+        Field(PLMETNS('digitisationSponsor'), 'sponsors', multiple=True, required=False),
         Field(WLNS('digitisationSponsorNote'), 'sponsor_note', required=False),
         Field(WLNS('developmentStage'), 'stage', required=False),
     )
@@ -452,7 +452,7 @@ class BookInfo(WorkInfo):
         Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True, required=False),
                 
         Field(DCNS('contributor.translator'), 'translators',
-              as_person,  salias='translator', multiple=True, default=[]),
+              as_person,  salias='translator', multiple=True, required=False),
         Field(DCNS('relation.hasPart'), 'parts', WLURI, strict=as_wluri_strict, multiple=True, required=False),
         Field(DCNS('relation.isVariantOf'), 'variant_of', WLURI, strict=as_wluri_strict, required=False),
 
@@ -462,6 +462,7 @@ class BookInfo(WorkInfo):
         # WLCover-specific.
         Field(WLNS('coverBarColor'), 'cover_bar_color', required=False),
         Field(WLNS('coverBoxPosition'), 'cover_box_position', required=False),
+        Field(WLNS('coverClass'), 'cover_class', default=['default']),
         Field('pdf-id',  'isbn_pdf',  required=False),
         Field('epub-id', 'isbn_epub', required=False),
         Field('mobi-id', 'isbn_mobi', required=False),
