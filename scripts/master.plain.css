@@ -5,10 +5,10 @@
  */
 body {
     font-size: 16px;
-    font: Georgia, "Times New Roman", serif;
+    font-family: Georgia, "Times New Roman", serif;
     line-height: 1.5em;
     margin: 3em;
-    max-width: 36em;
+    max-width: 48em;
 }
 
 a {
