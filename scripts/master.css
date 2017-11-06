@@ -175,6 +175,10 @@ div.note p, div.dedication p, div.note p.paragraph, div.dedication p.paragraph {
     font-style: italic;
 }
 
+div.frame {
+    border: 1px darkgray solid;
+}
+
 hr.spacer {
     height: 3em;
     visibility: hidden;

@@ -101,6 +101,10 @@
     <div class="dedication"><xsl:apply-templates /></div>
 </xsl:template>
 
+<xsl:template match="ramka">
+    <div class="frame"><xsl:apply-templates /></div>
+</xsl:template>
+
 <xsl:template match="kwestia">
     <div class="kwestia">
         <xsl:apply-templates select="strofa|akap|didaskalia" />

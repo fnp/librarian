@@ -67,6 +67,12 @@
     </div>
   </xsl:template>
 
+  <xsl:template match="ramka">
+    <div class="frame" xmlns="http://www.w3.org/1999/xhtml">
+      <xsl:apply-templates />
+    </div>
+  </xsl:template>
+
   <xsl:template match="motto">
     <div class="motto" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />

@@ -26,6 +26,7 @@
         <kwestia />
         <motto />
         <didaskalia />
+        <ramka />
     </block>
 
     <inline-elements element="span" mixed="true">
@@ -133,6 +134,8 @@
 
         <dlugi_cytat />
         <poezja_cyt />
+
+        <ramka />
 
         <didaskalia />
     </editable>

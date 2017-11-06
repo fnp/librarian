@@ -217,7 +217,7 @@ def add_anchors(root):
     counter = 1
     for element in root.iterdescendants():
         def f(e):
-            return e.get('class') in ('note', 'motto', 'motto_podpis', 'dedication') or \
+            return e.get('class') in ('note', 'motto', 'motto_podpis', 'dedication', 'frame') or \
                 e.get('id') == 'nota_red' or e.tag == 'blockquote'
         if any_ancestor(element, f):
             continue

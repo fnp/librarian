@@ -49,6 +49,9 @@
 		<td><xsl:apply-templates mode="inline" /></td>
 	</xsl:template>
 
+	<xsl:template mode="para" match="ramka">
+		<xsl:apply-templates mode="para" />
+	</xsl:template>
 
 
 	<xsl:template mode="para" match="*"/>

@@ -40,6 +40,10 @@
 <xsl:apply-templates />
 </xsl:template>
 
+<xsl:template match="ramka">
+<xsl:apply-templates />
+</xsl:template>
+
 <xsl:template match="lista_osob">
 <xsl:text>
 

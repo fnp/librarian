@@ -272,6 +272,11 @@ h2 + .paragraph:first-letter
     font-style: italic;
 }
 
+.frame
+{
+    border: 1px darkgray solid;
+}
+
 hr.spacer
 {
     height: 3em;
