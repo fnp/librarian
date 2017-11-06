@@ -440,10 +440,12 @@ Letters={Uppercase}
 }
 
 \newcommand{\ramka}[1]{%
+\par\vspace{1em}%
 \noindent\myfbox{1em}{1em}{%
 \parbox{\textwidth}{%
 #1%
 }}%
+\vspace{1em}%
 }
 
 \newcommand{\dlugicytat}[1]{%
