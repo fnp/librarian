@@ -207,7 +207,7 @@
 <!-- ==================================================================================== -->
 
 <xsl:template
-    match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny|nota|dedykacja|dlugi_cytat|poezja_cyt|motto">
+    match="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny|nota|dedykacja|dlugi_cytat|poezja_cyt|motto|ramka">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />

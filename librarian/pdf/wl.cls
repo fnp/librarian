@@ -350,6 +350,13 @@ Letters={Uppercase}
 \end{em}%
 }
 
+\newcommand{\ramka}[1]{%
+\noindent\fbox{%
+\parbox{\textwidth}{%
+#1%
+}}%
+}
+
 \newcommand{\dlugicytat}[1]{%
 \begin{quotation}%
 %\raggedright%

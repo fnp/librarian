@@ -92,6 +92,10 @@ autor_utworu, dzielo_nadrzedne, nazwa_utworu, podtytul, tłumacz (z DC)]</akap>
 <dlugi_cytat><akap>Cytowany akapit powinien wyglądać jak cytowany akapit.
 Znaczy, może mieć jakieś dodatkowe wcięcie, jakiś rodzaj wyróżnienia czy coś.</akap></dlugi_cytat>
 
+<akap>[ramka/akap]</akap>
+
+<ramka><akap>To jest ramka. W ramce są akapity i inne takie.</akap></ramka>
+
 <akap>[poezja_cyt/strofa]</akap>
 
 <poezja_cyt><strofa>To jest poezja/

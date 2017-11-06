@@ -30,14 +30,14 @@ body, p, h1, h2, h3, h4 {
 
 body
 {
-	line-height: 1.5em;
-	margin: 0;
+    line-height: 1.5em;
+    margin: 0;
 }
 
 a
 {
-	text-decoration: none;
-	color: #00e;
+    text-decoration: none;
+    color: #00e;
 }
 
 a img {
@@ -57,11 +57,11 @@ a img {
 
 .h2
 {
-	font-size: 2em;
-	margin: 0;
-	margin-top: 1.5em;
-	font-weight: bold;
-	line-height: 1.5em;
+    font-size: 2em;
+    margin: 0;
+    margin-top: 1.5em;
+    font-weight: bold;
+    line-height: 1.5em;
 }
 
 .h3
@@ -75,15 +75,15 @@ a img {
 
 .h4
 {
-	font-size: 1em;
+    font-size: 1em;
     margin: 0;
     margin-top: 1.5em;
-	line-height: 1.5em;
+    line-height: 1.5em;
 }
 
 p
 {
-	margin: 0;
+    margin: 0;
 }
 
 /* ======================== */
@@ -92,19 +92,19 @@ p
 
 .theme-begin
 {
-	border-left: 0.1em solid #DDDDDD;
-	color: #777;
-	padding: 0 0.5em;
-	width: 7.5em;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 0.875em;
-	float: right;
-	margin-right: -9.5em;
-	clear: both;
-	left: 40em;
-	line-height: 1.5em;
-	text-align: left;
+    border-left: 0.1em solid #DDDDDD;
+    color: #777;
+    padding: 0 0.5em;
+    width: 7.5em;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.875em;
+    float: right;
+    margin-right: -9.5em;
+    clear: both;
+    left: 40em;
+    line-height: 1.5em;
+    text-align: left;
 }
 
 .annotation-anchor
@@ -207,9 +207,9 @@ p
     text-align: center;
     font-weight: bold;
 
-	font-size: 1.125em;
-	line-height: 1.5em;
-	margin-bottom: -0.25em;
+    font-size: 1.125em;
+    line-height: 1.5em;
+    margin-bottom: -0.25em;
 }
 
 .subtitle
@@ -281,6 +281,11 @@ div.dedication div.paragaph
     font-style: italic;
 }
 
+
+.frame
+{
+    border: 1px darkgray solid;
+}
 
 hr.spacer
 {

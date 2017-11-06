@@ -39,6 +39,9 @@
 		<empty-line/><p>————————</p><empty-line/>
 	</xsl:template>
 
+	<xsl:template mode="para" match="ramka">
+		<xsl:apply-templates mode="para" />
+	</xsl:template>
 
 
 	<xsl:template mode="para" match="*"/>
