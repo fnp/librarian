@@ -285,6 +285,7 @@ div.dedication div.paragaph
 .frame
 {
     border: 1px darkgray solid;
+    padding: 1em;
 }
 
 hr.spacer
