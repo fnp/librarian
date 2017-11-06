@@ -381,8 +381,66 @@ Letters={Uppercase}
 \end{em}%
 }
 
+\newlength{\fboxhsep}
+\newlength{\fboxvsep}
+
+\newlength{\fboxtoprule}
+\newlength{\fboxbottomrule}
+\newlength{\fboxleftrule}
+\newlength{\fboxrightrule}
+
+\setlength{\fboxhsep}{5\fboxsep}
+\setlength{\fboxvsep}{20\fboxsep}
+
+\setlength{\fboxtoprule}{\fboxrule}
+\setlength{\fboxleftrule}{\fboxrule}
+\setlength{\fboxrightrule}{\fboxrule}
+\setlength{\fboxbottomrule}{\fboxrule}
+
+
+
+\def\@frameb@xother#1{%
+  \@tempdima\fboxtoprule
+  \advance\@tempdima\fboxvsep
+  \advance\@tempdima\dp\@tempboxa
+  \hbox{%
+    \lower\@tempdima\hbox{%
+      \vbox{%
+        \hrule\@height\fboxtoprule
+        \hbox{%
+          \vrule\@width\fboxleftrule
+          #1%
+          \vbox{%
+            \vskip\fboxvsep
+            \box\@tempboxa
+            \vskip\fboxvsep}%
+          #1%
+          \vrule\@width\fboxrightrule}%
+        \hrule\@height\fboxbottomrule}%
+    }%
+  }%
+}
+
+
+\long\def\fboxother#1{%
+  \leavevmode
+  \setbox\@tempboxa\hbox{%
+    \color@begingroup
+    \kern\fboxhsep{#1}\kern\fboxhsep
+    \color@endgroup}%
+  \@frameb@xother\relax}
+
+\newcommand{\myfbox}[3]{%
+  \begingroup
+  \setlength{\fboxhsep}{#1}
+  \setlength{\fboxvsep}{#2}
+  \fboxother{#3}
+
+  \endgroup
+}
+
 \newcommand{\ramka}[1]{%
-\noindent\fbox{%
+\noindent\myfbox{1em}{1em}{%
 \parbox{\textwidth}{%
 #1%
 }}%
