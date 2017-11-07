@@ -443,7 +443,7 @@ Letters={Uppercase}
 \par\vspace{1em}%
 \edef\myindent{\the\parindent}%
 \noindent\myfbox{1em}{1em}{%
-\parbox{\textwidth}{%
+\parbox{\dimexpr \textwidth - 2\fboxhsep - 2\fboxrule\relax}{%
 \setlength{\parindent}{\myindent}%
 #1%
 }}%
