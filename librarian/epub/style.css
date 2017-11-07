@@ -276,6 +276,8 @@ h2 + .paragraph:first-letter
 {
     border: 1px darkgray solid;
     padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 hr.spacer
