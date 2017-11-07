@@ -441,8 +441,10 @@ Letters={Uppercase}
 
 \newcommand{\ramka}[1]{%
 \par\vspace{1em}%
+\edef\myindent{\the\parindent}%
 \noindent\myfbox{1em}{1em}{%
 \parbox{\textwidth}{%
+\setlength{\parindent}{\myindent}%
 #1%
 }}%
 \vspace{1em}%
