@@ -285,10 +285,10 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
-        #shutil.copy(get_resource('res/prawokultury-logo.png'), temp)
-        #shutil.copy(get_resource('res/trust-logo.eps'), temp)
+        shutil.copy(get_resource('res/prawokultury-logo.png'), temp)
+        # shutil.copy(get_resource('res/trust-logo.eps'), temp)
         shutil.copy(get_resource('res/fnp-logo.eps'), temp)
-        shutil.copy(get_resource('res/koed-logo.eps'), temp)
+        # shutil.copy(get_resource('res/koed-logo.eps'), temp)
 
         try:
             cwd = os.getcwd()
