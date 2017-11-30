@@ -103,7 +103,7 @@
                 \def\editors{<xsl:call-template name="editors" />}
             </TeXML>
 
-            <cmd name="editorialsection" />
+            <!--<cmd name="editorialsection" />-->
 
         </env>
     </TeXML>

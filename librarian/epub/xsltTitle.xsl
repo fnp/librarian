@@ -58,7 +58,7 @@
 
           <p class="footer info">
             <!--a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a-->
-            <a href="http://koed.org.pl"><img src="logo_koed.png" alt="Koalicja Otwartej Edukacji" /></a>
+            <!--<a href="http://koed.org.pl"><img src="logo_koed.png" alt="Koalicja Otwartej Edukacji" /></a>-->
           </p>
         </div>
       </body>

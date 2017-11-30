@@ -444,9 +444,9 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                        '<rootfiles><rootfile full-path="OPS/content.opf" ' \
                        'media-type="application/oebps-package+xml" />' \
                        '</rootfiles></container>')
-    #zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
-    zip.write(get_resource('res/koedlogo.png'), os.path.join('OPS', 'logo_koed.png'))
-    #zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
+    # zip.write(get_resource('res/wl-logo-small.png'), os.path.join('OPS', 'logo_wolnelektury.png'))
+    # zip.write(get_resource('res/koedlogo.png'), os.path.join('OPS', 'logo_koed.png'))
+    # zip.write(get_resource('res/jedenprocent.png'), os.path.join('OPS', 'jedenprocent.png'))
     if not style:
         style = get_resource('epub/style.css')
     zip.write(style, os.path.join('OPS', 'style.css'))
@@ -518,15 +518,15 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         zip.writestr('OPS/annotations.html', etree.tostring(
                             html_tree, method="html", pretty_print=True))
 
-    toc.add("Strona redakcyjna", "last.html")
-    manifest.append(etree.fromstring(
-        '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
-    spine.append(etree.fromstring(
-        '<itemref idref="last" />'))
-    html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'))
-    chars.update(used_chars(html_tree.getroot()))
-    zip.writestr('OPS/last.html', etree.tostring(
-                        html_tree, method="html", pretty_print=True))
+    # toc.add("Strona redakcyjna", "last.html")
+    # manifest.append(etree.fromstring(
+    #     '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
+    # spine.append(etree.fromstring(
+    #     '<itemref idref="last" />'))
+    # html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'))
+    # chars.update(used_chars(html_tree.getroot()))
+    # zip.writestr('OPS/last.html', etree.tostring(
+    #                     html_tree, method="html", pretty_print=True))
 
     if not flags or not 'without-fonts' in flags:
         # strip fonts
