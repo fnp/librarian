@@ -121,27 +121,31 @@ class EduModule(Xmill):
 
     @escape(True)
     def get_curriculum(self, element):
-        identifiers = self.get_dc(element, 'subject.curriculum')
-        if not identifiers:
-            return ''
-        try:
-            from curriculum.templatetags.curriculum_tags import curriculum
-            curr_elements = curriculum(identifiers)
-        except ImportError:
-            curr_elements = {'identifiers': identifiers}
-        items = ['Podstawa programowa:']
-        newline = '<ctrl ch="\\"/>\n'
-        if 'currset' in curr_elements:
-            for (course, level), types in curr_elements['currset'].iteritems():
-                lines = [u'%s, %s poziom edukacyjny' % (course, level)]
-                for type, currs in types.iteritems():
-                    lines.append(type)
-                    lines += [curr.title for curr in currs]
-                items.append(newline.join(lines))
-        else:
-            items += identifiers
-        return '\n<cmd name="vspace"><parm>.6em</parm></cmd>\n'.join(
-            '<cmd name="akap"><parm>%s</parm></cmd>' % item for item in items)
+        ret = []
+        for dc_tag, new in [('subject.curriculum', False), ('subject.curriculum.new', True)]:
+            identifiers = self.get_dc(element, dc_tag)
+            if not identifiers:
+                continue
+            try:
+                from curriculum.templatetags.curriculum_tags import curriculum
+                curr_elements = curriculum(identifiers)
+            except ImportError:
+                curr_elements = {'identifiers': identifiers}
+            items = ['Nowa podstawa programowa:' if new else 'Podstawa programowa:']
+            newline = '<ctrl ch="\\"/>\n'
+            if 'currset' in curr_elements:
+                for (course, level), types in curr_elements['currset'].iteritems():
+                    label = u'klasa' if new else u'poziom edukacyjny'
+                    lines = [u'%s, %s %s' % (course, level, label)]
+                    for type, currs in types.iteritems():
+                        lines.append(type)
+                        lines += [curr.title for curr in currs]
+                    items.append(newline.join(lines))
+            else:
+                items += identifiers
+            ret.append('\n<cmd name="vspace"><parm>.6em</parm></cmd>\n'.join(
+                '<cmd name="akap"><parm>%s</parm></cmd>' % item for item in items))
+        return '\n<cmd name="vspace"><parm>1em</parm></cmd>\n'.join(ret)
 
     def handle_utwor(self, element):
         lines = [

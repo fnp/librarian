@@ -188,6 +188,7 @@ class WorkInfo(object):
 
         Field(DCNS('subject.competence'), 'competences', multiple=True, required=False),
         Field(DCNS('subject.curriculum'), 'curriculum', multiple=True, required=False),
+        Field(DCNS('subject.curriculum.new'), 'curriculum_new', multiple=True, required=False),
 
         Field(DCNS('language'), 'language'),
         Field(DCNS('description'), 'description', required=False),
