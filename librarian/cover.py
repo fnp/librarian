@@ -413,6 +413,11 @@ class WLCover(Cover):
         return img
 
 
+class WLNoBoxCover(WLCover):
+    def add_box(self, img):
+        return img
+
+
 class LogoWLCover(WLCover):
     gradient_height = 90
     gradient_logo_height = 60
