@@ -78,6 +78,7 @@ def substitute_hyphens(doc):
             DCNS("title"),
             DCNS("description"),
             DCNS("subject.curriculum"),
+            DCNS("subject.curriculum.new"),
             'www',
         ]
     )
@@ -92,6 +93,7 @@ def fix_hanging(doc):
             DCNS("title"),
             DCNS("description"),
             DCNS("subject.curriculum"),
+            DCNS("subject.curriculum.new"),
         ]
     )
 
