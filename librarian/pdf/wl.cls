@@ -12,6 +12,7 @@
 % a4paper,... - paper size as required by LaTeX
 % nowlfont - don't use customized WL font
 
+\RequirePackage{fixltx2e}
 \RequirePackage{setspace}
 \RequirePackage{type1cm}
 \DeclareOption{13pt}{%
