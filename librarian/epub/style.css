@@ -253,6 +253,12 @@ h2 + .paragraph:first-letter
     padding-bottom: 1.5em;
 }
 
+.dedication, .dedication .paragraph
+{
+    text-align: right;
+    font-style: italic;
+}
+
 .note
 {
     text-align: right;
@@ -264,12 +270,6 @@ h2 + .paragraph:first-letter
 .note .paragraph
 {
     text-align: justify;
-}
-
-.dedication, .dedication .paragraph
-{
-    text-align: right;
-    font-style: italic;
 }
 
 .frame
