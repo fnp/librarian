@@ -89,6 +89,7 @@
 </xsl:template>
 
 <xsl:template match="lista_osob">
+    <xsl:call-template name="section-anchor"/>
     <div class="person-list">
         <h3><xsl:value-of select="naglowek_listy" /></h3>
         <ol>
@@ -116,6 +117,7 @@
 </xsl:template>
 
 <xsl:template match="motto">
+    <xsl:call-template name="section-anchor"/>
     <div class="motto"><xsl:apply-templates /></div>
 </xsl:template>
 
@@ -260,10 +262,12 @@
 </xsl:template>
 
 <xsl:template match="motto_podpis">
+    <xsl:call-template name="section-anchor"/>
     <p class="motto_podpis"><xsl:apply-templates mode="inline" /></p>
 </xsl:template>
 
 <xsl:template match="tabela|tabelka">
+    <xsl:call-template name="section-anchor"/>
     <xsl:choose>
         <xsl:when test="@ramka = '1'">
             <table class="border"><xsl:apply-templates /></table>
