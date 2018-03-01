@@ -450,7 +450,9 @@ class BookInfo(WorkInfo):
         Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True, required=False),
         Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True, required=False),
         Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True, required=False),
-                
+
+        Field(DCNS('subject.location'), 'location', required=False),
+
         Field(DCNS('contributor.translator'), 'translators',
               as_person,  salias='translator', multiple=True, required=False),
         Field(DCNS('relation.hasPart'), 'parts', WLURI, strict=as_wluri_strict, multiple=True, required=False),
