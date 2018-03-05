@@ -142,14 +142,14 @@
   </xsl:template>
 
   <xsl:template match="naglowek_scena">
-    <a id="sub{@sub}" xmlns="http://www.w3.org/1999/xhtml"></a>
+    <a id="sub{@sub}" xmlns="http://www.w3.org/1999/xhtml"><xsl:comment/><!-- hack to keep closing tags --></a>
     <h2 class="h3" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
   </xsl:template>
 
   <xsl:template match="naglowek_podrozdzial">
-    <a id="sub{@sub}" xmlns="http://www.w3.org/1999/xhtml"></a>
+    <a id="sub{@sub}" xmlns="http://www.w3.org/1999/xhtml"><xsl:comment/><!-- same as above --></a>
     <h2 class="h4" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />
     </h2>
