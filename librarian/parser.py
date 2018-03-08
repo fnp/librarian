@@ -171,6 +171,10 @@ class WLDocument(object):
         from librarian import pyhtml as html
         return html.transform(self, *args, **kwargs)
 
+    def as_weasy(self, *args, **kwargs):
+        from librarian import weasy
+        return weasy.transform(self, *args, **kwargs)
+
     def as_text(self, *args, **kwargs):
         from librarian import text
         return text.transform(self, *args, **kwargs)
