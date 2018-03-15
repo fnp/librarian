@@ -46,7 +46,7 @@ class EduModule(Xmill):
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <title>Edukacja medialna</title>
-        <link href="weasy.css" rel="stylesheet" type="text/css">
+        <link href="pdf-style.css" rel="stylesheet" type="text/css">
         <meta charset="UTF-8">
     </head>
     <body id="body">        
@@ -617,17 +617,18 @@ class PrawdaFalsz(Exercise):
             return super(PrawdaFalsz, self).handle_punkt(element)
 
 
-class EduModuleWeasyFormat(Format):
+class EduModulePdfFromHtmlFormat(Format):
     PRIMARY_MATERIAL_FORMATS = ('pdf', 'odt')
 
     class MaterialNotFound(BaseException):
         pass
 
-    def __init__(self, wldoc, media_root='', save_html_to=None, **kwargs):
-        super(EduModuleWeasyFormat, self).__init__(wldoc, **kwargs)
+    def __init__(self, wldoc, media_root='', html_to_pdf_command=None, save_html_to=None, **kwargs):
+        super(EduModulePdfFromHtmlFormat, self).__init__(wldoc, **kwargs)
         self.media_root = media_root
         self.materials_by_slug = None
         self.attachments = {}
+        self.html_to_pdf_command = html_to_pdf_command
         self.save_html_to = save_html_to
 
     def get_html(self):
@@ -640,25 +641,25 @@ class EduModuleWeasyFormat(Format):
         })
         return edumod.generate(self.wldoc.edoc.getroot())
 
-    def get_weasy_dir(self):
+    def get_html_dir(self):
         html = self.get_html()
-        temp = mkdtemp('-weasy')
+        temp = mkdtemp('-pdf-from-html')
         # Save TeX file
         html_path = os.path.join(temp, 'doc.html')
         with open(html_path, 'w') as fout:
             fout.write(html.encode('utf-8'))
         # Copy style
-        weasy_dir = os.path.join(os.path.dirname(__file__), 'weasy')
-        for filename in os.listdir(weasy_dir):
-            shutil.copy(get_resource('weasy/%s' % filename), temp)
+        html_dir = os.path.join(os.path.dirname(__file__), 'pdf-from-html')
+        for filename in os.listdir(html_dir):
+            shutil.copy(get_resource('pdf-from-html/%s' % filename), temp)
         for name, path in self.attachments.items():
             shutil.copy(path, os.path.join(temp, name))
         return temp
 
     def get_pdf(self):
-        temp = self.get_weasy_dir()
+        temp = self.get_html_dir()
         if self.save_html_to:
-            save_path = os.path.join(self.save_html_to, 'weasy-html')
+            save_path = os.path.join(self.save_html_to, 'doc-html')
             shutil.rmtree(save_path, ignore_errors=True)
             shutil.copytree(temp, save_path)
         html_path = os.path.join(temp, 'doc.html')
@@ -669,9 +670,7 @@ class EduModuleWeasyFormat(Format):
             cwd = None
         os.chdir(temp)
 
-        WEASY_COMMAND = '/home/janek/Desktop/weasy-test/bin/weasyprint'
-
-        p = call([WEASY_COMMAND, html_path, pdf_path])
+        p = call([self.html_to_pdf_command, html_path, pdf_path])
         if p:
             raise ParseError("Error parsing .html file: %s" % html_path)
 
@@ -721,14 +720,3 @@ class EduModuleWeasyFormat(Format):
 
     def get_help_url(self, naglowek):
         return None
-
-
-def transform(wldoc, stylesheet='edumed', options=None, flags=None, verbose=None):
-    """Transforms the WL document to XHTML.
-
-    If output_filename is None, returns an XML,
-    otherwise returns True if file has been written,False if it hasn't.
-    File won't be written if it has no content.
-    """
-    edumodfor = EduModuleWeasyFormat(wldoc)
-    return edumodfor.build()
