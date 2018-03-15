@@ -623,11 +623,12 @@ class EduModuleWeasyFormat(Format):
     class MaterialNotFound(BaseException):
         pass
 
-    def __init__(self, wldoc, media_root='', **kwargs):
+    def __init__(self, wldoc, media_root='', save_html_to=None, **kwargs):
         super(EduModuleWeasyFormat, self).__init__(wldoc, **kwargs)
         self.media_root = media_root
         self.materials_by_slug = None
         self.attachments = {}
+        self.save_html_to = save_html_to
 
     def get_html(self):
         self.attachments = {}
@@ -656,6 +657,10 @@ class EduModuleWeasyFormat(Format):
 
     def get_pdf(self):
         temp = self.get_weasy_dir()
+        if self.save_html_to:
+            save_path = os.path.join(self.save_html_to, 'weasy-html')
+            shutil.rmtree(save_path, ignore_errors=True)
+            shutil.copytree(temp, save_path)
         html_path = os.path.join(temp, 'doc.html')
         pdf_path = os.path.join(temp, 'doc.pdf')
         try:
