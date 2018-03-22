@@ -118,26 +118,6 @@ class PdfFormat(Format):
         doc = etree.SubElement(t, TexmlNS('env'), name="document")
         doc.append(texml_cmd("thispagestyle", "empty"))
 
-        # title page
-        height_left = 297
-        cover_url = self.doc.meta.get_one(DCNS('relation.coverimage.url'))
-        if cover_url:
-            self.add_file(build_ctx, 'cover.png', cover_url, image=True)
-            
-            img = Image.open(self.get_file(build_ctx, 'cover.png'))
-            size = img.size
-
-            if size[1] > size[0]:
-                img = img.crop((0, 0, size[0], size[0]))
-                img.save(self.get_file(build_ctx, 'cover.png'), format=img.format, quality=90)
-            size = img.size
-
-            # TODO: hardcoded paper size here
-            height = 210.0 * size[1] / size[0]
-            doc.append(texml_cmd("makecover", "%fmm" % height))
-        else:
-            doc.append(texml_cmd("vfill*"))
-
         # Wielkości!
         grp = etree.SubElement(doc, 'group')
         grp.append(texml_cmd("raggedright"))
@@ -157,8 +137,6 @@ class PdfFormat(Format):
             p[0].append(texml_cmd("noindent"))
             p[0].append(texml_cmd("nohyphens", title))
             # p[0][-1].tail = title
-        doc.append(texml_cmd("vfill"))
-        doc.append(texml_cmd("vfill"))
 
         # IOFile probably would be better
         cover_logo_url = getattr(build_ctx, 'cover_logo', None)
@@ -171,24 +149,19 @@ class PdfFormat(Format):
             p = texml_cmd("par", "")
             doc.append(p)
             p[0].append(texml_cmd("noindent"))
-            p[0].append(texml_cmd("insertimage", 'coverlogo.png', "%fcm" % (1.0 * size[0] / size[1]), "1cm"))
-            
-        # logo organizacji!
-        doc.append(texml_cmd("clearpage"))
+            p[0].append(texml_cmd("insertimage", 'coverlogo.png', "%fcm" % (2.0 * size[0] / size[1]), "2cm"))
+        doc.append(texml_cmd("vspace", "2em"))
 
         ctx = Context(build_ctx, format=self, img=1)
         doc.extend(self.render(self.doc.edoc.getroot(), ctx))
 
         # Redakcyjna na końcu.
-        doc.append(texml_cmd("clearpage"))
-
         doc.append(texml_cmd("section*", "Information about the resource"))
         doc.append(texml_cmd("vspace", "1em"))
 
         for m, f, multiple in (
                 ('Publisher: ', DCNS('publisher'), False),
                 ('Rights: ', DCNS('rights'), False),
-                ('Intended audience: ', DCNS('audience'), True),
                 ('', DCNS('description'), False)):
             if multiple:
                 v = ', '.join(self.doc.meta.get(f))

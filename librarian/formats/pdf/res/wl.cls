@@ -71,6 +71,7 @@
 \usepackage{fontspec}
 \usepackage{xunicode}
 \usepackage{xltxtra}
+\usepackage[Latin,Greek]{ucharclasses}
 
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
@@ -78,25 +79,27 @@
 \usepackage[hyphens]{url}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=blue,xetex]{hyperref}
 
+\newfontfamily\substitutefont{GFS Neohellenic}
+\setTransitionsForGreek{\begingroup\substitutefont}{\endgroup}
+
 \ifenablewlfont
 \setmainfont [
-%ExternalLocation,
-%UprightFont = Dosis-Regular,
-UprightFont = JunicodeWL-Regular,
-%ItalicFont = Dosis-SemiBold,
-%BoldFont = Dosis-Bold,
-%BoldItalicFont = Dosis-Bold,
-%SmallCapsFont = Dosis-Regular,
-ItalicFont = JunicodeWL-Italic,
-BoldFont = Junicode-Bold,
-%BoldFont = Junicode-Italic,
-BoldItalicFont = Junicode-BoldItalic,
-SmallCapsFont = JunicodeWL-Regular,
+ExternalLocation,
+UprightFont = Dosis-Regular,
+ItalicFont = Dosis-SemiBold,
+BoldFont = Dosis-Bold,
+BoldItalicFont = Dosis-Bold,
+SmallCapsFont = Dosis-Regular,
+%UprightFont = JunicodeWL-Regular,
+%ItalicFont = JunicodeWL-Italic,
+%BoldFont = Junicode-Bold,
+%BoldItalicFont = Junicode-BoldItalic,
+%SmallCapsFont = JunicodeWL-Regular,
 SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
 Numbers=OldStyle,
 Scale=1.04,
 LetterSpace=-1.0
-] {Junicode}
+] {Dosis}
 
 %\newfontfamily\alien[
 %\setmainfont[
@@ -156,6 +159,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \setlength{\headsep}{0pt}
 \setlength{\textheight}{24cm}
 \setlength{\textwidth}{16cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em plus0.4em minus0.3em}
 
 
 \pagestyle{fancy}
