@@ -506,7 +506,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\naglowekosoba}[1]{%
-\par{\textsc{#1}}\nopagebreak%
+\par{\textsc{\MakeLowercase{#1}}}\nopagebreak%
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
 \vspace{5ex}\par{#1}\nopagebreak%
