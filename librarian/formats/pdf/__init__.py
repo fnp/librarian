@@ -114,6 +114,7 @@ class PdfFormat(Format):
         title = self.doc.meta.title()
         t.append(texml_cmd("author", author))
         t.append(texml_cmd("title", title))
+        t.append(texml_cmd("organization", build_ctx.organization))
 
         doc = etree.SubElement(t, TexmlNS('env'), name="document")
 

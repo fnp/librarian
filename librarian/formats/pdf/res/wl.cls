@@ -167,7 +167,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\lfoot{{\footnotesize \@author{} \emph{\@title}}}
+\lfoot{{\footnotesize \@organization}} %\@author{} \emph{\@title}}}
 \cfoot{}
 \rfoot{{\footnotesize \thepage}}
 
