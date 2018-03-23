@@ -116,10 +116,11 @@ class PdfFormat(Format):
         t.append(texml_cmd("title", title))
 
         doc = etree.SubElement(t, TexmlNS('env'), name="document")
-        doc.append(texml_cmd("thispagestyle", "empty"))
 
         # Wielkości!
-        grp = etree.SubElement(doc, 'group')
+        title_field = texml_cmd("titlefield", "")
+        doc.append(title_field)
+        grp = title_field[0]
         grp.append(texml_cmd("raggedright"))
         grp.append(texml_cmd("vfill"))
         if author:
@@ -146,14 +147,14 @@ class PdfFormat(Format):
         if cover_logo_url:
             self.add_file(build_ctx, 'coverlogo.png', cover_logo_url, image=True)
             size = Image.open(self.get_file(build_ctx, 'coverlogo.png')).size
-            p = texml_cmd("par", "")
-            doc.append(p)
-            p[0].append(texml_cmd("noindent"))
-            p[0].append(texml_cmd("insertimage", 'coverlogo.png', "%fcm" % (2.0 * size[0] / size[1]), "2cm"))
+            doc.append(texml_cmd("toplogo", 'coverlogo.png', "%fcm" % (2.0 * size[0] / size[1]), "2cm"))
+
         doc.append(texml_cmd("vspace", "2em"))
 
         ctx = Context(build_ctx, format=self, img=1)
-        doc.extend(self.render(self.doc.edoc.getroot(), ctx))
+        root = self.doc.edoc.getroot()
+        root.remove(root[1])
+        doc.extend(self.render(root, ctx))
 
         # Redakcyjna na końcu.
         doc.append(texml_cmd("section*", "Information about the resource"))
