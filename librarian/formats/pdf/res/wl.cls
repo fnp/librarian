@@ -84,7 +84,6 @@
 
 \ifenablewlfont
 \setmainfont [
-ExternalLocation,
 UprightFont = Dosis-Regular,
 ItalicFont = Dosis-SemiBold,
 BoldFont = Dosis-Bold,
@@ -441,6 +440,6 @@ Letters={Uppercase}
 \newcommand{\toplogo}[3]{%
 \begin{minipage}[t]{.3\textwidth}%
 \raggedleft%
-\vspace{0pt}{\includegraphics[height=#2,width=#3]{#1}}%
+\vspace{0pt}{\includegraphics[width=#3]{#1}}%
 \end{minipage}%
 }
