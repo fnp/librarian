@@ -32,6 +32,17 @@ def html_has_content(text):
     return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)
 
 
+def transform_abstrakt(abstrakt_element):
+    from cStringIO import StringIO
+    style_filename = get_stylesheet('legacy')
+    style = etree.parse(style_filename)
+    xml = etree.tostring(abstrakt_element)
+    document = etree.parse(StringIO(xml.replace('abstrakt', 'dlugi_cytat')))  # HACK
+    result = document.xslt(style)
+    html = re.sub('<a name="sec[0-9]*"/>', '', etree.tostring(result))
+    return re.sub('</?blockquote[^>]*>', '', html)
+
+
 def transform(wldoc, stylesheet='legacy', options=None, flags=None):
     """Transforms the WL document to XHTML.
 
