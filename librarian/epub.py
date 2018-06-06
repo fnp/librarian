@@ -201,10 +201,10 @@ class Stanza(object):
         if not text:
             return
         for i, verse_text in enumerate(re.split(r"/\s*\n", text)):
-            if not verse_text.strip():
-                continue
             if i:
                 self.open_normal_verse()
+            if not verse_text.strip():
+                continue
             verse = self.get_open_verse()
             if len(verse):
                 verse[-1].tail = (verse[-1].tail or "") + verse_text
