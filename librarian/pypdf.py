@@ -135,8 +135,7 @@ class EduModule(Xmill):
             newline = '<ctrl ch="\\"/>\n'
             if 'currset' in curr_elements:
                 for (course, level), types in curr_elements['currset'].iteritems():
-                    label = u'klasa' if new else u'poziom edukacyjny'
-                    lines = [u'%s, %s %s' % (course, level, label)]
+                    lines = [u'%s, %s' % (course, level)]
                     for type, currs in types.iteritems():
                         lines.append(type)
                         lines += [curr.title for curr in currs]
