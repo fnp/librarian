@@ -131,7 +131,7 @@ class EduModule(Xmill):
                 curr_elements = curriculum(identifiers)
             except ImportError:
                 curr_elements = {'identifiers': identifiers}
-            items = ['Podstawa programowa 2017:' if new else 'Podstawa programowa:']
+            items = ['Nowa podstawa programowa:' if new else 'Podstawa programowa:']
             newline = '<ctrl ch="\\"/>\n'
             if 'currset' in curr_elements:
                 for (course, level), types in curr_elements['currset'].iteritems():
