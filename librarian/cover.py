@@ -554,9 +554,20 @@ class KMLUCover(LogoWLCover):
     ]
 
 
+class MPWCover(LogoWLCover):
+    gradient_logo_height = 58
+    gradient_logo_spacing = 25
+    gradient_logos = [
+        'res/mpw-logo-white.png',
+        'res/wl-logo-white.png',
+        'res/fnp-logo-white.png',
+    ]
+
+
 COVER_CLASSES = {
     'default': LogoWLCover,
     'kmlu': KMLUCover,
+    'mpw': MPWCover,
 }
 
 
