@@ -506,6 +506,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\naglowekosoba}[1]{%
+\medskip%
 \par{\textsc{\MakeLowercase{#1}}}\nopagebreak%
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
