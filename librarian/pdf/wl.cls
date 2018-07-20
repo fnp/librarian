@@ -479,7 +479,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\listaosoba}[1]{%
-\item{#1}%
+\item[]{#1}%
 }
 
 \newcommand{\kwestia}[1]{%
@@ -610,7 +610,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\osoba}[1]{%
-#1%
+{\textsc{#1}}%
 }
 
 \newcommand{\sekcjaswiatlo}{%
