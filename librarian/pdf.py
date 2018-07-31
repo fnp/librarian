@@ -26,7 +26,7 @@ from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
-from librarian import ParseError, DCNS, get_resource, OutputFile
+from librarian import ParseError, DCNS, get_resource, OutputFile, RDFNS
 from librarian import functions
 from librarian.cover import make_cover
 from .sponsor import sponsor_logo
@@ -108,6 +108,18 @@ def fix_tables(doc):
             table.set('_format', '|' + 'X|' * len(table[0]))
         else:
             table.set('_format', 'X' * len(table[0]))
+
+
+def mark_subauthors(doc):
+    root_author = ', '.join(elem.text for elem in doc.findall('./' + RDFNS('RDF') + '//' + DCNS('creator_parsed')))
+    last_author = None
+    # jeśli autor jest inny niż autor całości i niż poprzedni autor
+    # to wstawiamy jakiś znacznik w rdf?
+    for subutwor in doc.xpath('/utwor/utwor'):
+        author = ', '.join(elem.text for elem in subutwor.findall('.//' + DCNS('creator_parsed')))
+        if author not in (last_author, root_author):
+            subutwor.find('.//' + RDFNS('RDF')).append(etree.Element('use_subauthor'))
+        last_author = author
 
 
 def move_motifs_inside(doc):
@@ -260,6 +272,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         substitute_hyphens(document.edoc)
         fix_hanging(document.edoc)
         fix_tables(document.edoc)
+        mark_subauthors(document.edoc)
 
         # wl -> TeXML
         style_filename = get_stylesheet("wl2tex")
@@ -315,8 +328,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         os.chdir(temp)
 
         # some things work better when compiled twice
-        # but they are not enabled now (line numbers)
-        for run in xrange(1):
+        # (table of contents, [line numbers - disabled])
+        for run in xrange(2):
             if verbose:
                 p = call(['xelatex', tex_path])
             else:

@@ -89,6 +89,16 @@
                 </xsl:otherwise>
               </xsl:choose>
             </parm></cmd>
+            <xsl:if test="//utwor//utwor or //naglowek_czesc or //naglowek_akt or //srodtytul or //naglowek_scena or //naglowek_rozdzial">
+                <cmd name="ifshowtoc" />
+                <cmd name="setcounter" >
+                    <parm>tocdepth</parm>
+                    <parm>3</parm>
+                </cmd>
+                <cmd name="tableofcontents" />
+                <cmd name="clearpage" />
+                <cmd name="fi" />
+            </xsl:if>
             <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
             <xsl:apply-templates select="utwor" mode="part" />
 
@@ -141,7 +151,7 @@
       <xsl:choose>
         <xsl:when test="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu">
             <!-- title in master -->
-            <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu" mode="title" />
+            <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/nazwa_utworu" mode="part_title" />
             <xsl:apply-templates select="(powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny)/podtytul" mode="title" />
         </xsl:when>
         <xsl:otherwise>
@@ -221,6 +231,9 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="dctitle">
+    <cmd name="autorpodutworu">
+        <parm><xsl:call-template name="authors" /></parm>
+    </cmd>
     <cmd name="nazwapodutworu"><parm>
         <xsl:apply-templates select=".//dc:title/node()" mode="inline" />
     </parm></cmd>
@@ -295,14 +308,55 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="nazwa_utworu" mode="part_title">
+    <xsl:if test="../../rdf:RDF//use_subauthor">
+        <cmd name="autorpodutworu"><parm><xsl:call-template name="authors2"/></parm></cmd>
+    </xsl:if>
+    <cmd name="nazwapodutworu">
+        <parm><xsl:apply-templates mode="inline"/></parm>
+        <parm>
+            <xsl:for-each select="./text() | nbsp | dywiz | alien">
+                <xsl:choose>
+                    <xsl:when test="name() = 'nbsp'">
+                        <xsl:text> </xsl:text>
+                    </xsl:when>
+                    <xsl:when test="name() = 'dywiz'">
+                        <xsl:text>-</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="name() = 'alien'">
+                        <xsl:apply-templates mode="inline" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="."/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+        </parm>
+    </cmd>
+</xsl:template>
+
 
 <xsl:template
-    match="naglowek_akt|naglowek_czesc|srodtytul|naglowek_osoba|naglowek_podrozdzial|naglowek_scena|naglowek_rozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy">
+    match="naglowek_osoba|naglowek_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_diafrlog|akap_cd|motto_podpis|naglowek_listy|srodtytul">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
         </xsl:attribute>
         <parm><xsl:apply-templates mode="inline"/></parm>
+    </cmd>
+</xsl:template>
+
+<xsl:template match="naglowek_czesc|naglowek_rozdzial|naglowek_akt|naglowek_scena">
+    <cmd>
+        <xsl:attribute name="name">
+            <xsl:value-of select="wl:texcommand(name())" />
+        </xsl:attribute>
+        <parm><xsl:apply-templates mode="inline"/></parm>
+        <parm>
+            <xsl:for-each select="./text()">
+                <xsl:value-of select="."/>
+            </xsl:for-each>
+        </parm>
     </cmd>
 </xsl:template>
 
@@ -427,6 +481,13 @@
 
 <xsl:template name="authors">
     <xsl:for-each select=".//dc:creator_parsed">
+        <xsl:if test="position() != 1">, </xsl:if>
+        <xsl:apply-templates mode="inline" />
+    </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="authors2">
+    <xsl:for-each select="../..//dc:creator_parsed">
         <xsl:if test="position() != 1">, </xsl:if>
         <xsl:apply-templates mode="inline" />
     </xsl:for-each>

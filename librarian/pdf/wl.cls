@@ -60,6 +60,9 @@
 \newif\ifenablewlfont \enablewlfonttrue
 \DeclareOption{nowlfont}{\enablewlfontfalse}
 
+\newif\ifshowtoc \showtoctrue
+\DeclareOption{notoc}{\showtocfalse}
+
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 \LoadClass[a4paper,oneside]{book}
@@ -332,17 +335,34 @@ Letters={Uppercase}
 }
 
 
+\DeclareRobustCommand\authortoctext[1]{%
+{\addvspace{10pt}\nopagebreak\leftskip0em\relax
+\rightskip \@tocrmarg\relax
+\noindent\itshape#1\par}}
+
+\newcommand\authortoc[1]{%
+  \gdef\chapterauthor{#1}%
+  \addtocontents{toc}{\authortoctext{#1}}}
+
+
 \newcommand{\tytul}[1]{%
 #1%
 \vspace{1em}%
 }
 
-\newcommand{\nazwapodutworu}[1]{%
+\newcommand{\nazwapodutworu}[2]{%
+\vspace{10ex}%
 \section*{\typosection{#1}}%
+\addcontentsline{toc}{section}{#2}%
 }
 
 \newcommand{\autorutworu}[1]{%
 \subsection*{\typosubsection{#1}}%
+}
+
+\newcommand{\autorpodutworu}[1]{%
+\subsection*{\typosubsection{#1}}%
+\authortoc{#1}%
 }
 
 \newcommand{\dzielonadrzedne}[1]{%
@@ -350,6 +370,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\nazwautworu}[1]{%
+\vspace{10ex}%
 \section*{\typosection{#1}}%
 }
 
@@ -371,7 +392,8 @@ Letters={Uppercase}
 \newcommand{\dramatwspolczesny}[1]{#1}
 
 \newcommand{\nota}[1]{%
-\par{#1}%
+\par{\raggedleft \emph{#1}}%
+\vspace{10ex}%
 }
 
 \newcommand{\dedykacja}[1]{%
@@ -486,23 +508,31 @@ Letters={Uppercase}
 \par{#1}%
 }
 
-\newcommand{\naglowekakt}[1]{%
+\newcommand{\naglowekakt}[2]{%
 \pagebreak
-\subsection*{\typosubsection{#1}}%
+\subsection*{\typosubsection{\huge #1}}%
+\addcontentsline{toc}{subsection}{#2}%
+\vspace{10ex}%
 }
-\newcommand{\naglowekczesc}[1]{%
+\newcommand{\naglowekczesc}[2]{%
 \pagebreak
-\subsection*{\typosubsection{#1}}%
+\subsection*{\typosubsection{\huge #1}}%
+\addcontentsline{toc}{subsection}{#2}%
+\vspace{10ex}%
 }
 \newcommand{\srodtytul}[1]{%
 \subsection*{\typosubsection{#1}}%
 }
 
-\newcommand{\naglowekscena}[1]{%
-\subsubsection*{\typosubsubsection{#1}}%
+\newcommand{\naglowekscena}[2]{%
+\subsubsection*{\typosubsubsection{\LARGE #1}}%
+\addcontentsline{toc}{subsubsection}{#2}%
+\vspace{5ex}%
 }
-\newcommand{\naglowekrozdzial}[1]{%
-\subsubsection*{\typosubsubsection{#1}}%
+\newcommand{\naglowekrozdzial}[2]{%
+\subsubsection*{\typosubsubsection{\LARGE #1}}%
+\addcontentsline{toc}{subsubsection}{#2}%
+\vspace{5ex}%
 }
 
 \newcommand{\naglowekosoba}[1]{%
@@ -611,7 +641,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\osoba}[1]{%
-{\textsc{#1}}%
+{\scshape \MakeLowercase{#1}}%
 }
 
 \newcommand{\sekcjaswiatlo}{%
