@@ -351,7 +351,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\nazwapodutworu}[2]{%
-\vspace{10ex}%
+\vspace{5ex}%
 \section*{\typosection{#1}}%
 \addcontentsline{toc}{section}{#2}%
 }
@@ -361,6 +361,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\autorpodutworu}[1]{%
+\vspace{5ex}%
 \subsection*{\typosubsection{#1}}%
 \authortoc{#1}%
 }
@@ -370,7 +371,7 @@ Letters={Uppercase}
 }
 
 \newcommand{\nazwautworu}[1]{%
-\vspace{10ex}%
+\vspace{5ex}%
 \section*{\typosection{#1}}%
 }
 
@@ -393,7 +394,7 @@ Letters={Uppercase}
 
 \newcommand{\nota}[1]{%
 \par{\raggedleft \emph{#1}}%
-\vspace{10ex}%
+\vspace{5ex}%
 }
 
 \newcommand{\dedykacja}[1]{%
@@ -512,13 +513,13 @@ Letters={Uppercase}
 \pagebreak
 \subsection*{\typosubsection{\huge #1}}%
 \addcontentsline{toc}{subsection}{#2}%
-\vspace{10ex}%
+\vspace{5ex}%
 }
 \newcommand{\naglowekczesc}[2]{%
 \pagebreak
 \subsection*{\typosubsection{\huge #1}}%
 \addcontentsline{toc}{subsection}{#2}%
-\vspace{10ex}%
+\vspace{5ex}%
 }
 \newcommand{\srodtytul}[1]{%
 \subsection*{\typosubsection{#1}}%
