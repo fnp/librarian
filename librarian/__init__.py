@@ -84,7 +84,7 @@ class WLURI(object):
     slug = None
 
     example = 'http://wolnelektury.pl/katalog/lektura/template/'
-    _re_wl_uri = re.compile(r'http://(www\.)?wolnelektury.pl/katalog/lektura/'
+    _re_wl_uri = re.compile(r'http://(www\.)?wolnelektury.pl/katalog/lektur[ay]/'
             '(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):
