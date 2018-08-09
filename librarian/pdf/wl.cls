@@ -38,6 +38,29 @@
 }%
 }%
 }
+\DeclareOption{16pt}{%
+\AtEndOfClass{%
+% font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
+\renewcommand\normalsize{%
+   \@setfontsize\normalsize{16pt}{18pt}%
+   \abovedisplayskip 15\p@ \@plus3\p@ \@minus7\p@
+   \abovedisplayshortskip \z@ \@plus3.5\p@
+   \belowdisplayshortskip 8\p@ \@plus4\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}\normalsize%
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize\@xpt\@xiipt
+   \abovedisplayskip 12\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3.5\p@
+   \belowdisplayshortskip 7\p@ \@plus3.5\p@ \@minus3\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 7\p@ \@plus2.5\p@ \@minus2.5\p@
+               \parsep 3.5\p@ \@plus2.5\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}%
+}%
+}
 
 %% \DeclareOption{14pt}{\renewcommand{\normalsize}{\AtEndOfClass{\fontsize{14}{17}\selectfont}}}
 
