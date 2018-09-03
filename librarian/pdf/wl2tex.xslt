@@ -315,7 +315,7 @@
     <cmd name="nazwapodutworu">
         <parm><xsl:apply-templates mode="inline"/></parm>
         <parm>
-            <xsl:for-each select="./text() | nbsp | dywiz | alien">
+            <xsl:for-each select="./text() | nbsp | dywiz | alien | slowo_obce">
                 <xsl:choose>
                     <xsl:when test="name() = 'nbsp'">
                         <xsl:text> </xsl:text>
@@ -323,7 +323,7 @@
                     <xsl:when test="name() = 'dywiz'">
                         <xsl:text>-</xsl:text>
                     </xsl:when>
-                    <xsl:when test="name() = 'alien'">
+                    <xsl:when test="name() = 'alien' or name() = 'slowo_obce'">
                         <xsl:apply-templates mode="inline" />
                     </xsl:when>
                     <xsl:otherwise>
@@ -354,7 +354,7 @@
         <parm><xsl:apply-templates mode="inline"/></parm>
         <parm>
             <!-- osobny szablon? -->
-            <xsl:for-each select="./text() | nbsp | dywiz | alien">
+            <xsl:for-each select="./text() | nbsp | dywiz | alien | slowo_obce">
                 <xsl:choose>
                     <xsl:when test="name() = 'nbsp'">
                         <xsl:text> </xsl:text>
@@ -362,7 +362,7 @@
                     <xsl:when test="name() = 'dywiz'">
                         <xsl:text>-</xsl:text>
                     </xsl:when>
-                    <xsl:when test="name() = 'alien'">
+                    <xsl:when test="name() = 'alien' or name() = 'slowo_obce'">
                         <xsl:apply-templates mode="inline" />
                     </xsl:when>
                     <xsl:otherwise>
