@@ -353,8 +353,22 @@
         </xsl:attribute>
         <parm><xsl:apply-templates mode="inline"/></parm>
         <parm>
-            <xsl:for-each select="./text()">
-                <xsl:value-of select="."/>
+            <!-- osobny szablon? -->
+            <xsl:for-each select="./text() | nbsp | dywiz | alien">
+                <xsl:choose>
+                    <xsl:when test="name() = 'nbsp'">
+                        <xsl:text> </xsl:text>
+                    </xsl:when>
+                    <xsl:when test="name() = 'dywiz'">
+                        <xsl:text>-</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="name() = 'alien'">
+                        <xsl:apply-templates mode="inline" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="."/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:for-each>
         </parm>
     </cmd>
