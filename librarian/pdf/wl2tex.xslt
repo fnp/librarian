@@ -362,8 +362,13 @@
                     <xsl:when test="name() = 'dywiz'">
                         <xsl:text>-</xsl:text>
                     </xsl:when>
-                    <xsl:when test="name() = 'alien' or name() = 'slowo_obce'">
+                    <xsl:when test="name() = 'alien'">
                         <xsl:apply-templates mode="inline" />
+                    </xsl:when>
+                    <xsl:when test="name() = 'slowo_obce'">
+                        <cmd name="slowoobce">
+                            <parm><xsl:value-of select="text()"/></parm>
+                        </cmd>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="."/>
