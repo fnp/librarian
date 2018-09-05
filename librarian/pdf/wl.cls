@@ -356,6 +356,12 @@ Letters={Uppercase}
 \addcontentsline{toc}{section}{#2}%
 }
 
+\newcommand{\nazwanadpodutworu}[2]{%
+\authortoc{}%
+\nazwapodutworu{#1}{#2}%
+\authortoc{}%
+}
+
 \newcommand{\autorutworu}[1]{%
 \subsection*{\typosubsection{#1}}%
 }

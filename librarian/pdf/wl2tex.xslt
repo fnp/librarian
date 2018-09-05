@@ -231,10 +231,15 @@
 </xsl:template>
 
 <xsl:template match="rdf:RDF" mode="dctitle">
-    <cmd name="autorpodutworu">
-        <parm><xsl:call-template name="authors" /></parm>
-    </cmd>
-    <cmd name="nazwapodutworu"><parm>
+    <xsl:if test="../../rdf:RDF//use_subauthor">
+        <cmd name="autorpodutworu">
+            <parm><xsl:call-template name="authors" /></parm>
+        </cmd>
+    </xsl:if>
+    <cmd name="nazwanadpodutworu"><parm>
+        <xsl:apply-templates select=".//dc:title/node()" mode="inline" />
+    </parm>
+    <parm>
         <xsl:apply-templates select=".//dc:title/node()" mode="inline" />
     </parm></cmd>
 </xsl:template>
