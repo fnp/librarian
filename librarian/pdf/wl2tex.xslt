@@ -320,22 +320,7 @@
     <cmd name="nazwapodutworu">
         <parm><xsl:apply-templates mode="inline"/></parm>
         <parm>
-            <xsl:for-each select="./text() | nbsp | dywiz | alien | slowo_obce">
-                <xsl:choose>
-                    <xsl:when test="name() = 'nbsp'">
-                        <xsl:text> </xsl:text>
-                    </xsl:when>
-                    <xsl:when test="name() = 'dywiz'">
-                        <xsl:text>-</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="name() = 'alien' or name() = 'slowo_obce'">
-                        <xsl:apply-templates mode="inline" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="."/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:for-each>
+            <xsl:call-template name="strip-for-toc" />
         </parm>
     </cmd>
 </xsl:template>
@@ -358,28 +343,7 @@
         </xsl:attribute>
         <parm><xsl:apply-templates mode="inline"/></parm>
         <parm>
-            <!-- osobny szablon? -->
-            <xsl:for-each select="./text() | nbsp | dywiz | alien | slowo_obce">
-                <xsl:choose>
-                    <xsl:when test="name() = 'nbsp'">
-                        <xsl:text> </xsl:text>
-                    </xsl:when>
-                    <xsl:when test="name() = 'dywiz'">
-                        <xsl:text>-</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="name() = 'alien'">
-                        <xsl:apply-templates mode="inline" />
-                    </xsl:when>
-                    <xsl:when test="name() = 'slowo_obce'">
-                        <cmd name="slowoobce">
-                            <parm><xsl:value-of select="text()"/></parm>
-                        </cmd>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="."/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:for-each>
+            <xsl:call-template name="strip-for-toc" />
         </parm>
     </cmd>
 </xsl:template>
@@ -534,6 +498,28 @@
             </xsl:for-each>
         </parm></cmd>
     </xsl:if>
+</xsl:template>
+
+<xsl:template name="strip-for-toc">
+    <xsl:for-each select="./text() | nbsp | dywiz | alien | slowo_obce">
+        <xsl:choose>
+            <xsl:when test="name() = 'nbsp'">
+                <xsl:text> </xsl:text>
+            </xsl:when>
+            <xsl:when test="name() = 'dywiz'">
+                <xsl:text>-</xsl:text>
+            </xsl:when>
+            <xsl:when test="name() = 'alien'">
+                <xsl:apply-templates mode="inline" />
+            </xsl:when>
+            <xsl:when test="name() = 'slowo_obce'">
+                <xsl:call-template name="strip-for-toc" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:for-each>
 </xsl:template>
 
 <xsl:template match="data-sponsor" mode="sponsor">
