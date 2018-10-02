@@ -564,13 +564,28 @@ class MPWCover(LogoWLCover):
     ]
 
 
+class AtriumCover(LogoWLCover):
+    gradient_logo_height = 58
+    gradient_logo_spacing = 25
+    gradient_logos = [
+        'res/atrium-logo.png',
+        'res/wl-logo-white.png',
+        'res/fnp-logo-white.png',
+    ]
+
+
 COVER_CLASSES = {
     'default': LogoWLCover,
     'kmlu': KMLUCover,
     'mpw': MPWCover,
+    'atrium': AtriumCover,
 }
 
 
 def make_cover(book_info, *args, **kwargs):
-    cover_class = COVER_CLASSES[book_info.cover_class]
+    if 'cover_class' in kwargs:
+        cover_class_name = kwargs.pop('cover_class')
+    else:
+        cover_class_name = book_info.cover_class
+    cover_class = COVER_CLASSES[cover_class_name]
     return cover_class(book_info, *args, **kwargs)
