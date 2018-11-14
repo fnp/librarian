@@ -218,8 +218,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \color{theme}
 
     \noindent \begin{minipage}[t]{.65\textwidth}\vspace{0pt}
-        \href{http://prawokultury.pl}{\xbox{\includegraphics[width=1.5in]{prawokultury-logo.png}}}
-        %\href{http://koed.org.pl}{\xbox{\includegraphics[height=.55in]{koed-logo.eps}}}
+        %\href{http://prawokultury.pl}{\xbox{\includegraphics[width=1.5in]{prawokultury-logo.png}}}
+        \href{http://koed.org.pl}{\xbox{\includegraphics[height=.55in]{koed-logo.eps}}}
     \end{minipage}
     \noindent \begin{minipage}[t]{.35\textwidth}\vspace{0pt}
         \raggedright
