@@ -401,6 +401,13 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="link" mode="inline">
+    <cmd name="href">
+        <parm><xsl:value-of select="wl:urlquote(@url)" /></parm>
+        <parm><xsl:apply-templates mode="inline"/></parm>
+    </cmd>
+</xsl:template>
+
 
 
 <xsl:template match="tytul_dziela" mode="inline">

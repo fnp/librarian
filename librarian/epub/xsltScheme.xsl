@@ -286,6 +286,13 @@
     </li>
   </xsl:template>
 
+  <xsl:template match="link" >
+    <a>
+      <xsl:attribute name="href"><xsl:value-of select="@src"/></xsl:attribute>
+      <xsl:apply-templates />
+    </a>
+  </xsl:template>
+
   <!--===========================================================-->
   <!-- Tagi STANDALONE -->
   <!--===========================================================-->

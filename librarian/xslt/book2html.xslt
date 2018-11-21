@@ -705,6 +705,15 @@
     </a>
 </xsl:template>
 
+<xsl:template match="link" mode="inline">
+    <a>
+        <xsl:attribute name="href">
+            <xsl:value-of select="@url"/>
+        </xsl:attribute>
+        <xsl:value-of select="text()"/>
+    </a>
+</xsl:template>
+
 <!-- ============================================== -->
 <!-- = STANDALONE TAGS                            = -->
 <!-- = (cannot contain any other tags)            = -->

@@ -34,6 +34,12 @@
 			<xsl:apply-templates mode="inline"/>
 		</strong>
 	</xsl:template>
+	<xsl:template match="link" >
+		<a l:type="simple">
+			<xsl:attribute name="l:href"><xsl:value-of select="@src"/></xsl:attribute>
+			<xsl:apply-templates />
+		</a>
+	</xsl:template>
 
 	<!-- text -->
 	<xsl:template match="text()" mode="inline">
