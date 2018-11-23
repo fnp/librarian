@@ -676,12 +676,13 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                               ''.join(chars).encode('utf-8'),
                               get_resource('fonts/' + fname),
                               os.path.join(tmpdir, fname)]
+            env = {"PERL_USE_UNSAFE_INC": "1"}
             if verbose:
                 print "Running font-optimizer"
-                subprocess.check_call(optimizer_call)
+                subprocess.check_call(optimizer_call, env=env)
             else:
                 dev_null = open(os.devnull, 'w')
-                subprocess.check_call(optimizer_call, stdout=dev_null, stderr=dev_null)
+                subprocess.check_call(optimizer_call, stdout=dev_null, stderr=dev_null, env=env)
             zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
             manifest.append(etree.fromstring(
                 '<item id="%s" href="%s" media-type="application/x-font-truetype" />' % (fname, fname)))
