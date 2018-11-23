@@ -462,6 +462,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                     doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"' +
                             ' "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
                 )
+                html_string = re.sub(ur'([^\r])\n', ur'\1\r\n', html_string)
             zip.writestr('OPS/part%d.html' % chunk_counter, html_string)
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
