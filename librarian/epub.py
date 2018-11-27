@@ -29,6 +29,10 @@ functions.reg_person_name()
 functions.reg_lang_code_3to2()
 
 
+def squeeze_whitespace(s):
+    return re.sub(r'\s+', ' ', s)
+
+
 def set_hyph_language(source_tree):
     def get_short_lng_code(text):
         result = ''
@@ -437,15 +441,13 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
             # write book title page
             html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'), outputtype=output_type)
             chars = used_chars(html_tree.getroot())
-            zip.writestr(
-                'OPS/title.html',
-                etree.tostring(
-                    html_tree, pretty_print=True, xml_declaration=True,
-                    encoding="utf-8",
-                    doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"' +
-                            ' "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
-                )
+            html_string = etree.tostring(
+                html_tree, pretty_print=True, xml_declaration=True,
+                encoding="utf-8",
+                doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"' +
+                        ' "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
             )
+            zip.writestr('OPS/title.html', squeeze_whitespace(html_string))
             # add a title page TOC entry
             toc.add(u"Strona tytułowa", "title.html")
         elif wldoc.book_info.parts:
@@ -462,8 +464,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                     doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"' +
                             ' "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
                 )
-                html_string = re.sub(ur'([^\r])\n', ur'\1\r\n', html_string)
-            zip.writestr('OPS/part%d.html' % chunk_counter, html_string)
+            zip.writestr('OPS/part%d.html' % chunk_counter, squeeze_whitespace(html_string))
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
             chunk_counter += 1
@@ -489,7 +490,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
 
                 toc.extend(chunk_toc)
                 chars = chars.union(chunk_chars)
-                zip.writestr('OPS/part%d.html' % chunk_counter, chunk_html)
+                zip.writestr('OPS/part%d.html' % chunk_counter, squeeze_whitespace(chunk_html))
                 add_to_manifest(manifest, chunk_counter)
                 add_to_spine(spine, chunk_counter)
                 chunk_counter += 1
@@ -646,7 +647,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         '<itemref idref="support" />'))
     html_string = open(get_resource('epub/support.html')).read()
     chars.update(used_chars(etree.fromstring(html_string)))
-    zip.writestr('OPS/support.html', html_string)
+    zip.writestr('OPS/support.html', squeeze_whitespace(html_string))
 
     toc.add("Strona redakcyjna", "last.html")
     manifest.append(etree.fromstring(
@@ -655,12 +656,12 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         '<itemref idref="last" />'))
     html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'), outputtype=output_type)
     chars.update(used_chars(html_tree.getroot()))
-    zip.writestr('OPS/last.html', etree.tostring(
+    zip.writestr('OPS/last.html', squeeze_whitespace(etree.tostring(
         html_tree, pretty_print=True, xml_declaration=True,
         encoding="utf-8",
         doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" ' +
                 '"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
-    ))
+    )))
 
     if not flags or 'without-fonts' not in flags:
         # strip fonts
