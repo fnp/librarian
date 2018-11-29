@@ -190,7 +190,7 @@ class Stanza(object):
         tail = self.stanza.tail
         self.stanza.clear()
         self.stanza.tail = tail
-        self.stanza.extend(self.verses)
+        self.stanza.extend(verse for verse in self.verses if verse.text or len(verse) > 0)
 
     def open_normal_verse(self):
         self.open_verse = self.stanza.makeelement("wers_normalny")
