@@ -9,7 +9,7 @@ from librarian.formats import Format
 from librarian.output import OutputFile
 from librarian.renderers import Register, TreeRenderer
 from librarian.utils import Context, get_resource
-from librarian import core
+from librarian import core, VIDEO_PROVIDERS
 
 
 class HtmlFormat(Format):
@@ -191,11 +191,12 @@ HtmlFormat.renderers.register(core.Div, 'img', DivImage('img'))
 class DivVideo(NaturalText):
     def render(self, element, ctx):
         output = super(DivVideo, self).render(element, ctx)
+        provider = element.attrib.get('provider', '')
         video_id = element.attrib.get('videoid', '')
         attribs = {
             'width': '854',
             'height': '480',
-            'src': '//www.youtube.com/embed/%s?controls=2&amp;rel=0&amp;showinfo=0&amp;theme=light' % video_id,
+            'src': VIDEO_PROVIDERS[provider]['embed'] % video_id,
             'frameborder': '0',
             'allowfullscreen': '',
         }

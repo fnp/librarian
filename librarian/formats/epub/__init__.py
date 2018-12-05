@@ -13,7 +13,7 @@ import zipfile
 from urllib2 import urlopen
 
 from lxml import etree
-from librarian import OPFNS, NCXNS, XHTMLNS, DCNS, BuildError
+from librarian import OPFNS, NCXNS, XHTMLNS, DCNS, BuildError, VIDEO_PROVIDERS
 from librarian import core
 from librarian.formats import Format
 from librarian.formats.cover.evens import EvensCover
@@ -360,7 +360,7 @@ EpubFormat.renderers.register(core.Div, 'img', DivImageR('img'))
 
 class DivVideoR(Silent):
     def render(self, element, ctx):
-        src = 'https://www.youtube.com/watch?v=%s' % element.attrib.get('videoid', '')
+        src = VIDEO_PROVIDERS[element.attrib.get('provider')]['url'] % element.attrib.get('videoid', '')
         return super(DivVideoR, self).render(element, Context(ctx, src=src))
 
     def container(self, ctx):

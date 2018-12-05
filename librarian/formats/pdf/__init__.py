@@ -11,7 +11,7 @@ from lxml import etree
 from urllib import urlretrieve
 from StringIO import StringIO
 from Texml.processor import process
-from librarian import DCNS, XMLNamespace, BuildError
+from librarian import DCNS, XMLNamespace, BuildError, VIDEO_PROVIDERS
 from librarian.formats import Format
 from librarian.output import OutputFile
 from librarian.renderers import Register, TreeRenderer
@@ -316,7 +316,7 @@ PdfFormat.renderers.register(core.Div, 'img', ImgRenderer('insertimage'))
 class VideoRenderer(CmdRenderer):
     def render(self, element, ctx):
         root = super(VideoRenderer, self).render(element, ctx)
-        url = 'https://www.youtube.com/watch?v=%s' % element.attrib.get('videoid')
+        url = VIDEO_PROVIDERS[element.attrib.get('provider')]['url'] % element.attrib.get('videoid', '')
         link = texml_cmd('href', url, url)
         root[0][0].text = None
         root[0][0].append(link)

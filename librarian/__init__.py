@@ -8,6 +8,18 @@ import urllib
 from .utils import XMLNamespace
 
 
+VIDEO_PROVIDERS = {
+    'youtube': {
+        'url': 'https://www.youtube.com/watch?v=%s',
+        'embed': '//www.youtube.com/embed/%s?controls=2&amp;rel=0&amp;showinfo=0&amp;theme=light',
+    },
+    'vimeo': {
+        'url': 'https://vimeo.com/%s',
+        'embed': '//player.vimeo.com/video/%s',
+    },
+}
+
+
 class UnicodeException(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
