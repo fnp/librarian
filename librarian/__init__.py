@@ -20,6 +20,10 @@ VIDEO_PROVIDERS = {
 }
 
 
+def get_provider(provider_id):
+    return VIDEO_PROVIDERS.get(provider_id, VIDEO_PROVIDERS['youtube'])
+
+
 class UnicodeException(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
