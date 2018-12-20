@@ -62,6 +62,39 @@
 }%
 }
 
+\newif\iflargefont
+\largefontfalse
+
+\DeclareOption{26pt}{%
+\largefonttrue
+\AtEndOfClass{%
+% font size definitions, similar to ones in /usr/share/texmf-texlive/tex/latex/base/
+\renewcommand\normalsize{%
+   \@setfontsize\normalsize{26pt}{31pt}%
+   \abovedisplayskip 14\p@ \@plus6\p@ \@minus14\p@
+   \abovedisplayshortskip \z@ \@plus6\p@
+   \belowdisplayshortskip 13\p@ \@plus7\p@ \@minus6\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}\normalsize%
+   \setlength{\parindent}{1.5em}%
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize{15pt}{20pt}
+   \abovedisplayskip 20\p@ \@plus4\p@ \@minus10\p@
+   \abovedisplayshortskip \z@ \@plus6\p@
+   \belowdisplayshortskip 12\p@ \@plus6\p@ \@minus6\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 12\p@ \@plus4\p@ \@minus4\p@
+               \parsep 6\p@ \@plus4\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}%
+\renewcommand\LARGE{\@setfontsize\LARGE{41pt}{50pt}}%
+\renewcommand\huge{\@setfontsize\huge{49pt}{60pt}}%
+}%
+}
+
+\XeTeXgenerateactualtext=1
+
 %% \DeclareOption{14pt}{\renewcommand{\normalsize}{\AtEndOfClass{\fontsize{14}{17}\selectfont}}}
 
 \DeclareOption{defaultleading}{}
@@ -86,6 +119,12 @@
 \newif\ifshowtoc \showtoctrue
 \DeclareOption{notoc}{\showtocfalse}
 
+\newif\ifsansfont \sansfontfalse
+\DeclareOption{sansfont}{\sansfonttrue}
+
+\newif\ifmargins \marginstrue
+\DeclareOption{nomargins}{\marginsfalse}
+
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 \LoadClass[a4paper,oneside]{book}
@@ -109,6 +148,10 @@
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
 
+\ifsansfont
+\renewcommand{\familydefault}{\sfdefault}
+\fi
+
 \newfontfamily\alien[
 SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
 Numbers=OldStyle,
@@ -129,6 +172,28 @@ Numbers=OldStyle,
 Scale=1.04,
 LetterSpace=-1.0
 ] {JunicodeWL}
+
+%\setmainfont [
+%UprightFont = NotoSerif-Regular,
+%ItalicFont = NotoSerif-Italic,
+%BoldFont = NotoSerif-Regular,
+%BoldItalicFont = NotoSerif-Italic,
+%SmallCapsFont = NotoSerif-Regular,
+%SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+%Scale=1.04,
+%LetterSpace=-1.0
+%] {NotoSerif}
+
+\setsansfont [
+UprightFont = NotoSansDisplay-Regular,
+ItalicFont = NotoSansDisplay-Italic,
+BoldFont = NotoSansDisplay-Regular,
+BoldItalicFont = NotoSansDisplay-Italic,
+SmallCapsFont = NotoSansDisplay-Regular,
+SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+Scale=1.04,
+LetterSpace=-1.0
+] {NotoSansDisplay}
 
 \defaultfontfeatures{
 SizeFeatures={
@@ -169,6 +234,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \usepackage{color}
 \definecolor{theme}{gray}{.3}
 
+\ifmargins
 \setlength{\marginparsep}{2em}
 \setlength{\marginparwidth}{8.5em}
 \setlength{\oddsidemargin}{0pt}
@@ -177,6 +243,14 @@ Letters={SmallCaps,UppercaseSmallCaps}
 \setlength{\headheight}{0pt}
 \setlength{\headsep}{0pt}
 \setlength{\textheight}{24cm}
+\else
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.5in}
+\fi
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -337,7 +411,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 
 \newcommand{\typosubsubsection}[1]{%
+\iflargefont
+{\textsc{\scalefont{2}#1}}
+\else
 {\textsc{#1}}
+\fi
 }
 
 \newcommand{\typosubsection}[1]{%
@@ -345,15 +423,23 @@ Letters={SmallCaps,UppercaseSmallCaps}
 SizeFeatures={
   {Size={-10}, Scale=1.2, FakeStretch=1.00, LetterSpace=8.0 },
   {Size={10.5-12}, Scale=1.2, FakeStretch=1.00, LetterSpace=8.0 },
-  {Size={12-}, FakeStretch=1.0, LetterSpace=8.0 }
+  {Size={12-}, FakeStretch=2.0, LetterSpace=8.0 }
 },
 Letters={Uppercase}
 }
-\MakeUppercase{#1}}
+\iflargefont
+\MakeUppercase{\scalefont{2}#1}
+\else
+\MakeUppercase{#1}
+\fi}
 }
 
 \newcommand{\typosection}[1]{%
+\iflargefont
+{\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{4}#1}}
+\else
 {\addfontfeature{FakeStretch=0.96, LetterSpace=-4.0}\emph{\scalefont{2}#1}}
+\fi
 %{\addfontfeature{Scale=2.0, FakeStretch=0.98, LetterSpace=-2.0}\emph{#1}}
 }
 
@@ -442,8 +528,10 @@ Letters={Uppercase}
 \newlength{\fboxleftrule}
 \newlength{\fboxrightrule}
 
+\ifshowthemes
 \setlength{\fboxhsep}{5\fboxsep}
 \setlength{\fboxvsep}{20\fboxsep}
+\fi
 
 \setlength{\fboxtoprule}{\fboxrule}
 \setlength{\fboxleftrule}{\fboxrule}
