@@ -93,7 +93,8 @@
 }%
 }
 
-\XeTeXgenerateactualtext=1
+%  not supported on texlive version on jessie, and has weird side effects in some readers
+%% \XeTeXgenerateactualtext=1
 
 %% \DeclareOption{14pt}{\renewcommand{\normalsize}{\AtEndOfClass{\fontsize{14}{17}\selectfont}}}
 
