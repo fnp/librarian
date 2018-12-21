@@ -120,8 +120,8 @@
 \newif\ifshowtoc \showtoctrue
 \DeclareOption{notoc}{\showtocfalse}
 
-\newif\ifsansfont \sansfontfalse
-\DeclareOption{sansfont}{\sansfonttrue}
+%\newif\ifsansfont \sansfontfalse
+%\DeclareOption{sansfont}{\sansfonttrue}
 
 \newif\ifmargins \marginstrue
 \DeclareOption{nomargins}{\marginsfalse}
@@ -149,9 +149,9 @@
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
 
-\ifsansfont
-\renewcommand{\familydefault}{\sfdefault}
-\fi
+%\ifsansfont
+%\renewcommand{\familydefault}{\sfdefault}
+%\fi
 
 \newfontfamily\alien[
 SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
@@ -185,16 +185,16 @@ LetterSpace=-1.0
 %LetterSpace=-1.0
 %] {NotoSerif}
 
-\setsansfont [
-UprightFont = NotoSansDisplay-Regular,
-ItalicFont = NotoSansDisplay-Italic,
-BoldFont = NotoSansDisplay-Regular,
-BoldItalicFont = NotoSansDisplay-Italic,
-SmallCapsFont = NotoSansDisplay-Regular,
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-Scale=1.04,
-LetterSpace=-1.0
-] {NotoSansDisplay}
+%\setsansfont [
+%UprightFont = NotoSansDisplay-Regular,
+%ItalicFont = NotoSansDisplay-Italic,
+%BoldFont = NotoSansDisplay-Regular,
+%BoldItalicFont = NotoSansDisplay-Italic,
+%SmallCapsFont = NotoSansDisplay-Regular,
+%SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+%Scale=1.04,
+%LetterSpace=-1.0
+%] {NotoSansDisplay}
 
 \defaultfontfeatures{
 SizeFeatures={
