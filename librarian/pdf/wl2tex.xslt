@@ -327,7 +327,7 @@
 
 
 <xsl:template
-    match="naglowek_osoba|naglowek_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_diafrlog|akap_cd|motto_podpis|naglowek_listy|srodtytul">
+    match="naglowek_osoba|naglowek_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|srodtytul">
     <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
