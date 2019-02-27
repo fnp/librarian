@@ -3,10 +3,12 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 from librarian import NoDublinCore
 from librarian.parser import WLDocument
 from nose.tools import *
-from utils import get_fixture
+from .utils import get_fixture
 
 
 def test_transform():
@@ -14,9 +16,9 @@ def test_transform():
 
     html = WLDocument.from_file(
             get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
-        ).as_html().get_string()
+        ).as_html().get_bytes()
 
-    assert_equal(html, file(expected_output_file_path).read())
+    assert_equal(html, open(expected_output_file_path, 'rb').read())
 
 
 @raises(NoDublinCore)
@@ -35,7 +37,7 @@ def test_passing_parse_dublincore_to_transform():
 
 
 def test_empty():
-    assert not WLDocument.from_string(
-            '<utwor />',
+    assert not WLDocument.from_bytes(
+            b'<utwor />',
             parse_dublincore=False,
         ).as_html()

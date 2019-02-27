@@ -3,9 +3,9 @@ License
 
   ![AGPL Logo](http://www.gnu.org/graphics/agplv3-155x51.png)
 
-    Copyright © 2008,2009,2010 Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>
+    Copyright © 2008-2019 Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>
 
-    For full list of contributors see AUTHORS section at the end.
+    For full list of contributors see AUTHORS file.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -29,10 +29,12 @@ other formats, which are more suitable for presentation.
 
 Currently we support:
 
- * HTML4, XHTML 1.0
+ * HTML4, XHTML 1.0 (?)
  * Plain text
  * EPUB (XHTML based)
+ * MOBI
  * print-ready PDF
+ * FB2
 
 Other features:
 
@@ -84,13 +86,3 @@ To convert a file to PDF:
 To extract book fragments marked as "theme":
 
     bookfragments file1.xml [file2.xml ...]
-
-
-Authors
--------
-Originally written by Marek Stępniowski <marek@stepniowski.com>
-	
-Later contributions:
-
- * Łukasz Rekucki <lrekucki@gmail.com>
- * Radek Czajka <radek.czajka@gmail.com>

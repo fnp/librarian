@@ -1,9 +1,17 @@
 Authors
 -------
 
-Originally written by Marek Stępniowski <marek@stepniowski>
-	
-Later contributions:
+List of people who have contributed to the project, in chronological order:
 
-   * Łukasz Rekucki <lrekucki@gmail.com>
-   * Radek Czajka <radek.czajka@gmail.com>
+* Marek Stępniowski
+* Łukasz Rekucki
+* Radek Czajka
+* Łukasz Anwajler
+* Adam Twardoch
+* Marcin Koziej
+* Michał Górny
+* Aleksander Łukasz
+* Robert Błaut
+* Jan Szejko
+
+

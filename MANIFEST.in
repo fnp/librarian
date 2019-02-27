@@ -1,0 +1,15 @@
+include *.md
+include LICENSE
+include NOTICE
+include tox.ini
+recursive-include scripts *.py *.css
+recursive-include tests *.py *.xml *.html *.out *.txt *.jpeg
+include librarian/xslt/*.xslt
+include librarian/xslt/*.xml
+include librarian/epub/*
+include librarian/pdf/*
+include librarian/fb2/*
+include librarian/fonts/*
+graft librarian/res
+graft librarian/font-optimizer
+

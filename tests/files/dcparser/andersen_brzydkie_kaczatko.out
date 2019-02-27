@@ -1,5 +1,5 @@
 {
-    'publisher': u'Fundacja Nowoczesna Polska',
+    'publisher': [u'Fundacja Nowoczesna Polska'],
     'about': u'http://wiki.wolnepodreczniki.pl/Lektury:Andersen/Brzydkie_kaczątko',
     'source_name': u'Andersen, Hans Christian (1805-1875), Baśnie, Gebethner i Wolff, wyd. 7, Kraków, 1925',
     'author': u'Andersen, Hans Christian',

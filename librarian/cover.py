@@ -3,9 +3,11 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 import re
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
-from StringIO import StringIO
+from six import BytesIO
 from librarian import get_resource, OutputFile, URLOpener
 
 
@@ -69,7 +71,7 @@ class TextBox(object):
                 line_width = self.draw.textsize(line, font=font)[0]
             line = line.strip() + ' '
 
-            pos_x = (self.max_width - line_width) / 2
+            pos_x = (self.max_width - line_width) // 2
 
             if shadow_color:
                 self.shadow_draw.text(
@@ -144,7 +146,7 @@ class Cover(object):
         if format is not None:
             self.format = format
         if width and height:
-            self.height = height * self.width / width
+            self.height = int(round(height * self.width / width))
         scale = max(float(width or 0) / self.width, float(height or 0) / self.height)
         if scale >= 1:
             self.scale = scale
@@ -171,8 +173,8 @@ class Cover(object):
         # WL logo
         if metr.logo_width:
             logo = Image.open(get_resource('res/wl-logo.png'))
-            logo = logo.resize((metr.logo_width, logo.size[1] * metr.logo_width / logo.size[0]))
-            img.paste(logo, ((metr.width - metr.logo_width) / 2, img.size[1] - logo.size[1] - metr.logo_bottom))
+            logo = logo.resize((metr.logo_width, int(round(logo.size[1] * metr.logo_width / logo.size[0]))))
+            img.paste(logo, ((metr.width - metr.logo_width) // 2, img.size[1] - logo.size[1] - metr.logo_bottom))
 
         top = metr.author_top
         tbox = TextBox(
@@ -223,9 +225,9 @@ class Cover(object):
         return self.final_image().save(*args, **default_kwargs)
 
     def output_file(self, *args, **kwargs):
-        imgstr = StringIO()
+        imgstr = BytesIO()
         self.save(imgstr, *args, **kwargs)
-        return OutputFile.from_string(imgstr.getvalue())
+        return OutputFile.from_bytes(imgstr.getvalue())
 
 
 class WLCover(Cover):
@@ -347,9 +349,9 @@ class WLCover(Cover):
         elif self.box_position == 'bottom':
             box_top = metr.height - metr.box_bottom_margin - box_img.size[1]
         else:   # Middle.
-            box_top = (metr.height - box_img.size[1]) / 2
+            box_top = (metr.height - box_img.size[1]) // 2
 
-        box_left = metr.bar_width + (metr.width - metr.bar_width - box_img.size[0]) / 2
+        box_left = metr.bar_width + (metr.width - metr.bar_width - box_img.size[0]) // 2
 
         # Draw the white box.
         ImageDraw.Draw(img).rectangle(
@@ -389,17 +391,17 @@ class WLCover(Cover):
             if src.size[0] * trg_size[1] < src.size[1] * trg_size[0]:
                 resized = (
                     trg_size[0],
-                    src.size[1] * trg_size[0] / src.size[0]
+                    int(round(src.size[1] * trg_size[0] / src.size[0]))
                 )
-                cut = (resized[1] - trg_size[1]) / 2
+                cut = (resized[1] - trg_size[1]) // 2
                 src = src.resize(resized, Image.ANTIALIAS)
                 src = src.crop((0, cut, src.size[0], src.size[1] - cut))
             else:
                 resized = (
-                    src.size[0] * trg_size[1] / src.size[1],
+                    int(round(src.size[0] * trg_size[1] / src.size[1])),
                     trg_size[1],
                 )
-                cut = (resized[0] - trg_size[0]) / 2
+                cut = (resized[0] - trg_size[0]) // 2
                 src = src.resize(resized, Image.ANTIALIAS)
                 src = src.crop((cut, 0, src.size[0] - cut, src.size[1]))
 
@@ -448,11 +450,11 @@ class LogoWLCover(WLCover):
         img.paste(gradient, (metr.bar_width, metr.height - metr.gradient_height), mask=gradient_mask)
 
         cursor = metr.width - metr.gradient_logo_margin_right
-        logo_top = metr.height - metr.gradient_height / 2 - metr.gradient_logo_height / 2 - metr.bleed / 2
+        logo_top = int(metr.height - metr.gradient_height / 2 - metr.gradient_logo_height / 2 - metr.bleed / 2)
         for logo_path in self.gradient_logos[::-1]:
             logo = Image.open(get_resource(logo_path))
             logo = logo.resize(
-                (logo.size[0] * metr.gradient_logo_height / logo.size[1], metr.gradient_logo_height),
+                (int(round(logo.size[0] * metr.gradient_logo_height / logo.size[1])), metr.gradient_logo_height),
                 Image.ANTIALIAS)
             cursor -= logo.size[0]
             img.paste(logo, (cursor, logo_top), mask=logo)

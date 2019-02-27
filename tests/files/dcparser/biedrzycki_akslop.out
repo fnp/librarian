@@ -1,6 +1,6 @@
 {
     'editors': [u'Sekuła, Aleksandra'],
-    'publisher': u'Fundacja Nowoczesna Polska',
+    'publisher': [u'Fundacja Nowoczesna Polska'],
     'about': 'http://wiki.wolnepodreczniki.pl/Lektury:Biedrzycki/Akslop',
     'source_name': u'Miłosz Biedrzycki, * ("Gwiazdka"), Fundacja "brulion", Kraków-Warszawa, 1993',
     'author': u'Biedrzycki, Miłosz',

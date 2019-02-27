@@ -3,6 +3,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 from librarian import dcparser
 from lxml import etree
 from nose.tools import *
@@ -13,9 +15,9 @@ from datetime import date
 
 
 def check_dcparser(xml_file, result_file):
-    xml = file(xml_file).read()
+    xml = open(xml_file, 'rb').read()
     result = codecs.open(result_file, encoding='utf-8').read()
-    info = dcparser.BookInfo.from_string(xml).to_dict()
+    info = dcparser.BookInfo.from_bytes(xml).to_dict()
     should_be = eval(result)
     for key in should_be:
         assert_equals(info[key], should_be[key])
@@ -28,13 +30,13 @@ def test_dcparser():
 
 
 def check_serialize(xml_file):
-    xml = file(xml_file).read()
-    info = dcparser.BookInfo.from_string(xml)
+    xml = open(xml_file, 'rb').read()
+    info = dcparser.BookInfo.from_bytes(xml)
 
     # serialize
-    serialized = etree.tostring(info.to_etree(), encoding=unicode).encode('utf-8')
+    serialized = etree.tostring(info.to_etree(), encoding='unicode').encode('utf-8')
     # then parse again
-    info_bis = dcparser.BookInfo.from_string(serialized)
+    info_bis = dcparser.BookInfo.from_bytes(serialized)
 
     # check if they are the same
     for key in vars(info):
@@ -49,7 +51,7 @@ def test_serialize():
 
 
 def test_asdate():
-    assert_equals(dcparser.as_date(u"2010-10-03"), date(2010, 10, 03))
+    assert_equals(dcparser.as_date(u"2010-10-03"), date(2010, 10, 3))
     assert_equals(dcparser.as_date(u"2011"), date(2011, 1, 1))
     assert_equals(dcparser.as_date(u"2 poł. XIX w."), date(1950, 1, 1))
     assert_equals(dcparser.as_date(u"XVII w., l. 20"), date(1720, 1, 1))

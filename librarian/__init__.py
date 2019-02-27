@@ -3,28 +3,28 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from __future__ import with_statement
+from __future__ import print_function, unicode_literals
 
 import os
 import re
 import shutil
+from tempfile import NamedTemporaryFile
 import urllib
+from lxml import etree
+import six
+from six.moves.urllib.request import FancyURLopener
+from .util import makedirs
 
-from util import makedirs
 
-
+@six.python_2_unicode_compatible
 class UnicodeException(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
-        """ Dirty workaround for Python Unicode handling problems. """
         args = self.args[0] if len(self.args) == 1 else self.args
         try:
-            message = unicode(args)
+            message = six.text_type(args)
         except UnicodeDecodeError:
-            message = unicode(args, encoding='utf-8', errors='ignore')
+            message = six.text_type(args, encoding='utf-8', errors='ignore')
         return message
 
 class ParseError(UnicodeException):
@@ -79,6 +79,7 @@ PLMETNS = XMLNamespace("http://dl.psnc.pl/schemas/plmet/")
 WLNS = EmptyNamespace()
 
 
+@six.python_2_unicode_compatible
 class WLURI(object):
     """Represents a WL URI. Extracts slug from it."""
     slug = None
@@ -88,7 +89,7 @@ class WLURI(object):
             '(?P<slug>[-a-z0-9]+)/?$')
 
     def __init__(self, uri):
-        uri = unicode(uri)
+        uri = six.text_type(uri)
         self.uri = uri
         self.slug = uri.rstrip('/').rsplit('/', 1)[-1]
 
@@ -104,15 +105,12 @@ class WLURI(object):
     def from_slug(cls, slug):
         """Contructs an URI from slug.
 
-        >>> WLURI.from_slug('a-slug').uri
-        u'http://wolnelektury.pl/katalog/lektura/a-slug/'
+        >>> print(WLURI.from_slug('a-slug').uri)
+        http://wolnelektury.pl/katalog/lektura/a-slug/
 
         """
         uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
         return cls(uri)
-
-    def __unicode__(self):
-        return self.uri
 
     def __str__(self):
         return self.uri
@@ -146,11 +144,10 @@ class DirDocProvider(DocProvider):
 
     def by_slug(self, slug):
         fname = slug + '.xml'
-        return open(os.path.join(self.dir, fname))
+        return open(os.path.join(self.dir, fname), 'rb')
 
 
-import lxml.etree as etree
-import dcparser
+from . import dcparser
 
 DEFAULT_BOOKINFO = dcparser.BookInfo(
         { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'},
@@ -175,14 +172,14 @@ DEFAULT_BOOKINFO = dcparser.BookInfo(
 def xinclude_forURI(uri):
     e = etree.Element(XINS("include"))
     e.set("href", uri)
-    return etree.tostring(e, encoding=unicode)
+    return etree.tostring(e, encoding='unicode')
 
 def wrap_text(ocrtext, creation_date, bookinfo=DEFAULT_BOOKINFO):
     """Wrap the text within the minimal XML structure with a DC template."""
     bookinfo.created_at = creation_date
 
     dcstring = etree.tostring(bookinfo.to_etree(), \
-        method='xml', encoding=unicode, pretty_print=True)
+        method='xml', encoding='unicode', pretty_print=True)
 
     return u'<utwor>\n' + dcstring + u'\n<plain-text>\n' + ocrtext + \
         u'\n</plain-text>\n</utwor>'
@@ -192,7 +189,7 @@ def serialize_raw(element):
     b = u'' + (element.text or '')
 
     for child in element.iterchildren():
-        e = etree.tostring(child, method='xml', encoding=unicode,
+        e = etree.tostring(child, method='xml', encoding='unicode',
                 pretty_print=True)
         b += e
 
@@ -212,7 +209,7 @@ def get_resource(path):
 class OutputFile(object):
     """Represents a file returned by one of the converters."""
 
-    _string = None
+    _bytes = None
     _filename = None
 
     def __del__(self):
@@ -220,14 +217,14 @@ class OutputFile(object):
             os.unlink(self._filename)
 
     def __nonzero__(self):
-        return self._string is not None or self._filename is not None
+        return self._bytes is not None or self._filename is not None
 
     @classmethod
-    def from_string(cls, string):
+    def from_bytes(cls, bytestring):
         """Converter returns contents of a file as a string."""
 
         instance = cls()
-        instance._string = string
+        instance._bytes = bytestring
         return instance
 
     @classmethod
@@ -238,33 +235,31 @@ class OutputFile(object):
         instance._filename = filename
         return instance
 
-    def get_string(self):
-        """Get file's contents as a string."""
+    def get_bytes(self):
+        """Get file's contents as a bytestring."""
 
         if self._filename is not None:
-            with open(self._filename) as f:
+            with open(self._filename, 'rb') as f:
                 return f.read()
         else:
-            return self._string
+            return self._bytes
 
     def get_file(self):
         """Get file as a file-like object."""
 
-        if self._string is not None:
-            from StringIO import StringIO
-            return StringIO(self._string)
+        if self._bytes is not None:
+            return six.BytesIO(self._bytes)
         elif self._filename is not None:
-            return open(self._filename)
+            return open(self._filename, 'rb')
 
     def get_filename(self):
         """Get file as a fs path."""
 
         if self._filename is not None:
             return self._filename
-        elif self._string is not None:
-            from tempfile import NamedTemporaryFile
+        elif self._bytes is not None:
             temp = NamedTemporaryFile(prefix='librarian-', delete=False)
-            temp.write(self._string)
+            temp.write(self._bytes)
             temp.close()
             self._filename = temp.name
             return self._filename
@@ -279,6 +274,6 @@ class OutputFile(object):
         shutil.copy(self.get_filename(), path)
 
 
-class URLOpener(urllib.FancyURLopener):
+class URLOpener(FancyURLopener):
     version = 'FNP Librarian (http://github.com/fnp/librarian)'
 urllib._urlopener = URLOpener()

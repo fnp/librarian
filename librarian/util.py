@@ -2,6 +2,8 @@
 # by Paul Winkler 
 # http://code.activestate.com/recipes/81611-roman-numerals/
 # PSFL (GPL compatible)
+from __future__ import print_function, unicode_literals
+
 import os
 
 
@@ -18,11 +20,11 @@ def int_to_roman(input):
     Traceback (most recent call last):
     ValueError: Argument must be between 1 and 3999
 
-    >>> int_to_roman(1.5)
+    >>> int_to_roman(1.5)  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     TypeError: expected integer, got <type 'float'>
 
-    >>> for i in range(1, 21): print int_to_roman(i)
+    >>> for i in range(1, 21): print(int_to_roman(i))
     ...
     I
     II
@@ -44,15 +46,15 @@ def int_to_roman(input):
     XVIII
     XIX
     XX
-    >>> print int_to_roman(2000)
+    >>> print(int_to_roman(2000))
     MM
-    >>> print int_to_roman(1999)
+    >>> print(int_to_roman(1999))
     MCMXCIX
     """
     if type(input) != type(1):
-        raise TypeError, "expected integer, got %s" % type(input)
+        raise TypeError("expected integer, got %s" % type(input))
     if not 0 < input < 4000:
-        raise ValueError, "Argument must be between 1 and 3999"    
+        raise ValueError("Argument must be between 1 and 3999")
     ints = (1000, 900,  500, 400, 100,  90, 50,  40, 10,  9,    5,  4,    1)
     nums = ('M',  'CM', 'D', 'CD','C', 'XC','L','XL','X','IX','V','IV','I')
     result = ""
@@ -66,17 +68,17 @@ def roman_to_int(input):
     """
     Convert a roman numeral to an integer.
     
-    >>> r = range(1, 4000)
+    >>> r = list(range(1, 4000))
     >>> nums = [int_to_roman(i) for i in r]
     >>> ints = [roman_to_int(n) for n in nums]
-    >>> print r == ints
+    >>> print(r == ints)
     1
 
     >>> roman_to_int('VVVIV')
     Traceback (most recent call last):
      ...
     ValueError: input is not a valid roman numeral: VVVIV
-    >>> roman_to_int(1)
+    >>> roman_to_int(1)  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
      ...
     TypeError: expected string, got <type 'int'>
@@ -90,14 +92,14 @@ def roman_to_int(input):
     ValueError: input is not a valid roman numeral: IL
     """
     if type(input) != type(""):
-        raise TypeError, "expected string, got %s" % type(input)
+        raise TypeError("expected string, got %s" % type(input))
     input = input.upper()
     nums = ['M', 'D', 'C', 'L', 'X', 'V', 'I']
     ints = [1000, 500, 100, 50,  10,  5,    1]
     places = []
     for c in input:
         if not c in nums:
-            raise ValueError, "input is not a valid roman numeral: %s" % input
+            raise ValueError("input is not a valid roman numeral: %s" % input)
     for i in range(len(input)):
         c = input[i]
         value = ints[nums.index(c)]
@@ -116,7 +118,7 @@ def roman_to_int(input):
     if int_to_roman(sum) == input:
         return sum
     else:
-        raise ValueError, 'input is not a valid roman numeral: %s' % input
+        raise ValueError('input is not a valid roman numeral: %s' % input)
 
 
 def makedirs(path):

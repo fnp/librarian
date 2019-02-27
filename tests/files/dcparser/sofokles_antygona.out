@@ -1,6 +1,6 @@
 {
     'editors': [u'Sekuła, Aleksandra'],
-    'publisher': u'Fundacja Nowoczesna Polska',
+    'publisher': [u'Fundacja Nowoczesna Polska'],
     'about': 'http://wiki.wolnepodreczniki.pl/Lektury:Sofokles/Antygona',
     'source_name': u'Sofokles (496-406 a.C.), Antygona, Zakład Narodowy im. Ossolińskich, wyd. 7, Lwów, 1939',
     'author': u'Sofokles',

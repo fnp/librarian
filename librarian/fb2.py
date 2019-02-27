@@ -3,9 +3,12 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 import os.path
 from copy import deepcopy
 from lxml import etree
+import six
 
 from librarian import functions, OutputFile
 from .epub import replace_by_verse
@@ -62,6 +65,6 @@ def transform(wldoc, verbose=False,
 
     result = document.transform(style)
 
-    return OutputFile.from_string(unicode(result).encode('utf-8'))
+    return OutputFile.from_bytes(six.text_type(result).encode('utf-8'))
 
 # vim:et

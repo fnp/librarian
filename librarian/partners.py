@@ -11,9 +11,10 @@ along with custom cover images etc.
 
 New partners shouldn't be added here, but in the partners repository.
 """
+from __future__ import print_function, unicode_literals
 
 from librarian import packagers, cover
-from util import makedirs
+from .util import makedirs
 
 
 class GandalfEpub(packagers.EpubPackager):
@@ -79,7 +80,7 @@ class Virtualo(packagers.Packager):
         try:
             for main_input in input_filenames:
                 if verbose:
-                    print main_input
+                    print(main_input)
                 path, fname = os.path.realpath(main_input).rsplit('/', 1)
                 provider = DirDocProvider(path)
                 slug, ext = os.path.splitext(fname)
@@ -110,13 +111,13 @@ class Virtualo(packagers.Packager):
                 doc.save_output_file(
                     doc.as_mobi(doc, cover=cover.VirtualoCover, sample=25),
                     output_path=outfile_sample)
-        except ParseError, e:
-            print '%(file)s:%(name)s:%(message)s' % {
+        except ParseError as e:
+            print('%(file)s:%(name)s:%(message)s' % {
                 'file': main_input,
                 'name': e.__class__.__name__,
                 'message': e.message
-            }
+            })
 
         xml_file = open(os.path.join(output_dir, 'import_products.xml'), 'w')
-        xml_file.write(etree.tostring(xml, pretty_print=True, encoding=unicode).encode('utf-8'))
+        xml_file.write(etree.tostring(xml, pretty_print=True, encoding='unicode').encode('utf-8'))
         xml_file.close()

@@ -4,9 +4,11 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import print_function, unicode_literals
+
 import os.path
 import optparse
-
+import six
 from librarian import DirDocProvider, ParseError
 from librarian.parser import WLDocument
 from librarian.cover import make_cover
@@ -102,7 +104,10 @@ class Book2Anything(object):
         try:
             for main_input in input_filenames:
                 if options.verbose:
-                    print main_input
+                    print(main_input)
+
+            if isinstance(main_input, six.binary_type):
+                main_input = main_input.decode('utf-8')
 
             # Where to find input?
             if cls.uses_provider:
@@ -126,9 +131,9 @@ class Book2Anything(object):
 
             doc.save_output_file(output, output_file, options.output_dir, options.make_dir, cls.ext)
 
-        except ParseError, e:
-            print '%(file)s:%(name)s:%(message)s' % {
+        except ParseError as e:
+            print('%(file)s:%(name)s:%(message)s' % {
                 'file': main_input,
                 'name': e.__class__.__name__,
                 'message': e
-            }
+            })

@@ -4,6 +4,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import print_function, unicode_literals
+
 import os
 import optparse
 
@@ -29,14 +31,14 @@ if __name__ == '__main__':
     # Do some real work
     for input_filename in input_filenames:
         if options.verbose:
-            print input_filename
+            print(input_filename)
 
         output_filename = os.path.splitext(input_filename)[0] + '.fragments.html'
 
         closed_fragments, open_fragments = html.extract_fragments(input_filename)
 
         for fragment_id in open_fragments:
-            print '%s:warning:unclosed fragment #%s' % (input_filename, fragment_id)
+            print('%s:warning:unclosed fragment #%s' % (input_filename, fragment_id))
 
         output_file = open(output_filename, 'w')
         output_file.write("""

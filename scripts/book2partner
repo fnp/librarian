@@ -4,20 +4,15 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import print_function, unicode_literals
+
+from collections import OrderedDict
 import inspect
 import optparse
 import os
 import sys
 
 from librarian import packagers
-try:
-    from collections import OrderedDict
-except ImportError:
-    try:
-        from django.utils.datastructures import SortedDict
-        OrderedDict = SortedDict
-    except ImportError:
-        OrderedDict = dict
 
 
 if __name__ == '__main__':
@@ -64,12 +59,12 @@ if __name__ == '__main__':
             if inspect.isclass(package) and issubclass(package, packagers.Packager):
                 packages[package_name] = package
     if not packages:
-        print 'No packages found!'
+        print('No packages found!')
 
     if options.list_packages:
-        print 'Available packages:'
+        print('Available packages:')
         for package_name, package in packages.items():
-            print ' ', package_name
+            print(' ', package_name)
         exit(0)
 
     if len(input_filenames) < 1 or not options.packages:
@@ -79,6 +74,6 @@ if __name__ == '__main__':
     used_packages = [packages[p] for p in options.packages.split(',')]
     for package in used_packages:
         if options.verbose:
-            print 'Package:', package.__name__
+            print('Package:', package.__name__)
         package.prepare(input_filenames,
             options.output_dir, options.verbose, options.overwrite)

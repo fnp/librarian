@@ -3,11 +3,13 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import print_function, unicode_literals
+
 import os
 from librarian import pdf, epub, mobi, DirDocProvider, ParseError
 from librarian.parser import WLDocument
 
-from util import makedirs
+from .util import makedirs
 
 
 class Packager(object):
@@ -39,14 +41,14 @@ class Packager(object):
         try:
             for main_input in input_filenames:
                 if verbose:
-                    print main_input
+                    print(main_input)
                 cls.prepare_file(main_input, output_dir, verbose, overwrite)
-        except ParseError, e:
-            print '%(file)s:%(name)s:%(message)s' % {
+        except ParseError as e:
+            print('%(file)s:%(name)s:%(message)s' % {
                 'file': main_input,
                 'name': e.__class__.__name__,
                 'message': e.message
-            }
+            })
 
 
 class EpubPackager(Packager):

@@ -1,5 +1,5 @@
 {
-    'publisher': u'Fundacja Nowoczesna Polska',
+    'publisher': [u'Fundacja Nowoczesna Polska'],
     'about': u'http://wiki.wolnepodreczniki.pl/Lektury:Kochanowski/Pieśni/Pieśń_VII_(1)',
     'source_name': u'Kochanowski, Jan (1530-1584), Dzieła polskie, tom 1, oprac. Julian Krzyżanowski, wyd. 8, Państwowy Instytut Wydawniczy, Warszawa, 1976',
     'author': u'Kochanowski, Jan',

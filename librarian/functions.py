@@ -3,6 +3,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 from lxml import etree
 import re
 
@@ -112,7 +114,7 @@ def reg_lang_code_3to2():
         result = ''
         text = ''.join(text)
         with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
-            for line in f:
+            for line in f.read().decode('latin1').split('\n'):
                 list = line.strip().split('|')
                 if list[0] == text:
                     result = list[2]

@@ -3,10 +3,13 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 import copy
 from librarian import functions, OutputFile
 from lxml import etree
 import os
+import six
 
 
 functions.reg_substitute_entities()
@@ -103,7 +106,7 @@ def transform(wldoc, flags=None, **options):
             'description': description,
             'url': url,
             'license_description': license_description,
-            'text': unicode(result),
+            'text': six.text_type(result),
             'source': source,
             'contributors': contributors,
             'funders': funders,
@@ -111,5 +114,5 @@ def transform(wldoc, flags=None, **options):
             'isbn': isbn,
         }).encode('utf-8')
     else:
-        result = unicode(result).encode('utf-8')
-    return OutputFile.from_string("\r\n".join(result.splitlines()) + "\r\n")
+        result = six.text_type(result).encode('utf-8')
+    return OutputFile.from_bytes(b"\r\n".join(result.splitlines()) + b"\r\n")

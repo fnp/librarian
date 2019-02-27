@@ -3,10 +3,14 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 from xml.parsers.expat import ExpatError
 from datetime import date
+from functools import total_ordering
 import time
 import re
+import six
 from librarian.util import roman_to_int
 
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
@@ -16,7 +20,7 @@ import lxml.etree as etree  # ElementTree API using libxml2
 from lxml.etree import XMLSyntaxError
 
 
-class TextPlus(unicode):
+class TextPlus(six.text_type):
     pass
 
 
@@ -27,6 +31,8 @@ class DatePlus(date):
 # ==============
 # = Converters =
 # ==============
+@six.python_2_unicode_compatible
+@total_ordering
 class Person(object):
     """Single person with last name and a list of first names."""
     def __init__(self, last_name, *first_names):
@@ -55,13 +61,13 @@ class Person(object):
     def __eq__(self, right):
         return self.last_name == right.last_name and self.first_names == right.first_names
 
-    def __cmp__(self, other):
-        return cmp((self.last_name, self.first_names), (other.last_name, other.first_names))
+    def __lt__(self, other):
+        return (self.last_name, self.first_names) < (other.last_name, other.first_names)
 
     def __hash__(self):
         return hash((self.last_name, self.first_names))
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.first_names) > 0:
             return '%s, %s' % (self.last_name, ' '.join(self.first_names))
         else:
@@ -83,7 +89,7 @@ for now we will translate this to some single date losing information of course.
     """
     try:
         # check out the "N. poł X w." syntax
-        if isinstance(text, str):
+        if isinstance(text, six.binary_type):
             text = text.decode("utf-8")
 
         century_format = u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
@@ -94,7 +100,7 @@ for now we will translate this to some single date losing information of course.
         if m:
             half = m.group(1)
             decade = m.group(3)
-            century = roman_to_int(str(m.group(2)))
+            century = roman_to_int(m.group(2))
             if half is not None:
                 if decade is not None:
                     raise ValueError("Bad date format. Cannot specify both half and decade of century")
@@ -114,7 +120,7 @@ for now we will translate this to some single date losing information of course.
             raise ValueError
 
         return DatePlus(t[0], t[1], t[2])
-    except ValueError, e:
+    except ValueError as e:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
 
@@ -123,7 +129,7 @@ def as_person(text):
 
 
 def as_unicode(text):
-    if isinstance(text, unicode):
+    if isinstance(text, six.text_type):
         return text
     else:
         return TextPlus(text.decode('utf-8'))
@@ -174,7 +180,7 @@ class Field(object):
                 if hasattr(val[0], 'lang'):
                     setattr(nv, 'lang', val[0].lang)
                 return nv
-        except ValueError, e:
+        except ValueError as e:
             raise ValidationError("Field '%s' - invald value: %s" % (self.uri, e.message))
 
     def validate(self, fdict, fallbacks=None, strict=False):
@@ -221,9 +227,7 @@ class DCInfo(type):
         return super(DCInfo, mcs).__new__(mcs, classname, bases, class_dict)
 
 
-class WorkInfo(object):
-    __metaclass__ = DCInfo
-
+class WorkInfo(six.with_metaclass(DCInfo, object)):
     FIELDS = (
         Field(DCNS('creator'), 'authors', as_person, salias='author', multiple=True),
         Field(DCNS('title'), 'title'),
@@ -255,9 +259,8 @@ class WorkInfo(object):
     )
 
     @classmethod
-    def from_string(cls, xml, *args, **kwargs):
-        from StringIO import StringIO
-        return cls.from_file(StringIO(xml), *args, **kwargs)
+    def from_bytes(cls, xml, *args, **kwargs):
+        return cls.from_file(six.BytesIO(xml), *args, **kwargs)
 
     @classmethod
     def from_file(cls, xmlfile, *args, **kwargs):
@@ -282,9 +285,9 @@ class WorkInfo(object):
 
             # extract data from the element and make the info
             return cls.from_element(desc_tag, *args, **kwargs)
-        except XMLSyntaxError, e:
+        except XMLSyntaxError as e:
             raise ParseError(e)
-        except ExpatError, e:
+        except ExpatError as e:
             raise ParseError(e)
 
     @classmethod
@@ -306,7 +309,7 @@ class WorkInfo(object):
             fv = field_dict.get(e.tag, [])
             if e.text is not None:
                 text = e.text
-                if not isinstance(text, unicode):
+                if not isinstance(text, six.text_type):
                     text = text.decode('utf-8')
                 val = TextPlus(text)
                 val.lang = e.attrib.get(XMLNS('lang'), lang)
@@ -394,11 +397,11 @@ class WorkInfo(object):
                     for x in v:
                         e = etree.Element(field.uri)
                         if x is not None:
-                            e.text = unicode(x)
+                            e.text = six.text_type(x)
                         description.append(e)
                 else:
                     e = etree.Element(field.uri)
-                    e.text = unicode(v)
+                    e.text = six.text_type(v)
                     description.append(e)
 
         return root
@@ -413,9 +416,9 @@ class WorkInfo(object):
                 if field.multiple:
                     if len(v) == 0:
                         continue
-                    v = [unicode(x) for x in v if x is not None]
+                    v = [six.text_type(x) for x in v if x is not None]
                 else:
-                    v = unicode(v)
+                    v = six.text_type(v)
 
                 dc[field.name] = {'uri': field.uri, 'value': v}
         rdf['fields'] = dc
@@ -430,15 +433,15 @@ class WorkInfo(object):
                 if field.multiple:
                     if len(v) == 0:
                         continue
-                    v = [unicode(x) for x in v if x is not None]
+                    v = [six.text_type(x) for x in v if x is not None]
                 else:
-                    v = unicode(v)
+                    v = six.text_type(v)
                 result[field.name] = v
 
             if field.salias:
                 v = getattr(self, field.salias)
                 if v is not None:
-                    result[field.salias] = unicode(v)
+                    result[field.salias] = six.text_type(v)
 
         return result
 

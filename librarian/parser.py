@@ -3,6 +3,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS
 from librarian.cover import make_cover
@@ -14,7 +16,7 @@ from lxml.etree import XMLSyntaxError, XSLTApplyError
 
 import os
 import re
-from StringIO import StringIO
+import six
 
 
 class WLDocument(object):
@@ -45,14 +47,14 @@ class WLDocument(object):
             self.book_info = None
 
     @classmethod
-    def from_string(cls, xml, *args, **kwargs):
-        return cls.from_file(StringIO(xml), *args, **kwargs)
+    def from_bytes(cls, xml, *args, **kwargs):
+        return cls.from_file(six.BytesIO(xml), *args, **kwargs)
 
     @classmethod
     def from_file(cls, xmlfile, *args, **kwargs):
 
         # first, prepare for parsing
-        if isinstance(xmlfile, basestring):
+        if isinstance(xmlfile, six.text_type):
             file = open(xmlfile, 'rb')
             try:
                 data = file.read()
@@ -61,17 +63,17 @@ class WLDocument(object):
         else:
             data = xmlfile.read()
 
-        if not isinstance(data, unicode):
+        if not isinstance(data, six.text_type):
             data = data.decode('utf-8')
 
         data = data.replace(u'\ufeff', '')
 
         try:
             parser = etree.XMLParser(remove_blank_text=False)
-            tree = etree.parse(StringIO(data.encode('utf-8')), parser)
+            tree = etree.parse(six.BytesIO(data.encode('utf-8')), parser)
 
             return cls(tree, *args, **kwargs)
-        except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
+        except (ExpatError, XMLSyntaxError, XSLTApplyError) as e:
             raise ParseError(e)
 
     def swap_endlines(self):
@@ -139,7 +141,7 @@ class WLDocument(object):
 
     def serialize(self):
         self.update_dc()
-        return etree.tostring(self.edoc, encoding=unicode, pretty_print=True)
+        return etree.tostring(self.edoc, encoding='unicode', pretty_print=True)
 
     def merge_chunks(self, chunk_dict):
         unmerged = []
@@ -150,7 +152,7 @@ class WLDocument(object):
                 node = self.edoc.xpath(xpath)[0]
                 repl = etree.fromstring(u"<%s>%s</%s>" % (node.tag, data, node.tag))
                 node.getparent().replace(node, repl)
-            except Exception, e:
+            except Exception as e:
                 unmerged.append(repr((key, xpath, e)))
 
         return unmerged
@@ -220,7 +222,7 @@ class WLDocument(object):
         if output_dir_path:
             save_path = output_dir_path
             if make_author_dir:
-                save_path = os.path.join(save_path, unicode(self.book_info.author).encode('utf-8'))
+                save_path = os.path.join(save_path, six.text_type(self.book_info.author).encode('utf-8'))
             save_path = os.path.join(save_path, self.book_info.url.slug)
             if ext:
                 save_path += '.%s' % ext

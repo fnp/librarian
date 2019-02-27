@@ -3,9 +3,10 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import print_function, unicode_literals
+
 import os
 import re
-import cStringIO
 import copy
 
 from lxml import etree
@@ -13,6 +14,8 @@ from librarian import XHTMLNS, ParseError, OutputFile
 from librarian import functions
 
 from lxml.etree import XMLSyntaxError, XSLTApplyError
+import six
+
 
 functions.reg_substitute_entities()
 functions.reg_person_name()
@@ -33,11 +36,10 @@ def html_has_content(text):
 
 
 def transform_abstrakt(abstrakt_element):
-    from cStringIO import StringIO
     style_filename = get_stylesheet('legacy')
     style = etree.parse(style_filename)
     xml = etree.tostring(abstrakt_element)
-    document = etree.parse(StringIO(xml.replace('abstrakt', 'dlugi_cytat')))  # HACK
+    document = etree.parse(six.BytesIO(xml.replace('abstrakt', 'dlugi_cytat')))  # HACK
     result = document.xslt(style)
     html = re.sub('<a name="sec[0-9]*"/>', '', etree.tostring(result))
     return re.sub('</?blockquote[^>]*>', '', html)
@@ -77,16 +79,17 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None):
             add_table_of_themes(result.getroot())
             add_table_of_contents(result.getroot())
 
-            return OutputFile.from_string(etree.tostring(
+            return OutputFile.from_bytes(etree.tostring(
                 result, method='html', xml_declaration=False, pretty_print=True, encoding='utf-8'))
         else:
             return None
     except KeyError:
         raise ValueError("'%s' is not a valid stylesheet.")
-    except (XMLSyntaxError, XSLTApplyError), e:
+    except (XMLSyntaxError, XSLTApplyError) as e:
         raise ParseError(e)
 
 
+@six.python_2_unicode_compatible
 class Fragment(object):
     def __init__(self, id, themes):
         super(Fragment, self).__init__()
@@ -106,7 +109,7 @@ class Fragment(object):
                 try:
                     stack.pop()
                 except IndexError:
-                    print 'CLOSED NON-OPEN TAG:', element
+                    print('CLOSED NON-OPEN TAG:', element)
 
         stack.reverse()
         return self.events + stack
@@ -128,7 +131,7 @@ class Fragment(object):
 
         return ''.join(result)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.to_string()
 
 
@@ -139,7 +142,7 @@ def extract_fragments(input_filename):
 
     # iterparse would die on a HTML document
     parser = etree.HTMLParser(encoding='utf-8')
-    buf = cStringIO.StringIO()
+    buf = six.BytesIO()
     buf.write(etree.tostring(etree.parse(input_filename, parser).getroot()[0][0], encoding='utf-8'))
     buf.seek(0)
 
@@ -173,7 +176,7 @@ def extract_fragments(input_filename):
                 try:
                     fragment = open_fragments[element.get('fid')]
                 except KeyError:
-                    print '%s:closed not open fragment #%s' % (input_filename, element.get('fid'))
+                    print('%s:closed not open fragment #%s' % (input_filename, element.get('fid')))
                 else:
                     closed_fragments[fragment.id] = fragment
                     del open_fragments[fragment.id]
@@ -207,7 +210,7 @@ def add_anchor(element, prefix, with_link=True, with_target=True, link_text=None
             link_text = prefix
         anchor = etree.Element('a', href='#%s' % prefix)
         anchor.set('class', 'anchor')
-        anchor.text = unicode(link_text)
+        anchor.text = six.text_type(link_text)
         parent.insert(index, anchor)
 
     if with_target:
@@ -247,7 +250,7 @@ def raw_printable_text(element):
     for e in working.findall('a'):
         if e.get('class') in ('annotation', 'theme-begin'):
             e.text = ''
-    return etree.tostring(working, method='text', encoding=unicode).strip()
+    return etree.tostring(working, method='text', encoding='unicode').strip()
 
 
 def add_table_of_contents(root):
@@ -300,7 +303,7 @@ def add_table_of_themes(root):
         theme_names = [s.strip() for s in fragment.text.split(',')]
         for theme_name in theme_names:
             book_themes.setdefault(theme_name, []).append(fragment.get('name'))
-    book_themes = book_themes.items()
+    book_themes = list(book_themes.items())
     book_themes.sort(key=lambda s: sortify(s[0]))
     themes_div = etree.Element('div', id="themes")
     themes_ol = etree.SubElement(themes_div, 'ol')
@@ -326,7 +329,7 @@ def extract_annotations(html_path):
     parser = etree.HTMLParser(encoding='utf-8')
     tree = etree.parse(html_path, parser)
     footnotes = tree.find('//*[@id="footnotes"]')
-    re_qualifier = re.compile(ur'[^\u2014]+\s+\(([^\)]+)\)\s+\u2014')
+    re_qualifier = re.compile(r'[^\u2014]+\s+\(([^\)]+)\)\s+\u2014')
     if footnotes is not None:
         for footnote in footnotes.findall('div'):
             fn_type = footnote.get('class').split('-')[1]
@@ -335,8 +338,8 @@ def extract_annotations(html_path):
             footnote.text = None
             if len(footnote) and footnote[-1].tail == '\n':
                 footnote[-1].tail = None
-            text_str = etree.tostring(footnote, method='text', encoding=unicode).strip()
-            html_str = etree.tostring(footnote, method='html', encoding=unicode).strip()
+            text_str = etree.tostring(footnote, method='text', encoding='unicode').strip()
+            html_str = etree.tostring(footnote, method='html', encoding='unicode').strip()
 
             match = re_qualifier.match(text_str)
             if match:

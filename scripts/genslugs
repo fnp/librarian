@@ -4,6 +4,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import print_function, unicode_literals
+
 import os
 import optparse
 
@@ -36,13 +38,13 @@ if __name__ == '__main__':
     # Do some real work
     for input_filename in input_filenames:
         if options.verbose:
-            print input_filename
+            print(input_filename)
 
         doc = etree.parse(input_filename)
         try:
             title = doc.find('//{http://purl.org/dc/elements/1.1/}title').text
         except AttributeError:
-            print '%s:error:Book title not found. Skipping.' % input_filename
+            print('%s:error:Book title not found. Skipping.' % input_filename)
             continue
 
         parent = ''
@@ -52,14 +54,14 @@ if __name__ == '__main__':
         except AttributeError:
             pass
         except IndexError:
-            print '%s:error:Invalid parent URL "%s". Skipping.' % (input_filename, parent_url)
+            print('%s:error:Invalid parent URL "%s". Skipping.' % (input_filename, parent_url))
 
         book_url = doc.find('//{http://purl.org/dc/elements/1.1/}identifier.url')
         if book_url is None:
             book_description = doc.find('//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description')
             book_url = etree.SubElement(book_description, '{http://purl.org/dc/elements/1.1/}identifier.url')
         if not options.force and book_url.text.startswith('http://'):
-            print '%s:Notice:Book already has identifier URL "%s". Skipping.' % (input_filename, book_url.text)
+            print('%s:Notice:Book already has identifier URL "%s". Skipping.' % (input_filename, book_url.text))
             continue
 
         book_url.text = BOOK_URL + slughifi(parent + title)[:60]

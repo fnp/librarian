@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from operator import and_
 
-from dcparser import Field, WorkInfo, DCNS
+from .dcparser import Field, WorkInfo, DCNS
 from librarian import (RDFNS, ValidationError, NoDublinCore, ParseError, WLURI)
 from xml.parsers.expat import ExpatError
 from os import path
-from StringIO import StringIO
 from lxml import etree
 from lxml.etree import (XMLSyntaxError, XSLTApplyError, Element)
 import re
+import six
 
 
 class WLPictureURI(WLURI):
@@ -99,14 +101,14 @@ class WLPicture(object):
         self.frame = None
 
     @classmethod
-    def from_string(cls, xml, *args, **kwargs):
-        return cls.from_file(StringIO(xml), *args, **kwargs)
+    def from_bytes(cls, xml, *args, **kwargs):
+        return cls.from_file(six.BytesIO(xml), *args, **kwargs)
 
     @classmethod
     def from_file(cls, xmlfile, parse_dublincore=True, image_store=None):
 
         # first, prepare for parsing
-        if isinstance(xmlfile, basestring):
+        if isinstance(xmlfile, six.text_type):
             file = open(xmlfile, 'rb')
             try:
                 data = file.read()
@@ -115,7 +117,7 @@ class WLPicture(object):
         else:
             data = xmlfile.read()
 
-        if not isinstance(data, unicode):
+        if not isinstance(data, six.text_type):
             data = data.decode('utf-8')
 
         data = data.replace(u'\ufeff', '')
@@ -126,12 +128,12 @@ class WLPicture(object):
 
         try:
             parser = etree.XMLParser(remove_blank_text=False)
-            tree = etree.parse(StringIO(data.encode('utf-8')), parser)
+            tree = etree.parse(six.BytesIO(data.encode('utf-8')), parser)
 
             me = cls(tree, parse_dublincore=parse_dublincore, image_store=image_store)
             me.load_frame_info()
             return me
-        except (ExpatError, XMLSyntaxError, XSLTApplyError), e:
+        except (ExpatError, XMLSyntaxError, XSLTApplyError) as e:
             raise ParseError(e)
 
     @property
@@ -184,7 +186,7 @@ class WLPicture(object):
             pd['coords'] = coords
 
             def want_unicode(x):
-                if not isinstance(x, unicode):
+                if not isinstance(x, six.text_type):
                     return x.decode('utf-8')
                 else:
                     return x

@@ -9,3 +9,6 @@ build
 .project
 .pydevproject
 .settings
+/.tox
+/nosetests.xml
+/htmlcov

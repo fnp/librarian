@@ -6,7 +6,7 @@
 #
 import os
 import os.path
-from distutils.core import setup
+from setuptools import setup
 
 def whole_tree(prefix, path):
     files = []
@@ -21,7 +21,7 @@ def whole_tree(prefix, path):
 
 setup(
     name='librarian',
-    version='1.6',
+    version='1.7',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
@@ -29,13 +29,15 @@ setup(
     maintainer_email='radoslaw.czajka@nowoczesnapolska.org.pl',
     url='http://github.com/fnp/librarian',
     packages=['librarian', 'librarian.embeds'],
-    package_data={'librarian': ['xslt/*.xslt', 'epub/*', 'mobi/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
+    package_data={'librarian': ['xslt/*.xslt', 'xslt/*.xml', 'epub/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'res') +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer')},
     include_package_data=True,
     install_requires=[
-        'lxml>=2.2',
+        'lxml>=2.2,<=4.3',
         'Pillow',
+        'six',
+        'texml',
     ],
     scripts=['scripts/book2html',
              'scripts/book2txt',
@@ -47,5 +49,4 @@ setup(
              'scripts/book2cover',
              'scripts/bookfragments',
              'scripts/genslugs'],
-    tests_require=['nose>=0.11', 'coverage>=3.0.1'],
 )

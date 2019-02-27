@@ -3,6 +3,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
 
 from copy import deepcopy
 import os
@@ -13,13 +14,16 @@ from librarian import OutputFile
 
 
 def transform(wldoc, verbose=False, sample=None, cover=None,
-              use_kindlegen=False, flags=None, hyphenate=True, ilustr_path=''):
+              use_kindlegen=False, flags=None, hyphenate=True, ilustr_path='',
+              converter_path=None):
     """ produces a MOBI file
 
     wldoc: a WLDocument
     sample=n: generate sample e-book (with at least n paragraphs)
     cover: a cover.Cover factory overriding default
     flags: less-advertising,
+    converter_path: override path to MOBI converter,
+      either ebook-convert or kindlegen
     """
 
     document = deepcopy(wldoc)
@@ -40,10 +44,12 @@ def transform(wldoc, verbose=False, sample=None, cover=None,
 
     if use_kindlegen:
         output_file_basename = os.path.basename(output_file.name)
-        subprocess.check_call(['kindlegen', '-c2', epub.get_filename(),
-                              '-o', output_file_basename], **kwargs)
+        subprocess.check_call([converter_path or 'kindlegen',
+                               '-c2', epub.get_filename(),
+                               '-o', output_file_basename], **kwargs)
     else:
-        subprocess.check_call(['ebook-convert', epub.get_filename(),
+        subprocess.check_call([converter_path or 'ebook-convert',
+                               epub.get_filename(),
                                output_file.name, '--no-inline-toc',
                                '--mobi-file-type=both',
                                '--mobi-ignore-margins'], **kwargs)

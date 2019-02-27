@@ -3,6 +3,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 from librarian import picture, dcparser
 from tests.utils import get_all_fixtures, get_fixture
 from os import path
@@ -46,7 +48,6 @@ def test_picture_parts():
     motifs = set()
     names = set()
 
-    print parts
     for p in parts:
         for m in p['themes']:
             motifs.add(m)

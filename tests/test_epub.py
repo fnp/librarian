@@ -3,6 +3,8 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
+from __future__ import unicode_literals
+
 from zipfile import ZipFile
 from lxml import html
 from nose.tools import *
@@ -30,3 +32,13 @@ def test_transform():
                 u'Opracowanie redakcyjne i przypisy: '
                 u'Adam Fikcyjny, Aleksandra Sekuła, Olga Sutkowska.')
     assert_true(editors_attribution)
+
+
+def test_transform_hyphenate():
+    epub = WLDocument.from_file(
+            get_fixture('text', 'asnyk_zbior.xml'),
+            provider=DirDocProvider(get_fixture('text', ''))
+        ).as_epub(
+            flags=['without_fonts'],
+            hyphenate=True
+        ).get_file()

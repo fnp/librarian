@@ -21,73 +21,73 @@ def test_annotations():
 
         ('<pe/>', (
             'pe',
-            [], 
-            '',
-            '<p></p>'
+            [],
+            '[przypis edytorski]',
+            '<p> [przypis edytorski]</p>'
             ),
             'Empty footnote'),
 
         ('<pr>Definiendum --- definiens.</pr>', (
             'pr',
-            [], 
-            'Definiendum \u2014 definiens.', 
-            '<p>Definiendum \u2014 definiens.</p>'
+            [],
+            'Definiendum \u2014 definiens. [przypis redakcyjny]',
+            '<p>Definiendum \u2014 definiens. [przypis redakcyjny]</p>'
             ),
             'Plain footnote.'),
 
         ('<pt><slowo_obce>Definiendum</slowo_obce> --- definiens.</pt>', (
             'pt',
-            [], 
-            'Definiendum \u2014 definiens.', 
-            '<p><em class="foreign-word">Definiendum</em> \u2014 definiens.</p>'
+            [],
+            'Definiendum \u2014 definiens. [przypis tłumacza]',
+            '<p><em class="foreign-word">Definiendum</em> \u2014 definiens. [przypis tłumacza]</p>'
             ),
             'Standard footnote.'),
 
         ('<pr>Definiendum (łac.) --- definiens.</pr>', (
             'pr',
-            ['łac.'], 
-            'Definiendum (łac.) \u2014 definiens.', 
-            '<p>Definiendum (łac.) \u2014 definiens.</p>'
+            ['łac.'],
+            'Definiendum (łac.) \u2014 definiens. [przypis redakcyjny]',
+            '<p>Definiendum (łac.) \u2014 definiens. [przypis redakcyjny]</p>'
             ),
             'Plain footnote with qualifier'),
 
         ('<pe><slowo_obce>Definiendum</slowo_obce> (łac.) --- definiens.</pe>', (
             'pe',
-            ['łac.'], 
-            'Definiendum (łac.) \u2014 definiens.', 
-            '<p><em class="foreign-word">Definiendum</em> (łac.) \u2014 definiens.</p>'
+            ['łac.'],
+            'Definiendum (łac.) \u2014 definiens. [przypis edytorski]',
+            '<p><em class="foreign-word">Definiendum</em> (łac.) \u2014 definiens. [przypis edytorski]</p>'
             ),
             'Standard footnote with qualifier.'),
 
         ('<pt> <slowo_obce>Definiendum</slowo_obce> (daw.) --- definiens.</pt>', (
             'pt',
-            ['daw.'], 
-            'Definiendum (daw.) \u2014 definiens.', 
-            '<p> <em class="foreign-word">Definiendum</em> (daw.) \u2014 definiens.</p>'
+            ['daw.'],
+            'Definiendum (daw.) \u2014 definiens. [przypis tłumacza]',
+            '<p> <em class="foreign-word">Definiendum</em> (daw.) \u2014 definiens. [przypis tłumacza]</p>'
             ),
             'Standard footnote with leading whitespace and qualifier.'),
 
         ('<pr>Definiendum (łac.) --- <slowo_obce>definiens</slowo_obce>.</pr>', (
             'pr',
-            ['łac.'], 
-            'Definiendum (łac.) \u2014 definiens.', 
-            '<p>Definiendum (łac.) \u2014 <em class="foreign-word">definiens</em>.</p>'
+            ['łac.'],
+            'Definiendum (łac.) \u2014 definiens. [przypis redakcyjny]',
+            '<p>Definiendum (łac.) \u2014 <em class="foreign-word">definiens</em>. [przypis redakcyjny]</p>'
             ),
             'Plain footnote with qualifier and some emphasis.'),
 
         ('<pe><slowo_obce>Definiendum</slowo_obce> (łac.) --- <slowo_obce>definiens</slowo_obce>.</pe>', (
             'pe',
             ['łac.'],
-            'Definiendum (łac.) \u2014 definiens.',
-            '<p><em class="foreign-word">Definiendum</em> (łac.) \u2014 <em class="foreign-word">definiens</em>.</p>'
+            'Definiendum (łac.) \u2014 definiens. [przypis edytorski]',
+            '<p><em class="foreign-word">Definiendum</em> (łac.) \u2014 <em class="foreign-word">definiens</em>. [przypis edytorski]</p>'
             ),
             'Standard footnote with qualifier and some emphasis.'),
 
         ('<pe>Definiendum (łac.) --- definiens (some) --- more text.</pe>', (
             'pe',
             ['łac.'],
-            'Definiendum (łac.) \u2014 definiens (some) \u2014 more text.',
-            '<p>Definiendum (łac.) \u2014 definiens (some) \u2014 more text.</p>',
+            'Definiendum (łac.) \u2014 definiens (some) \u2014 more text. [przypis edytorski]',
+            '<p>Definiendum (łac.) \u2014 definiens (some) \u2014 more text. [przypis edytorski]</p>',
             ),
             'Footnote with a second parentheses and mdash.'),
 
@@ -96,9 +96,9 @@ def test_annotations():
             'pe',
             ['daw.', 'niem.'],
             'gemajna (daw., z niem. gemein: zwykły) \u2014 częściej: gemajn, '
-            'szeregowiec w wojsku polskim cudzoziemskiego autoramentu.',
+            'szeregowiec w wojsku polskim cudzoziemskiego autoramentu. [przypis edytorski]',
             '<p><em class="foreign-word">gemajna</em> (daw., z niem. <em class="foreign-word">gemein</em>: zwykły) '
-            '\u2014 częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu.</p>'
+            '\u2014 częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu. [przypis edytorski]</p>'
             ),
             'Footnote with multiple and qualifiers and emphasis.'),
 
@@ -106,7 +106,9 @@ def test_annotations():
 
     xml_src = '''<utwor><akap> %s </akap></utwor>''' % "".join(
         t[0] for t in annotations)
-    html = WLDocument.from_string(xml_src, parse_dublincore=False).as_html().get_file()
+    html = WLDocument.from_bytes(
+        xml_src.encode('utf-8'),
+        parse_dublincore=False).as_html().get_file()
     res_annotations = list(extract_annotations(html))
 
     for i, (src, expected, name) in enumerate(annotations):

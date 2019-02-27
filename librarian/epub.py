@@ -3,13 +3,13 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from __future__ import with_statement
+from __future__ import print_function, unicode_literals
 
 import os
 import os.path
 import re
 import subprocess
-from StringIO import StringIO
+from six import BytesIO
 from copy import deepcopy
 from mimetypes import guess_type
 
@@ -30,7 +30,7 @@ functions.reg_lang_code_3to2()
 
 
 def squeeze_whitespace(s):
-    return re.sub(r'\s+', ' ', s)
+    return re.sub(b'\\s+', b' ', s)
 
 
 def set_hyph_language(source_tree):
@@ -38,7 +38,7 @@ def set_hyph_language(source_tree):
         result = ''
         text = ''.join(text)
         with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
-            for line in f:
+            for line in f.read().decode('latin1').split('\n'):
                 list = line.strip().split('|')
                 if list[0] == text:
                     result = list[2]
@@ -77,12 +77,12 @@ def hyphenate_and_fix_conjunctions(source_tree, hyph):
 def inner_xml(node):
     """ returns node's text and children as a string
 
-    >>> print inner_xml(etree.fromstring('<a>x<b>y</b>z</a>'))
+    >>> print(inner_xml(etree.fromstring('<a>x<b>y</b>z</a>')))
     x<b>y</b>z
     """
 
     nt = node.text if node.text is not None else ''
-    return ''.join([nt] + [etree.tostring(child) for child in node])
+    return ''.join([nt] + [etree.tostring(child, encoding='unicode') for child in node])
 
 
 def set_inner_xml(node, text):
@@ -90,7 +90,7 @@ def set_inner_xml(node, text):
 
     >>> e = etree.fromstring('<a>b<b>x</b>x</a>')
     >>> set_inner_xml(e, 'x<b>y</b>z')
-    >>> print etree.tostring(e)
+    >>> print(etree.tostring(e, encoding='unicode'))
     <a>x<b>y</b>z</a>
     """
 
@@ -102,7 +102,7 @@ def set_inner_xml(node, text):
 def node_name(node):
     """ Find out a node's name
 
-    >>> print node_name(etree.fromstring('<a>X<b>Y</b>Z</a>'))
+    >>> print(node_name(etree.fromstring('<a>X<b>Y</b>Z</a>')))
     XYZ
     """
 
@@ -122,7 +122,7 @@ def xslt(xml, sheet, **kwargs):
         xml = etree.ElementTree(xml)
     with open(sheet) as xsltf:
         transform = etree.XSLT(etree.parse(xsltf))
-        params = dict((key, transform.strparam(value)) for key, value in kwargs.iteritems())
+        params = dict((key, transform.strparam(value)) for key, value in kwargs.items())
         return transform(xml, **params)
 
 
@@ -172,8 +172,8 @@ class Stanza(object):
 
     >>> s = etree.fromstring("<strofa>a <b>c</b> <b>c</b>/\\nb<x>x/\\ny</x>c/ \\nd</strofa>")
     >>> Stanza(s).versify()
-    >>> print etree.tostring(s)
-    <strofa><wers_normalny>a <b>c</b> <b>c</b></wers_normalny><wers_normalny>b<x>x/
+    >>> print(etree.tostring(s, encoding='unicode'))
+    <strofa><wers_normalny>a <b>c</b><b>c</b></wers_normalny><wers_normalny>b<x>x/
     y</x>c</wers_normalny><wers_normalny>d</wers_normalny></strofa>
 
     """
@@ -325,8 +325,8 @@ class TOC(object):
         return "\n".join(texts)
 
     def html(self):
-        with open(get_resource('epub/toc.html')) as f:
-            t = unicode(f.read(), 'utf-8')
+        with open(get_resource('epub/toc.html'), 'rb') as f:
+            t = f.read().decode('utf-8')
         return t % self.html_part()
 
 
@@ -546,16 +546,16 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
     mime = zipfile.ZipInfo()
     mime.filename = 'mimetype'
     mime.compress_type = zipfile.ZIP_STORED
-    mime.extra = ''
-    zip.writestr(mime, 'application/epub+zip')
+    mime.extra = b''
+    zip.writestr(mime, b'application/epub+zip')
     zip.writestr(
         'META-INF/container.xml',
-        '<?xml version="1.0" ?>'
-        '<container version="1.0" '
-        'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
-        '<rootfiles><rootfile full-path="OPS/content.opf" '
-        'media-type="application/oebps-package+xml" />'
-        '</rootfiles></container>'
+        b'<?xml version="1.0" ?>'
+        b'<container version="1.0" '
+        b'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
+        b'<rootfiles><rootfile full-path="OPS/content.opf" '
+        b'media-type="application/oebps-package+xml" />'
+        b'</rootfiles></container>'
     )
     zip.write(get_resource('res/wl-logo-small.png'),
               os.path.join('OPS', 'logo_wolnelektury.png'))
@@ -569,7 +569,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         if cover is True:
             cover = make_cover
 
-        cover_file = StringIO()
+        cover_file = BytesIO()
         bound_cover = cover(document.book_info)
         bound_cover.save(cover_file)
         cover_name = 'cover.%s' % bound_cover.ext()
@@ -602,12 +602,12 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
     annotations = etree.Element('annotations')
 
     toc_file = etree.fromstring(
-        '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE ncx PUBLIC '
-        '"-//NISO//DTD ncx 2005-1//EN" '
-        '"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">'
-        '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" '
-        'version="2005-1"><head></head><docTitle></docTitle><navMap>'
-        '</navMap></ncx>'
+        b'<?xml version="1.0" encoding="utf-8"?><!DOCTYPE ncx PUBLIC '
+        b'"-//NISO//DTD ncx 2005-1//EN" '
+        b'"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">'
+        b'<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" xml:lang="pl" '
+        b'version="2005-1"><head></head><docTitle></docTitle><navMap>'
+        b'</navMap></ncx>'
     )
     nav_map = toc_file[-1]
 
@@ -645,7 +645,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         '<item id="support" href="support.html" media-type="application/xhtml+xml" />'))
     spine.append(etree.fromstring(
         '<itemref idref="support" />'))
-    html_string = open(get_resource('epub/support.html')).read()
+    html_string = open(get_resource('epub/support.html'), 'rb').read()
     chars.update(used_chars(etree.fromstring(html_string)))
     zip.writestr('OPS/support.html', squeeze_whitespace(html_string))
 
@@ -679,7 +679,7 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                               os.path.join(tmpdir, fname)]
             env = {"PERL_USE_UNSAFE_INC": "1"}
             if verbose:
-                print "Running font-optimizer"
+                print("Running font-optimizer")
                 subprocess.check_call(optimizer_call, env=env)
             else:
                 dev_null = open(os.devnull, 'w')

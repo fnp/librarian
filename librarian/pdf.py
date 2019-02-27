@@ -9,11 +9,11 @@ Creates one big XML from the book and its children, converts it to LaTeX
 with TeXML, then runs it by XeLaTeX.
 
 """
-from __future__ import with_statement
+from __future__ import print_function, unicode_literals
+
 import os
 import os.path
 import shutil
-from StringIO import StringIO
 from tempfile import mkdtemp, NamedTemporaryFile
 import re
 from copy import deepcopy
@@ -23,6 +23,7 @@ from itertools import chain
 from Texml.processor import process
 from lxml import etree
 from lxml.etree import XMLSyntaxError, XSLTApplyError
+import six
 
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
@@ -57,7 +58,7 @@ def insert_tags(doc, split_re, tagname, exclude=None):
 
     >>> t = etree.fromstring('<a><b>A-B-C</b>X-Y-Z</a>')
     >>> insert_tags(t, re.compile('-'), 'd')
-    >>> print etree.tostring(t)
+    >>> print(etree.tostring(t, encoding='unicode'))
     <a><b>A<d/>B<d/>C</b>X<d/>Y<d/>Z</a>
     """
 
@@ -196,11 +197,11 @@ def package_available(package, args='', verbose=False):
     tempdir = mkdtemp('-wl2pdf-test')
     fpath = os.path.join(tempdir, 'test.tex')
     f = open(fpath, 'w')
-    f.write(r"""
-        \documentclass{wl}
-        \usepackage[%s]{%s}
-        \begin{document}
-        \end{document}
+    f.write("""
+        \\documentclass{wl}
+        \\usepackage[%s]{%s}
+        \\begin{document}
+        \\end{document}
         """ % (args, package))
     f.close()
     if verbose:
@@ -306,8 +307,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         del document  # no longer needed large object :)
 
         tex_path = os.path.join(temp, 'doc.tex')
-        fout = open(tex_path, 'w')
-        process(StringIO(texml), fout, 'utf-8')
+        fout = open(tex_path, 'wb')
+        process(six.BytesIO(texml), fout, 'utf-8')
         fout.close()
         del texml
 
@@ -329,7 +330,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         # some things work better when compiled twice
         # (table of contents, [line numbers - disabled])
-        for run in xrange(2):
+        for run in range(2):
             if verbose:
                 p = call(['xelatex', tex_path])
             else:
@@ -346,7 +347,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         shutil.rmtree(temp)
         return OutputFile.from_filename(output_file.name)
 
-    except (XMLSyntaxError, XSLTApplyError), e:
+    except (XMLSyntaxError, XSLTApplyError) as e:
         raise ParseError(e)
 
 
@@ -361,14 +362,14 @@ def load_including_children(wldoc=None, provider=None, uri=None):
         text = f.read().decode('utf-8')
         f.close()
     elif wldoc is not None:
-        text = etree.tostring(wldoc.edoc, encoding=unicode)
+        text = etree.tostring(wldoc.edoc, encoding='unicode')
         provider = wldoc.provider
     else:
         raise ValueError('Neither a WLDocument, nor provider and URI were provided.')
 
-    text = re.sub(ur"([\u0400-\u04ff]+)", ur"<alien>\1</alien>", text)
+    text = re.sub(r"([\u0400-\u04ff]+)", r"<alien>\1</alien>", text)
 
-    document = WLDocument.from_string(text, parse_dublincore=True, provider=provider)
+    document = WLDocument.from_bytes(text.encode('utf-8'), parse_dublincore=True, provider=provider)
     document.swap_endlines()
 
     for child_uri in document.book_info.parts:
