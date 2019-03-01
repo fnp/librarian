@@ -2,6 +2,13 @@
 
 This document records all notable changes to Librarian.
 
+
+## 1.7.1 (2019-03-01)
+
+### Fixed
+- Bug in cover generation.
+
+
 ## 1.7 (2019-02-27)
 
 ### Added

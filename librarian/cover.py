@@ -305,7 +305,7 @@ class WLCover(Cover):
             bg_src = None
             if bg_src is None:
                 bg_src = URLOpener().open(url)
-            self.background_img = StringIO(bg_src.read())
+            self.background_img = BytesIO(bg_src.read())
             bg_src.close()
 
     def pretty_author(self):
