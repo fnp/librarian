@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 1.7.2 (2019-03-12)
+
+### Fixed
+- Fix for Picture in Python 3: open image in binary mode.
+
+
 ## 1.7.1 (2019-03-01)
 
 ### Fixed

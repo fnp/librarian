@@ -154,7 +154,7 @@ class WLPicture(object):
         return self.image_store.path(self.slug, self.mime_type)
 
     def image_file(self, *args, **kwargs):
-        return open(self.image_path, *args, **kwargs)
+        return open(self.image_path, 'rb', *args, **kwargs)
 
     def get_sem_coords(self, sem):
         area = sem.find("div[@type='rect']")
