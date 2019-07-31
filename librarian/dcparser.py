@@ -468,6 +468,8 @@ class BookInfo(WorkInfo):
         Field(WLNS('coverBarColor'), 'cover_bar_color', required=False),
         Field(WLNS('coverBoxPosition'), 'cover_box_position', required=False),
         Field(WLNS('coverClass'), 'cover_class', default=['default']),
+        Field(WLNS('coverLogoUrl'), 'cover_logo_urls', multiple=True, required=False),
+
         Field('pdf-id',  'isbn_pdf',  required=False),
         Field('epub-id', 'isbn_epub', required=False),
         Field('mobi-id', 'isbn_mobi', required=False),

@@ -432,10 +432,15 @@ class LogoWLCover(WLCover):
         'res/fnp-logo-white.png',
     ]
 
-    def __init__(self, *args, **kwargs):
-        super(LogoWLCover, self).__init__(*args, **kwargs)
+    def __init__(self, book_info, *args, **kwargs):
+        super(LogoWLCover, self).__init__(book_info, *args, **kwargs)
         self.gradient_height += self.bleed
         self.gradient_logo_margin_right += self.bleed
+
+        self.additional_cover_logos = [
+            BytesIO(URLOpener().open(cover_logo_url).read())
+            for cover_logo_url in book_info.cover_logo_urls
+        ]
 
     def image(self):
         img = super(LogoWLCover, self).image()
@@ -451,14 +456,28 @@ class LogoWLCover(WLCover):
 
         cursor = metr.width - metr.gradient_logo_margin_right
         logo_top = int(metr.height - metr.gradient_height / 2 - metr.gradient_logo_height / 2 - metr.bleed / 2)
-        for logo_path in self.gradient_logos[::-1]:
-            logo = Image.open(get_resource(logo_path))
+
+        logos = [get_resource(logo_path) for logo_path in self.gradient_logos[::-1]]
+        logos = logos + self.additional_cover_logos
+        logos = [Image.open(logo_bytes).convert('RGBA') for logo_bytes in logos]
+
+        # See if logos fit into the gradient. If not, scale down accordingly.
+        space_for_logos = metr.width - metr.bar_width - 2 * metr.gradient_logo_margin_right
+        widths = [logo.size[0] * metr.gradient_logo_height / logo.size[1] for logo in logos]
+        taken_space = sum(widths) + (len(logos) - 1) * (metr.gradient_logo_spacing)
+        logo_scale = space_for_logos / taken_space if taken_space > space_for_logos else 1
+        logo_top += int(metr.gradient_logo_height * (1 - logo_scale) / 2)
+
+        for i, logo in enumerate(logos):
             logo = logo.resize(
-                (int(round(logo.size[0] * metr.gradient_logo_height / logo.size[1])), metr.gradient_logo_height),
+                (
+                    int(round(widths[i] * logo_scale)),
+                    int(round(metr.gradient_logo_height * logo_scale))
+                ),
                 Image.ANTIALIAS)
             cursor -= logo.size[0]
             img.paste(logo, (cursor, logo_top), mask=logo)
-            cursor -= metr.gradient_logo_spacing
+            cursor -= int(round(metr.gradient_logo_spacing * logo_scale))
 
         return img
 

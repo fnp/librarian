@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 1.7.3 (2019-07-31)
+
+### Added
+- Support for wl:coverLogoUrl, for adding cover logos.
+
+
 ## 1.7.2 (2019-03-12)
 
 ### Fixed
