@@ -38,10 +38,10 @@ def html_has_content(text):
 def transform_abstrakt(abstrakt_element):
     style_filename = get_stylesheet('legacy')
     style = etree.parse(style_filename)
-    xml = etree.tostring(abstrakt_element)
-    document = etree.parse(six.BytesIO(xml.replace('abstrakt', 'dlugi_cytat')))  # HACK
+    xml = etree.tostring(abstrakt_element, encoding='unicode')
+    document = etree.parse(six.StringIO(xml.replace('abstrakt', 'dlugi_cytat')))  # HACK
     result = document.xslt(style)
-    html = re.sub('<a name="sec[0-9]*"/>', '', etree.tostring(result))
+    html = re.sub('<a name="sec[0-9]*"/>', '', etree.tostring(result, encoding='unicode'))
     return re.sub('</?blockquote[^>]*>', '', html)
 
 

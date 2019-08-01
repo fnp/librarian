@@ -36,7 +36,7 @@ def test_wlpicture():
 
     assert path.exists(wlp.image_path)
     
-    f = wlp.image_file('r')
+    f = wlp.image_file()
     f.close()
 
 

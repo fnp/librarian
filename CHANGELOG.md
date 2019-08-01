@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 1.7.4 (2019-08-01)
+
+### Fixed
+- `html.tranform_abstract` bytes vs text confusion.
+- Tests.
+
+
 ## 1.7.3 (2019-07-31)
 
 ### Added
