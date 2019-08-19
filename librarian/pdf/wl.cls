@@ -399,8 +399,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
     Przekaż 1\% podatku na rozwój Wolnych Lektur:
     Fundacja Nowoczesna Polska, KRS 0000070056.
 
-    Pomóż uwolnić konkretną książkę, wspierając
-    \href{http://www.wolnelektury.pl/wesprzyj/}{zbiórkę na stronie wolnelektury.pl}.
+    Dołącz do \href{https://wolnelektury.pl/towarzystwo/}{Towarzystwa Przyjaciół Wolnych Lektur} i pomóż nam rozwijać bibliotekę.
 
     Przekaż darowiznę na konto:
     \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.

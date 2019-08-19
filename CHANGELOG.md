@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 1.7.5 (2019-08-19)
+
+### Changed
+- Updated information on the back of EPUB and PDF files.
+
+
 ## 1.7.4 (2019-08-01)
 
 ### Fixed

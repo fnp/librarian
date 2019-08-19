@@ -21,7 +21,7 @@ def whole_tree(prefix, path):
 
 setup(
     name='librarian',
-    version='1.7.4',
+    version='1.7.5',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
