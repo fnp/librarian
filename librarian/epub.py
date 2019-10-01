@@ -535,7 +535,10 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
     functions.reg_mathml_epub(zip)
 
     if os.path.isdir(ilustr_path):
+        ilustr_elements = set(ilustr.get('src') for ilustr in document.edoc.findall('//ilustr'))
         for i, filename in enumerate(os.listdir(ilustr_path)):
+            if filename not in ilustr_elements:
+                continue
             file_path = os.path.join(ilustr_path, filename)
             zip.write(file_path, os.path.join('OPS', filename))
             image_id = 'image%s' % i

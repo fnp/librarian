@@ -2,6 +2,11 @@
 
 This document records all notable changes to Librarian.
 
+## 1.7.6 (2019-10-01)
+
+### Changed
+- Epub: only attach images referenced in the text.
+
 
 ## 1.7.5 (2019-08-19)
 
