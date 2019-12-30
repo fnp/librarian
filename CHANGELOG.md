@@ -2,6 +2,11 @@
 
 This document records all notable changes to Librarian.
 
+## 1.7.7 (2019-12-31)
+
+### Changed
+- Allow multiple source.URL fields.
+
 ## 1.7.6 (2019-10-01)
 
 ### Changed

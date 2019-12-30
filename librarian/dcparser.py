@@ -248,7 +248,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         Field(DCNS('description'), 'description', required=False),
 
         Field(DCNS('source'), 'source_name', required=False),
-        Field(DCNS('source.URL'), 'source_url', required=False),
+        Field(DCNS('source.URL'), 'source_urls', salias='source_url', multiple=True, required=False),
         Field(DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
         Field(DCNS('rights.license'), 'license', required=False),
         Field(DCNS('rights'), 'license_description'),
