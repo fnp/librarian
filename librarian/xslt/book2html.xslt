@@ -20,9 +20,15 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 		<link href="https://static.wolnelektury.pl/css/compressed/book_text.css" rel="stylesheet" type="text/css" />
+		<style>
+		  .animacja {cursor: pointer;}
+		</style>
 	    </head>
             <body>
-                <xsl:call-template name="book-text" />
+              <xsl:call-template name="book-text" />
+
+	      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	      <script src="http://malsup.github.io/min/jquery.cycle2.min.js"></script>
             </body>
             </html>
         </xsl:when>
@@ -137,6 +143,12 @@
             <xsl:value-of select="@alt" />
         </xsl:attribute>
     </img>
+</xsl:template>
+
+<xsl:template match="animacja">
+  <div class="animacja cycle-slideshow" data-cycle-pause-on-hover="true" data-cycle-next="> img" data-cycle-fx="fadeout" data-cycle-paused="true">
+    <xsl:apply-templates/>
+  </div>
 </xsl:template>
 
 
