@@ -247,7 +247,7 @@
 <xsl:template name="verse">
     <xsl:param name="verse-content" />
     <xsl:param name="verse-type" />
-    <p class="verse">
+    <div class="verse">
         <xsl:choose>
             <xsl:when test="name($verse-type) = 'wers_akap'">
                 <xsl:attribute name="style">padding-left: 1em</xsl:attribute>
@@ -270,7 +270,7 @@
             </xsl:when>
         </xsl:choose>
         <xsl:apply-templates select="$verse-content" mode="inline" />
-    </p>
+    </div>
 </xsl:template>
 
 <xsl:template match="motto_podpis">
