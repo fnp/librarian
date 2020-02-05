@@ -297,7 +297,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         desc = rdf_tag.find(".//" + RDFNS('Description'))
 
         if desc is None:
-            raise NoDublinCore("No DublinCore section found.")
+            raise NoDublinCore("There must be a '%s' element inside the RDF." % RDFNS('Description'))
 
         lang = None
         p = desc

@@ -39,7 +39,7 @@ class WLDocument(object):
             self.rdf_elem = root_elem.find(dc_path)
 
             if self.rdf_elem is None:
-                raise NoDublinCore('Document has no DublinCore - which is required.')
+                raise NoDublinCore("Document must have a '%s' element." % RDFNS('RDF'))
 
             self.book_info = dcparser.BookInfo.from_element(
                     self.rdf_elem, fallbacks=meta_fallbacks, strict=strict)

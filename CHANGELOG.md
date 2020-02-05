@@ -2,6 +2,12 @@
 
 This document records all notable changes to Librarian.
 
+## 1.7.8 (2020-02-05)
+
+### Added
+- Preliminary support for new tag: animacja.
+
+
 ## 1.7.7 (2019-12-31)
 
 ### Changed
