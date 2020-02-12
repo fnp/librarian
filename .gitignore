@@ -12,3 +12,11 @@ build
 /.tox
 /nosetests.xml
 /htmlcov
+
+/tests/uat/*.pdf
+/tests/uat/*.html
+/tests/uat/*.epub
+/tests/uat/*.mobi
+/tests/uat/*.txt
+/tests/uat/*.fb2
+

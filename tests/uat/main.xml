@@ -1,0 +1,100 @@
+<utwor>
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <dc:creator>Radek Czajka</dc:creator>
+      <dc:title>Test Document</dc:title>
+      <dc:date>2020-01-08</dc:date>
+      <dc:publisher>Fundacja Nowoczesna Polska</dc:publisher>
+      <dc:language>pol</dc:language>
+      <dc:identifier.url>wl-test</dc:identifier.url>
+      <dc:rights>gnu gpl</dc:rights>
+    </rdf:Description>
+  </rdf:RDF>
+
+  <opowiadanie>
+
+<autor_utworu>Wolne Lektury</autor_utworu>
+<nazwa_utworu>Testy</nazwa_utworu>
+<podtytul>Podtytuł</podtytul>
+
+    <naglowek_czesc>Testy struktury</naglowek_czesc>
+
+    <naglowek_czesc>Nagłówek części</naglowek_czesc>
+    <podtytul_czesc>Podtytuł części</podtytul_czesc>
+
+    <naglowek_rozdzial>Nagłówek rozdziału</naglowek_rozdzial>
+    <podtytul_rozdzial>Podtytuł rozdziału</podtytul_rozdzial>
+
+    <naglowek_podrozdzial>Nagłówek podrozdziału</naglowek_podrozdzial>
+    <podtytul_podrozdzial>Podtytuł podrozdziału</podtytul_podrozdzial>
+
+    <naglowek_akt>Nagłówek aktu</naglowek_akt>
+    <podtytul_akt>Podtytuł aktu</podtytul_akt>
+    
+    <naglowek_scena>Nagłówek sceny</naglowek_scena>
+    <podtytul_scena>Podtytuł sceny</podtytul_scena>
+    
+    <srodtytul>Śródtytuł</srodtytul>
+
+    <akap>Nagłówki powinny tworzyć prawidłową strukturę. Użyte elementy: tytuły i podtytuły części, rozdziału, podrozdziału, aktu i sceny, oraz śródtytuł.</akap>
+    
+    
+    <naglowek_czesc>Strofa w przypisie</naglowek_czesc>
+    <akap>Strofa umieszczona w przypisie powinna wyglądać prawidłowo. Powinna być złożona fontem wielkości tekstu w przypisie. Nie powinna posiadać numeracji wersów.</akap>
+    <sekcja_asterysk/>
+
+    <akap>
+      Test<pe>
+        <slowo_obce>przypis ze strofami</slowo_obce> ---
+        Tekst
+        <strofa>
+          <wers>wers 1</wers>/
+          <wers>wers 2</wers>/
+          <wers>wers 3</wers>/
+          <wers>wers 4</wers>/
+          <wers>wers 5</wers>/
+          <wers>wers 6</wers>
+        </strofa>
+      </pe>
+    </akap>
+
+
+    <separator_linia/>
+    <naglowek_rozdzial>Akapit w przypisie</naglowek_rozdzial>
+
+    <akap>Akapit umieszczony w przypisie powinien wyglądać prawidłowo. Powinien być złożony fontem wielkości tekstu w przypisie. Nie powinien posiadać numeracji.</akap>
+    <sekcja_asterysk/>
+
+    <akap>
+      Test<pe>
+        <slowo_obce>przypis z akapitami</slowo_obce> ---
+        Tekst
+        <akap>Akapit 1</akap>
+        <akap>Akapit 2</akap>
+        <akap>Akapit 3</akap>
+        <akap>Akapit 4</akap>
+        <akap>Akapit 5</akap>
+        <akap>Akapit 6</akap>
+      </pe>
+    </akap>
+
+    <separator_linia/>
+    <naglowek_rozdzial>Przypis w przypisie</naglowek_rozdzial>
+    <akap>Przypis umieszczony w przypisie powinien wyglądać prawidłowo.</akap>
+    <sekcja_asterysk/>
+
+    <akap>
+      Test<pe>
+        <slowo_obce>Przypis z przypisem</slowo_obce> ---
+        Przypis<pe>
+        <slowo_obce>Przypis w przypisie</slowo_obce>
+        ---
+        Zawartość przypisu w przypisie
+      </pe>
+      </pe>
+    </akap>
+
+
+    
+  </opowiadanie>
+</utwor>

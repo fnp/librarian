@@ -2,6 +2,17 @@
 
 This document records all notable changes to Librarian.
 
+## 1.8 (2020-02-12)
+
+### Added
+- Support for tags: podtytul_*.
+- Swappable CSS for HTML preview (as --css).
+- First version of a test file in tests/uat.
+
+### Changed
+- Verses in HTML are now generated as div, not p, to prevent blank lines on copying.
+
+
 ## 1.7.8 (2020-02-05)
 
 ### Added
