@@ -19,6 +19,9 @@ class Book2Html(Book2Anything):
                 action='store_false', default=True,
                 help='output raw text for use in templates')
     ]
+    transform_options = [
+        Option('--css', dest='css')
+    ]
     parser_options = [
         Option('-i', '--ignore-dublin-core', dest='parse_dublincore', 
                 action='store_false', default=True,

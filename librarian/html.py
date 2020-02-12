@@ -45,7 +45,7 @@ def transform_abstrakt(abstrakt_element):
     return re.sub('</?blockquote[^>]*>', '', html)
 
 
-def transform(wldoc, stylesheet='legacy', options=None, flags=None):
+def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None):
     """Transforms the WL document to XHTML.
 
     If output_filename is None, returns an XML,
@@ -71,7 +71,10 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None):
         if not options:
             options = {}
         options.setdefault('gallery', "''")
-        result = document.transform(style, **options)
+
+        css = css or 'https://static.wolnelektury.pl/css/compressed/book_text.css'
+        css = "'%s'" % css
+        result = document.transform(style, css=css, **options)
         del document  # no longer needed large object :)
 
         if html_has_content(result):

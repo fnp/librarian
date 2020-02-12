@@ -19,10 +19,11 @@
                 <title>Książka z serwisu WolneLektury.pl</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-		<link href="https://static.wolnelektury.pl/css/compressed/book_text.css" rel="stylesheet" type="text/css" />
-		<style>
-		  .animacja {cursor: pointer;}
-		</style>
+		<link rel="stylesheet" type="text/css">
+			<xsl:attribute name="href">
+				<xsl:value-of select="$css" />
+			</xsl:attribute>
+		</link>
 	    </head>
             <body>
               <xsl:call-template name="book-text" />
