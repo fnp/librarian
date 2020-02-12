@@ -161,6 +161,25 @@
     </h2>
   </xsl:template>
 
+  <xsl:template match="podtytul_czesc|podtytul_akt">
+    <h2 class="h2"><small>
+      <xsl:apply-templates />
+    </small></h2>
+  </xsl:template>
+
+  <xsl:template match="podtytul_rozdzial|podtytul_scena">
+    <h2 class="h3"><small>
+      <xsl:apply-templates />
+    </small></h2>
+  </xsl:template>
+
+  <xsl:template match="podtytul_podrozdzial">
+    <h2 class="h4"><small>
+      <xsl:apply-templates />
+    </small></h2>
+  </xsl:template>
+
+
   <xsl:template match="naglowek_osoba">
     <h2 class="h4" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:apply-templates />

@@ -180,14 +180,32 @@
     <h2><xsl:apply-templates mode="inline" /></h2>
 </xsl:template>
 
+<xsl:template match="podtytul_akt|podtytul_czesc">
+  <div class="subtitle2">
+    <xsl:apply-templates mode="inline" />
+  </div>
+</xsl:template>
+
 <xsl:template match="naglowek_scena|naglowek_rozdzial">
     <xsl:call-template name="section-anchor"/>
     <h3><xsl:apply-templates mode="inline" /></h3>
 </xsl:template>
 
+<xsl:template match="podtytul_scena|podtytul_rozdzial">
+  <div class="subtitle3">
+    <xsl:apply-templates mode="inline" />
+  </div>
+</xsl:template>
+
 <xsl:template match="naglowek_osoba|naglowek_podrozdzial">
       <xsl:call-template name="section-anchor"/>
     <h4><xsl:apply-templates mode="inline" /></h4>
+</xsl:template>
+
+<xsl:template match="podtytul_podrozdzial">
+  <div class="subtitle4">
+    <xsl:apply-templates mode="inline" />
+  </div>
 </xsl:template>
 
 <!-- Other paragraph tags -->

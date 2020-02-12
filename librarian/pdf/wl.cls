@@ -632,12 +632,24 @@ Letters={Uppercase}
 \addcontentsline{toc}{subsection}{#2}%
 \vspace{5ex}%
 }
+
+\newcommand{\podtytulakt}[1]{%
+\par{\typosubsubsection{\LARGE #1}}%
+\vspace{5ex}%
+}
+
 \newcommand{\naglowekczesc}[2]{%
 \pagebreak
 \subsection*{\typosubsection{\huge #1}}%
 \addcontentsline{toc}{subsection}{#2}%
 \vspace{5ex}%
 }
+
+\newcommand{\podtytulczesc}[1]{%
+\par{\typosubsubsection{\LARGE #1}}%
+\vspace{5ex}%
+}
+
 \newcommand{\srodtytul}[1]{%
 \subsection*{\typosubsection{#1}}%
 }
@@ -647,9 +659,20 @@ Letters={Uppercase}
 \addcontentsline{toc}{subsubsection}{#2}%
 \vspace{5ex}%
 }
+
+\newcommand{\podtytulscena}[1]{%
+\par{\large #1}%
+\vspace{5ex}%
+}
+
 \newcommand{\naglowekrozdzial}[2]{%
 \subsubsection*{\typosubsubsection{\LARGE #1}}%
 \addcontentsline{toc}{subsubsection}{#2}%
+\vspace{5ex}%
+}
+
+\newcommand{\podtytulrozdzial}[1]{%
+\par{\large #1}%
 \vspace{5ex}%
 }
 
@@ -659,6 +682,10 @@ Letters={Uppercase}
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
 \vspace{5ex}\par{#1}\nopagebreak%
+}
+
+\newcommand{\podtytulpodrozdzial}[1]{%
+\par{#1}\nopagebreak%
 }
 
 \newcommand{\miejsceczas}[1]{%

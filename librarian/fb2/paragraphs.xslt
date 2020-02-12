@@ -23,7 +23,7 @@
 		<cite><xsl:apply-templates mode="para"/></cite>
 	</xsl:template>
 
-	<xsl:template mode="para" match="srodtytul">
+	<xsl:template mode="para" match="srodtytul|podtytul_czesc|podtytul_rozdzial|podtytul_podrozdzial|podtytul_akt|podtytul_scena">
 		<p><strong><xsl:apply-templates mode="inline"/></strong></p>
 	</xsl:template>
 

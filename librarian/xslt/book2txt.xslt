@@ -142,6 +142,16 @@
 <xsl:apply-templates mode="inline" />
 </xsl:template>
 
+
+<xsl:template match="podtytul_czesc|podtytul_rozdzial|podtytul_podrozdzial|podtytul_akt|podtytul_scena">
+<xsl:text>
+
+</xsl:text>
+<xsl:apply-templates mode="inline" />
+</xsl:template>
+
+
+
 <!-- Other paragraph tags -->
 <xsl:template match="miejsce_czas">
 <xsl:text>
