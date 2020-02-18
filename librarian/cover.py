@@ -141,7 +141,7 @@ class Cover(object):
         }
 
     def __init__(self, book_info, format=None, width=None, height=None):
-        self.author = ", ".join(auth.readable() for auth in book_info.authors)
+        self.authors = [auth.readable() for auth in book_info.authors]
         self.title = book_info.title
         if format is not None:
             self.format = format
@@ -153,9 +153,9 @@ class Cover(object):
         elif scale:
             self.scale_after = scale
 
-    def pretty_author(self):
-        """Allows for decorating author's name."""
-        return self.author
+    def pretty_authors(self):
+        """Allows for decorating authors' names."""
+        return [self.authors]
 
     def pretty_title(self):
         """Allows for decorating title."""
@@ -184,7 +184,8 @@ class Cover(object):
             
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size)
-        tbox.text(self.pretty_author(), self.author_color, author_font, metr.author_lineskip, self.author_shadow)
+        for pa in self.pretty_authors():
+            tbox.text(pa, self.author_color, author_font, metr.author_lineskip, self.author_shadow)
         text_img = tbox.image()
         img.paste(text_img, (metr.author_margin_left, top), text_img)
 
@@ -308,8 +309,8 @@ class WLCover(Cover):
             self.background_img = BytesIO(bg_src.read())
             bg_src.close()
 
-    def pretty_author(self):
-        return self.author.upper()
+    def pretty_authors(self):
+        return [a.upper() for a in self.authors]
 
     def add_box(self, img):
         if self.box_position == 'none':
@@ -321,7 +322,8 @@ class WLCover(Cover):
         box = TextBox(metr.title_box_width, metr.height, padding_y=metr.box_padding_y)
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size)
-        box.text(self.pretty_author(),
+        for pa in self.pretty_authors():
+            box.text(pa,
                  font=author_font,
                  line_height=metr.author_lineskip,
                  color=self.author_color,

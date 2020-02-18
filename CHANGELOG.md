@@ -2,6 +2,12 @@
 
 This document records all notable changes to Librarian.
 
+## 1.8.1 (2020-02-18)
+
+### Changed
+- Multiple authors on cover are now split into lines.
+
+
 ## 1.8 (2020-02-12)
 
 ### Added
