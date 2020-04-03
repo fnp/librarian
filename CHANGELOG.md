@@ -2,6 +2,12 @@
 
 This document records all notable changes to Librarian.
 
+## 1.8.2 (2020-04-03)
+
+### Changed
+- New Ebookpoint logo.
+
+
 ## 1.8.1 (2020-02-18)
 
 ### Changed
