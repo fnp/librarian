@@ -2,6 +2,14 @@
 
 This document records all notable changes to Librarian.
 
+
+## 1.8.3 (2020-05-28)
+
+### Fixed
+- XML entities in MathML breaking PDF generation.
+- Regression: verse numbering was lost.
+
+
 ## 1.8.2 (2020-04-03)
 
 ### Changed
