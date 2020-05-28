@@ -5,20 +5,25 @@
 #
 from __future__ import unicode_literals
 
+import io
+from unittest import TestCase
 from librarian import NoDublinCore
 from librarian.parser import WLDocument
 from nose.tools import *
 from .utils import get_fixture
 
 
-def test_transform():
-    expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.html')
+class TransformTest(TestCase):
+    maxDiff = None
 
-    html = WLDocument.from_file(
+    def test_transform(self):
+        expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.html')
+
+        html = WLDocument.from_file(
             get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
-        ).as_html().get_bytes()
+        ).as_html().get_bytes().decode('utf-8')
 
-    assert_equal(html, open(expected_output_file_path, 'rb').read())
+        self.assertEqual(html, io.open(expected_output_file_path).read())
 
 
 @raises(NoDublinCore)

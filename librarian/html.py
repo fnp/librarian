@@ -239,7 +239,7 @@ def add_anchors(root):
         if any_ancestor(element, f):
             continue
 
-        if element.tag == 'p' and 'verse' in element.get('class', ''):
+        if element.tag == 'div' and 'verse' in element.get('class', ''):
             if counter == 1 or counter % 5 == 0:
                 add_anchor(element, "f%d" % counter, link_text=counter)
             counter += 1
