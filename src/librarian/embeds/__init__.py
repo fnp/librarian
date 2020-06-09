@@ -8,6 +8,7 @@ known_types = {
     'application/x-latex': 'librarian.embeds.latex.LaTeX',
 }
 
+
 class Embed():
     @classmethod
     def transforms_to(cls, mime_types, downgrade=False):
@@ -20,7 +21,7 @@ class Embed():
         return matches
 
     def transform_to(self, mime_type, downgrade=False):
-        for name, method in type(cls).__dict__.iteritems():
+        for name, method in type(self).__dict__.iteritems():
             if hasattr(method, "embed_converts_to"):
                 conv_type, conv_downgrade = method.embed_converts_to
                 if downgrade == conv_downgrade and conv_type == mime_type:
@@ -31,11 +32,13 @@ class DataEmbed(Embed):
     def __init__(self, data=None):
         self.data = data
 
+
 class TreeEmbed(Embed):
     def __init__(self, tree=None):
         if isinstance(tree, etree._Element):
             tree = etree.ElementTree(tree)
         self.tree = tree
+
 
 def converts_to(mime_type, downgrade=False):
     def decorator(method):
@@ -43,8 +46,10 @@ def converts_to(mime_type, downgrade=False):
         return method
     return decorator
 
+
 def downgrades_to(mime_type):
     return converts_to(mime_type, True)
+
 
 def create_embed(mime_type, tree=None, data=None):
     embed = known_types.get(mime_type)

@@ -147,7 +147,8 @@ class Cover(object):
             self.format = format
         if width and height:
             self.height = int(round(height * self.width / width))
-        scale = max(float(width or 0) / self.width, float(height or 0) / self.height)
+        scale = max(float(width or 0) / self.width,
+                    float(height or 0) / self.height)
         if scale >= 1:
             self.scale = scale
         elif scale:
@@ -163,7 +164,8 @@ class Cover(object):
 
     def image(self):
         metr = Metric(self, self.scale)
-        img = Image.new('RGB', (metr.width, metr.height), self.background_color)
+        img = Image.new('RGB', (metr.width, metr.height),
+                        self.background_color)
 
         if self.background_img:
             background = Image.open(self.background_img)
@@ -173,19 +175,26 @@ class Cover(object):
         # WL logo
         if metr.logo_width:
             logo = Image.open(get_resource('res/wl-logo.png'))
-            logo = logo.resize((metr.logo_width, int(round(logo.size[1] * metr.logo_width / logo.size[0]))))
-            img.paste(logo, ((metr.width - metr.logo_width) // 2, img.size[1] - logo.size[1] - metr.logo_bottom))
+            logo = logo.resize((
+                metr.logo_width,
+                int(round(logo.size[1] * metr.logo_width / logo.size[0]))
+            ))
+            img.paste(logo, (
+                (metr.width - metr.logo_width) // 2,
+                img.size[1] - logo.size[1] - metr.logo_bottom
+            ))
 
         top = metr.author_top
         tbox = TextBox(
             metr.width - metr.author_margin_left - metr.author_margin_right,
             metr.height - top,
             )
-            
+
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size)
         for pa in self.pretty_authors():
-            tbox.text(pa, self.author_color, author_font, metr.author_lineskip, self.author_shadow)
+            tbox.text(pa, self.author_color, author_font, metr.author_lineskip,
+                      self.author_shadow)
         text_img = tbox.image()
         img.paste(text_img, (metr.author_margin_left, top), text_img)
 
@@ -196,7 +205,8 @@ class Cover(object):
             )
         title_font = ImageFont.truetype(
             self.title_font_ttf, metr.title_font_size)
-        tbox.text(self.pretty_title(), self.title_color, title_font, metr.title_lineskip, self.title_shadow)
+        tbox.text(self.pretty_title(), self.title_color, title_font,
+                  metr.title_lineskip, self.title_shadow)
         text_img = tbox.image()
         img.paste(text_img, (metr.title_margin_left, top), text_img)
 
@@ -282,8 +292,10 @@ class WLCover(Cover):
         u'Epika': 'bottom',
     }
 
-    def __init__(self, book_info, format=None, width=None, height=None, bleed=0):
-        super(WLCover, self).__init__(book_info, format=format, width=width, height=height)
+    def __init__(self, book_info, format=None, width=None, height=None,
+                 bleed=0):
+        super(WLCover, self).__init__(book_info, format=format, width=width,
+                                      height=height)
         # Set box position.
         self.box_position = book_info.cover_box_position or \
             self.kind_box_position.get(book_info.kind, self.box_position)
@@ -294,7 +306,8 @@ class WLCover(Cover):
             self.bar_color = book_info.cover_bar_color or \
                 self.epoch_colors.get(book_info.epoch, self.bar_color)
         # Set title color.
-        self.title_color = self.epoch_colors.get(book_info.epoch, self.title_color)
+        self.title_color = self.epoch_colors.get(book_info.epoch,
+                                                 self.title_color)
 
         self.bleed = bleed
         self.box_top_margin += bleed
@@ -319,19 +332,19 @@ class WLCover(Cover):
         metr = Metric(self, self.scale)
 
         # Write author name.
-        box = TextBox(metr.title_box_width, metr.height, padding_y=metr.box_padding_y)
+        box = TextBox(metr.title_box_width, metr.height,
+                      padding_y=metr.box_padding_y)
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size)
         for pa in self.pretty_authors():
-            box.text(pa,
-                 font=author_font,
-                 line_height=metr.author_lineskip,
-                 color=self.author_color,
-                 shadow_color=self.author_shadow)
+            box.text(pa, font=author_font, line_height=metr.author_lineskip,
+                     color=self.author_color, shadow_color=self.author_shadow)
 
         box.skip(metr.box_above_line)
-        box.draw.line((metr.box_line_left, box.height, metr.box_line_right, box.height),
-                      fill=self.author_color, width=metr.box_line_width)
+        box.draw.line(
+            (metr.box_line_left, box.height, metr.box_line_right, box.height),
+            fill=self.author_color, width=metr.box_line_width
+        )
         box.skip(metr.box_below_line)
 
         # Write title.
@@ -353,11 +366,20 @@ class WLCover(Cover):
         else:   # Middle.
             box_top = (metr.height - box_img.size[1]) // 2
 
-        box_left = metr.bar_width + (metr.width - metr.bar_width - box_img.size[0]) // 2
+        box_left = metr.bar_width + (
+            metr.width - metr.bar_width - box_img.size[0]
+        ) // 2
 
         # Draw the white box.
         ImageDraw.Draw(img).rectangle(
-            (box_left, box_top, box_left + box_img.size[0], box_top + box_img.size[1]), fill='#fff')
+            (
+                box_left,
+                box_top,
+                box_left + box_img.size[0],
+                box_top + box_img.size[1]
+            ),
+            fill='#fff'
+        )
         # Paste the contents into the white box.
         img.paste(box_img, (box_left, box_top), box_img)
         return img
@@ -368,24 +390,43 @@ class WLCover(Cover):
             return img
         metr = Metric(self, self.scale)
         draw = ImageDraw.Draw(img)
-        for corner_x, corner_y in ((0, 0), (metr.width, 0), (0, metr.height), (metr.width, metr.height)):
+        for corner_x, corner_y in (
+                (0, 0), (metr.width, 0),
+                (0, metr.height), (metr.width, metr.height)
+                ):
             dir_x = 1 if corner_x == 0 else -1
             dir_y = 1 if corner_y == 0 else -1
             for offset in (-1, 0, 1):
-                draw.line((corner_x, corner_y + dir_y * metr.bleed + offset,
-                           corner_x + dir_x * metr.bleed * line_ratio, corner_y + dir_y * metr.bleed + offset),
-                          fill='black' if offset == 0 else 'white', width=1)
-                draw.line((corner_x + dir_x * metr.bleed + offset, corner_y,
-                           corner_x + dir_x * metr.bleed + offset, corner_y + dir_y * metr.bleed * line_ratio),
-                          fill='black' if offset == 0 else 'white', width=1)
+                draw.line(
+                    (
+                        corner_x,
+                        corner_y + dir_y * metr.bleed + offset,
+                        corner_x + dir_x * metr.bleed * line_ratio,
+                        corner_y + dir_y * metr.bleed + offset
+                    ),
+                    fill='black' if offset == 0 else 'white',
+                    width=1
+                )
+                draw.line(
+                    (
+                        corner_x + dir_x * metr.bleed + offset,
+                        corner_y,
+                        corner_x + dir_x * metr.bleed + offset,
+                        corner_y + dir_y * metr.bleed * line_ratio
+                    ),
+                    fill='black' if offset == 0 else 'white',
+                    width=1
+                )
         return img
 
     def image(self):
         metr = Metric(self, self.scale)
-        img = Image.new('RGB', (metr.width, metr.height), self.background_color)
+        img = Image.new('RGB', (metr.width, metr.height),
+                        self.background_color)
         draw = ImageDraw.Draw(img)
 
-        draw.rectangle((0, 0, metr.bar_width, metr.height), fill=self.bar_color)
+        draw.rectangle((0, 0, metr.bar_width, metr.height),
+                       fill=self.bar_color)
 
         if self.background_img:
             src = Image.open(self.background_img)
@@ -447,27 +488,61 @@ class LogoWLCover(WLCover):
     def image(self):
         img = super(LogoWLCover, self).image()
         metr = Metric(self, self.scale)
-        gradient = Image.new('RGBA', (metr.width - metr.bar_width, metr.gradient_height), self.gradient_color)
-        gradient_mask = Image.new('L', (metr.width - metr.bar_width, metr.gradient_height))
+        gradient = Image.new(
+            'RGBA',
+            (metr.width - metr.bar_width, metr.gradient_height),
+            self.gradient_color
+        )
+        gradient_mask = Image.new(
+            'L',
+            (metr.width - metr.bar_width, metr.gradient_height)
+        )
         draw = ImageDraw.Draw(gradient_mask)
         for line in range(0, metr.gradient_height):
             draw.line(
                 (0, line, metr.width - metr.bar_width, line),
-                fill=int(255 * self.gradient_opacity * line / metr.gradient_height))
-        img.paste(gradient, (metr.bar_width, metr.height - metr.gradient_height), mask=gradient_mask)
+                fill=int(
+                    255 * self.gradient_opacity * line / metr.gradient_height
+                )
+            )
+        img.paste(gradient,
+                  (metr.bar_width, metr.height - metr.gradient_height),
+                  mask=gradient_mask)
 
         cursor = metr.width - metr.gradient_logo_margin_right
-        logo_top = int(metr.height - metr.gradient_height / 2 - metr.gradient_logo_height / 2 - metr.bleed / 2)
+        logo_top = int(
+            metr.height
+            - metr.gradient_height / 2
+            - metr.gradient_logo_height / 2 - metr.bleed / 2
+        )
 
-        logos = [get_resource(logo_path) for logo_path in self.gradient_logos[::-1]]
+        logos = [
+            get_resource(logo_path)
+            for logo_path in self.gradient_logos[::-1]
+        ]
         logos = logos + self.additional_cover_logos
-        logos = [Image.open(logo_bytes).convert('RGBA') for logo_bytes in logos]
+        logos = [
+            Image.open(logo_bytes).convert('RGBA')
+            for logo_bytes in logos
+        ]
 
         # See if logos fit into the gradient. If not, scale down accordingly.
-        space_for_logos = metr.width - metr.bar_width - 2 * metr.gradient_logo_margin_right
-        widths = [logo.size[0] * metr.gradient_logo_height / logo.size[1] for logo in logos]
-        taken_space = sum(widths) + (len(logos) - 1) * (metr.gradient_logo_spacing)
-        logo_scale = space_for_logos / taken_space if taken_space > space_for_logos else 1
+        space_for_logos = (
+            metr.width
+            - metr.bar_width
+            - 2 * metr.gradient_logo_margin_right
+        )
+        widths = [
+            logo.size[0] * metr.gradient_logo_height / logo.size[1]
+            for logo in logos]
+        taken_space = (
+            sum(widths)
+            + (len(logos) - 1) * (metr.gradient_logo_spacing)
+        )
+        logo_scale = (
+            space_for_logos / taken_space
+            if taken_space > space_for_logos else 1
+        )
         logo_top += int(metr.gradient_logo_height * (1 - logo_scale) / 2)
 
         for i, logo in enumerate(logos):

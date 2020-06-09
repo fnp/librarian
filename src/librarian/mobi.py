@@ -31,7 +31,8 @@ def transform(wldoc, verbose=False, sample=None, cover=None,
 
     epub = document.as_epub(verbose=verbose, sample=sample,
                             html_toc=True, cover=cover or True, flags=flags,
-                            hyphenate=hyphenate, ilustr_path=ilustr_path, output_type='mobi')
+                            hyphenate=hyphenate, ilustr_path=ilustr_path,
+                            output_type='mobi')
     if verbose:
         kwargs = {}
     else:

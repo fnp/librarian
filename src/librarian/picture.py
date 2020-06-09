@@ -14,7 +14,9 @@ import six
 
 
 class WLPictureURI(WLURI):
-    _re_wl_uri = re.compile('http://wolnelektury.pl/katalog/obraz/(?P<slug>[-a-z0-9]+)/?$')
+    _re_wl_uri = re.compile(
+        'http://wolnelektury.pl/katalog/obraz/(?P<slug>[-a-z0-9]+)/?$'
+    )
 
     @classmethod
     def from_slug(cls, slug):
@@ -34,15 +36,19 @@ class PictureInfo(WorkInfo):
         Field(DCNS('language'), 'language', required=False),
         Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True),
         Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True),
-        Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True, required=False),
-        Field(DCNS('subject.style'), 'styles', salias='style', multiple=True, required=False),
+        Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True,
+              required=False),
+        Field(DCNS('subject.style'), 'styles', salias='style', multiple=True,
+              required=False),
 
         Field(DCNS('format.dimensions'), 'dimensions', required=False),
         Field(DCNS('format.checksum.sha1'), 'sha1', required=True),
         Field(DCNS('description.medium'), 'medium', required=False),
-        Field(DCNS('description.dimensions'), 'original_dimensions', required=False),
+        Field(DCNS('description.dimensions'), 'original_dimensions',
+              required=False),
         Field(DCNS('format'), 'mime_type', required=False),
-        Field(DCNS('identifier.url'), 'url', WLPictureURI, strict=as_wlpictureuri_strict)
+        Field(DCNS('identifier.url'), 'url', WLPictureURI,
+              strict=as_wlpictureuri_strict)
     )
 
 
@@ -53,8 +59,9 @@ class ImageStore(object):
     MIME = ['image/gif', 'image/jpeg', 'image/png',
             'application/x-shockwave-flash', 'image/psd', 'image/bmp',
             'image/tiff', 'image/tiff', 'application/octet-stream',
-            'image/jp2', 'application/octet-stream', 'application/octet-stream',
-            'application/x-shockwave-flash', 'image/iff', 'image/vnd.wap.wbmp', 'image/xbm']
+            'image/jp2', 'application/octet-stream',
+            'application/octet-stream', 'application/x-shockwave-flash',
+            'image/iff', 'image/vnd.wap.wbmp', 'image/xbm']
 
     def __init__(self, dir_):
         super(ImageStore, self).__init__()
@@ -68,7 +75,10 @@ class ImageStore(object):
         try:
             i = self.MIME.index(mime_type)
         except ValueError:
-            err = ValueError("Picture %s has unknown mime type: %s" % (slug, mime_type))
+            err = ValueError(
+                "Picture %s has unknown mime type: %s"
+                % (slug, mime_type)
+            )
             err.slug = slug
             err.mime_type = mime_type
             raise err
@@ -87,13 +97,18 @@ class WLPicture(object):
         dc_path = './/' + RDFNS('RDF')
 
         if root_elem.tag != 'picture':
-            raise ValidationError("Invalid root element. Found '%s', should be 'picture'" % root_elem.tag)
+            raise ValidationError(
+                "Invalid root element. Found '%s', should be 'picture'"
+                % root_elem.tag
+            )
 
         if parse_dublincore:
             self.rdf_elem = root_elem.find(dc_path)
 
             if self.rdf_elem is None:
-                raise NoDublinCore('Document has no DublinCore - which is required.')
+                raise NoDublinCore(
+                    "Document has no DublinCore - which is required."
+                )
 
             self.picture_info = PictureInfo.from_element(self.rdf_elem)
         else:
@@ -130,7 +145,8 @@ class WLPicture(object):
             parser = etree.XMLParser(remove_blank_text=False)
             tree = etree.parse(six.BytesIO(data.encode('utf-8')), parser)
 
-            me = cls(tree, parse_dublincore=parse_dublincore, image_store=image_store)
+            me = cls(tree, parse_dublincore=parse_dublincore,
+                     image_store=image_store)
             me.load_frame_info()
             return me
         except (ExpatError, XMLSyntaxError, XSLTApplyError) as e:
@@ -139,7 +155,9 @@ class WLPicture(object):
     @property
     def mime_type(self):
         if self.picture_info is None:
-            raise ValueError('DC is not loaded, hence we don\'t know the image type')
+            raise ValueError(
+                "DC is not loaded, hence we don't know the image type."
+            )
         return self.picture_info.mime_type
 
     @property
@@ -173,7 +191,8 @@ class WLPicture(object):
 
     def partiter(self):
         """
-        Iterates the parts of this picture and returns them and their metadata
+        Iterates the parts of this picture and returns them
+        and their metadata.
         """
         # omg no support for //sem[(@type='theme') or (@type='object')] ?
         for part in list(self.edoc.iterfind("//sem[@type='theme']")) +\
@@ -190,13 +209,21 @@ class WLPicture(object):
                     return x.decode('utf-8')
                 else:
                     return x
-            pd['object'] = part.attrib['type'] == 'object' and want_unicode(part.attrib.get('object', u'')) or None
-            pd['themes'] = part.attrib['type'] == 'theme' and [part.attrib.get('theme', u'')] or []
+            pd['object'] = (
+                part.attrib['type'] == 'object'
+                and want_unicode(part.attrib.get('object', u''))
+                or None
+            )
+            pd['themes'] = (
+                part.attrib['type'] == 'theme'
+                and [part.attrib.get('theme', u'')]
+                or []
+            )
             yield pd
 
     def load_frame_info(self):
         k = self.edoc.find("//sem[@object='kadr']")
-        
+
         if k is not None:
             clip = self.get_sem_coords(k)
             self.frame = clip

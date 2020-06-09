@@ -60,8 +60,11 @@ class Virtualo(packagers.Packager):
         from copy import deepcopy
         import os.path
 
-        xml = etree.fromstring("""<?xml version="1.0" encoding="utf-8"?>
-            <products xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></products>""")
+        xml = etree.fromstring(
+            """<?xml version="1.0" encoding="utf-8"?>
+            <products xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">"""
+            "</products>"
+        )
         product = etree.fromstring("""<product>
                 <publisherProductId></publisherProductId>
                 <title></title>
@@ -96,18 +99,26 @@ class Virtualo(packagers.Packager):
                 product_elem[1].text = cls.utf_trunc(info.title, 255)
                 product_elem[2].text = cls.utf_trunc(info.description, 255)
                 product_elem[3].text = cls.utf_trunc(info.source_name, 3000)
-                product_elem[4][0][0].text = cls.utf_trunc(u' '.join(info.author.first_names), 100)
-                product_elem[4][0][1].text = cls.utf_trunc(info.author.last_name, 100)
+                product_elem[4][0][0].text = cls.utf_trunc(
+                    u' '.join(info.author.first_names), 100
+                )
+                product_elem[4][0][1].text = cls.utf_trunc(
+                    info.author.last_name, 100
+                )
                 xml.append(product_elem)
 
-                cover.VirtualoCover(info).save(os.path.join(outfile_dir, slug+'.jpg'))
+                cover.VirtualoCover(info).save(
+                    os.path.join(outfile_dir, slug+'.jpg')
+                )
                 outfile = os.path.join(outfile_dir, '1.epub')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.epub')
                 doc.save_output_file(doc.as_epub(), output_path=outfile)
-                doc.save_output_file(doc.as_epub(doc, sample=25), output_path=outfile_sample)
+                doc.save_output_file(doc.as_epub(doc, sample=25),
+                                     output_path=outfile_sample)
                 outfile = os.path.join(outfile_dir, '1.mobi')
                 outfile_sample = os.path.join(outfile_dir, '1.sample.mobi')
-                doc.save_output_file(doc.as_mobi(cover=cover.VirtualoCover), output_path=outfile)
+                doc.save_output_file(doc.as_mobi(cover=cover.VirtualoCover),
+                                     output_path=outfile)
                 doc.save_output_file(
                     doc.as_mobi(doc, cover=cover.VirtualoCover, sample=25),
                     output_path=outfile_sample)
@@ -118,6 +129,12 @@ class Virtualo(packagers.Packager):
                 'message': e.message
             })
 
-        xml_file = open(os.path.join(output_dir, 'import_products.xml'), 'w')
-        xml_file.write(etree.tostring(xml, pretty_print=True, encoding='unicode').encode('utf-8'))
+        with open(os.path.join(
+                    output_dir, 'import_products.xml'
+                ), 'w') as xml_file:
+            xml_file.write(
+                etree.tostring(
+                    xml, pretty_print=True, encoding='unicode'
+                ).encode('utf-8')
+            )
         xml_file.close()

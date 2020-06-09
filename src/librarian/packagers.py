@@ -21,7 +21,8 @@ class Packager(object):
         return cls.converter.transform(*args, **kwargs)
 
     @classmethod
-    def prepare_file(cls, main_input, output_dir, verbose=False, overwrite=False):
+    def prepare_file(cls, main_input, output_dir, verbose=False,
+                     overwrite=False):
         path, fname = os.path.realpath(main_input).rsplit('/', 1)
         provider = DirDocProvider(path)
         slug, ext = os.path.splitext(fname)
@@ -37,7 +38,8 @@ class Packager(object):
         doc.save_output_file(output_file, output_path=outfile)
 
     @classmethod
-    def prepare(cls, input_filenames, output_dir='', verbose=False, overwrite=False):
+    def prepare(cls, input_filenames, output_dir='', verbose=False,
+                overwrite=False):
         try:
             for main_input in input_filenames:
                 if verbose:

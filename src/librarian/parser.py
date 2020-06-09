@@ -23,7 +23,7 @@ class WLDocument(object):
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
 
-    def __init__(self, edoc, parse_dublincore=True, provider=None, 
+    def __init__(self, edoc, parse_dublincore=True, provider=None,
                  strict=False, meta_fallbacks=None):
         self.edoc = edoc
         self.provider = provider

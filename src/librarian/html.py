@@ -32,16 +32,21 @@ def get_stylesheet(name):
 
 
 def html_has_content(text):
-    return etree.ETXPath('//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)})(text)
+    return etree.ETXPath(
+        '//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)}
+    )(text)
 
 
 def transform_abstrakt(abstrakt_element):
     style_filename = get_stylesheet('legacy')
     style = etree.parse(style_filename)
     xml = etree.tostring(abstrakt_element, encoding='unicode')
-    document = etree.parse(six.StringIO(xml.replace('abstrakt', 'dlugi_cytat')))  # HACK
+    document = etree.parse(six.StringIO(
+        xml.replace('abstrakt', 'dlugi_cytat')
+    ))  # HACK
     result = document.xslt(style)
-    html = re.sub('<a name="sec[0-9]*"/>', '', etree.tostring(result, encoding='unicode'))
+    html = re.sub('<a name="sec[0-9]*"/>', '',
+                  etree.tostring(result, encoding='unicode'))
     return re.sub('</?blockquote[^>]*>', '', html)
 
 
@@ -72,7 +77,10 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None):
             options = {}
         options.setdefault('gallery', "''")
 
-        css = css or 'https://static.wolnelektury.pl/css/compressed/book_text.css'
+        css = (
+            css
+            or 'https://static.wolnelektury.pl/css/compressed/book_text.css'
+        )
         css = "'%s'" % css
         result = document.transform(style, css=css, **options)
         del document  # no longer needed large object :)
@@ -83,7 +91,9 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None):
             add_table_of_contents(result.getroot())
 
             return OutputFile.from_bytes(etree.tostring(
-                result, method='html', xml_declaration=False, pretty_print=True, encoding='utf-8'))
+                result, method='html', xml_declaration=False,
+                pretty_print=True, encoding='utf-8'
+            ))
         else:
             return None
     except KeyError:
@@ -122,7 +132,12 @@ class Fragment(object):
         for event, element in self.closed_events():
             if event == 'start':
                 result.append(u'<%s %s>' % (
-                    element.tag, ' '.join('%s="%s"' % (k, v) for k, v in element.attrib.items())))
+                    element.tag,
+                    ' '.join(
+                        '%s="%s"' % (k, v)
+                        for k, v in element.attrib.items()
+                    )
+                ))
                 if element.text:
                     result.append(element.text)
             elif event == 'end':
@@ -146,7 +161,10 @@ def extract_fragments(input_filename):
     # iterparse would die on a HTML document
     parser = etree.HTMLParser(encoding='utf-8')
     buf = six.BytesIO()
-    buf.write(etree.tostring(etree.parse(input_filename, parser).getroot()[0][0], encoding='utf-8'))
+    buf.write(etree.tostring(
+        etree.parse(input_filename, parser).getroot()[0][0],
+        encoding='utf-8'
+    ))
     buf.seek(0)
 
     for event, element in etree.iterparse(buf, events=('start', 'end')):
@@ -179,12 +197,15 @@ def extract_fragments(input_filename):
                 try:
                     fragment = open_fragments[element.get('fid')]
                 except KeyError:
-                    print('%s:closed not open fragment #%s' % (input_filename, element.get('fid')))
+                    print('%s:closed not open fragment #%s' % (
+                        input_filename, element.get('fid')
+                    ))
                 else:
                     closed_fragments[fragment.id] = fragment
                     del open_fragments[fragment.id]
 
-            # Append element tail to lost_text (we don't want to lose any text)
+            # Append element tail to lost_text
+            # (we don't want to lose any text)
             if element.tail:
                 for fragment_id in open_fragments:
                     open_fragments[fragment_id].append('text', element.tail)
@@ -192,19 +213,24 @@ def extract_fragments(input_filename):
         # Process all elements except begin and end
         else:
             # Omit annotation tags
-            if (len(element.get('name', '')) or 
+            if (len(element.get('name', '')) or
                     element.get('class', '') in ('annotation', 'anchor')):
                 if event == 'end' and element.tail:
                     for fragment_id in open_fragments:
-                        open_fragments[fragment_id].append('text', element.tail)
+                        open_fragments[fragment_id].append(
+                            'text', element.tail
+                        )
             else:
                 for fragment_id in open_fragments:
-                    open_fragments[fragment_id].append(event, copy.copy(element))
+                    open_fragments[fragment_id].append(
+                        event, copy.copy(element)
+                    )
 
     return closed_fragments, open_fragments
 
 
-def add_anchor(element, prefix, with_link=True, with_target=True, link_text=None):
+def add_anchor(element, prefix, with_link=True, with_target=True,
+               link_text=None):
     parent = element.getparent()
     index = parent.index(element)
 
@@ -234,8 +260,13 @@ def add_anchors(root):
     counter = 1
     for element in root.iterdescendants():
         def f(e):
-            return e.get('class') in ('note', 'motto', 'motto_podpis', 'dedication', 'frame') or \
-                e.get('id') == 'nota_red' or e.tag == 'blockquote'
+            return (
+                e.get('class') in (
+                    'note', 'motto', 'motto_podpis', 'dedication', 'frame'
+                )
+                or e.get('id') == 'nota_red'
+                or e.tag == 'blockquote'
+            )
         if any_ancestor(element, f):
             continue
 
@@ -261,13 +292,19 @@ def add_table_of_contents(root):
     counter = 1
     for element in root.iterdescendants():
         if element.tag in ('h2', 'h3'):
-            if any_ancestor(element,
-                            lambda e: e.get('id') in ('footnotes', 'nota_red') or e.get('class') in ('person-list',)):
+            if any_ancestor(
+                    element,
+                    lambda e: e.get('id') in (
+                        'footnotes', 'nota_red'
+                    ) or e.get('class') in ('person-list',)):
                 continue
 
             element_text = raw_printable_text(element)
-            if element.tag == 'h3' and len(sections) and sections[-1][1] == 'h2':
-                sections[-1][3].append((counter, element.tag, element_text, []))
+            if (element.tag == 'h3' and len(sections)
+                    and sections[-1][1] == 'h2'):
+                sections[-1][3].append(
+                    (counter, element.tag, element_text, [])
+                )
             else:
                 sections.append((counter, element.tag, element_text, []))
             add_anchor(element, "s%d" % counter, with_link=False)
@@ -281,17 +318,19 @@ def add_table_of_contents(root):
 
     for n, section, text, subsections in sections:
         section_element = etree.SubElement(toc_list, 'li')
-        add_anchor(section_element, "s%d" % n, with_target=False, link_text=text)
+        add_anchor(section_element, "s%d" % n, with_target=False,
+                   link_text=text)
 
         if len(subsections):
             subsection_list = etree.SubElement(section_element, 'ol')
             for n1, subsection, subtext, _ in subsections:
                 subsection_element = etree.SubElement(subsection_list, 'li')
-                add_anchor(subsection_element, "s%d" % n1, with_target=False, link_text=subtext)
+                add_anchor(subsection_element, "s%d" % n1, with_target=False,
+                           link_text=subtext)
 
     root.insert(0, toc)
 
-    
+
 def add_table_of_themes(root):
     try:
         from sortify import sortify
@@ -341,8 +380,10 @@ def extract_annotations(html_path):
             footnote.text = None
             if len(footnote) and footnote[-1].tail == '\n':
                 footnote[-1].tail = None
-            text_str = etree.tostring(footnote, method='text', encoding='unicode').strip()
-            html_str = etree.tostring(footnote, method='html', encoding='unicode').strip()
+            text_str = etree.tostring(footnote, method='text',
+                                      encoding='unicode').strip()
+            html_str = etree.tostring(footnote, method='html',
+                                      encoding='unicode').strip()
 
             match = re_qualifier.match(text_str)
             if match:

@@ -69,7 +69,10 @@ def reg_ends_white():
 
 def reg_wrap_words():
     def wrap_words(context, text, wrapping):
-        """XPath extension function automatically wrapping words in passed text"""
+        """
+        XPath extension function automatically wrapping words
+        in passed text.
+        """
         if isinstance(text, list):
             text = ''.join(text)
         if not wrapping:

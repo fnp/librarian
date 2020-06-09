@@ -54,7 +54,9 @@ STYLESHEETS = {
 
 
 def insert_tags(doc, split_re, tagname, exclude=None):
-    """ inserts <tagname> for every occurence of `split_re' in text nodes in the `doc' tree
+    """
+    Inserts <tagname> for every occurence of `split_re'
+    in text nodes in the `doc' tree.
 
     >>> t = etree.fromstring('<a><b>A-B-C</b>X-Y-Z</a>')
     >>> insert_tags(t, re.compile('-'), 'd')
@@ -84,19 +86,21 @@ def insert_tags(doc, split_re, tagname, exclude=None):
 
 
 def substitute_hyphens(doc):
-    insert_tags(doc,
-                re.compile("(?<=[^-\s])-(?=[^-\s])"),
-                "dywiz",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license"), "meta"]
-                )
+    insert_tags(
+        doc,
+        re.compile(r"(?<=[^-\s])-(?=[^-\s])"),
+        "dywiz",
+        exclude=[DCNS("identifier.url"), DCNS("rights.license"), "meta"]
+    )
 
 
 def fix_hanging(doc):
-    insert_tags(doc,
-                re.compile("(?<=\s\w)\s+"),
-                "nbsp",
-                exclude=[DCNS("identifier.url"), DCNS("rights.license")]
-                )
+    insert_tags(
+        doc,
+        re.compile(r"(?<=\s\w)\s+"),
+        "nbsp",
+        exclude=[DCNS("identifier.url"), DCNS("rights.license")]
+    )
 
 
 def fix_tables(doc):
@@ -112,25 +116,37 @@ def fix_tables(doc):
 
 
 def mark_subauthors(doc):
-    root_author = ', '.join(elem.text for elem in doc.findall('./' + RDFNS('RDF') + '//' + DCNS('creator_parsed')))
+    root_author = ', '.join(
+        elem.text
+        for elem in doc.findall(
+                './' + RDFNS('RDF') + '//' + DCNS('creator_parsed')
+        )
+    )
     last_author = None
     # jeśli autor jest inny niż autor całości i niż poprzedni autor
     # to wstawiamy jakiś znacznik w rdf?
     for subutwor in doc.xpath('/utwor/utwor'):
-        author = ', '.join(elem.text for elem in subutwor.findall('.//' + DCNS('creator_parsed')))
+        author = ', '.join(
+            elem.text
+            for elem in subutwor.findall('.//' + DCNS('creator_parsed'))
+        )
         if author not in (last_author, root_author):
-            subutwor.find('.//' + RDFNS('RDF')).append(etree.Element('use_subauthor'))
+            subutwor.find('.//' + RDFNS('RDF')).append(
+                etree.Element('use_subauthor')
+            )
         last_author = author
 
 
 def move_motifs_inside(doc):
     """ moves motifs to be into block elements """
     for master in doc.xpath('//powiesc|//opowiadanie|//liryka_l|//liryka_lp|'
-                            '//dramat_wierszowany_l|//dramat_wierszowany_lp|//dramat_wspolczesny'):
+                            '//dramat_wierszowany_l|//dramat_wierszowany_lp|'
+                            '//dramat_wspolczesny'):
         for motif in master.xpath('motyw'):
             for sib in motif.itersiblings():
-                if sib.tag not in ('sekcja_swiatlo', 'sekcja_asterysk', 'separator_linia',
-                                   'begin', 'end', 'motyw', 'extra', 'uwaga'):
+                if sib.tag not in ('sekcja_swiatlo', 'sekcja_asterysk',
+                                   'separator_linia', 'begin', 'end',
+                                   'motyw', 'extra', 'uwaga'):
                     # motif shouldn't have a tail - it would be untagged text
                     motif.tail = None
                     motif.getparent().remove(motif)
@@ -139,18 +155,21 @@ def move_motifs_inside(doc):
 
 
 def hack_motifs(doc):
-    """ dirty hack for the marginpar-creates-orphans LaTeX problem
+    """
+    Dirty hack for the marginpar-creates-orphans LaTeX problem
     see http://www.latex-project.org/cgi-bin/ltxbugs2html?pr=latex/2304
 
-    moves motifs in stanzas from first verse to second
-    and from next to last to last, then inserts negative vspace before them
+    Moves motifs in stanzas from first verse to second and from next
+    to last to last, then inserts negative vspace before them.
     """
     for motif in doc.findall('//strofa//motyw'):
         # find relevant verse-level tag
         verse, stanza = motif, motif.getparent()
         while stanza is not None and stanza.tag != 'strofa':
             verse, stanza = stanza, stanza.getparent()
-        breaks_before = sum(1 for i in verse.itersiblings('br', preceding=True))
+        breaks_before = sum(
+            1 for i in verse.itersiblings('br', preceding=True)
+        )
         breaks_after = sum(1 for i in verse.itersiblings('br'))
         if (breaks_before == 0 and breaks_after > 0) or breaks_after == 1:
             move_by = 1
@@ -176,8 +195,11 @@ def parse_creator(doc):
     Finds all dc:creator and dc.contributor.translator tags
     and adds *_parsed versions with forenames first.
     """
-    for person in doc.xpath("|".join('//dc:' + tag for tag in ('creator', 'contributor.translator')),
-                            namespaces={'dc': str(DCNS)})[::-1]:
+    for person in doc.xpath(
+            "|".join('//dc:' + tag for tag in (
+                'creator', 'contributor.translator'
+            )),
+            namespaces={'dc': str(DCNS)})[::-1]:
         if not person.text:
             continue
         p = Person.from_text(person.text)
@@ -193,7 +215,10 @@ def get_stylesheet(name):
 
 
 def package_available(package, args='', verbose=False):
-    """ check if a verion of a latex package accepting given args is available """
+    """
+    Check if a verion of a latex package accepting given args
+    is available.
+    """
     tempdir = mkdtemp('-wl2pdf-test')
     fpath = os.path.join(tempdir, 'test.tex')
     f = open(fpath, 'w')
@@ -207,13 +232,18 @@ def package_available(package, args='', verbose=False):
     if verbose:
         p = call(['xelatex', '-output-directory', tempdir, fpath])
     else:
-        p = call(['xelatex', '-interaction=batchmode', '-output-directory', tempdir, fpath], stdout=PIPE, stderr=PIPE)
+        p = call(
+            ['xelatex', '-interaction=batchmode', '-output-directory',
+             tempdir, fpath],
+            stdout=PIPE, stderr=PIPE
+        )
     shutil.rmtree(tempdir)
     return p == 0
 
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None, ilustr_path='', latex_dir=False):
+              cover=None, flags=None, customizations=None, ilustr_path='',
+              latex_dir=False):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
@@ -222,7 +252,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
     morefloats (old/new/none): force specific morefloats
     cover: a cover.Cover factory or True for default
     flags: less-advertising,
-    customizations: user requested customizations regarding various formatting parameters (passed to wl LaTeX class)
+    customizations: user requested customizations regarding various
+        formatting parameters (passed to wl LaTeX class)
     """
 
     # Parse XSLT
@@ -294,7 +325,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
                 shutil.copy(logo, os.path.join(temp, fname))
                 ins.set('src', fname)
             root.insert(0, ins)
-                
+
         if book_info.sponsor_note:
             root.set("sponsor-note", book_info.sponsor_note)
 
@@ -334,14 +365,18 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             if verbose:
                 p = call(['xelatex', tex_path])
             else:
-                p = call(['xelatex', '-interaction=batchmode', tex_path], stdout=PIPE, stderr=PIPE)
+                p = call(
+                    ['xelatex', '-interaction=batchmode', tex_path],
+                    stdout=PIPE, stderr=PIPE
+                )
             if p:
                 raise ParseError("Error parsing .tex file")
 
         if cwd is not None:
             os.chdir(cwd)
 
-        output_file = NamedTemporaryFile(prefix='librarian', suffix='.pdf', delete=False)
+        output_file = NamedTemporaryFile(prefix='librarian', suffix='.pdf',
+                                         delete=False)
         pdf_path = os.path.join(temp, 'doc.pdf')
         shutil.move(pdf_path, output_file.name)
         shutil.rmtree(temp)
@@ -353,7 +388,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
 def load_including_children(wldoc=None, provider=None, uri=None):
     """ Makes one big xml file with children inserted at end.
-    
+
     Either wldoc or provider and URI must be provided.
     """
 
@@ -365,11 +400,14 @@ def load_including_children(wldoc=None, provider=None, uri=None):
         text = etree.tostring(wldoc.edoc, encoding='unicode')
         provider = wldoc.provider
     else:
-        raise ValueError('Neither a WLDocument, nor provider and URI were provided.')
+        raise ValueError(
+            'Neither a WLDocument, nor provider and URI were provided.'
+        )
 
     text = re.sub(r"([\u0400-\u04ff]+)", r"<alien>\1</alien>", text)
 
-    document = WLDocument.from_bytes(text.encode('utf-8'), parse_dublincore=True, provider=provider)
+    document = WLDocument.from_bytes(text.encode('utf-8'),
+                                     parse_dublincore=True, provider=provider)
     document.swap_endlines()
 
     for child_uri in document.book_info.parts:

@@ -46,12 +46,19 @@ class Person(object):
             surname = parts[0]
             names = []
         elif len(parts) != 2:
-            raise ValueError("Invalid person name. There should be at most one comma: \"%s\"." % text.encode('utf-8'))
+            raise ValueError(
+                "Invalid person name. "
+                "There should be at most one comma: \"%s\"."
+                % text.encode('utf-8')
+            )
         else:
             surname = parts[0]
             if len(parts[1]) == 0:
                 # there is no non-whitespace data after the comma
-                raise ValueError("Found a comma, but no names given: \"%s\" -> %r." % (text, parts))
+                raise ValueError(
+                    "Found a comma, but no names given: \"%s\" -> %r."
+                    % (text, parts)
+                )
             names = parts[1].split()
         return cls(surname, *names)
 
@@ -59,10 +66,12 @@ class Person(object):
         return u" ".join(self.first_names + (self.last_name,))
 
     def __eq__(self, right):
-        return self.last_name == right.last_name and self.first_names == right.first_names
+        return (self.last_name == right.last_name
+                and self.first_names == right.first_names)
 
     def __lt__(self, other):
-        return (self.last_name, self.first_names) < (other.last_name, other.first_names)
+        return ((self.last_name, self.first_names)
+                < (other.last_name, other.first_names))
 
     def __hash__(self):
         return hash((self.last_name, self.first_names))
@@ -74,25 +83,32 @@ class Person(object):
             return self.last_name
 
     def __repr__(self):
-        return 'Person(last_name=%r, first_names=*%r)' % (self.last_name, self.first_names)
+        return 'Person(last_name=%r, first_names=*%r)' % (
+            self.last_name, self.first_names
+        )
 
 
 def as_date(text):
-    """Dates for digitization of pictures. It seems we need the following:
-ranges:		'1350-1450',
-centuries:	"XVIII w.'
-half centuries/decades: '2 poł. XVIII w.', 'XVII w., l. 20'
-later-then: 'po 1450'
-circa 'ok. 1813-1814', 'ok.1876-ok.1886
-turn: 1893/1894
-for now we will translate this to some single date losing information of course.
+    """
+    Dates for digitization of pictures. It seems we need the following:
+    ranges:		'1350-1450',
+    centuries:	"XVIII w.'
+    half centuries/decades: '2 poł. XVIII w.', 'XVII w., l. 20'
+    later-then: 'po 1450'
+    circa 'ok. 1813-1814', 'ok.1876-ok.1886
+    turn: 1893/1894
+
+    For now we will translate this to some single date
+    losing information of course.
     """
     try:
         # check out the "N. poł X w." syntax
         if isinstance(text, six.binary_type):
             text = text.decode("utf-8")
 
-        century_format = u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
+        century_format = (
+            u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
+        )
         vague_format = u"(?:po *|ok. *)?([0-9]{4})(-[0-9]{2}-[0-9]{2})?"
 
         m = re.match(century_format, text)
@@ -103,7 +119,10 @@ for now we will translate this to some single date losing information of course.
             century = roman_to_int(m.group(2))
             if half is not None:
                 if decade is not None:
-                    raise ValueError("Bad date format. Cannot specify both half and decade of century")
+                    raise ValueError(
+                        "Bad date format. "
+                        "Cannot specify both half and decade of century."
+                    )
                 half = int(half)
                 t = ((century*100 + (half-1)*50), 1, 1)
             else:
@@ -120,7 +139,7 @@ for now we will translate this to some single date losing information of course.
             raise ValueError
 
         return DatePlus(t[0], t[1], t[2])
-    except ValueError as e:
+    except ValueError:
         raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
 
 
@@ -140,7 +159,8 @@ def as_wluri_strict(text):
 
 
 class Field(object):
-    def __init__(self, uri, attr_name, validator=as_unicode, strict=None, multiple=False, salias=None, **kwargs):
+    def __init__(self, uri, attr_name, validator=as_unicode, strict=None,
+                 multiple=False, salias=None, **kwargs):
         self.uri = uri
         self.name = attr_name
         self.validator = validator
@@ -148,7 +168,8 @@ class Field(object):
         self.multiple = multiple
         self.salias = salias
 
-        self.required = kwargs.get('required', True) and 'default' not in kwargs
+        self.required = (kwargs.get('required', True)
+                         and 'default' not in kwargs)
         self.default = kwargs.get('default', [] if multiple else [None])
 
     def validate_value(self, val, strict=False):
@@ -170,9 +191,14 @@ class Field(object):
                     new_values.append(nv)
                 return new_values
             elif len(val) > 1:
-                raise ValidationError("Multiple values not allowed for field '%s'" % self.uri)
+                raise ValidationError(
+                    "Multiple values not allowed for field '%s'" % self.uri
+                )
             elif len(val) == 0:
-                raise ValidationError("Field %s has no value to assign. Check your defaults." % self.uri)
+                raise ValidationError(
+                    "Field %s has no value to assign. Check your defaults."
+                    % self.uri
+                )
             else:
                 if validator is None or val[0] is None:
                     return val[0]
@@ -181,7 +207,10 @@ class Field(object):
                     setattr(nv, 'lang', val[0].lang)
                 return nv
         except ValueError as e:
-            raise ValidationError("Field '%s' - invald value: %s" % (self.uri, e.message))
+            raise ValidationError(
+                "Field '%s' - invald value: %s"
+                % (self.uri, e.message)
+            )
 
     def validate(self, fdict, fallbacks=None, strict=False):
         if fallbacks is None:
@@ -229,31 +258,37 @@ class DCInfo(type):
 
 class WorkInfo(six.with_metaclass(DCInfo, object)):
     FIELDS = (
-        Field(DCNS('creator'), 'authors', as_person, salias='author', multiple=True),
+        Field(DCNS('creator'), 'authors', as_person, salias='author',
+              multiple=True),
         Field(DCNS('title'), 'title'),
         Field(DCNS('type'), 'type', required=False, multiple=True),
 
         Field(DCNS('contributor.editor'), 'editors',
               as_person, salias='editor', multiple=True, required=False),
         Field(DCNS('contributor.technical_editor'), 'technical_editors',
-              as_person, salias='technical_editor', multiple=True, required=False),
-        Field(DCNS('contributor.funding'), 'funders', salias='funder', multiple=True, required=False),
+              as_person, salias='technical_editor', multiple=True,
+              required=False),
+        Field(DCNS('contributor.funding'), 'funders', salias='funder',
+              multiple=True, required=False),
         Field(DCNS('contributor.thanks'), 'thanks', required=False),
 
         Field(DCNS('date'), 'created_at'),
-        Field(DCNS('date.pd'), 'released_to_public_domain_at', as_date, required=False),
+        Field(DCNS('date.pd'), 'released_to_public_domain_at', as_date,
+              required=False),
         Field(DCNS('publisher'), 'publisher', multiple=True),
 
         Field(DCNS('language'), 'language'),
         Field(DCNS('description'), 'description', required=False),
 
         Field(DCNS('source'), 'source_name', required=False),
-        Field(DCNS('source.URL'), 'source_urls', salias='source_url', multiple=True, required=False),
+        Field(DCNS('source.URL'), 'source_urls', salias='source_url',
+              multiple=True, required=False),
         Field(DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
         Field(DCNS('rights.license'), 'license', required=False),
         Field(DCNS('rights'), 'license_description'),
 
-        Field(PLMETNS('digitisationSponsor'), 'sponsors', multiple=True, required=False),
+        Field(PLMETNS('digitisationSponsor'), 'sponsors', multiple=True,
+              required=False),
         Field(WLNS('digitisationSponsorNote'), 'sponsor_note', required=False),
         Field(WLNS('developmentStage'), 'stage', required=False),
     )
@@ -292,12 +327,16 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
 
     @classmethod
     def from_element(cls, rdf_tag, *args, **kwargs):
-        # the tree is already parsed, so we don't need to worry about Expat errors
+        # The tree is already parsed,
+        # so we don't need to worry about Expat errors.
         field_dict = {}
         desc = rdf_tag.find(".//" + RDFNS('Description'))
 
         if desc is None:
-            raise NoDublinCore("There must be a '%s' element inside the RDF." % RDFNS('Description'))
+            raise NoDublinCore(
+                "There must be a '%s' element inside the RDF."
+                % RDFNS('Description')
+            )
 
         lang = None
         p = desc
@@ -325,15 +364,19 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         return cls(desc.attrib, field_dict, *args, **kwargs)
 
     def __init__(self, rdf_attrs, dc_fields, fallbacks=None, strict=False):
-        """rdf_attrs should be a dictionary-like object with any attributes of the RDF:Description.
-        dc_fields - dictionary mapping DC fields (with namespace) to list of text values for the
-        given field. """
+        """
+        rdf_attrs should be a dictionary-like object with any attributes
+        of the RDF:Description.
+        dc_fields - dictionary mapping DC fields (with namespace) to
+        list of text values for the given field.
+        """
 
         self.about = rdf_attrs.get(RDFNS('about'))
         self.fmap = {}
 
         for field in self.FIELDS:
-            value = field.validate(dc_fields, fallbacks=fallbacks, strict=strict)
+            value = field.validate(dc_fields, fallbacks=fallbacks,
+                                   strict=strict)
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias:
@@ -367,8 +410,10 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
             return object.__setattr__(self, name, newvalue)
 
     def update(self, field_dict):
-        """Update using field_dict. Verify correctness, but don't check if all
-        required fields are present."""
+        """
+        Update using field_dict. Verify correctness, but don't check
+        if all required fields are present.
+        """
         for field in self.FIELDS:
             if field.name in field_dict:
                 setattr(self, field.name, field_dict[field.name])
@@ -448,27 +493,36 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
 
 class BookInfo(WorkInfo):
     FIELDS = (
-        Field(DCNS('audience'), 'audiences', salias='audience', multiple=True, required=False),
+        Field(DCNS('audience'), 'audiences', salias='audience', multiple=True,
+              required=False),
 
-        Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True, required=False),
-        Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True, required=False),
-        Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True, required=False),
+        Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True,
+              required=False),
+        Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True,
+              required=False),
+        Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True,
+              required=False),
 
         Field(DCNS('subject.location'), 'location', required=False),
 
         Field(DCNS('contributor.translator'), 'translators',
               as_person,  salias='translator', multiple=True, required=False),
-        Field(DCNS('relation.hasPart'), 'parts', WLURI, strict=as_wluri_strict, multiple=True, required=False),
-        Field(DCNS('relation.isVariantOf'), 'variant_of', WLURI, strict=as_wluri_strict, required=False),
+        Field(DCNS('relation.hasPart'), 'parts', WLURI, strict=as_wluri_strict,
+              multiple=True, required=False),
+        Field(DCNS('relation.isVariantOf'), 'variant_of', WLURI,
+              strict=as_wluri_strict, required=False),
 
         Field(DCNS('relation.coverImage.url'), 'cover_url', required=False),
-        Field(DCNS('relation.coverImage.attribution'), 'cover_by', required=False),
-        Field(DCNS('relation.coverImage.source'), 'cover_source', required=False),
+        Field(DCNS('relation.coverImage.attribution'), 'cover_by',
+              required=False),
+        Field(DCNS('relation.coverImage.source'), 'cover_source',
+              required=False),
         # WLCover-specific.
         Field(WLNS('coverBarColor'), 'cover_bar_color', required=False),
         Field(WLNS('coverBoxPosition'), 'cover_box_position', required=False),
         Field(WLNS('coverClass'), 'cover_class', default=['default']),
-        Field(WLNS('coverLogoUrl'), 'cover_logo_urls', multiple=True, required=False),
+        Field(WLNS('coverLogoUrl'), 'cover_logo_urls', multiple=True,
+              required=False),
 
         Field('pdf-id',  'isbn_pdf',  required=False),
         Field('epub-id', 'isbn_epub', required=False),
