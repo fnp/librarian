@@ -4,12 +4,12 @@ include NOTICE
 include tox.ini
 recursive-include scripts *.py *.css
 recursive-include tests *.py *.xml *.html *.out *.txt *.jpeg
-include librarian/xslt/*.xslt
-include librarian/xslt/*.xml
-include librarian/epub/*
-include librarian/pdf/*
-include librarian/fb2/*
-include librarian/fonts/*
-graft librarian/res
-graft librarian/font-optimizer
+include src/librarian/xslt/*.xslt
+include src/librarian/xslt/*.xml
+include src/librarian/epub/*
+include src/librarian/pdf/*
+include src/librarian/fb2/*
+include src/librarian/fonts/*
+graft src/librarian/res
+graft src/librarian/font-optimizer
 

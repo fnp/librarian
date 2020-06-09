@@ -6,7 +6,7 @@
 #
 import os
 import os.path
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def whole_tree(prefix, path):
     files = []
@@ -28,10 +28,11 @@ setup(
     maintainer='Radek Czajka',
     maintainer_email='radoslaw.czajka@nowoczesnapolska.org.pl',
     url='http://github.com/fnp/librarian',
-    packages=['librarian', 'librarian.embeds'],
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     package_data={'librarian': ['xslt/*.xslt', 'xslt/*.xml', 'epub/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'res') +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'librarian'), 'font-optimizer')},
+                                whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'res') +
+                                whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'font-optimizer')},
     include_package_data=True,
     install_requires=[
         'lxml>=2.2,<=4.3',
