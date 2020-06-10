@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import copy
 from librarian import functions, OutputFile, get_resource
 from lxml import etree
+import io
 import os
 import six
 
@@ -18,7 +19,7 @@ functions.reg_strip()
 functions.reg_person_name()
 
 
-with open(get_resource("res/text/template.txt")) as f:
+with io.open(get_resource("res/text/template.txt")) as f:
     TEMPLATE = f.read()
 
 
