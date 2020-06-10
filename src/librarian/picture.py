@@ -181,7 +181,9 @@ class WLPicture(object):
             return [[0, 0], [-1, -1]]
 
         def has_all_props(node, props):
-            return reduce(and_, map(lambda prop: prop in node.attrib, props))
+            return six.moves.reduce(
+                and_, map(lambda prop: prop in node.attrib, props)
+            )
 
         if not has_all_props(area, ['x1', 'x2', 'y1', 'y2']):
             return None

@@ -6,7 +6,7 @@
 from __future__ import unicode_literals
 
 import copy
-from librarian import functions, OutputFile
+from librarian import functions, OutputFile, get_resource
 from lxml import etree
 import os
 import six
@@ -17,20 +17,9 @@ functions.reg_wrap_words()
 functions.reg_strip()
 functions.reg_person_name()
 
-TEMPLATE = u"""\
-%(text)s
 
-
------
-Ta lektura, podobnie jak tysiące innych, dostępna jest na stronie wolnelektury.pl.
-Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie %(url)s.
-
-Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowoczesna Polska.
-
-%(license_description)s.%(source)s%(publisher)s
-
-%(description)s%(contributors)s%(funders)s%(isbn)s
-"""
+with open(get_resource("res/text/template.txt")) as f:
+    TEMPLATE = f.read()
 
 
 def transform(wldoc, flags=None, **options):

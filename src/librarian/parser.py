@@ -33,16 +33,21 @@ class WLDocument(object):
         dc_path = './/' + RDFNS('RDF')
 
         if root_elem.tag != 'utwor':
-            raise ValidationError("Invalid root element. Found '%s', should be 'utwor'" % root_elem.tag)
+            raise ValidationError(
+                "Invalid root element. Found '%s', should be 'utwor'"
+                % root_elem.tag
+            )
 
         if parse_dublincore:
             self.rdf_elem = root_elem.find(dc_path)
 
             if self.rdf_elem is None:
-                raise NoDublinCore("Document must have a '%s' element." % RDFNS('RDF'))
+                raise NoDublinCore(
+                    "Document must have a '%s' element." % RDFNS('RDF')
+                )
 
             self.book_info = dcparser.BookInfo.from_element(
-                    self.rdf_elem, fallbacks=meta_fallbacks, strict=strict)
+                self.rdf_elem, fallbacks=meta_fallbacks, strict=strict)
         else:
             self.book_info = None
 
@@ -103,7 +108,9 @@ class WLDocument(object):
         if self.book_info is None:
             raise NoDublinCore('No Dublin Core in document.')
         for part_uri in self.book_info.parts:
-            yield self.from_file(self.provider.by_uri(part_uri), provider=self.provider)
+            yield self.from_file(
+                self.provider.by_uri(part_uri), provider=self.provider
+            )
 
     def chunk(self, path):
         # convert the path to XPath
@@ -150,7 +157,9 @@ class WLDocument(object):
             try:
                 xpath = self.path_to_xpath(key)
                 node = self.edoc.xpath(xpath)[0]
-                repl = etree.fromstring(u"<%s>%s</%s>" % (node.tag, data, node.tag))
+                repl = etree.fromstring(
+                    "<%s>%s</%s>" % (node.tag, data, node.tag)
+                )
                 node.getparent().replace(node, repl)
             except Exception as e:
                 unmerged.append(repr((key, xpath, e)))
@@ -160,8 +169,9 @@ class WLDocument(object):
     def clean_ed_note(self, note_tag='nota_red'):
         """ deletes forbidden tags from nota_red """
 
-        for node in self.edoc.xpath('|'.join('//%s//%s' % (note_tag, tag) for tag in
-                                    ('pa', 'pe', 'pr', 'pt', 'begin', 'end', 'motyw'))):
+        for node in self.edoc.xpath('|'.join(
+                '//%s//%s' % (note_tag, tag) for tag in
+                ('pa', 'pe', 'pr', 'pt', 'begin', 'end', 'motyw'))):
             tail = node.tail
             node.clear()
             node.tag = 'span'
@@ -174,7 +184,8 @@ class WLDocument(object):
         """
         if self.book_info is None:
             raise NoDublinCore('No Dublin Core in document.')
-        persons = set(self.book_info.editors + self.book_info.technical_editors)
+        persons = set(self.book_info.editors
+                      + self.book_info.technical_editors)
         for child in self.parts():
             persons.update(child.editors())
         if None in persons:
@@ -218,11 +229,16 @@ class WLDocument(object):
         from librarian import pdf
         return pdf.transform(self, *args, **kwargs)
 
-    def save_output_file(self, output_file, output_path=None, output_dir_path=None, make_author_dir=False, ext=None):
+    def save_output_file(self, output_file, output_path=None,
+                         output_dir_path=None, make_author_dir=False,
+                         ext=None):
         if output_dir_path:
             save_path = output_dir_path
             if make_author_dir:
-                save_path = os.path.join(save_path, six.text_type(self.book_info.author).encode('utf-8'))
+                save_path = os.path.join(
+                    save_path,
+                    six.text_type(self.book_info.author).encode('utf-8')
+                )
             save_path = os.path.join(save_path, self.book_info.url.slug)
             if ext:
                 save_path += '.%s' % ext

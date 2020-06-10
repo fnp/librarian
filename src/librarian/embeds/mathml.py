@@ -12,13 +12,13 @@ class MathML(TreeEmbed):
     def to_latex(self):
         """
         >>> print(MathML(etree.fromstring(
-                '<mat>a &lt; b</mat>'
-            )).to_latex().data.strip())
+        ...     '<mat>a &lt; b</mat>'
+        ... )).to_latex().data.strip())
         a < b
 
         >>> print(MathML(etree.fromstring(
-                '<mat>&lt; &amp; &amp;lt; &#65;</mat>'
-            )).to_latex().data.strip())
+        ...     '<mat>&lt; &amp; &amp;lt; &#65;</mat>'
+        ... )).to_latex().data.strip())
         < & &lt; A
 
         """

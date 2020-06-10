@@ -82,7 +82,9 @@ def inner_xml(node):
     """
 
     nt = node.text if node.text is not None else ''
-    return ''.join([nt] + [etree.tostring(child, encoding='unicode') for child in node])
+    return ''.join(
+        [nt] + [etree.tostring(child, encoding='unicode') for child in node]
+    )
 
 
 def set_inner_xml(node, text):
@@ -122,7 +124,10 @@ def xslt(xml, sheet, **kwargs):
         xml = etree.ElementTree(xml)
     with open(sheet) as xsltf:
         transform = etree.XSLT(etree.parse(xsltf))
-        params = dict((key, transform.strparam(value)) for key, value in kwargs.items())
+        params = dict(
+            (key, transform.strparam(value))
+            for key, value in kwargs.items()
+        )
         return transform(xml, **params)
 
 
@@ -170,11 +175,17 @@ class Stanza(object):
     Slashes may only occur directly in the stanza. Any slashes in subelements
     will be ignored, and the subelements will be put inside verse elements.
 
-    >>> s = etree.fromstring("<strofa>a <b>c</b> <b>c</b>/\\nb<x>x/\\ny</x>c/ \\nd</strofa>")
+    >>> s = etree.fromstring(
+    ...         "<strofa>a <b>c</b> <b>c</b>/\\nb<x>x/\\ny</x>c/ \\nd</strofa>"
+    ...     )
     >>> Stanza(s).versify()
-    >>> print(etree.tostring(s, encoding='unicode'))
-    <strofa><wers_normalny>a <b>c</b><b>c</b></wers_normalny><wers_normalny>b<x>x/
-    y</x>c</wers_normalny><wers_normalny>d</wers_normalny></strofa>
+    >>> print(etree.tostring(s, encoding='unicode', pretty_print=True).strip())
+    <strofa>
+      <wers_normalny>a <b>c</b><b>c</b></wers_normalny>
+      <wers_normalny>b<x>x/
+    y</x>c</wers_normalny>
+      <wers_normalny>d</wers_normalny>
+    </strofa>
 
     """
     def __init__(self, stanza_elem):
@@ -190,7 +201,10 @@ class Stanza(object):
         tail = self.stanza.tail
         self.stanza.clear()
         self.stanza.tail = tail
-        self.stanza.extend(verse for verse in self.verses if verse.text or len(verse) > 0)
+        self.stanza.extend(
+            verse for verse in self.verses
+            if verse.text or len(verse) > 0
+        )
 
     def open_normal_verse(self):
         self.open_verse = self.stanza.makeelement("wers_normalny")
@@ -249,7 +263,10 @@ def add_to_manifest(manifest, partno):
 def add_to_spine(spine, partno):
     """ Adds a node to the spine section in content.opf file """
 
-    e = spine.makeelement(OPFNS('itemref'), attrib={'idref': 'part%d' % partno})
+    e = spine.makeelement(
+        OPFNS('itemref'),
+        attrib={'idref': 'part%d' % partno}
+    )
     spine.append(e)
 
 
@@ -348,7 +365,8 @@ def chop(main_text):
 
     last_node_part = False
 
-    # the below loop are workaround for a problem with epubs in drama ebooks without acts
+    # The below loop are workaround for a problem with epubs
+    # in drama ebooks without acts.
     is_scene = False
     is_act = False
     for one_part in main_text:
@@ -376,7 +394,10 @@ def chop(main_text):
                 yield part_xml
                 last_node_part = True
                 main_xml_part[:] = [deepcopy(one_part)]
-            elif not last_node_part and name in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
+            elif (not last_node_part
+                  and name in (
+                      "naglowek_rozdzial", "naglowek_akt", "srodtytul"
+                  )):
                 yield part_xml
                 main_xml_part[:] = [deepcopy(one_part)]
             else:
@@ -385,8 +406,12 @@ def chop(main_text):
     yield part_xml
 
 
-def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_static=[]):
-    """ transforms one chunk, returns a HTML string, a TOC object and a set of used characters """
+def transform_chunk(chunk_xml, chunk_no, annotations, empty=False,
+                    _empty_html_static=[]):
+    """
+    Transforms one chunk, returns a HTML string, a TOC object
+    and a set of used characters.
+    """
 
     toc = TOC()
     for element in chunk_xml[0]:
@@ -395,11 +420,13 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
         elif element.tag in ("naglowek_rozdzial", "naglowek_akt", "srodtytul"):
             toc.add(node_name(element), "part%d.html" % chunk_no)
         elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
-            subnumber = toc.add(node_name(element), "part%d.html" % chunk_no, level=1, is_part=False)
+            subnumber = toc.add(node_name(element), "part%d.html" % chunk_no,
+                                level=1, is_part=False)
             element.set('sub', str(subnumber))
     if empty:
         if not _empty_html_static:
-            _empty_html_static.append(open(get_resource('epub/emptyChunk.html')).read())
+            with open(get_resource('epub/emptyChunk.html')) as f:
+                _empty_html_static.append(f.read())
         chars = set()
         output_html = _empty_html_static[0]
     else:
@@ -417,7 +444,8 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False, _empty_html_s
 
 
 def transform(wldoc, verbose=False, style=None, html_toc=False,
-              sample=None, cover=None, flags=None, hyphenate=False, ilustr_path='', output_type='epub'):
+              sample=None, cover=None, flags=None, hyphenate=False,
+              ilustr_path='', output_type='epub'):
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
@@ -430,7 +458,9 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
 
         replace_characters(wldoc.edoc.getroot())
 
-        hyphenator = set_hyph_language(wldoc.edoc.getroot()) if hyphenate else None
+        hyphenator = set_hyph_language(
+            wldoc.edoc.getroot()
+        ) if hyphenate else None
         hyphenate_and_fix_conjunctions(wldoc.edoc.getroot(), hyphenator)
 
         # every input file will have a TOC entry,
@@ -439,7 +469,8 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         chars = set()
         if first:
             # write book title page
-            html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'), outputtype=output_type)
+            html_tree = xslt(wldoc.edoc, get_resource('epub/xsltTitle.xsl'),
+                             outputtype=output_type)
             chars = used_chars(html_tree.getroot())
             html_string = etree.tostring(
                 html_tree, pretty_print=True, xml_declaration=True,
@@ -456,15 +487,17 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                 chars = set()
                 html_string = open(get_resource('epub/emptyChunk.html')).read()
             else:
-                html_tree = xslt(wldoc.edoc, get_resource('epub/xsltChunkTitle.xsl'))
+                html_tree = xslt(wldoc.edoc,
+                                 get_resource('epub/xsltChunkTitle.xsl'))
                 chars = used_chars(html_tree.getroot())
                 html_string = etree.tostring(
                     html_tree, pretty_print=True, xml_declaration=True,
                     encoding="utf-8",
-                    doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"' +
+                    doctype='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"'
                             ' "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
                 )
-            zip.writestr('OPS/part%d.html' % chunk_counter, squeeze_whitespace(html_string))
+            zip.writestr('OPS/part%d.html' % chunk_counter,
+                         squeeze_whitespace(html_string))
             add_to_manifest(manifest, chunk_counter)
             add_to_spine(spine, chunk_counter)
             chunk_counter += 1
@@ -485,12 +518,16 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                     if sample <= 0:
                         empty = True
                     else:
-                        sample -= len(chunk_xml.xpath('//strofa|//akap|//akap_cd|//akap_dialog'))
-                chunk_html, chunk_toc, chunk_chars = transform_chunk(chunk_xml, chunk_counter, annotations, empty)
+                        sample -= len(chunk_xml.xpath(
+                            '//strofa|//akap|//akap_cd|//akap_dialog'
+                        ))
+                chunk_html, chunk_toc, chunk_chars = transform_chunk(
+                    chunk_xml, chunk_counter, annotations, empty)
 
                 toc.extend(chunk_toc)
                 chars = chars.union(chunk_chars)
-                zip.writestr('OPS/part%d.html' % chunk_counter, squeeze_whitespace(chunk_html))
+                zip.writestr('OPS/part%d.html' % chunk_counter,
+                             squeeze_whitespace(chunk_html))
                 add_to_manifest(manifest, chunk_counter)
                 add_to_spine(spine, chunk_counter)
                 chunk_counter += 1
@@ -524,18 +561,21 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
     if document.book_info.thanks:
         document.edoc.getroot().set('thanks', document.book_info.thanks)
 
-    opf = xslt(document.book_info.to_etree(), get_resource('epub/xsltContent.xsl'))
+    opf = xslt(document.book_info.to_etree(),
+               get_resource('epub/xsltContent.xsl'))
     manifest = opf.find('.//' + OPFNS('manifest'))
     guide = opf.find('.//' + OPFNS('guide'))
     spine = opf.find('.//' + OPFNS('spine'))
 
-    output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub', delete=False)
+    output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub',
+                                     delete=False)
     zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
 
     functions.reg_mathml_epub(zip)
 
     if os.path.isdir(ilustr_path):
-        ilustr_elements = set(ilustr.get('src') for ilustr in document.edoc.findall('//ilustr'))
+        ilustr_elements = set(ilustr.get('src')
+                              for ilustr in document.edoc.findall('//ilustr'))
         for i, filename in enumerate(os.listdir(ilustr_path)):
             if filename not in ilustr_elements:
                 continue
@@ -543,7 +583,9 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
             zip.write(file_path, os.path.join('OPS', filename))
             image_id = 'image%s' % i
             manifest.append(etree.fromstring(
-                '<item id="%s" href="%s" media-type="%s" />' % (image_id, filename, guess_type(file_path)[0])))
+                '<item id="%s" href="%s" media-type="%s" />' % (
+                    image_id, filename, guess_type(file_path)[0])
+            ))
 
     # write static elements
     mime = zipfile.ZipInfo()
@@ -590,17 +632,28 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
 
         if bound_cover.uses_dc_cover:
             if document.book_info.cover_by:
-                document.edoc.getroot().set('data-cover-by', document.book_info.cover_by)
+                document.edoc.getroot().set('data-cover-by',
+                                            document.book_info.cover_by)
             if document.book_info.cover_source:
-                document.edoc.getroot().set('data-cover-source', document.book_info.cover_source)
+                document.edoc.getroot().set('data-cover-source',
+                                            document.book_info.cover_source)
 
         manifest.append(etree.fromstring(
-            '<item id="cover" href="cover.html" media-type="application/xhtml+xml" />'))
+            '<item id="cover" href="cover.html" '
+            'media-type="application/xhtml+xml" />'
+        ))
         manifest.append(etree.fromstring(
-            '<item id="cover-image" href="%s" media-type="%s" />' % (cover_name, bound_cover.mime_type())))
+            '<item id="cover-image" href="%s" media-type="%s" />' % (
+                cover_name, bound_cover.mime_type()
+            )
+        ))
         spine.insert(0, etree.fromstring('<itemref idref="cover"/>'))
-        opf.getroot()[0].append(etree.fromstring('<meta name="cover" content="cover-image"/>'))
-        guide.append(etree.fromstring('<reference href="cover.html" type="cover" title="Okładka"/>'))
+        opf.getroot()[0].append(etree.fromstring(
+            '<meta name="cover" content="cover-image"/>'
+        ))
+        guide.append(etree.fromstring(
+            '<reference href="cover.html" type="cover" title="Okładka"/>'
+        ))
 
     annotations = etree.Element('annotations')
 
@@ -616,10 +669,14 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
 
     if html_toc:
         manifest.append(etree.fromstring(
-            '<item id="html_toc" href="toc.html" media-type="application/xhtml+xml" />'))
+            '<item id="html_toc" href="toc.html" '
+            'media-type="application/xhtml+xml" />'
+        ))
         spine.append(etree.fromstring(
             '<itemref idref="html_toc" />'))
-        guide.append(etree.fromstring('<reference href="toc.html" type="toc" title="Spis treści"/>'))
+        guide.append(etree.fromstring(
+            '<reference href="toc.html" type="toc" title="Spis treści"/>'
+        ))
 
     toc, chunk_counter, chars, sample = transform_file(document, sample=sample)
 
@@ -630,7 +687,9 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
     if len(annotations) > 0:
         toc.add("Przypisy", "annotations.html")
         manifest.append(etree.fromstring(
-            '<item id="annotations" href="annotations.html" media-type="application/xhtml+xml" />'))
+            '<item id="annotations" href="annotations.html" '
+            'media-type="application/xhtml+xml" />'
+        ))
         spine.append(etree.fromstring(
             '<itemref idref="annotations" />'))
         replace_by_verse(annotations)
@@ -645,7 +704,9 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
 
     toc.add("Wesprzyj Wolne Lektury", "support.html")
     manifest.append(etree.fromstring(
-        '<item id="support" href="support.html" media-type="application/xhtml+xml" />'))
+        '<item id="support" href="support.html" '
+        'media-type="application/xhtml+xml" />'
+    ))
     spine.append(etree.fromstring(
         '<itemref idref="support" />'))
     html_string = open(get_resource('epub/support.html'), 'rb').read()
@@ -654,10 +715,13 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
 
     toc.add("Strona redakcyjna", "last.html")
     manifest.append(etree.fromstring(
-        '<item id="last" href="last.html" media-type="application/xhtml+xml" />'))
+        '<item id="last" href="last.html" '
+        'media-type="application/xhtml+xml" />'
+    ))
     spine.append(etree.fromstring(
         '<itemref idref="last" />'))
-    html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'), outputtype=output_type)
+    html_tree = xslt(document.edoc, get_resource('epub/xsltLast.xsl'),
+                     outputtype=output_type)
     chars.update(used_chars(html_tree.getroot()))
     zip.writestr('OPS/last.html', squeeze_whitespace(etree.tostring(
         html_tree, pretty_print=True, xml_declaration=True,
@@ -674,8 +738,10 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
         except OSError:
             cwd = None
 
-        os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'font-optimizer'))
-        for fname in 'DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf', 'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf':
+        os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                              'font-optimizer'))
+        for fname in ('DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf',
+                      'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf'):
             optimizer_call = ['perl', 'subset.pl', '--chars',
                               ''.join(chars).encode('utf-8'),
                               get_resource('fonts/' + fname),
@@ -686,17 +752,22 @@ def transform(wldoc, verbose=False, style=None, html_toc=False,
                 subprocess.check_call(optimizer_call, env=env)
             else:
                 dev_null = open(os.devnull, 'w')
-                subprocess.check_call(optimizer_call, stdout=dev_null, stderr=dev_null, env=env)
+                subprocess.check_call(optimizer_call, stdout=dev_null,
+                                      stderr=dev_null, env=env)
             zip.write(os.path.join(tmpdir, fname), os.path.join('OPS', fname))
             manifest.append(etree.fromstring(
-                '<item id="%s" href="%s" media-type="application/x-font-truetype" />' % (fname, fname)))
+                '<item id="%s" href="%s" '
+                'media-type="application/x-font-truetype" />'
+                % (fname, fname)
+            ))
         rmtree(tmpdir)
         if cwd is not None:
             os.chdir(cwd)
     zip.writestr('OPS/content.opf', etree.tostring(opf, pretty_print=True,
                  xml_declaration=True, encoding="utf-8"))
     title = document.book_info.title
-    attributes = "dtb:uid", "dtb:depth", "dtb:totalPageCount", "dtb:maxPageNumber"
+    attributes = ("dtb:uid", "dtb:depth", "dtb:totalPageCount",
+                  "dtb:maxPageNumber")
     for st in attributes:
         meta = toc_file.makeelement(NCXNS('meta'))
         meta.set('name', st)

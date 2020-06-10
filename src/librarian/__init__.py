@@ -27,19 +27,24 @@ class UnicodeException(Exception):
             message = six.text_type(args, encoding='utf-8', errors='ignore')
         return message
 
+
 class ParseError(UnicodeException):
     pass
 
+
 class ValidationError(UnicodeException):
     pass
+
 
 class NoDublinCore(ValidationError):
     """There's no DublinCore section, and it's required."""
     pass
 
+
 class NoProvider(UnicodeException):
     """There's no DocProvider specified, and it's needed."""
     pass
+
 
 class XMLNamespace(object):
     '''A handy structure to repsent names in an XML namespace.'''
@@ -59,12 +64,14 @@ class XMLNamespace(object):
     def __str__(self):
         return '%s' % self.uri
 
+
 class EmptyNamespace(XMLNamespace):
     def __init__(self):
         super(EmptyNamespace, self).__init__('')
 
     def __call__(self, tag):
         return tag
+
 
 # some common namespaces we use
 XMLNS = XMLNamespace('http://www.w3.org/XML/1998/namespace')
@@ -85,8 +92,10 @@ class WLURI(object):
     slug = None
 
     example = 'http://wolnelektury.pl/katalog/lektura/template/'
-    _re_wl_uri = re.compile(r'http://(www\.)?wolnelektury.pl/katalog/lektur[ay]/'
-            '(?P<slug>[-a-z0-9]+)/?$')
+    _re_wl_uri = re.compile(
+        r'http://(www\.)?wolnelektury.pl/katalog/lektur[ay]/'
+        '(?P<slug>[-a-z0-9]+)/?$'
+    )
 
     def __init__(self, uri):
         uri = six.text_type(uri)
@@ -149,37 +158,47 @@ class DirDocProvider(DocProvider):
 
 from . import dcparser
 
+
 DEFAULT_BOOKINFO = dcparser.BookInfo(
-        { RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'},
-        { DCNS('creator'): [u'Some, Author'],
-          DCNS('title'): [u'Some Title'],
-          DCNS('subject.period'): [u'Unknown'],
-          DCNS('subject.type'): [u'Unknown'],
-          DCNS('subject.genre'): [u'Unknown'],
-          DCNS('date'): ['1970-01-01'],
-          DCNS('language'): [u'pol'],
-          # DCNS('date'): [creation_date],
-          DCNS('publisher'): [u"Fundacja Nowoczesna Polska"],
-          DCNS('description'):
-          [u"""Publikacja zrealizowana w ramach projektu
-             Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa
-             wykonana przez Bibliotekę Narodową z egzemplarza
-             pochodzącego ze zbiorów BN."""],
-          DCNS('identifier.url'): [WLURI.example],
-          DCNS('rights'):
-            [u"Domena publiczna - zm. [OPIS STANU PRAWNEGO TEKSTU]"] })
+    {
+        RDFNS('about'): u'http://wiki.wolnepodreczniki.pl/Lektury:Template'
+    },
+    {
+        DCNS('creator'): [u'Some, Author'],
+        DCNS('title'): [u'Some Title'],
+        DCNS('subject.period'): [u'Unknown'],
+        DCNS('subject.type'): [u'Unknown'],
+        DCNS('subject.genre'): [u'Unknown'],
+        DCNS('date'): ['1970-01-01'],
+        DCNS('language'): [u'pol'],
+        # DCNS('date'): [creation_date],
+        DCNS('publisher'): [u"Fundacja Nowoczesna Polska"],
+        DCNS('description'):
+        [u"""Publikacja zrealizowana w ramach projektu
+        Wolne Lektury (http://wolnelektury.pl). Reprodukcja cyfrowa
+        wykonana przez Bibliotekę Narodową z egzemplarza
+        pochodzącego ze zbiorów BN."""],
+        DCNS('identifier.url'): [WLURI.example],
+        DCNS('rights'):
+        [u"Domena publiczna - zm. [OPIS STANU PRAWNEGO TEKSTU]"]
+    }
+)
+
 
 def xinclude_forURI(uri):
     e = etree.Element(XINS("include"))
     e.set("href", uri)
     return etree.tostring(e, encoding='unicode')
 
+
 def wrap_text(ocrtext, creation_date, bookinfo=DEFAULT_BOOKINFO):
     """Wrap the text within the minimal XML structure with a DC template."""
     bookinfo.created_at = creation_date
 
-    dcstring = etree.tostring(bookinfo.to_etree(), \
-        method='xml', encoding='unicode', pretty_print=True)
+    dcstring = etree.tostring(
+        bookinfo.to_etree(),  method='xml', encoding='unicode',
+        pretty_print=True
+    )
 
     return u'<utwor>\n' + dcstring + u'\n<plain-text>\n' + ocrtext + \
         u'\n</plain-text>\n</utwor>'
@@ -190,17 +209,20 @@ def serialize_raw(element):
 
     for child in element.iterchildren():
         e = etree.tostring(child, method='xml', encoding='unicode',
-                pretty_print=True)
+                           pretty_print=True)
         b += e
 
     return b
+
 
 SERIALIZERS = {
     'raw': serialize_raw,
 }
 
+
 def serialize_children(element, format='raw'):
     return SERIALIZERS[format](element)
+
 
 def get_resource(path):
     return os.path.join(os.path.dirname(__file__), path)
@@ -276,4 +298,6 @@ class OutputFile(object):
 
 class URLOpener(FancyURLopener):
     version = 'FNP Librarian (http://github.com/fnp/librarian)'
+
+
 urllib._urlopener = URLOpener()

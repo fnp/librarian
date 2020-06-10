@@ -1,0 +1,12 @@
+%(text)s
+
+
+-----
+Ta lektura, podobnie jak tysiące innych, dostępna jest na stronie wolnelektury.pl.
+Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dostępna jest na stronie %(url)s.
+
+Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowoczesna Polska.
+
+%(license_description)s.%(source)s%(publisher)s
+
+%(description)s%(contributors)s%(funders)s%(isbn)s
