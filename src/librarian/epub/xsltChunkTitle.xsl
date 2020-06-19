@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <xsl:output method="html" version="1.0" encoding="utf-8" />
-  <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
-  <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
 
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
         <link rel="stylesheet" href="style.css" type="text/css" />
-        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>
           <xsl:text>Strona tytułowa</xsl:text>
         </title>

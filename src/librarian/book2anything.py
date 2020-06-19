@@ -11,7 +11,7 @@ import optparse
 import six
 from librarian import DirDocProvider, ParseError
 from librarian.parser import WLDocument
-from librarian.cover import make_cover
+from librarian.cover import make_cover, COVER_CLASSES
 
 
 class Option(object):
@@ -82,6 +82,10 @@ class Book2Anything(object):
                 help='prefix for image download cache'
                 + (' (implies --with-cover)' if cls.cover_optional else '')
             )
+            parser.add_option(
+                '--cover-class', dest='cover_class',
+                help='cover class name'
+            )
         for option in (
                 cls.parser_options
                 + cls.transform_options
@@ -118,11 +122,14 @@ class Book2Anything(object):
                 def cover_class(book_info, *args, **kwargs):
                     return make_cover(
                         book_info, image_cache=options.image_cache,
+                        cover_class=options.cover_class,
                         *args, **kwargs
                     )
                 transform_args['cover'] = cover_class
             elif not cls.cover_optional or options.with_cover:
-                transform_args['cover'] = make_cover
+                cover_class = COVER_CLASSES.get(
+                    options.cover_class, make_cover)
+                transform_args['cover'] = cover_class
 
         # Do some real work
         try:

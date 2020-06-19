@@ -5,15 +5,13 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:wl="http://wolnelektury.pl/functions">
   <xsl:output method="html" version="1.0" encoding="utf-8" />
-  <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
-  <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
   <xsl:param name="outputtype"/>
 
   <xsl:template match="/">
     <html>
       <head>
         <link rel="stylesheet" href="style.css" type="text/css" />
-        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>
           <xsl:text>Strona tytułowa</xsl:text>
         </title>

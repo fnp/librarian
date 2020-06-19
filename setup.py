@@ -39,6 +39,7 @@ setup(
         'Pillow',
         'six',
         'texml',
+        'ebooklib',
     ],
     scripts=['scripts/book2html',
              'scripts/book2txt',

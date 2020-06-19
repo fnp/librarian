@@ -111,21 +111,19 @@ def reg_texcommand():
     _register_function(texcommand)
 
 
-def reg_lang_code_3to2():
-    def lang_code_3to2(context, text):
-        """Convert 3-letter language code to 2-letter code"""
-        result = ''
-        text = ''.join(text)
-        with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
-            for line in f.read().decode('latin1').split('\n'):
-                list = line.strip().split('|')
-                if list[0] == text:
-                    result = list[2]
-        if result == '':
-            return text
-        else:
-            return result
-    _register_function(lang_code_3to2)
+def lang_code_3to2(text):
+    """Convert 3-letter language code to 2-letter code"""
+    result = ''
+    text = ''.join(text)
+    with open(get_resource('res/ISO-639-2_8859-1.txt'), 'rb') as f:
+        for line in f.read().decode('latin1').split('\n'):
+            codes = line.strip().split('|')
+            if codes[0] == text:
+                result = codes[2]
+    if result == '':
+        return text
+    else:
+        return result
 
 
 def mathml_latex(context, trees):

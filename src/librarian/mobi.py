@@ -30,7 +30,7 @@ def transform(wldoc, verbose=False, sample=None, cover=None,
     del wldoc
 
     epub = document.as_epub(verbose=verbose, sample=sample,
-                            html_toc=True, cover=cover or True, flags=flags,
+                            cover=cover or True, flags=flags,
                             hyphenate=hyphenate, ilustr_path=ilustr_path,
                             output_type='mobi')
     if verbose:

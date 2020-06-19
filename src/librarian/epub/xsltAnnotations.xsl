@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" version="1.0" encoding="utf-8" />
-  <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
-  <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
 
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
         <link rel="stylesheet" href="style.css" type="text/css" />
-        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>
           <xsl:text>Przypisy</xsl:text>
         </title>
@@ -31,7 +29,7 @@
   </xsl:template>
 
   <xsl:template match="pa|pe|pr|pt" mode="przypis">
-    <p id="annotation-{@number}" class="annotation" xmlns="http://www.w3.org/1999/xhtml"><a href="part{@part}.html#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml"><xsl:value-of select="@number" /></a>. <xsl:apply-templates /><xsl:if test="name()='pa'"> [przypis autorski]</xsl:if><xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if><xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if><xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if></p>
+    <p id="annotation-{@number}" class="annotation" xmlns="http://www.w3.org/1999/xhtml"><a href="part{@part}.xhtml#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml"><xsl:value-of select="@number" /></a>. <xsl:apply-templates /><xsl:if test="name()='pa'"> [przypis autorski]</xsl:if><xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if><xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if><xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if></p>
     <xsl:text>&#xa;</xsl:text>
   </xsl:template>
 

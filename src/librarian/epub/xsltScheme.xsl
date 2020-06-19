@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0"  xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:wl="http://wolnelektury.pl/functions" exclude-result-prefixes="mml wl">
   <xsl:output method="html" version="1.0" encoding="utf-8" />
-  <xsl:output doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
-  <xsl:output doctype-public="-//W3C//DTD XHTML 1.1//EN" />
 
   <xsl:template match="/" >
     <xsl:element name="html" xmlns="http://www.w3.org/1999/xhtml">
       <xsl:element name="head">
         <link rel="stylesheet" href="style.css" type="text/css" />
-        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>
           WolneLektury.pl
         </title>
@@ -378,7 +376,7 @@
   <xsl:template match="extra" />
 
   <xsl:template match="pe|pa|pr|pt" >
-    <a class="anchor" id="anchor-{.}" href="annotations.html#annotation-{.}"
+    <a class="anchor" id="anchor-{.}" href="annotations.xhtml#annotation-{.}"
        xmlns="http://www.w3.org/1999/xhtml"><sup xmlns="http://www.w3.org/1999/xhtml"><xsl:apply-templates /></sup></a>
   </xsl:template>
 
