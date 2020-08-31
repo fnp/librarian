@@ -19,7 +19,27 @@ import re
 import six
 
 
+from .elements import WL_ELEMENTS
+
+
+class WLElementLookup(etree.CustomElementClassLookup):
+    def lookup(self, node_type, document, namespace, name):
+        if node_type != 'element':
+            return
+        if namespace:
+            return
+        return WL_ELEMENTS[name]
+
+
+parser = etree.XMLParser()
+parser.set_element_class_lookup(
+    WLElementLookup()
+)
+
+
+
 class WLDocument(object):
+    """Legacy class, to be replaced with documents.WLDocument."""
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
 

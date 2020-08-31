@@ -212,7 +212,7 @@ class Field(object):
                 % (self.uri, e.message)
             )
 
-    def validate(self, fdict, fallbacks=None, strict=False):
+    def validate(self, fdict, fallbacks=None, strict=False, validate_required=True):
         if fallbacks is None:
             fallbacks = {}
         if self.uri not in fdict:
@@ -227,8 +227,10 @@ class Field(object):
                     f = [fallbacks[self.salias]]
                 else:
                     f = self.default
-            else:
+            elif validate_required:
                 raise ValidationError("Required field %s not found" % self.uri)
+            else:
+                return None
         else:
             f = fdict[self.uri]
 
@@ -363,7 +365,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
 
         return cls(desc.attrib, field_dict, *args, **kwargs)
 
-    def __init__(self, rdf_attrs, dc_fields, fallbacks=None, strict=False):
+    def __init__(self, rdf_attrs, dc_fields, fallbacks=None, strict=False, validate_required=True):
         """
         rdf_attrs should be a dictionary-like object with any attributes
         of the RDF:Description.
@@ -376,7 +378,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
 
         for field in self.FIELDS:
             value = field.validate(dc_fields, fallbacks=fallbacks,
-                                   strict=strict)
+                                   strict=strict, validate_required=validate_required)
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias:

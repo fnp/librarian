@@ -41,6 +41,11 @@ setup(
         'texml',
         'ebooklib',
     ],
+    entry_points = {
+        "console_scripts": [
+            "librarian=librarian.command_line:main"
+        ]
+    },
     scripts=['scripts/book2html',
              'scripts/book2txt',
              'scripts/book2epub',
