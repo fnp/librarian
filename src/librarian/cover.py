@@ -191,7 +191,8 @@ class Cover(object):
             )
 
         author_font = ImageFont.truetype(
-            self.author_font_ttf, metr.author_font_size)
+            self.author_font_ttf, metr.author_font_size,
+            layout_engine=ImageFont.LAYOUT_BASIC)
         for pa in self.pretty_authors():
             tbox.text(pa, self.author_color, author_font, metr.author_lineskip,
                       self.author_shadow)
@@ -204,7 +205,8 @@ class Cover(object):
             metr.height - top,
             )
         title_font = ImageFont.truetype(
-            self.title_font_ttf, metr.title_font_size)
+            self.title_font_ttf, metr.title_font_size,
+            layout_engine=ImageFont.LAYOUT_BASIC)
         tbox.text(self.pretty_title(), self.title_color, title_font,
                   metr.title_lineskip, self.title_shadow)
         text_img = tbox.image()
@@ -335,7 +337,8 @@ class WLCover(Cover):
         box = TextBox(metr.title_box_width, metr.height,
                       padding_y=metr.box_padding_y)
         author_font = ImageFont.truetype(
-            self.author_font_ttf, metr.author_font_size)
+            self.author_font_ttf, metr.author_font_size,
+            layout_engine=ImageFont.LAYOUT_BASIC)
         for pa in self.pretty_authors():
             box.text(pa, font=author_font, line_height=metr.author_lineskip,
                      color=self.author_color, shadow_color=self.author_shadow)
@@ -349,7 +352,8 @@ class WLCover(Cover):
 
         # Write title.
         title_font = ImageFont.truetype(
-            self.title_font_ttf, metr.title_font_size)
+            self.title_font_ttf, metr.title_font_size,
+            layout_engine=ImageFont.LAYOUT_BASIC)
         box.text(self.pretty_title(),
                  line_height=metr.title_lineskip,
                  font=title_font,
