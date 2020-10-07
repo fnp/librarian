@@ -183,6 +183,8 @@ def extract_fragments(input_filename):
                 while parent.get('id', None) != 'book-text':
                     cparent = copy.deepcopy(parent)
                     cparent.text = None
+                    if 'id' in cparent.attrib:
+                        del cparent.attrib['id']
                     parents.append(cparent)
                     parent = parent.getparent()
 
@@ -222,8 +224,11 @@ def extract_fragments(input_filename):
                         )
             else:
                 for fragment_id in open_fragments:
+                    celem = copy.copy(element)
+                    if 'id' in celem.attrib:
+                        del celem.attrib['id']
                     open_fragments[fragment_id].append(
-                        event, copy.copy(element)
+                        event, celem
                     )
 
     return closed_fragments, open_fragments

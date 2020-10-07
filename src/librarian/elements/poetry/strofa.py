@@ -9,6 +9,9 @@ class Strofa(WLElement):
     TXT_LEGACY_TOP_MARGIN = 1
     TXT_LEGACY_BOTTOM_MARGIN = 0
 
+    HTML_TAG = 'div'
+    HTML_CLASS = 'stanza'
+    
     def get_verses(self):
         from librarian.parser import parser
 
@@ -38,6 +41,7 @@ class Strofa(WLElement):
                 verses[-1].append(child)
 
         for verse in verses:
+            verse.stanza = self
             if len(verse) == 1 and isinstance(verse[0], Wers):
                 assert not (verse.text or '').strip()
                 assert not (verse[0].tail or '').strip()

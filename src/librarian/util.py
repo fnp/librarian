@@ -128,3 +128,14 @@ def roman_to_int(input):
 def makedirs(path):
     if not os.path.isdir(path):
         os.makedirs(path)
+
+
+def get_translation(language):
+    import gettext
+    from .functions import lang_code_3to2
+
+    return gettext.translation(
+        'messages',
+        localedir=os.path.join(os.path.dirname(__file__), 'locale'),
+        languages=[lang_code_3to2(language)],
+    )

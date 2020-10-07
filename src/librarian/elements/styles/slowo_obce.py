@@ -2,4 +2,5 @@ from ..base import WLElement
 
 
 class SlowoObce(WLElement):
-    pass
+    HTML_TAG = 'em'
+    HTML_CLASS = 'foreign-word'

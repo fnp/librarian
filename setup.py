@@ -32,7 +32,8 @@ setup(
     package_dir={"": "src"},
     package_data={'librarian': ['xslt/*.xslt', 'xslt/*.xml', 'epub/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'res') +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'font-optimizer')},
+                                whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'font-optimizer') +
+                                whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'locale')},
     include_package_data=True,
     install_requires=[
         'lxml>=2.2,<=4.3',

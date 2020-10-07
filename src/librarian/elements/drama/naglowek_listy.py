@@ -2,4 +2,4 @@ from ..base import WLElement
 
 
 class NaglowekListy(WLElement):
-    pass
+    HTML_TAG = "h3"

@@ -17,3 +17,9 @@ class Utwor(WLElement):
             # This should not generally happen.
             if self.getparent() is not None:
                 return self.getparent().meta
+
+    @property
+    def master(self):
+        for c in self:
+            if isinstance(c, Master):
+                return c

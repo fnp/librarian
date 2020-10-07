@@ -10,6 +10,7 @@ include src/librarian/epub/*
 include src/librarian/pdf/*
 include src/librarian/fb2/*
 include src/librarian/fonts/*
+recursive-include src/librarian/locale *.po *.mo
 graft src/librarian/res
 graft src/librarian/font-optimizer
 

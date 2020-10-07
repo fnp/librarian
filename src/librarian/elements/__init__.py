@@ -33,6 +33,7 @@ WL_ELEMENTS = {
     "dlugi_cytat": blocks.DlugiCytat,
     "poezja_cyt": blocks.PoezjaCyt,
     "dlugi_cyt": blocks.DlugiCytat,  ### ???
+    "ramka": blocks.Ramka,
     
     "slowo_obce": styles.SlowoObce,
     "tytul_dziela": styles.TytulDziela,
@@ -52,22 +53,22 @@ WL_ELEMENTS = {
     "kwestia": drama.Kwestia,
     "didask_tekst": drama.DidaskTekst,
 
-    "dedykacja": paragraphs.Akap,
-    "miejsce_czas": paragraphs.Akap,
+    "dedykacja": blocks.Dedykacja,
+    "miejsce_czas": drama.MiejsceCzas,
 
     "uwaga": comments.Uwaga,
 
     "wers": poetry.Wers,
     "wers_wciety": poetry.WersWciety,
     "wers_cd": poetry.WersCd,
-    "wers_akap": poetry.Wers,
+    "wers_akap": poetry.WersAkap,
     "zastepnik_wersu": poetry.ZastepnikWersu,
-    "wers_do_prawej": poetry.Wers,
+    "wers_do_prawej": poetry.WersDoPrawej,
     
-    "pa": footnotes.Footnote,
-    "pe": footnotes.Footnote,
-    "pr": footnotes.Footnote,
-    "pt": footnotes.Footnote,
+    "pa": footnotes.PA,
+    "pe": footnotes.PE,
+    "pr": footnotes.PR,
+    "pt": footnotes.PT,
 
     "begin": themes.Begin,
     "end": themes.End,
@@ -75,7 +76,7 @@ WL_ELEMENTS = {
 
     "nota": blocks.Nota,
 
-    "nota_red": comments.Abstrakt,
+    "nota_red": comments.NotaRed,
     "extra": comments.Abstrakt,
     "abstrakt": comments.Abstrakt,
 
@@ -85,6 +86,11 @@ WL_ELEMENTS = {
     "naglowek_rozdzial": headers.NaglowekRozdzial,
     "naglowek_podrozdzial": headers.NaglowekPodrozdzial,
     "srodtytul": headers.NaglowekCzesc,
+    "podtytul_czesc": headers.PodtytulCzesc,
+    "podtytul_akt": headers.PodtytulCzesc,
+    "podtytul_scena": headers.PodtytulRozdzial,
+    "podtytul_rozdzial": headers.PodtytulRozdzial,
+    "podtytul_podrozdzial": headers.PodtytulPodrozdzial,
 
     "naglowek_listy": drama.NaglowekListy,
 
@@ -92,24 +98,25 @@ WL_ELEMENTS = {
     "sekcja_swiatlo": separators.SekcjaSwiatlo,
     "separator_linia": separators.SeparatorLinia,
 
-    "wieksze_odstepy": styles.Wyroznienie,
-    "mat": styles.Wyroznienie,
-    "www": styles.Wyroznienie,
-    "indeks_dolny": styles.Wyroznienie,
+    "wieksze_odstepy": styles.WiekszeOdstepy,
+    "mat": styles.Mat,
+    "www": styles.WWW,
+    "indeks_dolny": styles.IndeksDolny,
 
-    "tabela": paragraphs.Akap,
-    "tabelka": paragraphs.Akap,
-    "wiersz": paragraphs.Akap,
-    "kol": paragraphs.Akap,
+    "tabela": figures.Tabela,
+    "tabelka": figures.Tabela,
+    "wiersz": figures.Wiersz,
+    "kol": figures.Kol,
 
+    "animacja": figures.Animacja,
     "ilustr": figures.Ilustr,
 
-#    sklodowska-badanie-cial-radioaktywnych.xml
-    "mrow": paragraphs.Akap,
-    "mi": paragraphs.Akap,
-    "mo": paragraphs.Akap,
-    "msup": paragraphs.Akap,
-    "mn": paragraphs.Akap,
-    "mfrac": paragraphs.Akap,
-    "mfenced": paragraphs.Akap,
+    # Inline MathML, should really be namespaced.
+    "mrow": etree.ElementBase,
+    "mi": etree.ElementBase,
+    "mo": etree.ElementBase,
+    "msup": etree.ElementBase,
+    "mn": etree.ElementBase,
+    "mfrac": etree.ElementBase,
+    "mfenced": etree.ElementBase,
 }

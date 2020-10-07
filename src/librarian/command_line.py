@@ -9,7 +9,7 @@ def main(*args, **kwargs):
 
     parser.add_argument(
         'builder',
-        choices=[b.identifier for b in builders],
+        choices=builders.keys(),
         help="Builder"
     )
     parser.add_argument('input_file')
@@ -23,6 +23,7 @@ def main(*args, **kwargs):
     )
 
     args = parser.parse_args()
+    builder = builders[args.builder]
 
     if args.output_file:
         output_file_path = args.output_file

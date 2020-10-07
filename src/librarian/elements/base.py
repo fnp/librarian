@@ -3,6 +3,7 @@
 import re
 from lxml import etree
 from librarian import dcparser, RDFNS
+from librarian.util import get_translation
 
 
 class WLElement(etree.ElementBase):
@@ -14,7 +15,6 @@ class WLElement(etree.ElementBase):
     HTML_TAG = None
     HTML_ATTR = {}
     HTML_CLASS = None
-    HTML_SECTION = False
     
     CAN_HAVE_TEXT = True
     STRIP = False
@@ -37,7 +37,7 @@ class WLElement(etree.ElementBase):
             else:
                 self._meta_object = None
         return self._meta_object
-    
+
     @property
     def meta(self):
         if self.meta_object is not None:
@@ -47,7 +47,11 @@ class WLElement(etree.ElementBase):
                 return self.getparent().meta
             else:
                 return self.document.base_meta
-    
+
+    @property
+    def gettext(self):
+        return get_translation(self.meta.language).gettext
+
     def normalize_text(self, text):
         text = text or ''
         for e, s in self.text_substitutions:
@@ -99,34 +103,16 @@ class WLElement(etree.ElementBase):
         # always copy the id attribute (?)
         if self.attrib.get('id'):
             attr['id'] = self.attrib['id']
+        elif '_compat_section_id' in self.attrib:
+            attr['id'] = self.attrib['_compat_section_id']
         return attr
-        
+
     def html_build(self, builder):
-        if self.HTML_SECTION:
-            builder.start_element(
-                'a', {"name": "f18", "class": "target"}
-            )
-            builder.push_text(" ")
-            builder.end_element()
-
-            builder.start_element(
-                "a", {"href": "#f18", "class": "anchor"}
-            )
-            builder.push_text("18")
-            builder.end_element()
-        
-
         if self.HTML_TAG:
             builder.start_element(
                 self.HTML_TAG,
                 self.get_html_attr(builder),
             )
-
-        if self.HTML_SECTION:
-            builder.start_element(
-                "a", {"name": "sec34"}
-            )
-            builder.end_element()
 
         self._html_build_inner(builder)
         if self.HTML_TAG:

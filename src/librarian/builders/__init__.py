@@ -1,14 +1,12 @@
+from collections import OrderedDict
 from .txt import TxtBuilder
-from .html import HtmlBuilder
+from .html import HtmlBuilder, StandaloneHtmlBuilder
 from .sanitize import Sanitizer
 
 
-builders = [
-    TxtBuilder,
-    HtmlBuilder,
-    Sanitizer,
-]
-
-
-def get_builder_class(builder_id):
-    return next(b for b in builders if b.identifier == builder_id)
+builders = OrderedDict([
+    ("txt", TxtBuilder),
+    ("html", HtmlBuilder),
+    ("html-standalone", StandaloneHtmlBuilder),
+    ("sanitizer", Sanitizer),
+])

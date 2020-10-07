@@ -11,5 +11,3 @@ class Akap(WLElement):
 
     HTML_TAG = 'p'
     HTML_CLASS = 'paragraph'
-
-    HTML_SECTION = True

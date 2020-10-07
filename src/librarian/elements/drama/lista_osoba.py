@@ -8,3 +8,10 @@ class ListaOsoba(WLElement):
     TXT_LEGACY_BOTTOM_MARGIN = 0
     TXT_PREFIX = " * "
 
+    HTML_TAG = "li"
+
+    def html_build(self, builder):
+        builder.enter_fragment('list')
+        super(ListaOsoba, self).html_build(builder)
+        builder.exit_fragment()
+        

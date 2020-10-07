@@ -1,0 +1,42 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2020-10-07 12:11+0200\n"
+"Last-Translator: Radek Czajka <rczajka@rczajka.pl>\n"
+"Language-Team: \n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+
+#: src/librarian/builders/html.py:77
+msgid "translated by"
+msgstr "tłum."
+
+#: src/librarian/builders/html.py:94
+msgid "Footnotes"
+msgstr "Przypisy"
+
+#: src/librarian/elements/footnotes/__init__.py:43
+msgid "author's footnote"
+msgstr "przypis autorski"
+
+#: src/librarian/elements/footnotes/__init__.py:51
+msgid "translator's footnote"
+msgstr "przypis tłumacza"
+
+#: src/librarian/elements/footnotes/__init__.py:59
+msgid "editor's footnote"
+msgstr "przypis redakcyjny"
+
+#: src/librarian/elements/footnotes/__init__.py:67
+msgid "source editor's footnote"
+msgstr "przypis edytorski"

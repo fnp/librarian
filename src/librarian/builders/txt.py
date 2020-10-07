@@ -94,9 +94,13 @@ class TxtBuilder:
 
         self.enter_fragment('header')
         if meta.translators:
-            self.push_text("tłum. ", 'header')
-            for translator in meta.translators:
-                self.push_text(translator.readable())
+            self.push_text("tłum. ")
+            self.push_text(
+                ", ".join(
+                    translator.readable()
+                    for translator in meta.translators
+                )
+            )
             #builder.push_margin(2)
             self.push_legacy_margin(1)
 

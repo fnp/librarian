@@ -2,4 +2,6 @@ from ..base import WLElement
 
 
 class MottoPodpis(WLElement):
-    pass
+    HTML_TAG = "p"
+    HTML_CLASS = "motto_podpis"
+
