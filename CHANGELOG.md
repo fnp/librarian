@@ -3,6 +3,19 @@
 This document records all notable changes to Librarian.
 
 
+## 1.9 (2020-10-08)
+
+### Added
+
+- Experimental class-based builders for HTML and TXT.
+
+
+### Changed
+
+- Upgraded to EPUB 3, using ebooklib.
+
+
+
 ## 1.8.3 (2020-05-28)
 
 ### Fixed

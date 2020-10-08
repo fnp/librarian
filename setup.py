@@ -8,6 +8,7 @@ import os
 import os.path
 from setuptools import setup, find_packages
 
+
 def whole_tree(prefix, path):
     files = []
     for f in (f for f in os.listdir(os.path.join(prefix, path)) if not f[0]=='.'):
@@ -21,7 +22,7 @@ def whole_tree(prefix, path):
 
 setup(
     name='librarian',
-    version='1.8.3',
+    version='1.9',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
