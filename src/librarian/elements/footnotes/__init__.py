@@ -6,6 +6,9 @@ class Footnote(WLElement):
         pass
 
     def html_build(self, builder):
+        if not builder.with_footnotes:
+            return
+
         builder.footnote_counter += 1
         fn_no = builder.footnote_counter
         footnote_id = 'footnote-idm{}'.format(self.attrib['_compat_ordered_id'])
