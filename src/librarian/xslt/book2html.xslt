@@ -330,6 +330,14 @@
     <a href="{concat('#footnote-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt]) + 1" />]</a>
 </xsl:template>
 
+<xsl:template match="ref" mode="inline">
+  <a class="reference" data-uri="">
+    <xsl:attribute name="data-uri">
+      <xsl:value-of select="@href"/>
+    </xsl:attribute>
+  </a>
+</xsl:template>
+
 <!-- Other inline tags -->
 <xsl:template match="mat" mode="inline">
     <math xmlns="http://www.w3.org/1998/Math/MathML"><xsl:copy-of select="*" /></math>

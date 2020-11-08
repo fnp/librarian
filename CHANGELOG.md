@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 1.10 (2020-11-09)
+
+### Added
+
+- Support for `ref` tags in HTML.
+
+
 ## 1.9 (2020-10-08)
 
 ### Added
