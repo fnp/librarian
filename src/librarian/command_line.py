@@ -22,6 +22,13 @@ def main(*args, **kwargs):
         help='specifies the directory for output'
     )
 
+    parser.add_argument(
+        '--mp3',
+        metavar="FILE",
+        nargs="*",
+        help='specifies an MP3 file, if needed'
+    )
+    
     args = parser.parse_args()
     builder = builders[args.builder]
 
@@ -39,6 +46,12 @@ def main(*args, **kwargs):
             ))
 
     document = WLDocument(filename=args.input_file)
-    output = document.build(args.builder)
+
+    builder = builders[args.builder]
+    kwargs = {
+        "mp3": args.mp3,
+    }
+
+    output = document.build(builder, **kwargs)
     with open(output_file_path, 'wb') as f:
         f.write(output.get_bytes())
