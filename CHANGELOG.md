@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 1.11 (2020-12-09)
+
+### Added
+
+- Experimental DAISY builder.
+
+
 ## 1.10 (2020-11-09)
 
 ### Added

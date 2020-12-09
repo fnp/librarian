@@ -1,17 +1,17 @@
 import gettext
 import os
 import re
+from urllib.request import urlopen
 from lxml import etree
-from .builders import builders
 from .parser import parser
 from . import dcparser
 from .functions import lang_code_3to2
 
 
 class WLDocument:
-    def __init__(self, tree=None, filename=None):
-        if filename is not None:
-            tree = etree.parse(filename, parser=parser)
+    def __init__(self, filename=None, url=None):
+        source = filename or urlopen(url)
+        tree = etree.parse(source, parser=parser)
         self.tree = tree
         tree.getroot().document = self
         self.base_meta = dcparser.BookInfo({}, {}, validate_required=False)
@@ -23,8 +23,8 @@ class WLDocument:
         return self.tree.getroot().meta
         return master.meta
 
-    def build(self, builder_id, **kwargs):
-        return builders[builder_id]().build(self, **kwargs)
+    def build(self, builder, **kwargs):
+        return builder().build(self, **kwargs)
 
     def _compat_assign_ordered_ids(self):
         """
