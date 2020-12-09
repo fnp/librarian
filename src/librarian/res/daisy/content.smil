@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='ASCII'?>
+<!DOCTYPE smil PUBLIC "-//W3C//DTD SMIL 1.0//EN" "SMIL10.dtd">
+<smil>
+  <head>
+    <meta name="dc:format" content="Daisy 2.02"/>
+    <meta name="ncc:totalElapsedTime" content="00:00:00.000"/>
+    <layout>
+      <region id="txt-view"/>
+    </layout>
+    <meta name="ncc:generator" content="Librarian {VERSION}"/>
+    <meta name="dc:identifier" content="Unknown"/>
+    <meta name="ncc:timeInThisSmil" content="{HHMMSSmmm}"/>
+    <meta name="title" content="{TITLE}"/>
+    <meta name="dc:title" content="{TITLE}"/>
+  </head>
+  <body>
+    <seq dur="{Sd}"></seq>
+  </body>
+</smil>
+
