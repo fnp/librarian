@@ -137,5 +137,5 @@ def get_translation(language):
     return gettext.translation(
         'messages',
         localedir=os.path.join(os.path.dirname(__file__), 'locale'),
-        languages=[lang_code_3to2(language)],
+        languages=[lang_code_3to2(language), 'pl'],
     )

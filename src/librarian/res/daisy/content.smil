@@ -3,7 +3,7 @@
 <smil>
   <head>
     <meta name="dc:format" content="Daisy 2.02"/>
-    <meta name="ncc:totalElapsedTime" content="00:00:00.000"/>
+    <meta name="ncc:totalElapsedTime" content="{ELAPSED}"/>
     <layout>
       <region id="txt-view"/>
     </layout>

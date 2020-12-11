@@ -36,18 +36,14 @@ class HtmlBuilder:
             'footnotes': self.footnotes,
             'nota_red': self.nota_red,
         }
-        self.current_cursors = [None]
+        self.current_cursors = [text]
 
     @property
     def cursor(self):
-        return self.cursors[self.current_cursors[-1]]
-
-    @cursor.setter
-    def cursor(self, value):
-        self.cursors[self.current_cursors[-1]] = value
+        return self.current_cursors[-1]
 
     def enter_fragment(self, fragment):
-        self.current_cursors.append(fragment)
+        self.current_cursors.append(self.cursors[fragment])
 
     def exit_fragment(self):
         self.current_cursors.pop()
@@ -63,7 +59,7 @@ class HtmlBuilder:
         document._compat_assign_ordered_ids()
         document._compat_assign_section_ids()
 
-    def build(self, document):
+    def build(self, document, **kwargs):
         self.preprocess(document)
         document.tree.getroot().html_build(self)
         self.postprocess(document)
@@ -110,19 +106,16 @@ class HtmlBuilder:
             self.tree.append(self.footnotes)
 
     def start_element(self, tag, attrib=None):
-        self.cursor = etree.SubElement(
+        self.current_cursors.append(etree.SubElement(
             self.cursor,
             tag,
             **(attrib or {})
-        )
+        ))
 
     def end_element(self):
-        self.cursor = self.cursor.getparent()
+        self.current_cursors.pop()
 
     def push_text(self, text):
-        if text == 'Między nami nic nie było':
-            print(self.cursors)
-            print(self.current_cursors)
         cursor = self.cursor
         if len(cursor):
             cursor[-1].tail = (cursor[-1].tail or '') + text

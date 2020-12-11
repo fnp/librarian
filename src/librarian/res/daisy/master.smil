@@ -11,7 +11,5 @@
       <region id="txtView"/>
     </layout>
   </head>
-  <body>
-    <ref title="{TITLE}" src="content.smil#seq000001" id="smil_0001"/>
-  </body>
+  <body></body>
 </smil>

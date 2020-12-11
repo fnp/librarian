@@ -6,7 +6,7 @@ class Sanitizer:
     identifier = 'sanitize'
     file_extension = 'xml2'
 
-    def build(self, document):
+    def build(self, document, **kwargs):
         doc = document.tree.getroot() # TODO: copy
         doc.sanitize()
         return OutputFile.from_bytes(

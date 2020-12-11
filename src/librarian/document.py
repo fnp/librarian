@@ -4,7 +4,7 @@ import re
 from urllib.request import urlopen
 from lxml import etree
 from .parser import parser
-from . import dcparser
+from . import dcparser, DCNS
 from .functions import lang_code_3to2
 
 
@@ -14,7 +14,9 @@ class WLDocument:
         tree = etree.parse(source, parser=parser)
         self.tree = tree
         tree.getroot().document = self
-        self.base_meta = dcparser.BookInfo({}, {}, validate_required=False)
+        self.base_meta = dcparser.BookInfo({}, {
+            DCNS('language'): ["pol"],
+        }, validate_required=False)
 
     @property
     def meta(self):

@@ -17,6 +17,8 @@ class Utwor(WLElement):
             # This should not generally happen.
             if self.getparent() is not None:
                 return self.getparent().meta
+        # Fallback
+        return self.document.base_meta
 
     @property
     def master(self):

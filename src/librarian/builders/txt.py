@@ -88,7 +88,7 @@ class TxtBuilder:
     def push_legacy_margin(self, margin, where=None):
         self.current_fragments[-1].push_legacy_margin(margin)
         
-    def build(self, document, raw_text=False):
+    def build(self, document, raw_text=False, **kwargs):
         document.tree.getroot().txt_build(self)
         meta = document.meta
 
