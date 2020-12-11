@@ -14,10 +14,19 @@ class Footnote(WLElement):
         footnote_id = 'footnote-idm{}'.format(self.attrib['_compat_ordered_id'])
         anchor_id = 'anchor-idm{}'.format(self.attrib['_compat_ordered_id'])
 
-        builder.start_element('a', {"href": '#{}'.format(footnote_id), "class": "annotation"})
+        # Add anchor.
+        builder.start_element(
+            'a',
+            {
+                "href": '#{}'.format(footnote_id),
+                "class": "annotation-anchor",
+                "id": anchor_id,
+            }
+        )
         builder.push_text('[{}]'.format(fn_no))
         builder.end_element()
         
+        # Add actual footnote.
         builder.enter_fragment('footnotes')
         builder.start_element('div', {'class': 'fn-{}'.format(self.tag)})
         builder.push_text('\n') # Compat

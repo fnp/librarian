@@ -12,7 +12,7 @@ class Motyw(WLElement):
             super(Motyw, self).html_build(builder)
 
     def get_html_attr(self, builder):
-        fid = self.attrib['id'][1:]
+        fid = self.attrib.get('id', '')[1:]
         return {
             "class": "theme-begin",
             "fid": fid,
