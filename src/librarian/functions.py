@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from lxml import etree
 import re
+from ebooklib import epub
 
 from librarian.dcparser import Person
 from librarian import get_resource
@@ -138,14 +139,22 @@ def reg_mathml_latex():
     _register_function(mathml_latex)
 
 
-def reg_mathml_epub(zipf):
+def reg_mathml_epub(output):
     from librarian.embeds.mathml import MathML
 
     def mathml(context, trees):
         data = MathML(trees[0]).to_latex().to_png().data
         name = "math%d.png" % mathml.count
         mathml.count += 1
-        zipf.writestr('OPS/' + name, data)
+        output.add_item(
+            epub.EpubItem(
+                uid='math%d' % mathml.count,
+                file_name=name,
+                media_type='image/png',
+                content=data
+            )
+        )
+
         return name
     mathml.count = 0
     _register_function(mathml)

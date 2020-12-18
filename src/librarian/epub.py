@@ -553,7 +553,7 @@ def transform(wldoc, verbose=False, style=None,
 
     spine = output.spine
 
-    functions.reg_mathml_epub(zip)
+    functions.reg_mathml_epub(output)
 
     if os.path.isdir(ilustr_path):
         ilustr_elements = set(ilustr.get('src')
