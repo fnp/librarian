@@ -3,10 +3,11 @@
 This document records all notable changes to Librarian.
 
 
-## 1.11.1 (2020-12-18)
+## 1.11.2 (2020-12-18)
 
 ### Fixed
 - MathML in EPUBs.
+- Subchapters without chapters in EPUBs.
 
 
 ## 1.11 (2020-12-09)
