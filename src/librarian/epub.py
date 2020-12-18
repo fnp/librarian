@@ -327,6 +327,18 @@ def transform_chunk(chunk_xml, chunk_no, annotations, empty=False,
                 )
             )
         elif element.tag in ('naglowek_podrozdzial', 'naglowek_scena'):
+            if not toc:
+                toc.append(
+                    (
+                        epub.Link(
+                            "part%d.xhtml" % chunk_no,
+                            " ",
+                            "part%d" % chunk_no
+                        ),
+                        []
+                    )
+                )
+
             subnumber = len(toc[-1][1])
             toc[-1][1].append(
                 epub.Link(
