@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 1.11.3 (2021-01-25)
+
+### Fixed
+- Missing items in EPUB TOC.
+
+
 ## 1.11.2 (2020-12-18)
 
 ### Fixed

@@ -653,7 +653,7 @@ def transform(wldoc, verbose=False, style=None,
     output.toc = toc[0][1]
 
     if len(toc) < 2:
-        toc.append(
+        output.toc.append(
             epub.Link(
                 "part1.xhtml",
                 "Początek utworu",
@@ -663,7 +663,7 @@ def transform(wldoc, verbose=False, style=None,
 
     # Last modifications in container files and EPUB creation
     if len(annotations) > 0:
-        toc.append(
+        output.toc.append(
             epub.Link(
                 "annotations.xhtml",
                 "Przypisy",
@@ -687,7 +687,7 @@ def transform(wldoc, verbose=False, style=None,
         output.add_item(item)
         spine.append(item)
 
-    toc.append(
+    output.toc.append(
         epub.Link(
             "support.xhtml",
             "Wesprzyj Wolne Lektury",
@@ -706,7 +706,7 @@ def transform(wldoc, verbose=False, style=None,
     output.add_item(item)
     spine.append(item)
 
-    toc.append(
+    output.toc.append(
         epub.Link(
             "last.xhtml",
             "Strona redakcyjna",
