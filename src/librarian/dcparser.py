@@ -292,6 +292,8 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         Field(PLMETNS('digitisationSponsor'), 'sponsors', multiple=True,
               required=False),
         Field(WLNS('digitisationSponsorNote'), 'sponsor_note', required=False),
+        Field(WLNS('contentWarning'), 'content_warnings', multiple=True,
+              required=False),
         Field(WLNS('developmentStage'), 'stage', required=False),
     )
 

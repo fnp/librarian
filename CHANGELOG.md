@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 1.12 (2021-01-27)
+
+### Added
+- Content warnings.
+
+
 ## 1.11.3 (2021-01-25)
 
 ### Fixed
