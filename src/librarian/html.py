@@ -12,6 +12,7 @@ import copy
 from lxml import etree
 from librarian import XHTMLNS, ParseError, OutputFile
 from librarian import functions
+from PIL import Image
 
 from lxml.etree import XMLSyntaxError, XSLTApplyError
 import six
@@ -50,7 +51,32 @@ def transform_abstrakt(abstrakt_element):
     return re.sub('</?blockquote[^>]*>', '', html)
 
 
-def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None):
+def add_image_sizes(tree, gallery_path, gallery_url):
+    widths = [360, 600, 1200, 1800]
+    for ilustr in tree.findall('//ilustr'):
+        rel_path = ilustr.attrib['src']
+        img = Image.open(gallery_path + rel_path)
+        srcset = []
+        for w in widths:
+            if w < img.size[0]:
+                height = round(img.size[1] * w / img.size[0])
+                th = img.resize((w, height))
+
+                fname = ('.W%d.' % w).join(rel_path.rsplit('.', 1))
+                th.save(gallery_path + fname)
+                srcset.append(" ".join((
+                    gallery_url + fname,
+                    '%dw' % w
+                    )))
+        srcset.append(" ".join((
+            gallery_url + rel_path,
+            '%dw' % img.size[0]
+        )))
+        ilustr.attrib['srcset'] = ", ".join(srcset)
+        ilustr.attrib['src'] = gallery_url + rel_path
+
+
+def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, gallery_path='img/', gallery_url='img/'):
     """Transforms the WL document to XHTML.
 
     If output_filename is None, returns an XML,
@@ -75,7 +101,8 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None):
 
         if not options:
             options = {}
-        options.setdefault('gallery', "''")
+
+        add_image_sizes(document.edoc, gallery_path, gallery_url)
 
         css = (
             css

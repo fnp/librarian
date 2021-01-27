@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 1.13 (2021-01-27)
+
+### Changed
+- Responsive images in HTML. This changes the html.transform API.
+
+
 ## 1.12 (2021-01-27)
 
 ### Added

@@ -135,7 +135,17 @@
 <xsl:template match="ilustr">
     <img>
         <xsl:attribute name="src">
-            <xsl:value-of select="$gallery" /><xsl:value-of select="@src" />
+            <xsl:value-of select="@src" />
+        </xsl:attribute>
+        <xsl:attribute name="srcset">
+          <xsl:value-of select="@srcset" />
+        </xsl:attribute>
+        <xsl:attribute name="sizes">
+          (min-width: 718px) 600px,
+          (min-width: 600px) calc(100vw - 118px),
+          (min-width: 320px) calc(100vw - 75px),
+          (min-width: 15em) calc(100wv - 60px),
+          calc(100wv - 40px)
         </xsl:attribute>
         <xsl:attribute name="alt">
             <xsl:value-of select="@alt" />
