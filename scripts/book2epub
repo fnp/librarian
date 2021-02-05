@@ -17,8 +17,15 @@ class Book2Epub(Book2Anything):
     transform_flags = [
         Option('-w', '--working-copy', dest='working-copy',
                 action='store_true', default=False,
-                help='mark the output as a working copy')
-        ]
+                help='mark the output as a working copy'
+        )
+    ]
+    transform_options = [
+        Option(
+            '-b', '--base-url', dest='base_url', metavar='URL',
+            help='specifies the base URL for relative image references'
+        ),
+    ]
 
 
 if __name__ == '__main__':

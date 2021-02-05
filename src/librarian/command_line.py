@@ -22,13 +22,19 @@ def main(*args, **kwargs):
         help='specifies the directory for output'
     )
 
+    # Specific 
+    parser.add_argument(
+        '-b', '--base-url', metavar="URL",
+        help="Base for relative URLs in documents (like image sources)"
+    )
+
     parser.add_argument(
         '--mp3',
         metavar="FILE",
         nargs="*",
         help='specifies an MP3 file, if needed'
     )
-    
+
     args = parser.parse_args()
     builder = builders[args.builder]
 

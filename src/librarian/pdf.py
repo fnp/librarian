@@ -20,6 +20,7 @@ from copy import deepcopy
 from subprocess import call, PIPE
 from itertools import chain
 
+from PIL import Image
 from Texml.processor import process
 from lxml import etree
 from lxml.etree import XMLSyntaxError, XSLTApplyError
@@ -242,7 +243,7 @@ def package_available(package, args='', verbose=False):
 
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
-              cover=None, flags=None, customizations=None, ilustr_path='',
+              cover=None, flags=None, customizations=None, base_url='file://./',
               latex_dir=False):
     """ produces a PDF file with XeLaTeX
 
@@ -314,8 +315,28 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # TeXML -> LaTeX
         temp = mkdtemp('-wl2pdf')
 
-        for ilustr in document.edoc.findall("//ilustr"):
-            shutil.copy(os.path.join(ilustr_path, ilustr.get("src")), temp)
+        for i, ilustr in enumerate(document.edoc.findall('//ilustr')):
+            url = six.moves.urllib.parse.urljoin(
+                base_url,
+                ilustr.get('src')
+            )
+            with six.moves.urllib.request.urlopen(url) as imgfile:
+                img = Image.open(imgfile)
+
+            th_format, ext, media_type = {
+                'GIF': ('GIF', 'gif', 'image/gif'),
+                'PNG': ('PNG', 'png', 'image/png'),
+            }.get(img.format, ('JPEG', 'jpg', 'image/jpeg'))
+
+            width = 2400
+            if img.size[0] < width:
+                th = img
+            else:
+                th = img.resize((width, round(width * img.size[1] / img.size[0])))
+
+            file_name = 'image%d.%s' % (i, ext)
+            th.save(os.path.join(temp, file_name))
+            ilustr.set('src', file_name)
 
         for sponsor in book_info.sponsors:
             ins = etree.Element("data-sponsor", name=sponsor)

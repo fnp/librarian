@@ -15,6 +15,7 @@ from mimetypes import guess_type
 
 from ebooklib import epub
 from lxml import etree
+from PIL import Image
 from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
@@ -378,7 +379,7 @@ def remove_empty_lists_from_toc(toc):
 
 def transform(wldoc, verbose=False, style=None,
               sample=None, cover=None, flags=None, hyphenate=False,
-              ilustr_path='', output_type='epub'):
+              base_url='file://./', output_type='epub'):
     """ produces a EPUB file
 
     sample=n: generate sample e-book (with at least n paragraphs)
@@ -567,23 +568,40 @@ def transform(wldoc, verbose=False, style=None,
 
     functions.reg_mathml_epub(output)
 
-    if os.path.isdir(ilustr_path):
-        ilustr_elements = set(ilustr.get('src')
-                              for ilustr in document.edoc.findall('//ilustr'))
-        for i, filename in enumerate(os.listdir(ilustr_path)):
-            if filename not in ilustr_elements:
-                continue
-            file_path = os.path.join(ilustr_path, filename)
-            with open(file_path, 'rb') as f:
-                output.add_item(
-                    epub.EpubItem(
-                        uid='image%s' % i,
-                        file_name=filename,
-                        media_type=guess_type(file_path)[0],
-                        content=f.read()
-                    )
-                )
+    # FIXME
+    for i, ilustr in enumerate(document.edoc.findall('//ilustr')):
+        url = six.moves.urllib.parse.urljoin(
+            base_url,
+            ilustr.get('src')
+        )
+        with six.moves.urllib.request.urlopen(url) as imgfile:
+            img = Image.open(imgfile)
 
+        th_format, ext, media_type = {
+            'GIF': ('GIF', 'gif', 'image/gif'),
+            'PNG': ('PNG', 'png', 'image/png'),
+        }.get(img.format, ('JPEG', 'jpg', 'image/jpeg'))
+
+        width = 1200
+        if img.size[0] < width:
+            th = img
+        else:
+            th = img.resize((width, round(width * img.size[1] / img.size[0])))
+
+        buffer = six.BytesIO()
+        th.save(buffer, format=th_format)
+
+        file_name = 'image%d.%s' % (i, ext)
+        ilustr.set('src', file_name)
+        output.add_item(
+            epub.EpubItem(
+                uid='image%s' % i,
+                file_name=file_name,
+                media_type=media_type,
+                content=buffer.getvalue()
+            )
+        )
+            
     # write static elements
 
     with open(get_resource('res/wl-logo-small.png'), 'rb') as f:

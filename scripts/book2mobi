@@ -17,10 +17,16 @@ class Book2Mobi(Book2Anything):
     uses_provider = True
 
     transform_options = [
-        Option('-k', '--use-kindlegen',
-                action='store_true', dest='use_kindlegen', default=False,
-                help='use kindlegen tool instead of Calibre')
-        ]
+        Option(
+            '-k', '--use-kindlegen',
+            action='store_true', dest='use_kindlegen', default=False,
+            help='use kindlegen tool instead of Calibre'
+        ),
+        Option(
+            '-b', '--base-url', dest='base_url', metavar='URL',
+            help='specifies the base URL for relative image references'
+        ),
+    ]
 
 
 if __name__ == '__main__':

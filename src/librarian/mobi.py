@@ -14,7 +14,7 @@ from librarian import OutputFile
 
 
 def transform(wldoc, verbose=False, sample=None, cover=None,
-              use_kindlegen=False, flags=None, hyphenate=True, ilustr_path='',
+              use_kindlegen=False, flags=None, hyphenate=True, base_url='',
               converter_path=None):
     """ produces a MOBI file
 
@@ -31,7 +31,7 @@ def transform(wldoc, verbose=False, sample=None, cover=None,
 
     epub = document.as_epub(verbose=verbose, sample=sample,
                             cover=cover or True, flags=flags,
-                            hyphenate=hyphenate, ilustr_path=ilustr_path,
+                            hyphenate=hyphenate, base_url=base_url,
                             output_type='mobi')
     if verbose:
         kwargs = {}

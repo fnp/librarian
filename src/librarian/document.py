@@ -1,8 +1,8 @@
 import gettext
 import os
 import re
-from urllib.request import urlopen
 from lxml import etree
+import six
 from .parser import parser
 from . import dcparser, DCNS
 from .functions import lang_code_3to2
@@ -10,7 +10,7 @@ from .functions import lang_code_3to2
 
 class WLDocument:
     def __init__(self, filename=None, url=None):
-        source = filename or urlopen(url)
+        source = filename or six.moves.urllib.request.urlopen(url)
         tree = etree.parse(source, parser=parser)
         self.tree = tree
         tree.getroot().document = self

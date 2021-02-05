@@ -51,32 +51,45 @@ def transform_abstrakt(abstrakt_element):
     return re.sub('</?blockquote[^>]*>', '', html)
 
 
-def add_image_sizes(tree, gallery_path, gallery_url):
-    widths = [360, 600, 1200, 1800]
-    for ilustr in tree.findall('//ilustr'):
+def add_image_sizes(tree, gallery_path, gallery_url, base_url):
+    widths = [360, 600, 1200, 1800, 2400]
+
+    for i, ilustr in enumerate(tree.findall('//ilustr')):
         rel_path = ilustr.attrib['src']
-        img = Image.open(gallery_path + rel_path)
+        img_url = six.moves.urllib.parse.urljoin(base_url, rel_path)
+
+        with six.moves.urllib.request.urlopen(img_url) as f:
+            img = Image.open(f)
+
+        ext = {'GIF': 'gif', 'PNG': 'png'}.get(img.format, 'jpg')
+
         srcset = []
+        # Needed widths: predefined and original, limited by
+        # whichever is smaller.
+        img_widths = [
+            w for w in
+            sorted(
+                set(widths + [img.size[0]])
+            )
+            if w <= min(widths[-1], img.size[0])
+        ]
+        largest = None
         for w in widths:
-            if w < img.size[0]:
-                height = round(img.size[1] * w / img.size[0])
-                th = img.resize((w, height))
-
-                fname = ('.W%d.' % w).join(rel_path.rsplit('.', 1))
-                th.save(gallery_path + fname)
-                srcset.append(" ".join((
-                    gallery_url + fname,
-                    '%dw' % w
-                    )))
-        srcset.append(" ".join((
-            gallery_url + rel_path,
-            '%dw' % img.size[0]
-        )))
+            height = round(img.size[1] * w / img.size[0])
+            th = img.resize((w, height))
+            fname = '%d.W%d.%s' % (i, w, ext)
+            th.save(gallery_path + fname)
+            th_url = gallery_url + fname
+            srcset.append(" ".join((
+                th_url,
+                '%dw' % w
+            )))
+            largest_url = th_url
         ilustr.attrib['srcset'] = ", ".join(srcset)
-        ilustr.attrib['src'] = gallery_url + rel_path
+        ilustr.attrib['src'] = largest_url
 
 
-def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, gallery_path='img/', gallery_url='img/'):
+def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, gallery_path='img/', gallery_url='img/', base_url='file://./'):
     """Transforms the WL document to XHTML.
 
     If output_filename is None, returns an XML,
@@ -102,7 +115,12 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, ga
         if not options:
             options = {}
 
-        add_image_sizes(document.edoc, gallery_path, gallery_url)
+        try:
+            os.makedirs(gallery_path)
+        except OSError:
+            pass
+
+        add_image_sizes(document.edoc, gallery_path, gallery_url, base_url)
 
         css = (
             css

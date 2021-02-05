@@ -6,7 +6,7 @@ class Ilustr(WLElement):
 
     def get_html_attr(self, builder):
         return {
-            'src': builder.image_location + self.attrib['src'],
+            'src': builder.base_url + self.attrib['src'],
             'alt': self.attrib['alt'],
             'title': self.attrib['alt'],
         }

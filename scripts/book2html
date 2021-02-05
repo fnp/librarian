@@ -20,7 +20,11 @@ class Book2Html(Book2Anything):
                 help='output raw text for use in templates')
     ]
     transform_options = [
-        Option('--css', dest='css')
+        Option('--css', dest='css'),
+        Option(
+            '-b', '--base-url', dest='base_url', metavar='URL',
+            help='specifies the base URL for relative image references'
+        ),
     ]
     parser_options = [
         Option('-i', '--ignore-dublin-core', dest='parse_dublincore', 

@@ -173,7 +173,7 @@ class DaisyBuilder:
                     **{
                         "clip-begin": "npt=%.3fs" % item[0],
                         "clip-end": "npt=%.3fs" % item[1],
-                    },
+                    }
                 )
 
             zipf.writestr(

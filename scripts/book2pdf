@@ -15,10 +15,18 @@ class Book2Pdf(Book2Anything):
     uses_cover = True
     uses_provider = True
     transform_options = [
-        Option('-t', '--save-tex', dest='save_tex', metavar='FILE',
-                help='path to save the intermediary LaTeX file to'),
-        Option('-m', '--morefloats', dest='morefloats', metavar='old/new/none',
-                help='force morefloats in old (<1.0c), new (>=1.0c) or none')
+        Option(
+            '-t', '--save-tex', dest='save_tex', metavar='FILE',
+            help='path to save the intermediary LaTeX file to'
+        ),
+        Option(
+            '-m', '--morefloats', dest='morefloats', metavar='old/new/none',
+            help='force morefloats in old (<1.0c), new (>=1.0c) or none'
+        ),
+        Option(
+            '-b', '--base-url', dest='base_url', metavar='URL',
+            help='specifies the base URL for relative image references'
+        ),
     ]
 
 

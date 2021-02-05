@@ -19,8 +19,8 @@ class HtmlBuilder:
     with_nota_red = True
     no_externalities = False
 
-    def __init__(self, image_location='https://wolnelektury.pl/media/book/pictures/marcos-historia-kolorow/'):
-        self.image_location = image_location
+    def __init__(self, base_url=None):
+        self._base_url = base_url
 
         self.tree = text = etree.Element('div', **{'id': 'book-text'})
         self.header = etree.SubElement(text, 'h1')
@@ -37,6 +37,13 @@ class HtmlBuilder:
             'nota_red': self.nota_red,
         }
         self.current_cursors = [text]
+
+    @property
+    def base_url(self):
+        if self._base_url is not None:
+            return self._base_url
+        else:
+            return 'https://wolnelektury.pl/media/book/pictures/{}/'.format(self.document.meta.url.slug)
 
     @property
     def cursor(self):
@@ -60,6 +67,8 @@ class HtmlBuilder:
         document._compat_assign_section_ids()
 
     def build(self, document, **kwargs):
+        self.document = document
+
         self.preprocess(document)
         document.tree.getroot().html_build(self)
         self.postprocess(document)

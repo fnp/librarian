@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import io
 from unittest import TestCase
 from librarian import NoDublinCore
+from librarian.builders import builders
 from librarian.document import WLDocument
 from librarian.parser import WLDocument as LegacyWLDocument
 from nose.tools import *
@@ -30,7 +31,7 @@ class TransformTest(TestCase):
         expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.html')
         html = WLDocument(
             filename=get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
-        ).build('html').get_bytes().decode('utf-8')
+        ).build(builders['html']).get_bytes().decode('utf-8')
 
         self.assertEqual(html, io.open(expected_output_file_path).read())
 

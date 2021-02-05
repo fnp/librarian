@@ -3,6 +3,15 @@
 This document records all notable changes to Librarian.
 
 
+## 1.14 (2021-02-05)
+
+### Changed
+- Image sources are now URLs. This changes the API: instead of paths
+  given as `ilustr_path`, `transform` functions now accept
+  a new `base_url` parameter.
+- Size limits introduced for images in all formats.
+
+
 ## 1.13 (2021-01-27)
 
 ### Changed

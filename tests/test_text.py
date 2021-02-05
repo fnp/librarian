@@ -6,6 +6,7 @@
 from __future__ import unicode_literals
 
 from librarian import NoDublinCore
+from librarian.builders import builders
 from librarian.parser import WLDocument as LegacyWLDocument
 from librarian.document import WLDocument
 from nose.tools import *
@@ -27,7 +28,7 @@ def test_transform():
 
     text = WLDocument(
         filename=get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
-    ).build('txt').get_bytes()
+    ).build(builders['txt']).get_bytes()
 
     assert_equal(text, open(expected_output_file_path, 'rb').read())
 
