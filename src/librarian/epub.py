@@ -448,6 +448,14 @@ def transform(wldoc, verbose=False, style=None,
             output.add_item(item)
             spine.append(item)
 
+            toc[-1][1].append(
+                epub.Link(
+                    "part1.xhtml",
+                    "Początek utworu",
+                    "part1"
+                )
+            )
+
         elif wldoc.book_info.parts:
             # write title page for every parent
             if sample is not None and sample <= 0:
@@ -541,16 +549,18 @@ def transform(wldoc, verbose=False, style=None,
     output.set_identifier(six.text_type(document.book_info.url))
     output.set_language(functions.lang_code_3to2(document.book_info.language))
     output.set_title(document.book_info.title)
-    for author in document.book_info.authors:
+    for i, author in enumerate(document.book_info.authors):
         output.add_author(
             author.readable(),
-            file_as=six.text_type(author)
+            file_as=six.text_type(author),
+            uid='creator{}'.format(i)
         )
     for translator in document.book_info.translators:
         output.add_author(
             translator.readable(),
             file_as=six.text_type(translator),
-            role='translator'
+            role='trl',
+            uid='translator{}'.format(i)
         )
     for publisher in document.book_info.publisher:
         output.add_metadata("DC", "publisher", publisher)
@@ -669,15 +679,6 @@ def transform(wldoc, verbose=False, style=None,
 
     toc, chunk_counter, chars, sample = transform_file(document, sample=sample)
     output.toc = toc[0][1]
-
-    if len(toc) < 2:
-        output.toc.append(
-            epub.Link(
-                "part1.xhtml",
-                "Początek utworu",
-                "part1"
-            )
-        )
 
     # Last modifications in container files and EPUB creation
     if len(annotations) > 0:

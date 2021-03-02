@@ -3,6 +3,14 @@
 This document records all notable changes to Librarian.
 
 
+## 1.15 (2021-03-02)
+
+### Fixed
+- Epub: translator marked with MARC Relators role 'trl'.
+- Epub: authors and translators dc:creator elements had duplicate `id`.
+- Epub: 'Start' element in TOC was added inconsistently and in wrong order.
+
+
 ## 1.14 (2021-02-05)
 
 ### Changed
