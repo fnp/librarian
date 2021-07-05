@@ -363,10 +363,10 @@ class WLCover(Cover):
         box_img = box.image()
 
         # Find box position.
-        if self.box_position == 'top':
-            box_top = metr.box_top_margin
-        elif self.box_position == 'bottom':
+        if self.box_position == 'bottom' or box_img.size[1] + metr.box_top_margin + metr.box_bottom_margin > metr.height:
             box_top = metr.height - metr.box_bottom_margin - box_img.size[1]
+        elif self.box_position == 'top':
+            box_top = metr.box_top_margin
         else:   # Middle.
             box_top = (metr.height - box_img.size[1]) // 2
 
@@ -470,6 +470,7 @@ class WLNoBoxCover(WLCover):
 class LogoWLCover(WLCover):
     gradient_height = 90
     gradient_logo_height = 60
+    gradient_logo_max_width = 1000
     gradient_logo_margin_right = 30
     gradient_logo_spacing = 40
     gradient_color = '#000'
@@ -478,6 +479,8 @@ class LogoWLCover(WLCover):
         'res/wl-logo-white.png',
         'res/fnp-logo-white.png',
     ]
+    annotation = None
+    annotation_height = 10
 
     def __init__(self, book_info, *args, **kwargs):
         super(LogoWLCover, self).__init__(book_info, *args, **kwargs)
@@ -537,7 +540,10 @@ class LogoWLCover(WLCover):
             - 2 * metr.gradient_logo_margin_right
         )
         widths = [
-            logo.size[0] * metr.gradient_logo_height / logo.size[1]
+            min(
+                metr.gradient_logo_max_width,
+                logo.size[0] * metr.gradient_logo_height / logo.size[1]
+            )
             for logo in logos]
         taken_space = (
             sum(widths)
@@ -553,12 +559,35 @@ class LogoWLCover(WLCover):
             logo = logo.resize(
                 (
                     int(round(widths[i] * logo_scale)),
-                    int(round(metr.gradient_logo_height * logo_scale))
+                    int(round(
+                        logo.size[1] * widths[i] / logo.size[0] * logo_scale
+                    ))
                 ),
                 Image.ANTIALIAS)
             cursor -= logo.size[0]
-            img.paste(logo, (cursor, logo_top), mask=logo)
+            img.paste(
+                logo,
+                (
+                    cursor,
+                    int(round(logo_top + (metr.gradient_logo_height - logo.size[1]) * logo_scale / 2))
+                ),
+                mask=logo
+            )
             cursor -= int(round(metr.gradient_logo_spacing * logo_scale))
+
+        if self.annotation:
+            img2 = Image.new('RGBA', (metr.height, metr.height), color=None)
+            draw = ImageDraw.Draw(img2)
+            author_font = ImageFont.truetype(
+                self.author_font_ttf, metr.annotation_height,
+                layout_engine=ImageFont.LAYOUT_BASIC)
+            draw.text((self.annotation_height, self.annotation_height), self.annotation, font=author_font, fill='#FFFFFF')
+            img2.show()
+            img2 = img2.rotate(90)
+            img2.show()
+            img.putalpha(0)
+            img.alpha_composite(img2, (0, 0))
+            img = img.convert('RGB')
 
         return img
 
@@ -676,11 +705,22 @@ class AtriumCover(LogoWLCover):
     ]
 
 
+class BNCover(LogoWLCover):
+    gradient_logos = [
+        'res/dofinansowano.png',
+        'res/MKIDN.jpg',
+        'res/BN.png',
+        'res/wl-logo-white.png',
+    ]
+#    annotation = 'Zadanie „Udostępnienie publikacji w formatach cyfrowych” w ramach Narodowego Programu Rozwoju Czytelnictwa. Dofinansowano ze środków Ministra Kultury, Dziedzictwa Narodowego i Sportu.'
+
+
 COVER_CLASSES = {
     'default': LogoWLCover,
     'kmlu': KMLUCover,
     'mpw': MPWCover,
     'atrium': AtriumCover,
+    'bn': BNCover,
 }
 
 

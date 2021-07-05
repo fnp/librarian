@@ -9,5 +9,5 @@ class Didaskalia(WLElement):
     TXT_PREFIX = "/ "
     TXT_SUFFIX = " /"
 
-    HTML_TAG = "div"
-    HTML_CLASS = "didaskalia"
+    EPUB_TAG =_HTML_TAG = "div"
+    EPUB_CLASS = HTML_CLASS = "didaskalia"

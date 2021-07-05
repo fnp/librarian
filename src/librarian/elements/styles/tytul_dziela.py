@@ -3,8 +3,8 @@ from ..base import WLElement
 
 
 class TytulDziela(WLElement):
-    HTML_TAG = 'em'
-    HTML_CLASS = 'book-title'
+    EPUB_TAG = HTML_TAG = 'em'
+    EPUB_CLASS = HTML_CLASS = 'book-title'
 
     def normalize_text(self, text):
         txt = super(TytulDziela, self).normalize_text(text)

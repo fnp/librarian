@@ -6,3 +6,6 @@ class DzieloNadrzedne(HeaderElement):
     TXT_LEGACY_BOTTOM_MARGIN = 1
 
     HTML_CLASS = "collection"
+
+    def epub_build(self, builder):
+        return

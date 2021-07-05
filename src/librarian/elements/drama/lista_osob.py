@@ -19,3 +19,10 @@ class ListaOsob(WLElement):
         super(ListaOsob, self)._html_build_inner(builder)
         builder.cursor.append(ol)
         builder.forget_fragment('list')
+
+    def _epub_build_inner(self, builder):
+        ol = etree.Element('ol')
+        builder.create_fragment('list', ol)
+        super(ListaOsob, self)._epub_build_inner(builder)
+        builder.cursor.append(ol)
+        builder.forget_fragment('list')

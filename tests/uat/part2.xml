@@ -1,0 +1,25 @@
+<utwor>
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <dc:creator>Radek Czajka</dc:creator>
+      <dc:title>Test Document, Part 2</dc:title>
+      <dc:date>2020-01-08</dc:date>
+      <dc:publisher>Fundacja Nowoczesna Polska</dc:publisher>
+      <dc:language>pol</dc:language>
+      <dc:identifier.url>part2</dc:identifier.url>
+      <dc:rights>gnu gpl</dc:rights>
+    </rdf:Description>
+  </rdf:RDF>
+
+  <opowiadanie>
+
+<autor_utworu>Wolne Lektury</autor_utworu>
+<nazwa_utworu>Testy</nazwa_utworu>
+<podtytul>Podtytuł</podtytul>
+
+<akap>
+	Druga część. Powinna być widoczna
+</akap>
+
+  </opowiadanie>
+</utwor>

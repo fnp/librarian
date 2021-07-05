@@ -6,28 +6,29 @@
       <dc:date>2020-01-08</dc:date>
       <dc:publisher>Fundacja Nowoczesna Polska</dc:publisher>
       <dc:language>pol</dc:language>
-      <dc:identifier.url>wl-test</dc:identifier.url>
+      <dc:identifier.url>main</dc:identifier.url>
       <dc:rights>gnu gpl</dc:rights>
     </rdf:Description>
   </rdf:RDF>
 
   <opowiadanie>
 
-<autor_utworu>Wolne Lektury</autor_utworu>
-<nazwa_utworu>Testy</nazwa_utworu>
-<podtytul>Podtytuł</podtytul>
-
+    <dzielo_nadrzedne>Dzieło nadrzędne<pa>Przypis w dziele nadrzędnym</pa></dzielo_nadrzedne>
+    <autor_utworu>Wolne<pa>Przypis w nazwie utworu</pa> Lektury</autor_utworu>
+    <nazwa_utworu>Testy<pa>Przypis w tytule utworu</pa></nazwa_utworu>
+    <podtytul>Podtytuł<pa>Przypis w podtytule</pa></podtytul>
+    
     <naglowek_czesc>Testy struktury</naglowek_czesc>
-
+    
     <naglowek_czesc>Nagłówek części</naglowek_czesc>
     <podtytul_czesc>Podtytuł części</podtytul_czesc>
-
+    
     <naglowek_rozdzial>Nagłówek rozdziału</naglowek_rozdzial>
     <podtytul_rozdzial>Podtytuł rozdziału</podtytul_rozdzial>
-
+    
     <naglowek_podrozdzial>Nagłówek podrozdziału</naglowek_podrozdzial>
     <podtytul_podrozdzial>Podtytuł podrozdziału</podtytul_podrozdzial>
-
+    
     <naglowek_akt>Nagłówek aktu</naglowek_akt>
     <podtytul_akt>Podtytuł aktu</podtytul_akt>
     
@@ -37,6 +38,210 @@
     <srodtytul>Śródtytuł</srodtytul>
 
     <akap>Nagłówki powinny tworzyć prawidłową strukturę. Użyte elementy: tytuły i podtytuły części, rozdziału, podrozdziału, aktu i sceny, oraz śródtytuł.</akap>
+
+
+
+    <naglowek_czesc>Akapity</naglowek_czesc>
+
+    <akap>Zwykły akapit.</akap>
+
+    <akap_cd>Kontynuacja akapitu.</akap_cd>
+
+    <akap_dialog>--- Akapit dialogowy.</akap_dialog>
+
+    <akap>Zastępnik wersu w akapicie:</akap>
+    <akap><zastepnik_wersu>. . . . . . . .</zastepnik_wersu></akap>
+
+    <akap>Poezja cytowana w akapicie dialogowym (?):</akap>
+    <akap_dialog><poezja_cyt><strofa>--- Cytat</strofa></poezja_cyt></akap_dialog>
+    
+
+
+
+
+
+    <naglowek_czesc>Dramat</naglowek_czesc>
+
+    <lista_osob>
+      <naglowek_listy>
+	Lista osób
+      </naglowek_listy>
+      <lista_osoba>
+	<osoba>Pustelnik</osoba> --- pustelnik
+      </lista_osoba>
+      <lista_osoba>
+	<osoba>Hesia</osoba> --- Hesia
+      </lista_osoba>
+      
+    </lista_osob>
+
+    <miejsce_czas>
+    </miejsce_czas>
+    
+    <naglowek_osoba>PUSTELNIK</naglowek_osoba>
+
+    <kwestia>
+      <strofa>
+	Więc jako dawniej czynili mocarze,/
+	Z Lechem się mieniał Scyta na obrączki;/
+	A pokochawszy mocniej sercem, w darze/
+	Dał mu koronę... stąd nasza korona./
+	Zbawiciel niegdyś wyciągając rączki/
+	Szedł do niej z matki zadumanej łona/
+	I ku rubinom podawał się cały/
+	Jako różyczka z liści wychylona,/
+	I wołał: caca! i na brylant biały/
+	Różanych ustek perełkami świecił.
+      </strofa>
+    </kwestia>
+
+    <didaskalia>Słychać głos Hesi.</didaskalia>
+    
+    <naglowek_osoba>GŁOS HESI</naglowek_osoba>
+
+    <kwestia>
+      <akap>
+	Mamuńciu, tak zimno! troszkę ciepłej wody...
+      </akap>
+    </kwestia>
+
+    <naglowek_osoba>DULSKA</naglowek_osoba>
+
+    <kwestia>
+      <akap>
+	Jeszcze czego? Hartujcie się... Felicjan! wstajesz? Wiesz? ten błazen, twój syn, nie wrócił jeszcze do domu! Co? nic nie mówisz? naturalnie. 
+	Ojciec toleruje. Niedaleko padło jabłko od jabłoni. Ale jak będą dłużki małe --- nie zapłacę.
+      </akap>
+    </kwestia>
+    
+
+
+    
+    <naglowek_czesc>Wyróżnienia</naglowek_czesc>
+    
+    <akap>Wyróżnienia:
+    <didask_tekst>didaskalia tekstowe</didask_tekst>,
+    <didaskalia>didaskalia</didaskalia>,
+    <indeks_dolny>indeks dolny</indeks_dolny>,
+    <osoba>osoba</osoba>,
+    <slowo_obce>słowo obce</slowo_obce>,
+    <tytul_dziela>tytuł dzieła</tytul_dziela>,
+    <wieksze_odstepy>większe odstępny</wieksze_odstepy>,
+    <wyroznienie>wyróżnienie</wyroznienie>,
+    <www>https://wolnelektury.pl/</www>.
+    </akap>
+    
+
+
+
+    <naglowek_czesc>Grupy</naglowek_czesc>
+
+    <akap>Długi cytat:</akap>
+    
+    <dlugi_cytat>
+      <akap>Długi cytat, akapit.</akap>
+      <akap_cd>Kontynuacja akapitu.</akap_cd>
+      <akap_dialog>--- Akapit dialogowy</akap_dialog>
+
+      <strofa>Strofa/ w/ cytacie</strofa>
+
+      <didaskalia>Didaskalia (czy tak?)</didaskalia>
+
+      <dlugi_cytat>
+	<akap>Cytat w cytacie!</akap>
+	<akap_cd>Kontynuacja akapitu w cytacie</akap_cd>
+	<akap_dialog>--- Akapit dialogowy w cytacie</akap_dialog>
+      </dlugi_cytat>
+
+      
+      <poezja_cyt>
+	<strofa>Poezja/ cytowana/ w cytacie</strofa>
+      </poezja_cyt>
+
+      
+      <naglowek_osoba>
+      </naglowek_osoba>
+      <kwestia>
+	...
+      </kwestia>
+
+
+      <naglowek_rozdzial>Rozdział w cytacie</naglowek_rozdzial>
+      <naglowek_podrozdzial>Podrozdział w cytacie</naglowek_podrozdzial>
+      <srodtytul>Śródtytuł w cytacie</srodtytul>
+
+      <motto_podpis>
+      </motto_podpis>
+
+      <nota>
+	<akap>Nota w cytacie</akap>
+      </nota>
+
+      <akap>Asterysk:</akap>
+      <sekcja_asterysk/>
+
+      <akap>Światło:</akap>
+      <sekcja_swiatlo/>
+
+      <akap>Separator linia:</akap>
+      <separator_linia/>
+
+      <akap>Koniec cytatu.</akap>
+
+    </dlugi_cytat>
+
+    <akap>Tekst za cytatem.</akap>
+
+
+    <akap>Cytat poetycki:</akap>
+    
+    <poezja_cyt>
+      <naglowek_rozdzial>Nagłówek rozdziału</naglowek_rozdzial>
+      <naglowek_podrozdzial>Nagłówek podrozdziału</naglowek_podrozdzial>
+      <srodtytul>Śródtytuł</srodtytul>
+      <naglowek_osoba>Nagłówek: osoba</naglowek_osoba>
+
+      <nota>
+	<akap>
+	  Nota
+	</akap>
+      </nota>
+      
+      <akap>Akapit</akap>
+
+      <strofa>Strofa/ w/ cytacie</strofa>
+      
+      <didaskalia>didaskalia?</didaskalia>
+
+      <kwestia>
+	<strofa>
+	  Strofa/ w/ kwestii/ w cytacie.
+	</strofa>
+      </kwestia>
+
+      <motto_podpis>
+	Motto-podpis
+      </motto_podpis>
+
+      <poezja_cyt>
+	<strofa>
+	  Poezja/
+	  cytowana/
+	  w cytacie/
+	  poetyckim
+	</strofa>
+      </poezja_cyt>
+
+      <akap>Asterysk:</akap>
+      <sekcja_asterysk/>
+
+      
+      
+    </poezja_cyt>
+
+
+    
+    
     
     
     <naglowek_czesc>Strofa w przypisie</naglowek_czesc>
@@ -95,6 +300,114 @@
     </akap>
 
 
+
+
+
+
+    <naglowek_czesc>Wzory</naglowek_czesc>
+
+    <akap>
+      Wzór:
+      <mat><mrow>
+	<mi>δ</mi>
+	<mo>=</mo>
+	<mfrac>
+	  <mrow>
+	    <mi>e</mi>
+	    <mo>⁢</mo>
+	    <mi>F</mi>
+	    <mo>⁢</mo>
+	    <mi>l</mi>
+	    <mo>×</mo>
+	    <mfenced><mrow>
+	      <mfrac>
+		<mi>l</mi>
+		<mn>2</mn>
+	      </mfrac>
+	      <mo>+</mo>
+	      <mi>h</mi>
+	    </mrow>
+	    </mfenced>
+	  </mrow>
+	  <mrow>
+	    <mi>m</mi>
+	    <mo>⁢</mo>
+	    <msup>
+	      <mi>v</mi>
+	      <mn>2</mn>
+	    </msup>
+	  </mrow>
+	</mfrac>
+      </mrow></mat>
+    </akap>
+
+
+
+
+    
+    <naglowek_czesc>Separatory</naglowek_czesc>
+
+    
+    <akap>Asterysk:</akap>
+    <sekcja_asterysk/>
+
+    <akap>Światło:</akap>
+    <sekcja_swiatlo/>
+
+    <akap>Separator linia:</akap>
+    <separator_linia/>
+
+
+    
+
+    <naglowek_czesc>Tabele</naglowek_czesc>
+
+    <akap>Tabela bez ramek:</akap>
+    
+    <tabela>
+      <wiersz>
+	<kol>
+	  Komórka 1
+	</kol>
+	<kol>
+	  Komórka 2
+	</kol>
+      </wiersz>
+      <wiersz>
+	<kol>
+	  Komórka 3
+	</kol>
+	<kol>
+	  Komórka 4
+	</kol>
+      </wiersz>
+    </tabela>
+
+    <akap>Tabela z ramkami:</akap>
+	  
+
+    <tabela ramka="1">
+      <wiersz>
+	<kol>
+	  Komórka 1
+	</kol>
+	<kol>
+	  Komórka 2
+	</kol>
+      </wiersz>
+      <wiersz>
+	<kol>
+	  Komórka 3
+	</kol>
+	<kol>
+	  Komórka 4
+	</kol>
+      </wiersz>
+    </tabela>
+
+    <naglowek_czesc>Ilustracje</naglowek_czesc>
+
+    
     
   </opowiadanie>
 </utwor>

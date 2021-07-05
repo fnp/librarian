@@ -7,9 +7,7 @@
       <xsl:element name="head">
         <link rel="stylesheet" href="style.css" type="text/css" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>
-          WolneLektury.pl
-        </title>
+        <title>WolneLektury.pl</title>
       </xsl:element>
       <xsl:element name="body" xmlns="http://www.w3.org/1999/xhtml">
         <xsl:element name="div" xmlns="http://www.w3.org/1999/xhtml">
@@ -79,11 +77,11 @@
 
   <xsl:template match="ilustr">
     <img>
-      <xsl:attribute name="src">
-        <xsl:value-of select="@src" />
-      </xsl:attribute>
       <xsl:attribute name="alt">
         <xsl:value-of select="@alt" />
+      </xsl:attribute>
+      <xsl:attribute name="src">
+        <xsl:value-of select="@src" />
       </xsl:attribute>
       <xsl:attribute name="title">
         <xsl:value-of select="@alt" />
@@ -376,7 +374,7 @@
   <xsl:template match="extra" />
 
   <xsl:template match="pe|pa|pr|pt" >
-    <a class="anchor" id="anchor-{.}" href="annotations.xhtml#annotation-{.}"
+    <a class="anchor" href="annotations.xhtml#annotation-{.}" id="anchor-{.}"
        xmlns="http://www.w3.org/1999/xhtml"><sup xmlns="http://www.w3.org/1999/xhtml"><xsl:apply-templates /></sup></a>
   </xsl:template>
 

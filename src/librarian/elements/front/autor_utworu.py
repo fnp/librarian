@@ -6,3 +6,6 @@ class AutorUtworu(HeaderElement):
     TXT_LEGACY_BOTTOM_MARGIN = 2
 
     HTML_CLASS = 'author'
+
+    def epub_build(self, builder):
+        return

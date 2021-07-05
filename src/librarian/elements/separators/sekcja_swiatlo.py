@@ -7,3 +7,9 @@ class SekcjaSwiatlo(WLElement):
 
     HTML_TAG = "hr"
     HTML_CLASS = "spacer"
+
+    EPUB_TAG = 'p'
+    EPUB_CLASS = 'spacer'
+
+    def _epub_build_inner(self, builder):
+        builder.push_text("\u00a0")

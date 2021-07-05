@@ -15,7 +15,7 @@
         <div id="book-text" xmlns="http://www.w3.org/1999/xhtml">
           <div id="footnotes" xmlns="http://www.w3.org/1999/xhtml">
             <h2 xmlns="http://www.w3.org/1999/xhtml">
-              Przypisy:
+              <xsl:text>Przypisy:</xsl:text>
             </h2>
             <xsl:apply-templates mode="przypis" />
           </div>
@@ -29,7 +29,7 @@
   </xsl:template>
 
   <xsl:template match="pa|pe|pr|pt" mode="przypis">
-    <p id="annotation-{@number}" class="annotation" xmlns="http://www.w3.org/1999/xhtml"><a href="part{@part}.xhtml#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml"><xsl:value-of select="@number" /></a>. <xsl:apply-templates /><xsl:if test="name()='pa'"> [przypis autorski]</xsl:if><xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if><xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if><xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if></p>
+    <p class="annotation" id="annotation-{@number}" xmlns="http://www.w3.org/1999/xhtml"><a href="part{@part}.xhtml#anchor-{@number}" xmlns="http://www.w3.org/1999/xhtml"><xsl:value-of select="@number" /></a>. <xsl:apply-templates /><xsl:if test="name()='pa'"> [przypis autorski]</xsl:if><xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if><xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if><xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if></p>
     <xsl:text>&#xa;</xsl:text>
   </xsl:template>
 

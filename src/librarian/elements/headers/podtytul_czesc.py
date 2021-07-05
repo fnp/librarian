@@ -7,3 +7,11 @@ class PodtytulCzesc(WLElement):
 
     HTML_TAG = "div"
     HTML_CLASS = "subtitle2"
+
+    EPUB_TAG = "h2"
+    EPUB_CLASS = "h2"
+
+    def _epub_build_inner(self, builder):
+        builder.start_element('small', {})
+        super()._epub_build_inner(builder)
+        builder.end_element()

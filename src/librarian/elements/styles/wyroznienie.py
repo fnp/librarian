@@ -5,5 +5,5 @@ class Wyroznienie(WLElement):
     TXT_PREFIX = "*"
     TXT_SUFFIX = "*"
 
-    HTML_TAG = "em"
-    HTML_CLASS = "author-emphasis"
+    EPUB_TAG = HTML_TAG = "em"
+    EPUB_CLASS = HTML_CLASS = "author-emphasis"

@@ -18,3 +18,6 @@ class Motyw(WLElement):
             "fid": fid,
             "name": "m" + fid,
         }
+
+    def epub_build(self, builder):
+        pass

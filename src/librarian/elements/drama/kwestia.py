@@ -4,5 +4,5 @@ from ..base import WLElement
 class Kwestia(WLElement):
     CAN_HAVE_TEXT = False
 
-    HTML_TAG = "div"
-    HTML_CLASS = "kwestia"
+    EPUB_TAG = HTML_TAG = "div"
+    EPUB_CLASS = HTML_CLASS = "kwestia"

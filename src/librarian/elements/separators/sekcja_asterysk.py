@@ -7,12 +7,14 @@ class SekcjaAsterysk(WLElement):
     TXT_LEGACY_TOP_MARGIN = 2
     TXT_LEGACY_BOTTOM_MARGIN = 2
 
-    HTML_TAG = "p"
-    HTML_CLASS = "spacer-asterisk"
+    EPUB_TAG = HTML_TAG = "p"
+    HTML_CLASS = HTML_CLASS = "spacer-asterisk"
 
     def _txt_build_inner(self, builder):
         builder.push_text('*')
 
     def _html_build_inner(self, builder):
         builder.push_text("*")
+
+    _epub_build_inner = _html_build_inner
 

@@ -24,6 +24,60 @@
 				<xsl:value-of select="$css" />
 			</xsl:attribute>
 		</link>
+		<style>
+		  .ilustr.prawo img {
+		  float: right;
+		  }
+		  .ilustr.lewo img {
+  		  float: left;
+		  }
+		  .ilustr.srodek {
+		  text-align: center;
+		  }
+		  .ilustr .stop {
+		  clear: both;
+		  }
+		  .ilustr.oblew .stop {
+		  clear: none;
+		  }
+
+                  .ilustr.oblew img {
+                    margin-bottom: 1em;
+                  }
+                  .ilustr.oblew.lewo img {
+                    margin-right: 2em;
+                    }
+                    .ilustr.oblew.prawo img {
+                    margin-left: 2em;
+                    }
+
+
+                    .ilustr img {
+                    min-width: 200px !important;
+                    }
+                    @media screen and (max-width: 320px) {
+                    .ilustr img {
+                    width: 100% !important;
+                    min-width: auto !important;
+                    }
+                    .ilustr.lewo img {
+                    float: none;
+                    }
+                    .ilustr.prawo img {
+                    float:none;
+                    }
+                    .ilustr.oblew.prawo img {
+                    margin-left: 0;
+                    }
+                    .ilustr.oblew.lewo img{
+                    margin-right: 0;
+                    }
+                    .ilustr .stop {
+		    clear: none;
+                    }
+
+                    }
+		</style>
 	    </head>
             <body>
               <xsl:call-template name="book-text" />
@@ -133,27 +187,47 @@
 </xsl:template>
 
 <xsl:template match="ilustr">
+  <div>
+
+    <xsl:attribute name="class">
+      <xsl:text>ilustr </xsl:text>
+      <xsl:value-of select="@wyrownanie"/>
+      <xsl:if test="@oblew">
+        <xsl:text> oblew</xsl:text>
+      </xsl:if>
+    </xsl:attribute>
+    
     <img>
-        <xsl:attribute name="src">
-            <xsl:value-of select="@src" />
+      <xsl:attribute name="src">
+        <xsl:value-of select="@src" />
+      </xsl:attribute>
+      <xsl:attribute name="srcset">
+        <xsl:value-of select="@srcset" />
+      </xsl:attribute>
+      <xsl:attribute name="sizes">
+        (min-width: 718px) 600px,
+        (min-width: 600px) calc(100vw - 118px),
+        (min-width: 320px) calc(100vw - 75px),
+        (min-width: 15em) calc(100wv - 60px),
+        calc(100wv - 40px)
+      </xsl:attribute>
+      <xsl:attribute name="alt">
+        <xsl:value-of select="@alt" />
+      </xsl:attribute>
+      <xsl:attribute name="title">
+        <xsl:value-of select="@alt" />
+      </xsl:attribute>
+
+      <xsl:if test="@szer">
+        <xsl:attribute name="style">
+          <xsl:text>width: </xsl:text>
+          <xsl:value-of select="@szer"/>
         </xsl:attribute>
-        <xsl:attribute name="srcset">
-          <xsl:value-of select="@srcset" />
-        </xsl:attribute>
-        <xsl:attribute name="sizes">
-          (min-width: 718px) 600px,
-          (min-width: 600px) calc(100vw - 118px),
-          (min-width: 320px) calc(100vw - 75px),
-          (min-width: 15em) calc(100wv - 60px),
-          calc(100wv - 40px)
-        </xsl:attribute>
-        <xsl:attribute name="alt">
-            <xsl:value-of select="@alt" />
-        </xsl:attribute>
-        <xsl:attribute name="title">
-            <xsl:value-of select="@alt" />
-        </xsl:attribute>
+      </xsl:if>
     </img>
+
+    <div class="stop"></div>
+  </div>
 </xsl:template>
 
 <xsl:template match="animacja">

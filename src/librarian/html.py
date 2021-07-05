@@ -58,9 +58,8 @@ def add_image_sizes(tree, gallery_path, gallery_url, base_url):
         rel_path = ilustr.attrib['src']
         img_url = six.moves.urllib.parse.urljoin(base_url, rel_path)
 
-        with six.moves.urllib.request.urlopen(img_url) as f:
-            img = Image.open(f)
-
+        f = six.moves.urllib.request.urlopen(img_url)
+        img = Image.open(f)
         ext = {'GIF': 'gif', 'PNG': 'png'}.get(img.format, 'jpg')
 
         srcset = []
@@ -75,10 +74,12 @@ def add_image_sizes(tree, gallery_path, gallery_url, base_url):
         ]
         largest = None
         for w in widths:
-            height = round(img.size[1] * w / img.size[0])
-            th = img.resize((w, height))
             fname = '%d.W%d.%s' % (i, w, ext)
-            th.save(gallery_path + fname)
+            fpath = gallery_path + fname
+            if not os.path.exists(fpath):
+                height = round(img.size[1] * w / img.size[0])
+                th = img.resize((w, height))
+                th.save(fpath)
             th_url = gallery_url + fname
             srcset.append(" ".join((
                 th_url,
@@ -87,6 +88,8 @@ def add_image_sizes(tree, gallery_path, gallery_url, base_url):
             largest_url = th_url
         ilustr.attrib['srcset'] = ", ".join(srcset)
         ilustr.attrib['src'] = largest_url
+
+        f.close()
 
 
 def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, gallery_path='img/', gallery_url='img/', base_url='file://./'):

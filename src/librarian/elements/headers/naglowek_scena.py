@@ -1,9 +1,9 @@
 from ..base import WLElement
 
 
-class NaglowekRozdzial(WLElement):
+class NaglowekScena(WLElement):
     SECTION_PRECEDENCE = 2
-    
+
     TXT_TOP_MARGIN = 4
     TXT_BOTTOM_MARGIN = 2
     TXT_LEGACY_TOP_MARGIN = 4
@@ -13,4 +13,5 @@ class NaglowekRozdzial(WLElement):
 
     EPUB_TAG = 'h2'
     EPUB_CLASS = 'h3'
-    EPUB_START_CHUNK = True
+    EPUB_START_CHUNK = False
+

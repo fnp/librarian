@@ -320,8 +320,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
                 base_url,
                 ilustr.get('src')
             )
-            with six.moves.urllib.request.urlopen(url) as imgfile:
-                img = Image.open(imgfile)
+            imgfile = six.moves.urllib.request.urlopen(url)
+            img = Image.open(imgfile)
 
             th_format, ext, media_type = {
                 'GIF': ('GIF', 'gif', 'image/gif'),
@@ -337,6 +337,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             file_name = 'image%d.%s' % (i, ext)
             th.save(os.path.join(temp, file_name))
             ilustr.set('src', file_name)
+
+            imgfile.close()
 
         for sponsor in book_info.sponsors:
             ins = etree.Element("data-sponsor", name=sponsor)

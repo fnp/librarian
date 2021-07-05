@@ -4,4 +4,4 @@ from ..base import WLElement
 class IndeksDolny(WLElement):
     TXT_PREFIX = "_"
 
-    HTML_TAG = "sub"
+    EPUB_TAG = HTML_TAG = "sub"

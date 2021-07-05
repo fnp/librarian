@@ -2,7 +2,7 @@ from ..base import WLElement
 
 
 class Tabela(WLElement):
-    HTML_TAG = 'table'
+    EPUB_TAG = HTML_TAG = 'table'
 
     def get_html_attr(self, builder):
         if self.attrib.get('ramka', '') == '1':
@@ -10,3 +10,7 @@ class Tabela(WLElement):
                 'class': 'border'
             }
         return {}
+
+    get_epub_attr = get_html_attr
+
+                

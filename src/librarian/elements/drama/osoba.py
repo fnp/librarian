@@ -2,6 +2,6 @@ from ..base import WLElement
 
 
 class Osoba(WLElement):
-    HTML_TAG = "em"
-    HTML_CLASS = "person"
+    EPUB_TAG = HTML_TAG = "em"
+    EPUB_CLASS = HTML_CLASS = "person"
 

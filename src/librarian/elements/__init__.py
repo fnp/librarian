@@ -82,7 +82,7 @@ WL_ELEMENTS = {
 
     "naglowek_czesc": headers.NaglowekCzesc,
     "naglowek_akt": headers.NaglowekCzesc,
-    "naglowek_scena": headers.NaglowekRozdzial,
+    "naglowek_scena": headers.NaglowekScena,
     "naglowek_rozdzial": headers.NaglowekRozdzial,
     "naglowek_podrozdzial": headers.NaglowekPodrozdzial,
     "srodtytul": headers.NaglowekCzesc,

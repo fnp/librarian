@@ -50,20 +50,40 @@ class TxtBuilder:
 
     default_license_description = {
         "pol": (
-            "Ten utwór nie jest objęty majątkowym prawem autorskim "
-            "i znajduje się w domenie publicznej, co oznacza że "
-            "możesz go swobodnie wykorzystywać, publikować "
-            "i rozpowszechniać. Jeśli utwór opatrzony jest "
-            "dodatkowymi materiałami (przypisy, motywy literackie "
-            "etc.), które podlegają prawu autorskiemu, to te "
-            "dodatkowe materiały udostępnione są na licencji "
-            "Creative Commons Uznanie Autorstwa – Na Tych Samych "
-            "Warunkach 3.0 PL "
-            "(http://creativecommons.org/licenses/by-sa/3.0/)"
+            "Wszystkie zasoby Wolnych Lektur możesz swobodnie wykorzystywać, "
+            "publikować i rozpowszechniać pod warunkiem zachowania warunków "
+            "licencji i zgodnie z Zasadami wykorzystania Wolnych Lektur.\n"
+            "Ten utwór jest w domenie publicznej. "
+            "Wszystkie materiały dodatkowe (przypisy, motywy literackie) są "
+            "udostępnione na Licencji Wolnej Sztuki 1.3 "
+            "(https://artlibre.org/licence/lal/pl/).\n"
+            "Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania "
+            "krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich "
+            "i prawach pokrewnych. Wykorzystując zasoby z Wolnych Lektur, "
+            "należy pamiętać o zapisach licencji oraz zasadach, które "
+            "spisaliśmy w Zasadach wykorzystania Wolnych Lektur "
+            "(https://wolnelektury.pl/info/zasady-wykorzystania/). Zapoznaj "
+            "się z nimi, zanim udostępnisz dalej nasze książki."
         )
     }
     license_description = {
-        "pol": "Ten utwór jest udostępniony na licencji {meta.license_description}: \n{meta.license}",
+        "pol": (
+            #"Ten utwór jest udostępniony na licencji {meta.license_description}: \n{meta.license}",
+            "Wszystkie zasoby Wolnych Lektur możesz swobodnie wykorzystywać, "
+            "publikować i rozpowszechniać pod warunkiem zachowania warunków "
+            "licencji i zgodnie z Zasadami wykorzystania Wolnych Lektur.\n"
+            "Ten utwór jest jest udostępniony na licencji {meta.license_description} ({meta.license}). "
+            "Wszystkie materiały dodatkowe (przypisy, motywy literackie) są "
+            "udostępnione na Licencji Wolnej Sztuki 1.3 "
+            "(https://artlibre.org/licence/lal/pl/).\n"
+            "Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania "
+            "krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich "
+            "i prawach pokrewnych. Wykorzystując zasoby z Wolnych Lektur, "
+            "należy pamiętać o zapisach licencji oraz zasadach, które "
+            "spisaliśmy w Zasadach wykorzystania Wolnych Lektur "
+            "(https://wolnelektury.pl/info/zasady-wykorzystania/). Zapoznaj "
+            "się z nimi, zanim udostępnisz dalej nasze książki."
+        )
     }
 
     def __init__(self):

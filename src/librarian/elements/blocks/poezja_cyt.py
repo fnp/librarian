@@ -10,3 +10,6 @@ class PoezjaCyt(WLElement):
     TXT_LEGACY_BOTTOM_MARGIN = 0
 
     HTML_TAG = 'blockquote'
+
+    EPUB_TAG = 'div'
+    EPUB_CLASS = 'block'

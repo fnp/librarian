@@ -18,3 +18,8 @@ class WersWciety(Wers):
         attr = super(WersWciety, self).get_html_attr(builder)
         attr['style'] = "padding-left: {}em".format(self.typ)
         return attr
+
+    def get_epub_attr(self, builder):
+        attr = super(WersWciety, self).get_html_attr(builder)
+        attr['style'] = "margin-left: {}em".format(self.typ)
+        return attr

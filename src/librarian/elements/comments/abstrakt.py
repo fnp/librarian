@@ -7,3 +7,6 @@ class Abstrakt(WLElement):
 
     def html_build(self, builder):
         pass
+
+    def epub_build(self, builder):
+        pass

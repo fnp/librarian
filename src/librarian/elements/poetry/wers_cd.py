@@ -8,3 +8,7 @@ class WersCd(Wers):
     HTML_ATTR = {
         "style": "padding-left: 12em",
     }
+
+    EPUB_ATTR = {
+        "style": "margin-left: 12em",
+    }

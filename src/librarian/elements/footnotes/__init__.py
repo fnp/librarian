@@ -49,6 +49,49 @@ class Footnote(WLElement):
         builder.end_element()
         builder.exit_fragment()
 
+    def epub_build(self, builder):
+        fn_no = builder.assign_footnote_number()
+        part_number = getattr(
+            builder,
+            'chunk_counter',
+            1
+        )
+
+        builder.start_element(
+            'a',
+            {
+                'class': 'anchor',
+                'id': f'anchor-{fn_no}',
+                'href': f'annotations.xhtml#annotation-{fn_no}',
+            }
+        )
+        builder.start_element('sup', {})
+        builder.push_text(str(fn_no))
+        builder.end_element()
+        builder.end_element()
+
+        
+        builder.enter_fragment('footnotes')
+        builder.start_element('p', {
+            'id': f'annotation-{fn_no}',
+            'class': "annotation"
+        })
+        builder.start_element('a', {
+            'href': f"part{part_number}.xhtml#anchor-{fn_no}"
+        })
+        builder.push_text(str(fn_no))
+        builder.end_element()
+        builder.push_text('. ')
+
+        super().epub_build(builder)
+        builder.push_text(' [' + self.qualifier + ']')
+        builder.end_element()
+
+        builder.push_text('\n')
+
+        builder.exit_fragment()
+
+        
 
 class PA(Footnote):
     """Przypis autorski."""

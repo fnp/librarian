@@ -290,10 +290,25 @@
 </xsl:template>
 
 <xsl:template match="ilustr">
-    <cmd name="ilustr">
+  <xsl:choose>
+    <xsl:when test="@oblew = 'true'">
+      <cmd name="par"/>
+      <env name="wrapfigure">
+        <parm>R</parm>
+        <parm>5cm</parm>
+        <cmd name="includegraphics">
+          <opt>width=<cmd name="linewidth"/></opt>
+          <parm><xsl:value-of select="@src"/></parm>
+        </cmd>
+      </env>
+    </xsl:when>
+    <xsl:otherwise>
+      <cmd name="ilustr">
         <parm><xsl:value-of select="@src" /></parm>
         <parm><xsl:value-of select="@alt" /></parm>
-    </cmd>
+      </cmd>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!-- ========================================== -->

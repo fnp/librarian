@@ -4,12 +4,12 @@ import re
 from lxml import etree
 import six
 from .parser import parser
-from . import dcparser, DCNS
+from . import dcparser, DCNS, DirDocProvider
 from .functions import lang_code_3to2
 
 
 class WLDocument:
-    def __init__(self, filename=None, url=None):
+    def __init__(self, filename=None, url=None, provider=None):
         source = filename or six.moves.urllib.request.urlopen(url)
         tree = etree.parse(source, parser=parser)
         self.tree = tree
@@ -18,6 +18,8 @@ class WLDocument:
             DCNS('language'): ["pol"],
         }, validate_required=False)
 
+        self.provider = provider if provider is not None else DirDocProvider('.')
+
     @property
     def meta(self):
         # Allow metadata of the master element as document meta.
@@ -25,6 +27,15 @@ class WLDocument:
         return self.tree.getroot().meta
         return master.meta
 
+    @property
+    def children(self):
+        for part_uri in self.meta.parts or []:
+            yield type(self)(
+                filename=self.provider.by_uri(part_uri),
+                provider=self.provider
+            )
+            
+    
     def build(self, builder, **kwargs):
         return builder().build(self, **kwargs)
 
@@ -65,4 +76,14 @@ class WLDocument:
                 child.attrib['_compat_section_id'] = idfier
                 _compat_assigns_section_ids_in_elem(child, idfier + '-')
         _compat_assigns_section_ids_in_elem(self.tree.getroot().master)
+
+
+    def editors(self):
+        persons = set(self.meta.editors
+                      + self.meta.technical_editors)
+        #for child in self.parts():
+        #    persons.update(child.editors())
+        #if None in persons:
+        #    persons.remove(None)
+        return persons
 

@@ -30,6 +30,7 @@ functions.reg_person_name()
 
 
 def squeeze_whitespace(s):
+    return s
     return re.sub(b'\\s+', b' ', s)
 
 
@@ -60,33 +61,6 @@ def hyphenate_and_fix_conjunctions(source_tree, hyph):
             parent.text = newt
         elif t.is_tail:
             parent.tail = newt
-
-
-def inner_xml(node):
-    """ returns node's text and children as a string
-
-    >>> print(inner_xml(etree.fromstring('<a>x<b>y</b>z</a>')))
-    x<b>y</b>z
-    """
-
-    nt = node.text if node.text is not None else ''
-    return ''.join(
-        [nt] + [etree.tostring(child, encoding='unicode') for child in node]
-    )
-
-
-def set_inner_xml(node, text):
-    """ sets node's text and children from a string
-
-    >>> e = etree.fromstring('<a>b<b>x</b>x</a>')
-    >>> set_inner_xml(e, 'x<b>y</b>z')
-    >>> print(etree.tostring(e, encoding='unicode'))
-    <a>x<b>y</b>z</a>
-    """
-
-    p = etree.fromstring('<x>%s</x>' % text)
-    node.text = p.text
-    node[:] = p[:]
 
 
 def node_name(node):
@@ -377,17 +351,8 @@ def remove_empty_lists_from_toc(toc):
                 toc[i] = e[0]
 
 
-def transform(wldoc, verbose=False, style=None,
-              sample=None, cover=None, flags=None, hyphenate=False,
-              base_url='file://./', output_type='epub'):
-    """ produces a EPUB file
 
-    sample=n: generate sample e-book (with at least n paragraphs)
-    cover: a cover.Cover factory or True for default
-    flags: less-advertising, without-fonts, working-copy
-    """
-
-    def transform_file(wldoc, chunk_counter=1, first=True, sample=None):
+def transform_file(wldoc, chunk_counter=1, first=True, sample=None, hyphenate=False, output_type='epub', spine=None, output=None, annotations=None):
         """ processes one input file and proceeds to its children """
 
         replace_characters(wldoc.edoc.getroot())
@@ -518,11 +483,26 @@ def transform(wldoc, verbose=False, style=None,
 
         for child in wldoc.parts():
             child_toc, chunk_counter, chunk_chars, sample = transform_file(
-                child, chunk_counter, first=False, sample=sample)
+                child, chunk_counter, first=False, sample=sample,
+                hyphenate=hyphenate, output_type=output_type,
+                spine=spine, output=output, annotations=annotations,
+            )
             toc[-1][1].extend(child_toc)
             chars = chars.union(chunk_chars)
 
         return toc, chunk_counter, chars, sample
+
+                
+def transform(wldoc, verbose=False, style=None,
+              sample=None, cover=None, flags=None, hyphenate=False,
+              base_url='file://./', output_type='epub'):
+    """ produces a EPUB file
+
+    sample=n: generate sample e-book (with at least n paragraphs)
+    cover: a cover.Cover factory or True for default
+    flags: less-advertising, without-fonts, working-copy
+    """
+
 
     document = deepcopy(wldoc)
     del wldoc
@@ -584,8 +564,8 @@ def transform(wldoc, verbose=False, style=None,
             base_url,
             ilustr.get('src')
         )
-        with six.moves.urllib.request.urlopen(url) as imgfile:
-            img = Image.open(imgfile)
+        imgfile = six.moves.urllib.request.urlopen(url)
+        img = Image.open(imgfile)
 
         th_format, ext, media_type = {
             'GIF': ('GIF', 'gif', 'image/gif'),
@@ -598,6 +578,8 @@ def transform(wldoc, verbose=False, style=None,
         else:
             th = img.resize((width, round(width * img.size[1] / img.size[0])))
 
+        imgfile.close()
+            
         buffer = six.BytesIO()
         th.save(buffer, format=th_format)
 
@@ -677,7 +659,11 @@ def transform(wldoc, verbose=False, style=None,
 
     annotations = etree.Element('annotations')
 
-    toc, chunk_counter, chars, sample = transform_file(document, sample=sample)
+    toc, chunk_counter, chars, sample = transform_file(
+        document, sample=sample,
+        hyphenate=hyphenate, output_type=output_type,
+        spine=spine, output=output, annotations=annotations
+    )
     output.toc = toc[0][1]
 
     # Last modifications in container files and EPUB creation
@@ -786,6 +772,7 @@ def transform(wldoc, verbose=False, style=None,
             os.chdir(cwd)
 
     remove_empty_lists_from_toc(output.toc)
+    print(output.toc)
 
     output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub',
                                      delete=False)

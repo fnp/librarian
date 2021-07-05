@@ -145,6 +145,8 @@
 \usepackage{unicode-math}
 \setmathfont{Latin Modern Math}
 
+\usepackage{wrapfig}
+
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}

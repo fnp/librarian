@@ -8,3 +8,7 @@ class Mat(WLElement):
         e.tag = 'math'
         e.attrib['xmlns'] = 'http://www.w3.org/1998/Math/MathML'
         builder.cursor.append(e)
+
+    def epub_build(self, builder):
+        builder.start_element('img', {"src": builder.mathml(self)})
+        builder.end_element()

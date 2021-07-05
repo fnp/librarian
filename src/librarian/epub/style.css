@@ -388,3 +388,12 @@ table.border th, table.border td {
 th, td {
     vertical-align: top;
 }
+
+.fundraising {
+	margin: 2em 1em 0;
+	border: 2px solid black;
+	padding: 2em 2em;
+	text-align: center;
+	font-size: 1.3em;
+	line-height: 1.4em;
+}

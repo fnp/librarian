@@ -8,3 +8,6 @@ class NaglowekOsoba(WLElement):
     TXT_LEGACY_BOTTOM_MARGIN = 0
 
     HTML_TAG = "h4"
+
+    EPUB_TAG = "h2"
+    EPUB_CLASS = "h4"

@@ -9,3 +9,6 @@ class NotaRed(WLElement):
         builder.enter_fragment('nota_red')
         super(NotaRed, self).html_build(builder)
         builder.exit_fragment()
+
+    def epub_build(self, builder):
+        pass

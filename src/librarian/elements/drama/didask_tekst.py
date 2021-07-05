@@ -5,5 +5,5 @@ class DidaskTekst(WLElement):
     TXT_PREFIX = "/ "
     TXT_SUFFIX = " /"
 
-    HTML_TAG = "em"
-    HTML_CLASS = "didaskalia"
+    EPUB_TAG = HTML_TAG = "em"
+    EPUB_CLASS = HTML_CLASS = "didaskalia"

@@ -51,27 +51,39 @@ def transform(wldoc, flags=None, **options):
             description = parsed_dc.description
             url = document.book_info.url
 
-            license_description = parsed_dc.license_description
+            license_name = parsed_dc.license_description
             license = parsed_dc.license
+            license_description = [
+                (
+                    "Wszystkie zasoby Wolnych Lektur możesz swobodnie wykorzystywać, "
+                    "publikować i rozpowszechniać pod warunkiem zachowania warunków "
+                    "licencji i zgodnie z Zasadami wykorzystania Wolnych Lektur."
+                )
+            ]
+
             if license:
-                license_description = (
-                    u"Ten utwór jest udostępniony na licencji %s: \n%s" % (
-                        license_description, license
+                license_description.append(
+                    "Ten utwór jest udostępniony na licencji %s: %s" % (
+                        license_name, license
                     )
                 )
             else:
-                license_description = (
-                    "Ten utwór nie jest objęty majątkowym prawem autorskim "
-                    "i znajduje się w domenie publicznej, co oznacza że "
-                    "możesz go swobodnie wykorzystywać, publikować "
-                    "i rozpowszechniać. Jeśli utwór opatrzony jest "
-                    "dodatkowymi materiałami (przypisy, motywy literackie "
-                    "etc.), które podlegają prawu autorskiemu, to te "
-                    "dodatkowe materiały udostępnione są na licencji "
-                    "Creative Commons Uznanie Autorstwa – Na Tych Samych "
-                    "Warunkach 3.0 PL "
-                    "(http://creativecommons.org/licenses/by-sa/3.0/)"
+                license_description.append(
+                    "Ten utwór jest w domenie publicznej."
                 )
+            license_description.append(
+                "Wszystkie materiały dodatkowe (przypisy, motywy literackie) są "
+                "udostępnione na Licencji Wolnej Sztuki 1.3: "
+                "https://artlibre.org/licence/lal/pl/\n"
+                "Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania "
+                "krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich "
+                "i prawach pokrewnych.\nWykorzystując zasoby z Wolnych Lektur, "
+                "należy pamiętać o zapisach licencji oraz zasadach, które "
+                "spisaliśmy w Zasadach wykorzystania Wolnych Lektur: "
+                "https://wolnelektury.pl/info/zasady-wykorzystania/\nZapoznaj "
+                "się z nimi, zanim udostępnisz dalej nasze książki"
+            )
+            license_description = "\n".join(license_description)
 
             source = parsed_dc.source_name
             if source:

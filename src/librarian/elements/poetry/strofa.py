@@ -1,4 +1,5 @@
 from copy import copy
+import re
 from ..base import WLElement
 from .wers import Wers
 
@@ -9,8 +10,19 @@ class Strofa(WLElement):
     TXT_LEGACY_TOP_MARGIN = 1
     TXT_LEGACY_BOTTOM_MARGIN = 0
 
-    HTML_TAG = 'div'
-    HTML_CLASS = 'stanza'
+    EPUB_TAG = HTML_TAG = 'div'
+    EPUB_CLASS = HTML_CLASS = 'stanza'
+
+    def epub_build(self, builder):
+        super().epub_build(builder)
+        builder.start_element(
+            'div',
+            {
+                'class': 'stanza-spacer'
+            }
+        )
+        builder.push_text('\u00a0');
+        builder.end_element()
     
     def get_verses(self):
         from librarian.parser import parser
@@ -20,7 +32,7 @@ class Strofa(WLElement):
         ]
         if self.text:
             # Before any tags. These are text-only verses.
-            pieces = self.text.split('/')
+            pieces = re.split(r"/\s+", self.text)
             for piece in pieces[:-1]:
                 verses[-1].text = piece
                 verses.append(parser.makeelement('wers'))
@@ -28,7 +40,7 @@ class Strofa(WLElement):
 
         for child in self:
             if child.tail:
-                pieces = child.tail.split('/')
+                pieces = re.split(r"/\s+", child.tail)
                 child_copy = copy(child)
                 child_copy.tail = pieces[0]
                 verses[-1].append(child_copy)
