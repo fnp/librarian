@@ -9,7 +9,6 @@ from librarian.cover import make_cover
 from librarian.embeds.mathml import MathML
 import librarian.epub
 from librarian.fonts import strip_font
-from librarian.fundraising import FUNDRAISING
 
 
 
@@ -30,8 +29,9 @@ class Xhtml:
 class Builder:
     file_extension = None
 
-    def __init__(self, base_url=None):
+    def __init__(self, base_url=None, fundraising=None):
         self._base_url = base_url or 'file:///home/rczajka/for/fnp/librarian/temp~/maly/img/'
+        self.fundraising = fundraising
         self.footnotes = etree.Element('div', id='footnotes')
 
         self.cursors = {
@@ -140,21 +140,21 @@ class EpubBuilder(Builder):
         self.add_support_page()
         self.add_last_page()
 
+        if self.fundraising:
+            e = len(self.output.spine) - 3 - 3
+            nfunds = len(self.fundraising)
+            if e > 4 * nfunds:
+                nfunds *= 2
 
-        e = len(self.output.spine) - 3 - 3
-        nfunds = len(FUNDRAISING)
-        if e > 16:
-            nfunds *= 2
+            # COUNTING CHARACTERS?
+            for f in range(nfunds):
+                spine_index = int(4 + (f / nfunds * e) + f)
 
-        # COUNTING CHARACTERS?
-        for f in range(nfunds):
-            spine_index = int(4 + (f / nfunds * e) + f)
-
-            h = Xhtml()
-            h.body.append(
-                etree.XML('<div id="book-text"><div class="fundraising">' + FUNDRAISING[f % len(FUNDRAISING)] + '</div></div>')
-            )
-            self.add_html(h.element, file_name='fund%d.xhtml' % f, spine=spine_index)
+                h = Xhtml()
+                h.body.append(
+                    etree.XML('<div id="book-text"><div class="fundraising">' + self.fundraising[f % len(self.fundraising)] + '</div></div>')
+                )
+                self.add_html(h.element, file_name='fund%d.xhtml' % f, spine=spine_index)
 
         self.add_fonts()
 
@@ -202,7 +202,7 @@ class EpubBuilder(Builder):
     def add_title_page(self):
         html = Xhtml()
         html.title.text = "Strona tytułowa"
-        bt = etree.SubElement(html.body, 'div', **{'class': 'book-text'})
+        bt = etree.SubElement(html.body, 'div', **{'id': 'book-text'})
         tp = etree.SubElement(bt, 'div', **{'class': 'title-page'})
 
         # Tak jak jest teraz – czy może być jednocześnie
@@ -389,8 +389,6 @@ class EpubBuilder(Builder):
             
         
     def add_fonts(self):
-        print("".join(sorted(self.chars)))
-        # TODO: optimizer
         for fname in ('DejaVuSerif.ttf', 'DejaVuSerif-Bold.ttf',
                       'DejaVuSerif-Italic.ttf', 'DejaVuSerif-BoldItalic.ttf'):
             self.add_file(
@@ -673,7 +671,7 @@ class EpubBuilder(Builder):
 </html>''' % cover.ext()).encode('utf-8')
         self.add_file(file_name='cover.xhtml', content=ci)
 
-        self.output.spine.append('cover')
+        self.output.spine.append(('cover', 'no'))
         self.output.guide.append({
             'type': 'cover',
             'href': 'cover.xhtml',

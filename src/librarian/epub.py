@@ -772,7 +772,6 @@ def transform(wldoc, verbose=False, style=None,
             os.chdir(cwd)
 
     remove_empty_lists_from_toc(output.toc)
-    print(output.toc)
 
     output_file = NamedTemporaryFile(prefix='librarian', suffix='.epub',
                                      delete=False)
