@@ -36,8 +36,8 @@ class WLDocument:
             )
             
     
-    def build(self, builder, **kwargs):
-        return builder().build(self, **kwargs)
+    def build(self, builder, base_url=None, **kwargs):
+        return builder(base_url=base_url).build(self, **kwargs)
 
     def _compat_assign_ordered_ids(self):
         """

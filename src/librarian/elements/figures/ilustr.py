@@ -27,10 +27,9 @@ class Ilustr(WLElement):
         else:
             th = img.resize((width, round(width * img.size[1] / img.size[0])))
 
-        imgfile.close()
         buffer = six.BytesIO()
         th.save(buffer, format=th_format)
-        ## TODO: Counter
+        imgfile.close()
         file_name = 'image%d.%s' % (
             builder.assign_image_number(),
             ext

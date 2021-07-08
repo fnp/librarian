@@ -10,7 +10,8 @@ WL_ELEMENTS = {
     "coverBarColor": etree.ElementBase,
     "coverBoxPosition": etree.ElementBase, 
     "coverLogoUrl": etree.ElementBase,
-   
+    "contentWarning": etree.ElementBase,
+
     "utwor": root.Utwor,
     "dramat_wierszowany_l": masters.Master,
     "dramat_wierszowany_lp": masters.Master,
@@ -110,6 +111,8 @@ WL_ELEMENTS = {
 
     "animacja": figures.Animacja,
     "ilustr": figures.Ilustr,
+
+    "ref": etree.ElementBase,
 
     # Inline MathML, should really be namespaced.
     "mrow": etree.ElementBase,

@@ -558,7 +558,8 @@ class EpubBuilder(Builder):
             ))
         ).text = str(m.url)
 
-        newp().text = 'Tekst opracowany na podstawie: ' + m.source_name
+        if m.source_name:
+            newp().text = 'Tekst opracowany na podstawie: ' + m.source_name
 
         newp().text = """
               Wydawca:

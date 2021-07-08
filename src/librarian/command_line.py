@@ -58,6 +58,6 @@ def main(*args, **kwargs):
         "mp3": args.mp3,
     }
 
-    output = document.build(builder, **kwargs)
+    output = document.build(builder, base_url=args.base_url, **kwargs)
     with open(output_file_path, 'wb') as f:
         f.write(output.get_bytes())
