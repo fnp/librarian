@@ -20,6 +20,8 @@ class WLDocument:
 
         self.provider = provider if provider is not None else DirDocProvider('.')
 
+        self.tree.getroot().validate()
+
     @property
     def meta(self):
         # Allow metadata of the master element as document meta.
@@ -81,9 +83,9 @@ class WLDocument:
     def editors(self):
         persons = set(self.meta.editors
                       + self.meta.technical_editors)
-        #for child in self.parts():
-        #    persons.update(child.editors())
-        #if None in persons:
-        #    persons.remove(None)
+        for child in self.children:
+            persons.update(child.editors())
+        if None in persons:
+            persons.remove(None)
         return persons
 

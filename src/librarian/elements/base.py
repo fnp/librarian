@@ -67,6 +67,8 @@ class WLElement(etree.ElementBase):
         t = ''
         t += self.normalize_text(self.text)
         for c in self:
+            if not isinstance(c, WLElement):
+                continue
             if c.tag not in ('pe', 'pa', 'pt', 'pr', 'motyw'):
                 t += c.raw_printable_text()
             t += self.normalize_text(c.tail)
@@ -152,16 +154,20 @@ class WLElement(etree.ElementBase):
         return attr
 
     def epub_build(self, builder):
+        from librarian.elements.masters import Master
+
         # TEMPORARY
         self.CAN_HAVE_TEXT = True
         self.STRIP = False
-        
-        if self.EPUB_START_CHUNK:
+       
+        start_chunk = self.EPUB_START_CHUNK and isinstance(self.getparent(), Master)
+
+        if start_chunk:
             builder.start_chunk()
 
         fragment = None
         if self.SECTION_PRECEDENCE:
-            if not self.EPUB_START_CHUNK:
+            if not start_chunk:
                 fragment = 'sub%d' % builder.assign_section_number()
                 self.attrib['id'] = fragment
 
@@ -183,7 +189,21 @@ class WLElement(etree.ElementBase):
         self._epub_build_inner(builder)
         if self.EPUB_TAG:
             builder.end_element()
-            
+
+    def validate(self):
+        from librarian.elements.masters import Master
+        from librarian.elements.blocks import DlugiCytat, PoezjaCyt
+
+        if self.SECTION_PRECEDENCE:
+            assert isinstance(self.getparent(), (Master, DlugiCytat, PoezjaCyt)), \
+                    'Header {} inside a <{}> instead of a master.'.format(
+                            etree.tostring(self), self.getparent().tag)
+
+        for c in self:
+            if isinstance(c, WLElement):
+                c.validate()
+
+
     def sanitize(self):
         # TODO: Remove insanity here.
         for e in self:

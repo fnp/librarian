@@ -43,8 +43,8 @@ class Ilustr(WLElement):
         
         return {
             'src': file_name,
-            'alt': self.attrib['alt'],
-            'title': self.attrib['alt'],
+            'alt': self.attrib.get('alt', ''),
+            'title': self.attrib.get('alt', ''),
         }
 
     get_epub_attr = get_html_attr
