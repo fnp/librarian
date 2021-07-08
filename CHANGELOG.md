@@ -3,6 +3,14 @@
 This document records all notable changes to Librarian.
 
 
+## 2.0 (2021-07-08)
+
+### Added
+- New Document API.
+- New EPUB builder.
+- New `librarian` entry point for converters.
+
+
 ## 1.15 (2021-03-02)
 
 ### Fixed
