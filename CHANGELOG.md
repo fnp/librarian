@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 2.1 (2021-07-08)
+
+### Added
+- Basic document structure validation.
+- Support for headers inside quotes in epub.
+
+
 ## 2.0 (2021-07-08)
 
 ### Added
