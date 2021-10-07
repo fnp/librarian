@@ -68,6 +68,10 @@ class TextBox(object):
                     line_width = self.max_text_width
                     break
                 line = parts[0]
+
+                if line[-2] == ' ':
+                    line = line[:-2]
+
                 line_width = self.draw.textsize(line, font=font)[0]
             line = line.strip() + ' '
 
