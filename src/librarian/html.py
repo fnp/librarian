@@ -114,7 +114,8 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, ga
 
         document.clean_ed_note()
         document.clean_ed_note('abstrakt')
-
+        document.fix_pa_akap()
+        
         if not options:
             options = {}
 
@@ -319,6 +320,7 @@ def add_anchors(root):
                 )
                 or e.get('id') == 'nota_red'
                 or e.tag == 'blockquote'
+                or e.get('id') == 'footnotes'
             )
         if any_ancestor(element, f):
             continue

@@ -114,7 +114,13 @@
                                 </p>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:apply-templates select="text()|*" mode="inline" />
+                              <xsl:apply-templates />
+                              <p>
+                                <xsl:if test="name()='pa'"> [przypis autorski]</xsl:if>
+                                <xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if>
+                                <xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if>
+                                <xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if>
+                              </p>
                             </xsl:otherwise>
                         </xsl:choose>
                     </div>

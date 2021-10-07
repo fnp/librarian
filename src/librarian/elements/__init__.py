@@ -11,6 +11,7 @@ WL_ELEMENTS = {
     "coverBoxPosition": etree.ElementBase, 
     "coverLogoUrl": etree.ElementBase,
     "contentWarning": etree.ElementBase,
+    "endnotes": etree.ElementBase,
 
     "utwor": root.Utwor,
     "dramat_wierszowany_l": masters.Master,

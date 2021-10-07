@@ -197,6 +197,13 @@ class WLDocument(object):
             node.tag = 'span'
             node.tail = tail
 
+    def fix_pa_akap(self):
+        for pa in ('pa','pe','pr','pt'):
+            for akap in self.edoc.findall(f'//{pa}/akap'):
+                akap.getparent().set('blocks', 'true')
+                if not akap.getparent().index(akap):
+                    akap.set('inline', 'true')
+            
     def editors(self):
         """Returns a set of all editors for book and its children.
 

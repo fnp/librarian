@@ -140,6 +140,18 @@
                 </xsl:if>
             </TeXML>
 
+	    <TeXML escape="0">
+		    \ifendnotes
+\newpage
+\begingroup
+\parindent 0pt
+\parskip 2ex
+\def\enotesize{\normalsize}
+\printendnotes
+		    \endgroup
+		    \fi
+	    </TeXML>
+
             <cmd name="editorialsection" />
 
         </env>
@@ -342,13 +354,20 @@
 
 
 <xsl:template
-	match="naglowek_osoba|naglowek_podrozdzial|podtytul_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|srodtytul|podtytul_czesc|podtytul_rozdzial|podtytul_akt|podtytul_scena">
-    <cmd>
+    match="naglowek_osoba|naglowek_podrozdzial|podtytul_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|srodtytul|podtytul_czesc|podtytul_rozdzial|podtytul_akt|podtytul_scena">
+  <xsl:choose>
+    <xsl:when test="@inline">
+      <xsl:apply-templates mode="inline"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <cmd>
         <xsl:attribute name="name">
             <xsl:value-of select="wl:texcommand(name())" />
         </xsl:attribute>
         <parm><xsl:apply-templates mode="inline"/></parm>
-    </cmd>
+      </cmd>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="naglowek_czesc|naglowek_rozdzial|naglowek_akt|naglowek_scena">
@@ -426,13 +445,23 @@
 <!-- = (contain other inline tags and special tags) = -->
 <!-- ================================================ -->
 
+
 <xsl:template mode="inline"
     match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|indeks_dolny|wieksze_odstepy">
     <cmd>
         <xsl:attribute name="name">
-            <xsl:value-of select="wl:texcommand(name())" />
+		<xsl:value-of select="wl:texcommand(name())" />
         </xsl:attribute>
-        <parm><xsl:apply-templates mode="inline"/></parm>
+	<parm>
+	  <xsl:choose>
+	    <xsl:when test="@blocks">
+              <xsl:apply-templates/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates mode="inline"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </parm>
     </cmd>
 </xsl:template>
 

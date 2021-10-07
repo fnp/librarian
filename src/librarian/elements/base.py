@@ -62,6 +62,20 @@ class WLElement(etree.ElementBase):
     def gettext(self):
         return get_translation(self.meta.language).gettext
 
+    def in_context_of(self, setting):
+        parent = self.getparent()
+        if parent is None:
+            return False
+        try:
+            return getattr(parent, setting)
+        except AttributeError:
+            return parent.in_context_of(setting)
+
+    def signal(self, signal):
+        parent = self.getparent()
+        if parent is not None:
+            parent.signal(signal)
+    
     def raw_printable_text(self):
         # TODO: podtagi, wyroznienia, etc
         t = ''
@@ -166,7 +180,7 @@ class WLElement(etree.ElementBase):
             builder.start_chunk()
 
         fragment = None
-        if self.SECTION_PRECEDENCE:
+        if self.SECTION_PRECEDENCE and not self.in_context_of('NO_TOC'):
             if not start_chunk:
                 fragment = 'sub%d' % builder.assign_section_number()
                 self.attrib['id'] = fragment
@@ -193,9 +207,10 @@ class WLElement(etree.ElementBase):
     def validate(self):
         from librarian.elements.masters import Master
         from librarian.elements.blocks import DlugiCytat, PoezjaCyt
+        from librarian.elements.footnotes import Footnote
 
         if self.SECTION_PRECEDENCE:
-            assert isinstance(self.getparent(), (Master, DlugiCytat, PoezjaCyt)), \
+            assert isinstance(self.getparent(), (Master, DlugiCytat, PoezjaCyt, Footnote)), \
                     'Header {} inside a <{}> instead of a master.'.format(
                             etree.tostring(self), self.getparent().tag)
 

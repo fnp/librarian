@@ -5,6 +5,15 @@ from ..base import WLElement
 
 
 class Footnote(WLElement):
+    NO_TOC = True
+    START_INLINE = True
+
+    def signal(self, signal):
+        if signal == 'INLINE':
+            self.START_INLINE = False
+        else:
+            super().signal(signal)
+    
     def txt_build(self, builder):
         pass
 
@@ -72,7 +81,7 @@ class Footnote(WLElement):
 
         
         builder.enter_fragment('footnotes')
-        builder.start_element('p', {
+        builder.start_element('div', {
             'id': f'annotation-{fn_no}',
             'class': "annotation"
         })

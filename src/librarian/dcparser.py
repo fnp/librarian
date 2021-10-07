@@ -153,6 +153,9 @@ def as_unicode(text):
     else:
         return TextPlus(text.decode('utf-8'))
 
+def as_bool(text):
+    return text == 'true'
+as_bool.no_lang = True
 
 def as_wluri_strict(text):
     return WLURI.strict(text)
@@ -203,7 +206,7 @@ class Field(object):
                 if validator is None or val[0] is None:
                     return val[0]
                 nv = validator(val[0])
-                if hasattr(val[0], 'lang'):
+                if hasattr(val[0], 'lang') and not hasattr(validator, 'no_lang'):
                     setattr(nv, 'lang', val[0].lang)
                 return nv
         except ValueError as e:
@@ -526,6 +529,8 @@ class BookInfo(WorkInfo):
         Field(WLNS('coverBoxPosition'), 'cover_box_position', required=False),
         Field(WLNS('coverClass'), 'cover_class', default=['default']),
         Field(WLNS('coverLogoUrl'), 'cover_logo_urls', multiple=True,
+              required=False),
+        Field(WLNS('endnotes'), 'endnotes', as_bool,
               required=False),
 
         Field('pdf-id',  'isbn_pdf',  required=False),

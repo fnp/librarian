@@ -284,6 +284,14 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         elif package_available('morefloats', 'maxfloats=19'):
             root.set('morefloats', 'new')
 
+        if customizations is None:
+            customizations = []
+        else:
+            customizations = list(customizations)
+
+        if book_info.endnotes:
+            customizations.append('endnotes')
+
         # add customizations
         if customizations is not None:
             root.set('customizations', u','.join(customizations))
@@ -306,6 +314,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         fix_hanging(document.edoc)
         fix_tables(document.edoc)
         mark_subauthors(document.edoc)
+        document.fix_pa_akap()
 
         # wl -> TeXML
         style_filename = get_stylesheet("wl2tex")
