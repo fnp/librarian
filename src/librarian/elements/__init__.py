@@ -1,6 +1,6 @@
 from lxml import etree
 from . import (blocks, comments, drama, figures, footnotes, front, headers,
-               masters, paragraphs, poetry, root, separators, styles, themes)
+               masters, paragraphs, poetry, ref, root, separators, styles, themes)
 
 
 WL_ELEMENTS = {
@@ -71,6 +71,8 @@ WL_ELEMENTS = {
     "pr": footnotes.PR,
     "pt": footnotes.PT,
 
+    "ref": ref.Ref,
+
     "begin": themes.Begin,
     "end": themes.End,
     "motyw": themes.Motyw,
@@ -113,6 +115,9 @@ WL_ELEMENTS = {
     "ilustr": figures.Ilustr,
 
     "ref": etree.ElementBase,
+    # Section
+    "wywiad_pyt": blocks.WywiadPyt,
+    "wywiad_odp": blocks.WywiadOdp,
 
     # Inline MathML, should really be namespaced.
     "mrow": etree.ElementBase,
