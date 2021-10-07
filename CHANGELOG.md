@@ -3,6 +3,16 @@
 This document records all notable changes to Librarian.
 
 
+## 2.2 (2021-10-07)
+
+### Added
+- Support for block annotations.
+- Option to use endnotes in PDF.
+
+### Fixed
+- Avoid hanging conjunctions on covers.
+
+
 ## 2.1 (2021-07-08)
 
 ### Added
