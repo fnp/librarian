@@ -5,6 +5,8 @@
 #
 from __future__ import unicode_literals
 
+from collections import Counter
+
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS
 from librarian.cover import make_cover
@@ -71,6 +73,52 @@ class WLDocument(object):
         else:
             self.book_info = None
 
+    def get_statistics(self):
+        def count_text(text, counter, in_fn=False):
+            if text:
+                text = re.sub(r'\s+', ' ', text)
+
+                chars = len(text) if text.strip() else 0
+                words = len(text.split()) if text.strip() else 0
+                
+                counter['chars'] += chars
+                counter['words'] += words
+                if not in_fn:
+                    counter['chars_with_fn'] += chars
+                    counter['words_with_fn'] += words
+                
+        def count(elem, counter, in_fn=False):
+            if elem.tag in (RDFNS('RDF'), 'nota_red', 'abstrakt', 'uwaga', 'ekstra'):
+                return
+            if not in_fn and elem.tag in ('pa', 'pe', 'pr', 'pt', 'motyw'):
+                in_fn = True
+            count_text(elem.text, counter, in_fn=in_fn)
+            for child in elem:
+                count(child, counter, in_fn=in_fn)
+                count_text(child.tail, counter, in_fn=in_fn)
+            
+            
+        data = {
+            "self": Counter(),
+            "parts": [],
+            "total": {
+            }
+        }
+
+        count(self.edoc.getroot(), data['self'])
+        for k, v in data['self'].items():
+            data['total'][k] = v
+        
+        for part in self.parts(pass_part_errors=True):
+            if isinstance(part, Exception):
+                data['parts'].append((None, {}))
+            else:
+                data['parts'].append((part, part.get_statistics()))
+                for k, v in data['parts'][-1][1]['total'].items():
+                    data['total'][k] += v
+            
+        return data
+
     @classmethod
     def from_bytes(cls, xml, *args, **kwargs):
         return cls.from_file(six.BytesIO(xml), *args, **kwargs)
@@ -122,15 +170,21 @@ class WLDocument(object):
                     elem.insert(0, ins)
                 elem.text = chunks.pop(0)
 
-    def parts(self):
+    def parts(self, pass_part_errors=False):
         if self.provider is None:
             raise NoProvider('No document provider supplied.')
         if self.book_info is None:
             raise NoDublinCore('No Dublin Core in document.')
         for part_uri in self.book_info.parts:
-            yield self.from_file(
-                self.provider.by_uri(part_uri), provider=self.provider
-            )
+            try:
+                yield self.from_file(
+                    self.provider.by_uri(part_uri), provider=self.provider
+                )
+            except Exception as e:
+                if pass_part_errors:
+                    yield e
+                else:
+                    raise
 
     def chunk(self, path):
         # convert the path to XPath
