@@ -32,14 +32,17 @@ class TextBox(object):
     SHADOW_Y = 3
     SHADOW_BLUR = 3
 
-    def __init__(self, max_width, max_height, padding_x=None, padding_y=None):
+    def __init__(self, max_width, max_height, padding_x=None, padding_y=None, bar_width=0, bar_color=None):
         if padding_x is None:
             padding_x = self.SHADOW_X + self.SHADOW_BLUR
         if padding_y is None:
             padding_y = self.SHADOW_Y + self.SHADOW_BLUR
 
         self.max_width = max_width
-        self.max_text_width = max_width - 2 * padding_x
+        self.bar_width = bar_width
+        self.bar_color = bar_color
+        self.max_text_width = max_width - 2 * padding_x - bar_width
+        self.padding_x = padding_x
         self.padding_y = padding_y
         self.height = padding_y
         self.img = Image.new('RGBA', (max_width, max_height))
@@ -52,7 +55,7 @@ class TextBox(object):
         self.height += height
 
     def text(self, text, color='#000', font=None, line_height=20,
-             shadow_color=None):
+             shadow_color=None, centering=True):
         """Writes some centered text."""
         text = re.sub(r'\s+', ' ', text)
         if shadow_color:
@@ -75,7 +78,10 @@ class TextBox(object):
                 line_width = self.draw.textsize(line, font=font)[0]
             line = line.strip() + ' '
 
-            pos_x = (self.max_width - line_width) // 2
+            if centering:
+                pos_x = (self.max_width - line_width) // 2
+            else:
+                pos_x = self.bar_width + self.padding_x
 
             if shadow_color:
                 self.shadow_draw.text(
@@ -91,7 +97,8 @@ class TextBox(object):
     def image(self):
         """Creates the actual Image object."""
         image = Image.new('RGBA', (self.max_width,
-                                   self.height + self.padding_y))
+                                   int(round(self.height + self.padding_y))))
+
         if self.shadow_img:
             shadow = self.shadow_img.filter(ImageFilter.BLUR)
             image.paste(shadow, (0, 0), shadow)
@@ -144,7 +151,7 @@ class Cover(object):
         'PNG': 'image/png',
         }
 
-    def __init__(self, book_info, format=None, width=None, height=None):
+    def __init__(self, book_info, format=None, width=None, height=None, cover_logo=None):
         self.authors = [auth.readable() for auth in book_info.authors]
         self.title = book_info.title
         if format is not None:
@@ -255,10 +262,12 @@ class WLCover(Cover):
     author_font_ttf = get_resource('fonts/JunicodeWL-Regular.ttf')
     author_font_size = 20
     author_lineskip = 30
+    author_centering = True
     title_font_ttf = get_resource('fonts/DejaVuSerif-Bold.ttf')
     title_font_size = 30
     title_lineskip = 40
     title_box_width = 350
+    title_centering = True
 
     box_top_margin = 100
     box_bottom_margin = 100
@@ -268,6 +277,8 @@ class WLCover(Cover):
     box_line_left = 75
     box_line_right = 275
     box_line_width = 2
+    box_padding_x = 0
+    box_bar_width = 0
 
     logo_top = 15
     logo_width = 140
@@ -292,6 +303,7 @@ class WLCover(Cover):
         u'Dwudziestolecie międzywojenne': '#3044cf',
         u'Współczesność': '#06393d',
     }
+    set_title_color = True
 
     kind_box_position = {
         u'Liryka': 'top',
@@ -299,7 +311,7 @@ class WLCover(Cover):
     }
 
     def __init__(self, book_info, format=None, width=None, height=None,
-                 bleed=0):
+                 bleed=0, cover_logo=None):
         super(WLCover, self).__init__(book_info, format=format, width=width,
                                       height=height)
         # Set box position.
@@ -312,8 +324,9 @@ class WLCover(Cover):
             self.bar_color = book_info.cover_bar_color or \
                 self.epoch_colors.get(book_info.epoch, self.bar_color)
         # Set title color.
-        self.title_color = self.epoch_colors.get(book_info.epoch,
-                                                 self.title_color)
+        if self.set_title_color:
+            self.title_color = self.epoch_colors.get(book_info.epoch,
+                                                     self.title_color)
 
         self.bleed = bleed
         self.box_top_margin += bleed
@@ -339,13 +352,19 @@ class WLCover(Cover):
 
         # Write author name.
         box = TextBox(metr.title_box_width, metr.height,
-                      padding_y=metr.box_padding_y)
+                      padding_y=metr.box_padding_y,
+                      padding_x=metr.box_padding_x,
+                      bar_width=metr.box_bar_width,
+                      bar_color=self.bar_color,
+                      )
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size,
             layout_engine=ImageFont.LAYOUT_BASIC)
         for pa in self.pretty_authors():
             box.text(pa, font=author_font, line_height=metr.author_lineskip,
-                     color=self.author_color, shadow_color=self.author_shadow)
+                     color=self.author_color, shadow_color=self.author_shadow,
+                     centering=self.author_centering
+                     )
 
         box.skip(metr.box_above_line)
         box.draw.line(
@@ -362,7 +381,9 @@ class WLCover(Cover):
                  line_height=metr.title_lineskip,
                  font=title_font,
                  color=self.title_color,
-                 shadow_color=self.title_shadow)
+                 shadow_color=self.title_shadow,
+                 centering=self.title_centering
+                 )
 
         box_img = box.image()
 
@@ -379,7 +400,8 @@ class WLCover(Cover):
         ) // 2
 
         # Draw the white box.
-        ImageDraw.Draw(img).rectangle(
+        img_draw = ImageDraw.Draw(img)
+        img_draw.rectangle(
             (
                 box_left,
                 box_top,
@@ -390,6 +412,16 @@ class WLCover(Cover):
         )
         # Paste the contents into the white box.
         img.paste(box_img, (box_left, box_top), box_img)
+        if self.box_bar_width:
+            img_draw.rectangle(
+                (
+                    box_left,
+                    box_top,
+                    box_left + metr.box_bar_width,
+                    box_top + box_img.size[1]
+                ),
+                fill=self.bar_color
+            )
         return img
 
     def add_cut_lines(self, img):
@@ -473,8 +505,9 @@ class WLNoBoxCover(WLCover):
 
 class LogoWLCover(WLCover):
     gradient_height = 90
-    gradient_logo_height = 60
-    gradient_logo_max_width = 1000
+    gradient_easing = 90
+    gradient_logo_height = 57
+    gradient_logo_max_width = 200
     gradient_logo_margin_right = 30
     gradient_logo_spacing = 40
     gradient_color = '#000'
@@ -486,7 +519,11 @@ class LogoWLCover(WLCover):
     annotation = None
     annotation_height = 10
 
-    def __init__(self, book_info, *args, **kwargs):
+    logos_right = True
+    gradient_logo_centering = False
+
+
+    def __init__(self, book_info, *args, cover_logo=None, **kwargs):
         super(LogoWLCover, self).__init__(book_info, *args, **kwargs)
         self.gradient_height += self.bleed
         self.gradient_logo_margin_right += self.bleed
@@ -495,10 +532,17 @@ class LogoWLCover(WLCover):
             BytesIO(URLOpener().open(cover_logo_url).read())
             for cover_logo_url in book_info.cover_logo_urls
         ]
+        self.end_cover_logos = []
+        if cover_logo:
+            self.end_cover_logos.append(
+                    open(cover_logo, 'rb')
+                    )
 
-    def image(self):
-        img = super(LogoWLCover, self).image()
-        metr = Metric(self, self.scale)
+    @property
+    def has_gradient_logos(self):
+        return self.gradient_logos or self.additional_cover_logos or self.end_cover_logos or self.annotation
+
+    def add_gradient_logos(self, img, metr):
         gradient = Image.new(
             'RGBA',
             (metr.width - metr.bar_width, metr.gradient_height),
@@ -509,18 +553,27 @@ class LogoWLCover(WLCover):
             (metr.width - metr.bar_width, metr.gradient_height)
         )
         draw = ImageDraw.Draw(gradient_mask)
-        for line in range(0, metr.gradient_height):
+        for line in range(0, metr.gradient_easing):
             draw.line(
                 (0, line, metr.width - metr.bar_width, line),
                 fill=int(
-                    255 * self.gradient_opacity * line / metr.gradient_height
+                    255 * self.gradient_opacity * line / metr.gradient_easing
                 )
             )
+        draw.rectangle((
+            0, metr.gradient_easing,
+            metr.width - metr.bar_width, metr.gradient_height
+        ), fill=int(255 * self.gradient_opacity))
+            
+            
         img.paste(gradient,
                   (metr.bar_width, metr.height - metr.gradient_height),
                   mask=gradient_mask)
 
-        cursor = metr.width - metr.gradient_logo_margin_right
+        if self.logos_right:
+            cursor = metr.width - metr.gradient_logo_margin_right
+        else:
+            cursor = metr.gradient_logo_margin_right
         logo_top = int(
             metr.height
             - metr.gradient_height / 2
@@ -529,9 +582,14 @@ class LogoWLCover(WLCover):
 
         logos = [
             get_resource(logo_path)
-            for logo_path in self.gradient_logos[::-1]
+            for logo_path in self.gradient_logos
         ]
-        logos = logos + self.additional_cover_logos
+
+        logos = self.additional_cover_logos + logos + self.end_cover_logos
+
+        if self.logos_right:
+            logos.reverse()
+
         logos = [
             Image.open(logo_bytes).convert('RGBA')
             for logo_bytes in logos
@@ -549,35 +607,50 @@ class LogoWLCover(WLCover):
                 logo.size[0] * metr.gradient_logo_height / logo.size[1]
             )
             for logo in logos]
-        taken_space = (
-            sum(widths)
-            + (len(logos) - 1) * (metr.gradient_logo_spacing)
-        )
+        taken_space = sum(widths) + (len(logos) - 1) * metr.gradient_logo_spacing
+        if taken_space > space_for_logos:
+            logo_scale = space_for_logos / taken_space
+        else:
+            logo_scale = 1
+            if self.gradient_logo_centering:
+                cursor += int((space_for_logos - taken_space) / 2)
         logo_scale = (
             space_for_logos / taken_space
             if taken_space > space_for_logos else 1
         )
-        logo_top += int(metr.gradient_logo_height * (1 - logo_scale) / 2)
+        #logo_top += int(metr.gradient_logo_height * (1 - logo_scale) / 2)
 
         for i, logo in enumerate(logos):
+            if i == -1:
+                L_scale = 1
+            else:
+                L_scale = logo_scale
+            L_top = logo_top + int(metr.gradient_logo_height * (1 - L_scale) / 2)
+
             logo = logo.resize(
                 (
-                    int(round(widths[i] * logo_scale)),
+                    int(round(widths[i] * L_scale)),
                     int(round(
-                        logo.size[1] * widths[i] / logo.size[0] * logo_scale
+                        logo.size[1] * widths[i] / logo.size[0] * L_scale
                     ))
                 ),
                 Image.ANTIALIAS)
-            cursor -= logo.size[0]
+            if self.logos_right:
+                cursor -= logo.size[0]
+
             img.paste(
                 logo,
                 (
                     cursor,
-                    int(round(logo_top + (metr.gradient_logo_height - logo.size[1]) * logo_scale / 2))
+                    L_top
+                    #int(round(logo_top + (metr.gradient_logo_height - logo.size[1]) * L_scale / 2))
                 ),
                 mask=logo
             )
-            cursor -= int(round(metr.gradient_logo_spacing * logo_scale))
+            if self.logos_right:
+                cursor -= int(round(metr.gradient_logo_spacing * logo_scale))
+            else:
+                cursor += int(round(metr.gradient_logo_spacing * logo_scale)) + logo.size[0]
 
         if self.annotation:
             img2 = Image.new('RGBA', (metr.height, metr.height), color=None)
@@ -594,6 +667,108 @@ class LogoWLCover(WLCover):
             img = img.convert('RGB')
 
         return img
+    
+    def image(self):
+        img = super(LogoWLCover, self).image()
+        metr = Metric(self, self.scale)
+        if self.has_gradient_logos:
+            img = self.add_gradient_logos(img, metr)
+        return img
+
+
+class LegimiCover(LogoWLCover):
+    width = 210
+    height = 297
+    bar_width = 0
+    # Other bar
+
+    author_font_ttf = get_resource('fonts/Lora-Regular.ttf')
+    author_font_size = 15
+    author_lineskip = 19.5
+    author_centering = False
+    title_font_ttf = get_resource('fonts/Lora-Bold.ttf')
+    title_font_size = 15
+    title_lineskip = 19.5
+    title_centering = False
+    
+    title_box_width = 210
+
+    box_bottom_margin = 20
+    box_padding_x = 20
+    box_padding_y = 10   # do baseline
+    box_above_line = 6
+    box_below_line = 0
+    box_line_left = 0
+    box_line_right = 0
+
+    box_line_width = 0
+
+    box_bar_width = 20
+
+    #logo_top = 15
+    #logo_width = 140
+
+    bar_color = '#000'
+    box_position = 'bottom'
+    background_color = '#444'
+    author_color = '#000'
+    title_color = '#000'
+    set_title_color = False
+
+    kind_box_position = {}
+
+    box_bottom_margin_logos_add = 10
+    gradient_height = 30
+    gradient_easing = 0
+    gradient_logo_height = 20
+    gradient_logo_max_width = 200
+    gradient_logo_margin_right = 10
+    gradient_logo_spacing = 20
+    gradient_color = '#000'
+    gradient_opacity = .5
+    gradient_logos = [
+        'res/wl-logo-white.png',
+    ]
+    logos_right = False
+    gradient_logo_centering = True
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.has_gradient_logos:
+            self.box_bottom_margin += self.box_bottom_margin_logos_add
+        
+    
+    def pretty_authors(self):
+        return self.authors
+
+
+class LegimiCornerCover(LegimiCover):
+    gradient_logos = []
+    corner_width = 120
+    corner_image = get_resource('res/book-band.png')
+    
+    def image(self):
+        image = super().image()
+        metr = Metric(self, self.scale)
+
+        if self.corner_image:
+            corner = Image.open(self.corner_image).convert('RGBA')
+            corner = corner.resize(
+                (
+                    int(round(metr.corner_width)),
+                    int(round(corner.size[1] / corner.size[0] * metr.corner_width))
+                )
+            )
+            image.paste(corner, (
+                metr.width - int(round(metr.corner_width)),
+                0,
+            ), corner)
+        return image
+
+class LegimiAudiobookCover(LegimiCornerCover):
+    corner_width = 82.5
+    corner_image = get_resource('res/audiobook-sticker.png')
+    height = 210
 
 
 class EbookpointCover(LogoWLCover):
@@ -690,7 +865,7 @@ class KMLUCover(LogoWLCover):
 
 
 class MPWCover(LogoWLCover):
-    gradient_logo_height = 58
+    gradient_logo_height = 57
     gradient_logo_spacing = 25
     gradient_logos = [
         'res/mpw-logo-white.png',
@@ -725,6 +900,9 @@ COVER_CLASSES = {
     'mpw': MPWCover,
     'atrium': AtriumCover,
     'bn': BNCover,
+    'legimi': LegimiCover,
+    'legimi-corner': LegimiCornerCover,
+    'legimi-audiobook': LegimiAudiobookCover,
 }
 
 
