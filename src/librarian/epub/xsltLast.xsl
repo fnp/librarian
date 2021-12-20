@@ -20,7 +20,10 @@
       <body>
         <div id="book-text" >
           <p class="info">
-              <xsl:choose>
+            Wszystkie zasoby Wolnych Lektur możesz swobodnie wykorzystywać,
+            publikować i rozpowszechniać pod warunkiem zachowania warunków
+            licencji i zgodnie z <a href="https://wolnelektury.pl/info/zasady-wykorzystania/">Zasadami wykorzystania Wolnych Lektur</a>.<br/>
+            <xsl:choose>
                   <xsl:when test="//dc:rights.license">
                       Ten utwór jest udostępniony na licencji
                       <a>
@@ -31,15 +34,18 @@
                       </a>
                   </xsl:when>
                   <xsl:otherwise>
-                    Ten utwór nie jest objęty majątkowym prawem autorskim i znajduje się w domenie
-                    publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
-                    i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
-                    (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
-                    te dodatkowe materiały udostępnione są na licencji
-                    <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons
-                    Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL</a>.
+                    Ten utwór jest w domenie publicznej.
                   </xsl:otherwise>
-              </xsl:choose>
+            </xsl:choose>
+            <br/>
+            Wszystkie materiały dodatkowe (przypisy, motywy literackie) są
+            udostępnione na <a href="https://artlibre.org/licence/lal/pl/">Licencji Wolnej Sztuki 1.3</a>.<br/>
+            Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania
+            krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich
+            i prawach pokrewnych. Wykorzystując zasoby z Wolnych Lektur,
+            należy pamiętać o zapisach licencji oraz zasadach, które
+            spisaliśmy w <a href="https://wolnelektury.pl/info/zasady-wykorzystania/">Zasadach wykorzystania Wolnych Lektur</a>.
+            Zapoznaj się z nimi, zanim udostępnisz dalej nasze książki.
           </p>
 
           <p class="info">Źródło: <a>

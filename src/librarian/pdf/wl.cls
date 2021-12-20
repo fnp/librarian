@@ -366,10 +366,24 @@ Letters={SmallCaps,UppercaseSmallCaps}
         }
     \fi
 
+    Wszystkie zasoby Wolnych Lektur możesz swobodnie wykorzystywać,
+    publikować i rozpowszechniać pod warunkiem zachowania warunków licencji i zgodnie
+    z~\href{https://wolnelektury.pl/info/zasady-wykorzystania/}{Zasadami wykorzystania Wolnych Lektur}.
+
     \rightsinfo
+
+    Wszystkie materiały dodatkowe (przypisy, motywy literackie) są udostępnione na
+    \href{https://artlibre.org/licence/lal/pl/}{Licencji Wolnej Sztuki 1.3}.
+
+    Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania
+    krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich
+    i prawach pokrewnych. Wykorzystując zasoby z Wolnych Lektur,
+    należy pamiętać o zapisach licencji oraz zasadach, które spisaliśmy
+    w~\href{https://wolnelektury.pl/info/zasady-wykorzystania/}{Zasadach wykorzystania Wolnych Lektur}.
+    Zapoznaj się z nimi, zanim udostępnisz dalej nasze książki.
     \vspace{.6em}
 
-    Źródło: \href{\bookurl}{\bookurl}
+    E-book można pobrać ze strony: \href{\bookurl}{\bookurl}
 
     \vspace{.6em}
     \sourceinfo

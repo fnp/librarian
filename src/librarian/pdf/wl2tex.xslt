@@ -196,13 +196,7 @@
 
         \def\bookurl{<TeXML escape="1"><xsl:value-of select=".//dc:identifier.url" /></TeXML>}
 
-        \def\rightsinfo{Ten utwór nie jest objęty majątkowym prawem autorskim i~znajduje się w~domenie
-            publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
-            i~rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
-            (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
-            te dodatkowe materiały udostępnione są na licencji
-            \href{http://creativecommons.org/licenses/by-sa/3.0/}{Creative Commons
-            Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
+        \def\rightsinfo{Ten utwór jest w~domenie publicznej.}
         <xsl:if test=".//dc:rights.license">
             \def\rightsinfo{Ten utwór jest udostępniony na licencji
             \href{<xsl:value-of select=".//dc:rights.license" />}{<TeXML escape="1"><xsl:apply-templates select=".//dc:rights" mode="inline" /></TeXML>}.}
