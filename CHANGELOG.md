@@ -3,6 +3,17 @@
 This document records all notable changes to Librarian.
 
 
+## 2.3 (2021-12-20)
+
+### Added:
+- New MOBI builder.
+- Document statistics.
+- Legimi cover classes.
+
+### Changed
+- Default licensing info.
+
+
 ## 2.2 (2021-10-07)
 
 ### Added
