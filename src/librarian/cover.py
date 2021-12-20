@@ -322,11 +322,10 @@ class WLCover(Cover):
             self.bar_width = 0
         else:
             self.bar_color = book_info.cover_bar_color or \
-                self.epoch_colors.get(book_info.epoch, self.bar_color)
+                self.get_variable_color(book_info) or self.bar_color
         # Set title color.
         if self.set_title_color:
-            self.title_color = self.epoch_colors.get(book_info.epoch,
-                                                     self.title_color)
+            self.title_color = self.get_variable_color(book_info) or self.title_color
 
         self.bleed = bleed
         self.box_top_margin += bleed
@@ -340,6 +339,9 @@ class WLCover(Cover):
                 bg_src = URLOpener().open(url)
             self.background_img = BytesIO(bg_src.read())
             bg_src.close()
+
+    def get_variable_color(self, book_info):
+        return self.epoch_colors.get(book_info.epoch, None)
 
     def pretty_authors(self):
         return [a.upper() for a in self.authors]
@@ -732,15 +734,47 @@ class LegimiCover(LogoWLCover):
     logos_right = False
     gradient_logo_centering = True
 
+    genre_colors = {
+        'Artykuł': '#bf001a',
+        'Artykuł naukowy': '#bf001a',
+        'Dziennik': '#bf001a',
+        'Esej': '#bf001a',
+        'Felieton': '#bf001a',
+        'Kronika': '#bf001a',
+        'List': '#bf001a',
+        'Manifest': '#bf001a',
+        'Odczyt': '#bf001a',
+        'Pamiętnik': '#bf001a',
+        'Poradnik': '#bf001a',
+        'Praca naukowa': '#bf001a',
+        'Publicystyka': '#bf001a',
+        'Reportaż': '#bf001a',
+        'Reportaż podróżniczy': '#bf001a',
+        'Rozprawa': '#bf001a',
+        'Rozprawa polityczna': '#bf001a',
+        'Traktat': '#bf001a',
+    }
+    kind_colors = {
+        'Epika': '#9bbb2b',
+        'Liryka': '#3e626f',
+        'Dramat': '#ecbe00',
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.has_gradient_logos:
             self.box_bottom_margin += self.box_bottom_margin_logos_add
-        
-    
+
     def pretty_authors(self):
         return self.authors
 
+    def get_variable_color(self, book_info):
+        for genre in book_info.genres:
+            if genre in self.genre_colors:
+                return self.genre_colors[genre]
+        for kind in book_info.kinds:
+            if kind in self.kind_colors:
+                return self.kind_colors[kind]
 
 class LegimiCornerCover(LegimiCover):
     gradient_logos = []
