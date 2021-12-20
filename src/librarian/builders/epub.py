@@ -29,10 +29,11 @@ class Xhtml:
 class Builder:
     file_extension = None
 
-    def __init__(self, base_url=None, fundraising=None):
+    def __init__(self, base_url=None, fundraising=None, cover=None):
         self._base_url = base_url or 'file:///home/rczajka/for/fnp/librarian/temp~/maly/img/'
         self.fundraising = fundraising
         self.footnotes = etree.Element('div', id='footnotes')
+        self.make_cover = cover or make_cover
 
         self.cursors = {
 #            None: None,
@@ -78,6 +79,7 @@ class Builder:
 
 class EpubBuilder(Builder):
     file_extension = 'epub'
+    isbn_field = 'isbn_epub'
 
     def __init__(self, *args, **kwargs):
         self.chars = set()
@@ -109,7 +111,6 @@ class EpubBuilder(Builder):
 
         self.set_metadata()
         
-
         self.add_cover()
         
         self.add_title_page()
@@ -212,10 +213,10 @@ class EpubBuilder(Builder):
 
         e = self.document.tree.find('//autor_utworu')
         if e is not None:
-            etree.SubElement(tp, 'h2', **{'class': 'author'}).text = e.raw_printable_text()
+            etree.SubElement(tp, 'h2', **{'class': 'author'}).text = e.raw_printable_text(self)
         e = self.document.tree.find('//nazwa_utworu')
         if e is not None:
-            etree.SubElement(tp, 'h1', **{'class': 'title'}).text = e.raw_printable_text()
+            etree.SubElement(tp, 'h1', **{'class': 'title'}).text = e.raw_printable_text(self)
 
         if not len(tp):
             for author in self.document.meta.authors:
@@ -251,8 +252,8 @@ class EpubBuilder(Builder):
           </p>
         """))
 
-        if self.document.meta.isbn_epub:
-            etree.SubElement(tp, 'p', **{"class": "info"}).text = self.document.meta.isbn_epub
+        if getattr(self.document.meta, self.isbn_field):
+            etree.SubElement(tp, 'p', **{"class": "info"}).text = getattr(self.document.meta, self.isbn_field)
 
         tp.append(etree.XML("""<p class="footer info">
             <a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a>
@@ -589,8 +590,8 @@ class EpubBuilder(Builder):
             else:
                 p.text += m.cover_by
             
-        if m.isbn_epub:
-            newp().text = m.isbn_epub
+        if getattr(m, self.isbn_field):
+            newp().text = getattr(m, self.isbn_field)
 
         newp().text = '\u00a0'
 
@@ -644,10 +645,10 @@ class EpubBuilder(Builder):
     def add_cover(self):
         # TODO: allow other covers
 
-        cover_maker = make_cover
+        cover_maker = self.make_cover
 
         cover_file = six.BytesIO()
-        cover = cover_maker(self.document.meta)
+        cover = cover_maker(self.document.meta, width=600)
         cover.save(cover_file)
         cover_name = 'cover.%s' % cover.ext()
 

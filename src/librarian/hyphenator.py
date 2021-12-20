@@ -81,13 +81,13 @@ class Hyph_dict(object):
     """
     def __init__(self, filename):
         self.patterns = {}
-        f = open(filename)
+        f = open(filename, 'rb')
         charset = f.readline().strip()
-        if charset.startswith('charset '):
+        if charset.startswith(b'charset '):
             charset = charset[8:].strip()
 
         for pat in f:
-            pat = pat.decode(charset).strip()
+            pat = pat.decode(charset.decode('latin1')).strip()
             if not pat or pat[0] == '%': continue
             # replace ^^hh with the real character
             pat = parse_hex(hexrepl, pat)
@@ -211,7 +211,7 @@ class Hyphenator(object):
         the string 'let-ter-gre-pen'. The hyphen string to use can be
         given as the second parameter, that defaults to '-'.
         """
-        if isinstance(word, str):
+        if isinstance(word, bytes):
             word = word.decode('latin1')
         l = list(word)
         for p in reversed(self.positions(word)):

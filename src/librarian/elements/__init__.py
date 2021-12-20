@@ -115,7 +115,6 @@ WL_ELEMENTS = {
     "animacja": figures.Animacja,
     "ilustr": figures.Ilustr,
 
-    "ref": etree.ElementBase,
     # Section
     "wywiad_pyt": blocks.WywiadPyt,
     "wywiad_odp": blocks.WywiadOdp,

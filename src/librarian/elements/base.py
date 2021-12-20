@@ -3,7 +3,6 @@
 import re
 from lxml import etree
 from librarian import dcparser, RDFNS
-from librarian.html import raw_printable_text
 from librarian.util import get_translation
 
 
@@ -76,25 +75,35 @@ class WLElement(etree.ElementBase):
         if parent is not None:
             parent.signal(signal)
     
-    def raw_printable_text(self):
+    def raw_printable_text(self, builder):
+        from librarian.html import raw_printable_text
+
         # TODO: podtagi, wyroznienia, etc
         t = ''
-        t += self.normalize_text(self.text)
+        t += self.normalize_text(self.text, builder)
         for c in self:
             if not isinstance(c, WLElement):
                 continue
             if c.tag not in ('pe', 'pa', 'pt', 'pr', 'motyw'):
-                t += c.raw_printable_text()
-            t += self.normalize_text(c.tail)
+                t += c.raw_printable_text(builder)
+            t += self.normalize_text(c.tail, builder)
         return t
     
-    def normalize_text(self, text):
+    def normalize_text(self, text, builder):
         text = text or ''
         for e, s in self.text_substitutions:
             text = text.replace(e, s)
             # FIXME: TEmporary turnoff
 #        text = re.sub(r'\s+', ' ', text)
 ### TODO: Added now for epub
+
+        if getattr(builder, 'hyphenator', None) is not None:
+            newt = ''
+            wlist = re.compile(r'\w+|[^\w]', re.UNICODE).findall(text)
+            for w in wlist:
+                newt += builder.hyphenator.inserted(w, u'\u00AD')
+            text = newt
+
         text = re.sub(r'(?<=\s\w)\s+', u'\u00A0', text)
 
         return text
@@ -102,7 +111,7 @@ class WLElement(etree.ElementBase):
     def _build_inner(self, builder, build_method):
         child_count = len(self)
         if self.CAN_HAVE_TEXT and self.text:
-            text = self.normalize_text(self.text)
+            text = self.normalize_text(self.text, builder)
             if self.STRIP:
                 text = text.lstrip()
                 if not child_count:
@@ -112,7 +121,7 @@ class WLElement(etree.ElementBase):
             if isinstance(child, WLElement):
                 getattr(child, build_method)(builder)
             if self.CAN_HAVE_TEXT and child.tail:
-                text = self.normalize_text(child.tail)
+                text = self.normalize_text(child.tail, builder)
                 if self.STRIP and i == child_count - 1:
                     text = text.rstrip()
                 builder.push_text(text)
@@ -187,7 +196,7 @@ class WLElement(etree.ElementBase):
 
             builder.add_toc_entry(
                 fragment,
-                self.raw_printable_text(),
+                self.raw_printable_text(builder),
                 self.SECTION_PRECEDENCE
             )
             
