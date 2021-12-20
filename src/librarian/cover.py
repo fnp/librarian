@@ -534,7 +534,7 @@ class LogoWLCover(WLCover):
         ]
         self.end_cover_logos = []
         if cover_logo:
-            self.end_cover_logos.append(
+            self.additional_cover_logos.append(
                     open(cover_logo, 'rb')
                     )
 
