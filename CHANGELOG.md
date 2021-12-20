@@ -2,6 +2,11 @@
 
 This document records all notable changes to Librarian.
 
+## 2.3.1 (2021-12-20)
+
+### Fixed:
+- Additional logos order.
+
 
 ## 2.3 (2021-12-20)
 
