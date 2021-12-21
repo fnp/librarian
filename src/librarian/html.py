@@ -312,6 +312,7 @@ def any_ancestor(element, test):
 
 def add_anchors(root):
     counter = 1
+    visible_counter = 1
     for element in root.iterdescendants():
         def f(e):
             return (
@@ -322,16 +323,25 @@ def add_anchors(root):
                 or e.tag == 'blockquote'
                 or e.get('id') == 'footnotes'
             )
+
+        if element.get('class') == 'numeracja':
+            try:
+                visible_counter = int(element.get('data-start'))
+            except ValueError:
+                visible_counter = 1
+
         if any_ancestor(element, f):
             continue
 
         if element.tag == 'div' and 'verse' in element.get('class', ''):
-            if counter == 1 or counter % 5 == 0:
-                add_anchor(element, "f%d" % counter, link_text=counter)
+            if visible_counter == 1 or visible_counter % 5 == 0:
+                add_anchor(element, "f%d" % counter, link_text=visible_counter)
             counter += 1
+            visible_counter += 1
         elif 'paragraph' in element.get('class', ''):
-            add_anchor(element, "f%d" % counter, link_text=counter)
+            add_anchor(element, "f%d" % counter, link_text=visible_counter)
             counter += 1
+            visible_counter += 1
 
 
 def raw_printable_text(element):

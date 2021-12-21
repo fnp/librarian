@@ -559,4 +559,12 @@
         <a name="{concat('sec', count(ancestor-or-self::*[last()-2]/preceding-sibling::*) + 1)}" />
 </xsl:template>
 
+<xsl:template match="numeracja">
+	<span class="numeracja">
+		<xsl:attribute name="data-start">
+			<xsl:value-of select="@start" />
+		</xsl:attribute>
+	</span>
+</xsl:template>
+
 </xsl:stylesheet>
