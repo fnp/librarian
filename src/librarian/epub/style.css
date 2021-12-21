@@ -51,6 +51,11 @@ a img {
     margin: 0;
 }
 
+
+nav#id li {
+    list-style: none;
+}
+
 /* =================================================== */
 /* = Common elements: headings, paragraphs and lines = */
 /* =================================================== */

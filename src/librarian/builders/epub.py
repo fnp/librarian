@@ -303,6 +303,7 @@ class EpubBuilder(Builder):
 
     def add_toc(self):
         item = epub.EpubNav()
+        item.add_link(href='style.css', rel='stylesheet', type='text/css')
         self.output.add_item(item)
         self.output.spine.append(item)
         self.output.add_item(epub.EpubNcx())
