@@ -1,6 +1,7 @@
 from lxml import etree
 from . import (blocks, comments, drama, figures, footnotes, front, headers,
-               masters, paragraphs, poetry, ref, root, separators, styles, themes)
+               masters, paragraphs, poetry, ref, root, separators, styles, themes,
+               tools)
 
 
 WL_ELEMENTS = {
@@ -114,6 +115,8 @@ WL_ELEMENTS = {
 
     "animacja": figures.Animacja,
     "ilustr": figures.Ilustr,
+
+    "numeracja": tools.Numeracja,
 
     # Section
     "wywiad_pyt": blocks.WywiadPyt,

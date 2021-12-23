@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 2.3.3 (2021-12-23)
+
+### Added:
+- Line numbering reset with numeracja.
+
+
 ## 2.3.2 (2021-12-21)
 
 ### Fixed:
