@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 2.3.4 (2022-02-28)
+
+### Fixed:
+- Document stats totaling bug.
+- Legimi cover background position.
+
+
 ## 2.3.3 (2021-12-23)
 
 ### Added:

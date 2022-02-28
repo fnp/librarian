@@ -289,6 +289,7 @@ class WLCover(Cover):
     background_color = '#444'
     author_color = '#444'
     background_img = get_resource('res/cover.png')
+    background_top = False
     format = 'JPEG'
 
     epoch_colors = {
@@ -478,7 +479,10 @@ class WLCover(Cover):
                     trg_size[0],
                     int(round(src.size[1] * trg_size[0] / src.size[0]))
                 )
-                cut = (resized[1] - trg_size[1]) // 2
+                if self.background_top:
+                    cut = 0
+                else:
+                    cut = (resized[1] - trg_size[1]) // 2
                 src = src.resize(resized, Image.ANTIALIAS)
                 src = src.crop((0, cut, src.size[0], src.size[1] - cut))
             else:
@@ -733,6 +737,7 @@ class LegimiCover(LogoWLCover):
     ]
     logos_right = False
     gradient_logo_centering = True
+    background_top = True
 
     genre_colors = {
         'Artykuł': '#bf001a',

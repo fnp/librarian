@@ -115,7 +115,7 @@ class WLDocument(object):
             else:
                 data['parts'].append((part, part.get_statistics()))
                 for k, v in data['parts'][-1][1]['total'].items():
-                    data['total'][k] += v
+                    data['total'][k] = data['total'].get(k, 0) + v
             
         return data
 
