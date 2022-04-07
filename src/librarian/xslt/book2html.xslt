@@ -430,7 +430,7 @@
 
 <!-- Other inline tags -->
 <xsl:template match="mat" mode="inline">
-    <math xmlns="http://www.w3.org/1998/Math/MathML"><xsl:copy-of select="*" /></math>
+    <math xmlns="http://www.w3.org/1998/Math/MathML"><xsl:copy-of select="*|text()" /></math>
 </xsl:template>
 
 <xsl:template match="didask_tekst" mode="inline">
@@ -463,6 +463,14 @@
     <em class="person"><xsl:apply-templates mode="inline" /></em>
 </xsl:template>
 
+<xsl:template match="www" mode="inline">
+    <a target="_blank">
+        <xsl:attribute name="href">
+            <xsl:value-of select="text()"/>
+        </xsl:attribute>
+        <xsl:apply-templates mode="inline" />
+    </a>
+</xsl:template>
 
 <!-- ============================================== -->
 <!-- = STANDALONE TAGS                            = -->

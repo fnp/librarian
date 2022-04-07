@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 2.3.5 (2022-04-07)
+
+### Fixed
+- Support for www tag.
+- Support for mat with inline text.
+
+
 ## 2.3.4 (2022-02-28)
 
 ### Fixed:
