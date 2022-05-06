@@ -152,10 +152,14 @@ class Cover(object):
         }
 
     def __init__(self, book_info, format=None, width=None, height=None, cover_logo=None):
+        self.book_info = book_info
         self.authors = [auth.readable() for auth in book_info.authors]
         self.title = book_info.title
         if format is not None:
             self.format = format
+        self.set_size(width, height)
+
+    def set_size(self, width, height):
         if width and height:
             self.height = int(round(height * self.width / width))
         scale = max(float(width or 0) / self.width,
@@ -167,7 +171,7 @@ class Cover(object):
 
     def pretty_authors(self):
         """Allows for decorating authors' names."""
-        return [self.authors]
+        return self.authors
 
     def pretty_title(self):
         """Allows for decorating title."""
@@ -315,6 +319,8 @@ class WLCover(Cover):
                  bleed=0, cover_logo=None):
         super(WLCover, self).__init__(book_info, format=format, width=width,
                                       height=height)
+
+        self.slug = book_info.url.slug
         # Set box position.
         self.box_position = book_info.cover_box_position or \
             self.kind_box_position.get(book_info.kind, self.box_position)
@@ -336,10 +342,20 @@ class WLCover(Cover):
         if book_info.cover_url:
             url = book_info.cover_url
             bg_src = None
-            if bg_src is None:
-                bg_src = URLOpener().open(url)
-            self.background_img = BytesIO(bg_src.read())
-            bg_src.close()
+            while True:
+                try:
+                    if bg_src is None:
+                        import requests
+                        bg_src = requests.get(url, timeout=5)
+                    self.background_img = BytesIO(bg_src.content)
+                    bg_src.close()
+                except Exception as e:
+                    bg_src = None
+                    print(e)
+                    import time
+                    time.sleep(1)
+                else:
+                    break
 
     def get_variable_color(self, book_info):
         return self.epoch_colors.get(book_info.epoch, None)
@@ -354,7 +370,7 @@ class WLCover(Cover):
         metr = Metric(self, self.scale)
 
         # Write author name.
-        box = TextBox(metr.title_box_width, metr.height,
+        box = TextBox(metr.title_box_width - 2 * self.bleed, metr.height,
                       padding_y=metr.box_padding_y,
                       padding_x=metr.box_padding_x,
                       bar_width=metr.box_bar_width,
@@ -399,7 +415,7 @@ class WLCover(Cover):
             box_top = (metr.height - box_img.size[1]) // 2
 
         box_left = metr.bar_width + (
-            metr.width - metr.bar_width - box_img.size[0]
+            metr.width - metr.bar_width - box_img.size[0] - self.bleed
         ) // 2
 
         # Draw the white box.
@@ -528,6 +544,8 @@ class LogoWLCover(WLCover):
     logos_right = True
     gradient_logo_centering = False
 
+    qrcode = None
+
 
     def __init__(self, book_info, *args, cover_logo=None, **kwargs):
         super(LogoWLCover, self).__init__(book_info, *args, **kwargs)
@@ -546,7 +564,7 @@ class LogoWLCover(WLCover):
 
     @property
     def has_gradient_logos(self):
-        return self.gradient_logos or self.additional_cover_logos or self.end_cover_logos or self.annotation
+        return self.gradient_logos or self.additional_cover_logos or self.end_cover_logos or self.annotation or self.qrcode is not None
 
     def add_gradient_logos(self, img, metr):
         gradient = Image.new(
@@ -583,7 +601,7 @@ class LogoWLCover(WLCover):
         logo_top = int(
             metr.height
             - metr.gradient_height / 2
-            - metr.gradient_logo_height / 2 - metr.bleed / 2
+            - metr.gradient_logo_height / 2 - metr.bleed
         )
 
         logos = [
@@ -593,19 +611,23 @@ class LogoWLCover(WLCover):
 
         logos = self.additional_cover_logos + logos + self.end_cover_logos
 
-        if self.logos_right:
-            logos.reverse()
-
         logos = [
             Image.open(logo_bytes).convert('RGBA')
             for logo_bytes in logos
         ]
 
+        if self.qrcode is not None:
+            import qrcode
+            logos.append(qrcode.make(f'https://wolnelektury.pl/katalog/lektura/{self.slug}/?{self.qrcode}'))
+
+        if self.logos_right:
+            logos.reverse()
+
         # See if logos fit into the gradient. If not, scale down accordingly.
         space_for_logos = (
             metr.width
             - metr.bar_width
-            - 2 * metr.gradient_logo_margin_right
+            - 2 * metr.gradient_logo_margin_right + self.bleed
         )
         widths = [
             min(
@@ -933,6 +955,39 @@ class BNCover(LogoWLCover):
 #    annotation = 'Zadanie „Udostępnienie publikacji w formatach cyfrowych” w ramach Narodowego Programu Rozwoju Czytelnictwa. Dofinansowano ze środków Ministra Kultury, Dziedzictwa Narodowego i Sportu.'
 
 
+class FactoryCover(LogoWLCover):
+    gradient_logos = [
+        'res/factory.jpg',
+        'res/wl-logo-white.png',
+    ]
+    qrcode = 'pk_campaign=factory22'
+    format = 'PNG'
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('bleed', 10)
+        return super().__init__(*args, **kwargs)
+
+    def ext(self):
+        return 'pdf'
+
+    def output_file(self, *args, **kwargs):
+        imgfile = super().output_file(*args, **kwargs)
+        import subprocess
+        import tempfile
+        with tempfile.TemporaryDirectory(prefix='factory-', dir='.') as d:
+            import os
+            import shutil
+            with open(d + '/cover.png', 'wb') as f:
+                f.write(imgfile.get_bytes())
+            shutil.copy(get_resource('res/factory-cover.svg'), d)
+            subprocess.call(['inkscape', f'--export-filename={d}/cover.pdf', d + '/factory-cover.svg'])
+            with open(d + '/cover.pdf', 'rb') as f:
+                return OutputFile.from_bytes(f.read())
+
+
+
+from librarian.covers.marquise import MarquiseCover, LabelMarquiseCover
+
 COVER_CLASSES = {
     'default': LogoWLCover,
     'kmlu': KMLUCover,
@@ -942,6 +997,9 @@ COVER_CLASSES = {
     'legimi': LegimiCover,
     'legimi-corner': LegimiCornerCover,
     'legimi-audiobook': LegimiAudiobookCover,
+    'factory': FactoryCover,
+    'm': MarquiseCover,
+    'm-label': LabelMarquiseCover,
 }
 
 

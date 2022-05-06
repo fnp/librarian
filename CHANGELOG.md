@@ -2,6 +2,12 @@
 
 This document records all notable changes to Librarian.
 
+## 2.4 (2022-05-06)
+
+### Added
+- New 'marquise' cover style.
+- 'Factory' cover style with a QR code.
+
 
 ## 2.3.5 (2022-04-07)
 
