@@ -30,7 +30,10 @@ class WLElementLookup(etree.CustomElementClassLookup):
             return
         if namespace:
             return
-        return WL_ELEMENTS[name]
+        try:
+            return WL_ELEMENTS[name]
+        except KeyError:
+            return
 
 
 parser = etree.XMLParser()

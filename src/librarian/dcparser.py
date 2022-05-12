@@ -509,6 +509,7 @@ class BookInfo(WorkInfo):
               required=False),
         Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True,
               required=False),
+        Field(WLNS('category.legimi'), 'legimi', required=False),
 
         Field(DCNS('subject.location'), 'location', required=False),
 

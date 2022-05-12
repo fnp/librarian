@@ -2,6 +2,17 @@
 
 This document records all notable changes to Librarian.
 
+
+## 2.4.1 (22-05-12)
+
+### Added
+- `category.legimi` metadata field
+
+### Changed
+- Fix PDF support for 'Geometric shapes' characters.
+- Explicitly ignore unknown elements in v2 elements API.
+
+
 ## 2.4 (2022-05-06)
 
 ### Added
