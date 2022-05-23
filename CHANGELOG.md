@@ -3,7 +3,13 @@
 This document records all notable changes to Librarian.
 
 
-## 2.4.1 (22-05-12)
+## 2.4.2 (2022-05-23)
+
+### Fixed
+- Error reporting on metadata parse error.
+
+
+## 2.4.1 (2022-05-12)
 
 ### Added
 - `category.legimi` metadata field

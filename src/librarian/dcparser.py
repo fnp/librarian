@@ -212,7 +212,7 @@ class Field(object):
         except ValueError as e:
             raise ValidationError(
                 "Field '%s' - invald value: %s"
-                % (self.uri, e.message)
+                % (self.uri, str(e))
             )
 
     def validate(self, fdict, fallbacks=None, strict=False, validate_required=True):
