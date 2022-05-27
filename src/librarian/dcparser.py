@@ -9,7 +9,7 @@ import six
 from librarian.util import roman_to_int
 
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
-                       XMLNS, WLURI, WLNS, PLMETNS)
+                       XMLNS, WLNS, PLMETNS)
 
 import lxml.etree as etree
 from lxml.etree import XMLSyntaxError
@@ -17,16 +17,16 @@ from lxml.etree import XMLSyntaxError
 from librarian.meta.types.bool import BoolValue
 from librarian.meta.types.date import DateValue
 from librarian.meta.types.person import Person
+from librarian.meta.types.wluri import WLURI
 from librarian.meta.types.text import TextValue
 
 
 class Field(object):
-    def __init__(self, uri, attr_name, validator=TextValue, strict=None,
+    def __init__(self, uri, attr_name, value_type=TextValue,
                  multiple=False, salias=None, **kwargs):
         self.uri = uri
         self.name = attr_name
-        self.validator = validator
-        self.strict = strict
+        self.value_type = value_type
         self.multiple = multiple
         self.salias = salias
 
@@ -35,24 +35,12 @@ class Field(object):
         self.default = kwargs.get('default', [] if multiple else [None])
 
     def validate_value(self, val, strict=False):
-        if strict and self.strict is not None:
-            validator = self.strict
-        else:
-            validator = self.validator
+        #if strict:
+        #    value.validate()
+
         try:
             if self.multiple:
-                if validator is None:
-                    return val
-                new_values = []
-                for v in val:
-                    nv = v
-                    if v is not None:
-                        #nv = validator(v)
-                        nv = v
-                        if hasattr(v, 'lang'):
-                            setattr(nv, 'lang', v.lang)
-                    new_values.append(nv)
-                return new_values
+                return val
             elif len(val) > 1:
                 raise ValidationError(
                     "Multiple values not allowed for field '%s'" % self.uri
@@ -63,13 +51,7 @@ class Field(object):
                     % self.uri
                 )
             else:
-                if validator is None or val[0] is None:
-                    return val[0]
-                #nv = validator(val[0])
-                nv = val[0]
-                if hasattr(val[0], 'lang') and not hasattr(validator, 'no_lang'):
-                    setattr(nv, 'lang', val[0].lang)
-                return nv
+                return val[0]
         except ValueError as e:
             raise ValidationError(
                 "Field '%s' - invald value: %s"
@@ -219,25 +201,25 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
             p = p.getparent()
 
         for e in desc.getchildren():
-            field = cls.get_field_by_uri(e.tag)
+            tag = e.tag
+            if tag == 'meta':
+                meta_id = e.attrib.get('id')
+                if meta_id and meta_id.endswith('-id'):
+                    tag = meta_id
+
+            field = cls.get_field_by_uri(tag)
             if field is None:
                 # Ignore unknown fields.
-                ### TODO: does it do <meta> for isbn?
                 continue
 
-            fv = field_dict.get(e.tag, [])
+            fv = field_dict.get(tag, [])
             if e.text is not None:
-                val = field.validator(e.text)
+                val = field.value_type.from_text(e.text)
                 val.lang = e.attrib.get(XMLNS('lang'), lang)
-
-                if e.tag == 'meta':
-                    meta_id = e.attrib.get('id')
-                    if meta_id and meta_id.endswith('-id'):
-                        field_dict[meta_id] = [val.replace('ISBN-', 'ISBN ')]
             else:
                 val = e.text
             fv.append(val)
-            field_dict[e.tag] = fv
+            field_dict[tag] = fv
 
         return cls(desc.attrib, field_dict, *args, **kwargs)
 
@@ -255,6 +237,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         for field in self.FIELDS:
             value = field.validate(dc_fields, fallbacks=fallbacks,
                                    strict=strict, validate_required=validate_required)
+            print(field.name, value)
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias:

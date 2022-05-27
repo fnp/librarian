@@ -1,3 +1,6 @@
+from datetime import date
+import re
+import time
 from .base import MetaValue
 
 
@@ -18,13 +21,10 @@ class DateValue(MetaValue):
         """
         try:
             # check out the "N. poł X w." syntax
-            if isinstance(text, six.binary_type):
-                text = text.decode("utf-8")
-
             century_format = (
-                u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
+                "(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
             )
-            vague_format = u"(?:po *|ok. *)?([0-9]{4})(-[0-9]{2}-[0-9]{2})?"
+            vague_format = "(?:po *|ok. *)?([0-9]{4})(-[0-9]{2}-[0-9]{2})?"
 
             m = re.match(century_format, text)
             m2 = re.match(vague_format, text)

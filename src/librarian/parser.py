@@ -181,7 +181,7 @@ class WLDocument(object):
         for part_uri in self.book_info.parts:
             try:
                 yield self.from_file(
-                    self.provider.by_uri(part_uri), provider=self.provider
+                    self.provider.by_slug(part_uri.slug), provider=self.provider
                 )
             except Exception as e:
                 if pass_part_errors:

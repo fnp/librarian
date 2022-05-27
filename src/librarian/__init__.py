@@ -86,46 +86,6 @@ PLMETNS = XMLNamespace("http://dl.psnc.pl/schemas/plmet/")
 WLNS = EmptyNamespace()
 
 
-@six.python_2_unicode_compatible
-class WLURI(object):
-    """Represents a WL URI. Extracts slug from it."""
-    slug = None
-
-    example = 'http://wolnelektury.pl/katalog/lektura/template/'
-    _re_wl_uri = re.compile(
-        r'http://(www\.)?wolnelektury.pl/katalog/lektur[ay]/'
-        '(?P<slug>[-a-z0-9]+)/?$'
-    )
-
-    def __init__(self, uri):
-        uri = six.text_type(uri)
-        self.uri = uri
-        self.slug = uri.rstrip('/').rsplit('/', 1)[-1]
-
-    @classmethod
-    def strict(cls, uri):
-        match = cls._re_wl_uri.match(uri)
-        if not match:
-            raise ValidationError(u'Invalid URI (%s). Should match: %s' % (
-                        uri, cls._re_wl_uri.pattern))
-        return cls(uri)
-
-    @classmethod
-    def from_slug(cls, slug):
-        """Contructs an URI from slug.
-
-        >>> print(WLURI.from_slug('a-slug').uri)
-        http://wolnelektury.pl/katalog/lektura/a-slug/
-
-        """
-        uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
-        return cls(uri)
-
-    def __str__(self):
-        return self.uri
-
-    def __eq__(self, other):
-        return self.slug == other.slug
 
 
 class DocProvider(object):
@@ -137,11 +97,6 @@ class DocProvider(object):
     def by_slug(self, slug):
         """Should return a file-like object with a WL document XML."""
         raise NotImplementedError
-
-    def by_uri(self, uri, wluri=WLURI):
-        """Should return a file-like object with a WL document XML."""
-        wluri = wluri(uri)
-        return self.by_slug(wluri.slug)
 
 
 class DirDocProvider(DocProvider):
@@ -157,6 +112,7 @@ class DirDocProvider(DocProvider):
 
 
 from . import dcparser
+from .meta.types.wluri import WLURI
 
 
 DEFAULT_BOOKINFO = dcparser.BookInfo(

@@ -425,7 +425,7 @@ def load_including_children(wldoc=None, provider=None, uri=None):
     """
 
     if uri and provider:
-        f = provider.by_uri(uri)
+        f = provider.by_slug(uri.slug)
         text = f.read().decode('utf-8')
         f.close()
     elif wldoc is not None:
