@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
 #
-from __future__ import unicode_literals
-
 from xml.parsers.expat import ExpatError
 from datetime import date
-from functools import total_ordering
 import time
 import re
 import six
@@ -16,153 +11,17 @@ from librarian.util import roman_to_int
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
                        XMLNS, WLURI, WLNS, PLMETNS)
 
-import lxml.etree as etree  # ElementTree API using libxml2
+import lxml.etree as etree
 from lxml.etree import XMLSyntaxError
 
-
-class TextPlus(six.text_type):
-    pass
-
-
-class DatePlus(date):
-    pass
-
-
-# ==============
-# = Converters =
-# ==============
-@six.python_2_unicode_compatible
-@total_ordering
-class Person(object):
-    """Single person with last name and a list of first names."""
-    def __init__(self, last_name, *first_names):
-        self.last_name = last_name
-        self.first_names = first_names
-
-    @classmethod
-    def from_text(cls, text):
-        parts = [token.strip() for token in text.split(',')]
-        if len(parts) == 1:
-            surname = parts[0]
-            names = []
-        elif len(parts) != 2:
-            raise ValueError(
-                "Invalid person name. "
-                "There should be at most one comma: \"%s\"."
-                % text.encode('utf-8')
-            )
-        else:
-            surname = parts[0]
-            if len(parts[1]) == 0:
-                # there is no non-whitespace data after the comma
-                raise ValueError(
-                    "Found a comma, but no names given: \"%s\" -> %r."
-                    % (text, parts)
-                )
-            names = parts[1].split()
-        return cls(surname, *names)
-
-    def readable(self):
-        return u" ".join(self.first_names + (self.last_name,))
-
-    def __eq__(self, right):
-        return (self.last_name == right.last_name
-                and self.first_names == right.first_names)
-
-    def __lt__(self, other):
-        return ((self.last_name, self.first_names)
-                < (other.last_name, other.first_names))
-
-    def __hash__(self):
-        return hash((self.last_name, self.first_names))
-
-    def __str__(self):
-        if len(self.first_names) > 0:
-            return '%s, %s' % (self.last_name, ' '.join(self.first_names))
-        else:
-            return self.last_name
-
-    def __repr__(self):
-        return 'Person(last_name=%r, first_names=*%r)' % (
-            self.last_name, self.first_names
-        )
-
-
-def as_date(text):
-    """
-    Dates for digitization of pictures. It seems we need the following:
-    ranges:		'1350-1450',
-    centuries:	"XVIII w.'
-    half centuries/decades: '2 poł. XVIII w.', 'XVII w., l. 20'
-    later-then: 'po 1450'
-    circa 'ok. 1813-1814', 'ok.1876-ok.1886
-    turn: 1893/1894
-
-    For now we will translate this to some single date
-    losing information of course.
-    """
-    try:
-        # check out the "N. poł X w." syntax
-        if isinstance(text, six.binary_type):
-            text = text.decode("utf-8")
-
-        century_format = (
-            u"(?:([12]) *poł[.]? +)?([MCDXVI]+) *w[.,]*(?: *l[.]? *([0-9]+))?"
-        )
-        vague_format = u"(?:po *|ok. *)?([0-9]{4})(-[0-9]{2}-[0-9]{2})?"
-
-        m = re.match(century_format, text)
-        m2 = re.match(vague_format, text)
-        if m:
-            half = m.group(1)
-            decade = m.group(3)
-            century = roman_to_int(m.group(2))
-            if half is not None:
-                if decade is not None:
-                    raise ValueError(
-                        "Bad date format. "
-                        "Cannot specify both half and decade of century."
-                    )
-                half = int(half)
-                t = ((century*100 + (half-1)*50), 1, 1)
-            else:
-                decade = int(decade or 0)
-                t = ((century*100 + decade), 1, 1)
-        elif m2:
-            year = m2.group(1)
-            mon_day = m2.group(2)
-            if mon_day:
-                t = time.strptime(year + mon_day, "%Y-%m-%d")
-            else:
-                t = time.strptime(year, '%Y')
-        else:
-            raise ValueError
-
-        return DatePlus(t[0], t[1], t[2])
-    except ValueError:
-        raise ValueError("Unrecognized date format. Try YYYY-MM-DD or YYYY.")
-
-
-def as_person(text):
-    return Person.from_text(text)
-
-
-def as_unicode(text):
-    if isinstance(text, six.text_type):
-        return text
-    else:
-        return TextPlus(text.decode('utf-8'))
-
-def as_bool(text):
-    return text == 'true'
-as_bool.no_lang = True
-
-def as_wluri_strict(text):
-    return WLURI.strict(text)
+from librarian.meta.types.bool import BoolValue
+from librarian.meta.types.date import DateValue
+from librarian.meta.types.person import Person
+from librarian.meta.types.text import TextValue
 
 
 class Field(object):
-    def __init__(self, uri, attr_name, validator=as_unicode, strict=None,
+    def __init__(self, uri, attr_name, validator=TextValue, strict=None,
                  multiple=False, salias=None, **kwargs):
         self.uri = uri
         self.name = attr_name
@@ -188,7 +47,8 @@ class Field(object):
                 for v in val:
                     nv = v
                     if v is not None:
-                        nv = validator(v)
+                        #nv = validator(v)
+                        nv = v
                         if hasattr(v, 'lang'):
                             setattr(nv, 'lang', v.lang)
                     new_values.append(nv)
@@ -205,7 +65,8 @@ class Field(object):
             else:
                 if validator is None or val[0] is None:
                     return val[0]
-                nv = validator(val[0])
+                #nv = validator(val[0])
+                nv = val[0]
                 if hasattr(val[0], 'lang') and not hasattr(validator, 'no_lang'):
                     setattr(nv, 'lang', val[0].lang)
                 return nv
@@ -263,22 +124,22 @@ class DCInfo(type):
 
 class WorkInfo(six.with_metaclass(DCInfo, object)):
     FIELDS = (
-        Field(DCNS('creator'), 'authors', as_person, salias='author',
+        Field(DCNS('creator'), 'authors', Person, salias='author',
               multiple=True),
         Field(DCNS('title'), 'title'),
         Field(DCNS('type'), 'type', required=False, multiple=True),
 
         Field(DCNS('contributor.editor'), 'editors',
-              as_person, salias='editor', multiple=True, required=False),
+              Person, salias='editor', multiple=True, required=False),
         Field(DCNS('contributor.technical_editor'), 'technical_editors',
-              as_person, salias='technical_editor', multiple=True,
+              Person, salias='technical_editor', multiple=True,
               required=False),
         Field(DCNS('contributor.funding'), 'funders', salias='funder',
               multiple=True, required=False),
         Field(DCNS('contributor.thanks'), 'thanks', required=False),
 
         Field(DCNS('date'), 'created_at'),
-        Field(DCNS('date.pd'), 'released_to_public_domain_at', as_date,
+        Field(DCNS('date.pd'), 'released_to_public_domain_at', DateValue,
               required=False),
         Field(DCNS('publisher'), 'publisher', multiple=True),
 
@@ -288,7 +149,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         Field(DCNS('source'), 'source_name', required=False),
         Field(DCNS('source.URL'), 'source_urls', salias='source_url',
               multiple=True, required=False),
-        Field(DCNS('identifier.url'), 'url', WLURI, strict=as_wluri_strict),
+        Field(DCNS('identifier.url'), 'url', WLURI),
         Field(DCNS('rights.license'), 'license', required=False),
         Field(DCNS('rights'), 'license_description'),
 
@@ -300,6 +161,12 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         Field(WLNS('developmentStage'), 'stage', required=False),
     )
 
+    @classmethod
+    def get_field_by_uri(cls, uri):
+        for f in cls.FIELDS:
+            if f.uri == uri:
+                return f
+    
     @classmethod
     def from_bytes(cls, xml, *args, **kwargs):
         return cls.from_file(six.BytesIO(xml), *args, **kwargs)
@@ -352,13 +219,17 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
             p = p.getparent()
 
         for e in desc.getchildren():
+            field = cls.get_field_by_uri(e.tag)
+            if field is None:
+                # Ignore unknown fields.
+                ### TODO: does it do <meta> for isbn?
+                continue
+
             fv = field_dict.get(e.tag, [])
             if e.text is not None:
-                text = e.text
-                if not isinstance(text, six.text_type):
-                    text = text.decode('utf-8')
-                val = TextPlus(text)
+                val = field.validator(e.text)
                 val.lang = e.attrib.get(XMLNS('lang'), lang)
+
                 if e.tag == 'meta':
                     meta_id = e.attrib.get('id')
                     if meta_id and meta_id.endswith('-id'):
@@ -514,11 +385,11 @@ class BookInfo(WorkInfo):
         Field(DCNS('subject.location'), 'location', required=False),
 
         Field(DCNS('contributor.translator'), 'translators',
-              as_person,  salias='translator', multiple=True, required=False),
-        Field(DCNS('relation.hasPart'), 'parts', WLURI, strict=as_wluri_strict,
+              Person,  salias='translator', multiple=True, required=False),
+        Field(DCNS('relation.hasPart'), 'parts', WLURI,
               multiple=True, required=False),
         Field(DCNS('relation.isVariantOf'), 'variant_of', WLURI,
-              strict=as_wluri_strict, required=False),
+              required=False),
 
         Field(DCNS('relation.coverImage.url'), 'cover_url', required=False),
         Field(DCNS('relation.coverImage.attribution'), 'cover_by',
@@ -531,7 +402,7 @@ class BookInfo(WorkInfo):
         Field(WLNS('coverClass'), 'cover_class', default=['default']),
         Field(WLNS('coverLogoUrl'), 'cover_logo_urls', multiple=True,
               required=False),
-        Field(WLNS('endnotes'), 'endnotes', as_bool,
+        Field(WLNS('endnotes'), 'endnotes', BoolValue,
               required=False),
 
         Field('pdf-id',  'isbn_pdf',  required=False),
