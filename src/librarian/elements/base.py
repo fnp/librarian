@@ -221,7 +221,7 @@ class WLElement(etree.ElementBase):
         if self.SECTION_PRECEDENCE:
             assert isinstance(self.getparent(), (Master, DlugiCytat, PoezjaCyt, Footnote)), \
                     'Header {} inside a <{}> instead of a master.'.format(
-                            etree.tostring(self), self.getparent().tag)
+                            etree.tostring(self, encoding='unicode'), self.getparent().tag)
 
         for c in self:
             if isinstance(c, WLElement):
