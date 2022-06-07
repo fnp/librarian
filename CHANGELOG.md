@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 2.4.3 (2022-06-07)
+
+### Fixed
+- Fix for new cover with custom size.
+
+
 ## 2.4.2 (2022-05-23)
 
 ### Fixed

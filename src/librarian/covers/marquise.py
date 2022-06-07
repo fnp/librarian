@@ -56,7 +56,7 @@ class MarquiseCover(Cover):
                 self.scale_after = final_width / self.width
             
         if final_height is not None:
-            self.height = round(final_height / self.m._scale)
+            self.height = round(final_height / self.scale_after / self.m._scale)
 
         self.square_variant = self.height / self.width < 250 / 210
 
