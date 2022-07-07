@@ -237,7 +237,6 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         for field in self.FIELDS:
             value = field.validate(dc_fields, fallbacks=fallbacks,
                                    strict=strict, validate_required=validate_required)
-            print(field.name, value)
             setattr(self, 'prop_' + field.name, value)
             self.fmap[field.name] = field
             if field.salias:

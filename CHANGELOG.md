@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+## 2.4.4 (2022-07-07)
+
+### Fixed
+- Packaging error.
+
+
 ## 2.4.3 (2022-06-07)
 
 ### Fixed
