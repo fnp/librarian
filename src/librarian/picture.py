@@ -230,7 +230,7 @@ class WLPicture(object):
             clip = self.get_sem_coords(k)
             self.frame = clip
             frm = Element("sem", {"type": "frame"})
-            frm.append(k.iter("div").next())
+            frm.append(next(k.iter("div")))
             self.edoc.getroot().append(frm)
             k.getparent().remove(k)
         else:

@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 2.4.5 (2022-07-08)
+
+# Fixed
+- Bug in reading picture XML.
+- Bug in setting WLURI.slug
+
+
 ## 2.4.4 (2022-07-07)
 
 ### Fixed
