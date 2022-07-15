@@ -10,3 +10,6 @@ class Uwaga(WLElement):
 
     def epub_build(self, builder):
         pass
+
+    def validate(self):
+        return
