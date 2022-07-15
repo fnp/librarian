@@ -3,6 +3,12 @@
 This document records all notable changes to Librarian.
 
 
+@@ 2.4.6 (2022-07-15)
+
+# Fixed:
+- Bug in reading child books.
+
+
 ## 2.4.5 (2022-07-08)
 
 # Fixed

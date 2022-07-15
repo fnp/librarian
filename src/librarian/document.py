@@ -33,7 +33,7 @@ class WLDocument:
     def children(self):
         for part_uri in self.meta.parts or []:
             yield type(self)(
-                filename=self.provider.by_uri(part_uri),
+                filename=self.provider.by_slug(part_uri.slug),
                 provider=self.provider
             )
             
