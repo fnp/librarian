@@ -17,6 +17,8 @@ class MarquiseCover(Cover):
     height = 2970
     margin = 100
     logo_h = 177
+    author_width = 1300
+
     title_box_top = 262
 
     color_schemes = [
@@ -138,8 +140,8 @@ class MarquiseCover(Cover):
             marquise.title_box_position[1],
         )
 
-        AuthorBox(self, self.m.width - self.m.margin).apply(
-            img, 0, self.m.margin
+        AuthorBox(self, self.m.author_width).apply(
+            img, self.m.width - self.m.margin - self.m.author_width, self.m.margin
         )
         WLLogo(self).apply(img, self.m.margin, self.m.margin, None, self.m.logo_h)
 

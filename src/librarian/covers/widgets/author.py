@@ -1,7 +1,7 @@
 import PIL.ImageFont
 from librarian import get_resource
 from librarian.cover import Metric
-from ..utils.textbox import TextBox, split_words
+from ..utils.textbox import TextBox, DoesNotFit, split_words
 from .base import Widget
 
 
@@ -31,36 +31,43 @@ class AuthorBox(Widget):
 
         authors = [a.readable() for a in self.cover.book_info.authors]
         translators = [a.readable() for a in self.cover.book_info.translators]
+
+        authors_written = False
         if authors and translators:
             author_str = ', '.join(authors)
             translator_str = '(tłum. ' + ', '.join(translators) + ')'
             # just print
             parts = [author_str, translator_str]
 
-            self.textboxes = [
-                TextBox(
-                    self.width,
-                    self.m.leading * 2,
-                    [author_str],
-                    author_font,
-                    1,
-                    self.m.leading,
-                    0,
-                    1, 0
-                ),
-                TextBox(
-                    self.width,
-                    self.m.leading * 2,
-                    [translator_str],
-                    translator_font,
-                    1,
-                    self.m.leading,
-                    0,
-                    1, 0
-                )
-            ]
+            try:
+                self.textboxes = [
+                    TextBox(
+                        self.width,
+                        self.m.leading * 2,
+                        [author_str],
+                        author_font,
+                        1,
+                        self.m.leading,
+                        0,
+                        1, 0
+                    ),
+                    TextBox(
+                        self.width,
+                        self.m.leading * 2,
+                        [translator_str],
+                        translator_font,
+                        1,
+                        self.m.leading,
+                        0,
+                        1, 0
+                    )
+                ]
+            except DoesNotFit:
+                pass
+            else:
+                authors_written = True
 
-        else:
+        if not authors_written:
             assert authors
             if len(authors) == 2:
                 parts = authors
