@@ -3,7 +3,17 @@
 This document records all notable changes to Librarian.
 
 
-@@ 2.4.6 (2022-07-15)
+## 2.4.7 (2022-07-18)
+
+# Added
+- Metadata types.
+
+# Fixed
+- Don't validate comment contents.
+- Ignore translators on new cover if too long.
+
+
+## 2.4.6 (2022-07-15)
 
 # Fixed:
 - Bug in reading child books.

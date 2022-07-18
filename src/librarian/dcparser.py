@@ -18,11 +18,11 @@ from librarian.meta.types.bool import BoolValue
 from librarian.meta.types.date import DateValue
 from librarian.meta.types.person import Person
 from librarian.meta.types.wluri import WLURI
-from librarian.meta.types.text import TextValue
+from librarian.meta.types import text
 
 
 class Field(object):
-    def __init__(self, uri, attr_name, value_type=TextValue,
+    def __init__(self, uri, attr_name, value_type=text.TextValue,
                  multiple=False, salias=None, **kwargs):
         self.uri = uri
         self.name = attr_name
@@ -353,16 +353,16 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
 
 class BookInfo(WorkInfo):
     FIELDS = (
-        Field(DCNS('audience'), 'audiences', salias='audience', multiple=True,
+        Field(DCNS('audience'), 'audiences', text.Audience, salias='audience', multiple=True,
               required=False),
 
-        Field(DCNS('subject.period'), 'epochs', salias='epoch', multiple=True,
+        Field(DCNS('subject.period'), 'epochs', text.Epoch, salias='epoch', multiple=True,
               required=False),
-        Field(DCNS('subject.type'), 'kinds', salias='kind', multiple=True,
+        Field(DCNS('subject.type'), 'kinds', text.Kind, salias='kind', multiple=True,
               required=False),
-        Field(DCNS('subject.genre'), 'genres', salias='genre', multiple=True,
+        Field(DCNS('subject.genre'), 'genres', text.Genre, salias='genre', multiple=True,
               required=False),
-        Field(WLNS('category.legimi'), 'legimi', required=False),
+        Field(WLNS('category.legimi'), 'legimi', text.LegimiCategory, required=False),
 
         Field(DCNS('subject.location'), 'location', required=False),
 

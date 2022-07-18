@@ -8,3 +8,28 @@ class TextValue(MetaValue, str):
 
     def __str__(self):
         return self.value
+
+
+
+class NameIdentifier(TextValue):
+    has_language = False
+
+
+class LegimiCategory(NameIdentifier):
+    pass
+
+    
+class Epoch(NameIdentifier):
+    pass
+
+
+class Kind(NameIdentifier):
+    pass
+
+
+class Genre(NameIdentifier):
+    pass
+
+
+class Audience(NameIdentifier):
+    pass
