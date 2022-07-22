@@ -32,16 +32,18 @@ class AuthorBox(Widget):
         authors = [a.readable() for a in self.cover.book_info.authors]
         translators = [a.readable() for a in self.cover.book_info.translators]
 
-        authors_written = False
         if authors and translators:
-            author_str = ', '.join(authors)
-            translator_str = '(tłum. ' + ', '.join(translators) + ')'
-            # just print
-            parts = [author_str, translator_str]
+            # Try with two boxes.
 
-            try:
-                self.textboxes = [
-                    TextBox(
+            authors_shortened = False
+            author_box = None
+            while author_box is None:
+                author_str = ', '.join(authors)
+                if authors_shortened:
+                    # translate!
+                    author_str += ' i in.'
+                try:
+                    author_box = TextBox(
                         self.width,
                         self.m.leading * 2,
                         [author_str],
@@ -50,8 +52,20 @@ class AuthorBox(Widget):
                         self.m.leading,
                         0,
                         1, 0
-                    ),
-                    TextBox(
+                    )
+                except DoesNotFit:
+                    authors.pop()
+                    authors_shortened = True
+
+            translators_shortened = False
+            translator_box = None
+            while translator_box is None:
+                translator_str = '(tłum. ' + ', '.join(translators)
+                if translators_shortened:
+                    translator_str += ' i in.'
+                translator_str += ')'
+                try:
+                    translator_box = TextBox(
                         self.width,
                         self.m.leading * 2,
                         [translator_str],
@@ -61,47 +75,61 @@ class AuthorBox(Widget):
                         0,
                         1, 0
                     )
-                ]
-            except DoesNotFit:
-                pass
-            else:
-                authors_written = True
+                except DoesNotFit:
+                    translators.pop()
+                    translators_shortened = True
 
-        if not authors_written:
-            assert authors
-            if len(authors) == 2:
-                parts = authors
-            elif len(authors) > 2:
-                parts = [author + ',' for author in authors[:-1]] + [authors[-1]]
-            else:
-                parts = split_words(authors[0])
+            self.textboxes = [
+                author_box,
+                translator_box
+            ]
 
-            try:
-                self.textboxes = [
-                    TextBox(
-                        self.width,
-                        self.m.leading * 2,
-                        parts,
-                        author_font,
-                        2,
-                        self.m.leading,
-                        0,
-                        1, 0
-                    )
-                ]
-            except:
-                self.textboxes = [
-                    TextBox(
-                        self.width,
-                        self.m.leading * 2,
-                        parts,
-                        author_font,
-                        1,
-                        self.m.leading,
-                        0,
-                        1, 0
-                    )
-                ]
+        elif authors:
+            author_box = None
+            shortened = False
+            while author_box is None:
+                if not shortened and len(authors) == 2:
+                    parts = authors
+                elif len(authors) > 2:
+                    parts = [author + ',' for author in authors[:-1]] + [authors[-1]]
+                    if shortened:
+                        parts.append('i in.')
+                else:
+                    parts = split_words(authors[0])
+                    if shortened:
+                        parts.append('i in.')
+
+                try:
+                    if len(parts) > 1:
+                        # Author in two lines.
+                        author_box = TextBox(
+                            self.width,
+                            self.m.leading * 2,
+                            parts,
+                            author_font,
+                            2,
+                            self.m.leading,
+                            0,
+                            1, 0
+                        )
+                    else:
+                        # author in one line.
+                        author_box = TextBox(
+                            self.width,
+                            self.m.leading * 2,
+                            parts,
+                            author_font,
+                            1,
+                            self.m.leading,
+                            0,
+                            1, 0
+                        )
+                except DoesNotFit:
+                    authors.pop()
+                    shortened = True
+
+            self.textboxes = [author_box]
+
         self.margin_top = self.textboxes[0].margin_top
 
     def build(self, w, h):

@@ -1,4 +1,5 @@
 import io
+import time
 from urllib.request import urlopen
 import PIL.Image
 from .base import Widget
