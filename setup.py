@@ -22,7 +22,7 @@ def whole_tree(prefix, path):
 
 setup(
     name='librarian',
-    version='2.4.7',
+    version='2.4.8',
     description='Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats',
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
@@ -37,7 +37,7 @@ setup(
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'locale')},
     include_package_data=True,
     install_requires=[
-        'lxml>=2.2,<=4.3',
+        'lxml>=2.2,<5.0',
         'Pillow',
         'six',
         'texml',

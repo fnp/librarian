@@ -3,6 +3,13 @@
 This document records all notable changes to Librarian.
 
 
+## 2.4.8 (2022-07-23)
+
+# Changed
+- Shortening authors and translators list on new cover.
+- Update lxml.
+
+
 ## 2.4.7 (2022-07-18)
 
 # Added
