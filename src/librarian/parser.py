@@ -77,30 +77,42 @@ class WLDocument(object):
             self.book_info = None
 
     def get_statistics(self):
-        def count_text(text, counter, in_fn=False):
+        def count_text(text, counter, in_fn=False, stanza=False):
             if text:
                 text = re.sub(r'\s+', ' ', text)
 
                 chars = len(text) if text.strip() else 0
                 words = len(text.split()) if text.strip() else 0
                 
-                counter['chars'] += chars
-                counter['words'] += words
+                counter['chars_with_fn'] += chars
+                counter['words_with_fn'] += words
                 if not in_fn:
-                    counter['chars_with_fn'] += chars
-                    counter['words_with_fn'] += words
+                    counter['chars'] += chars
+                    counter['words'] += words
+                if not stanza:
+                    counter['chars_out_verse_with_fn'] += chars
+                    if not in_fn:
+                        counter['chars_out_verse'] += chars
                 
-        def count(elem, counter, in_fn=False):
+        def count(elem, counter, in_fn=False, stanza=False):
             if elem.tag in (RDFNS('RDF'), 'nota_red', 'abstrakt', 'uwaga', 'ekstra'):
                 return
             if not in_fn and elem.tag in ('pa', 'pe', 'pr', 'pt', 'motyw'):
                 in_fn = True
-            count_text(elem.text, counter, in_fn=in_fn)
+            if elem.tag == 'strofa':
+                # count verses now
+                verses = len(elem.findall('.//br')) + 1
+                counter['verses_with_fn'] += verses
+                if not in_fn:
+                    counter['verses'] += verses
+                stanza = True
+            count_text(elem.text, counter, in_fn=in_fn, stanza=stanza)
             for child in elem:
-                count(child, counter, in_fn=in_fn)
-                count_text(child.tail, counter, in_fn=in_fn)
-            
-            
+                count(child, counter, in_fn=in_fn, stanza=stanza)
+                count_text(child.tail, counter, in_fn=in_fn, stanza=stanza)
+
+        self.swap_endlines()
+
         data = {
             "self": Counter(),
             "parts": [],
