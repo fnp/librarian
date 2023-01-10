@@ -23,6 +23,8 @@ WL_ELEMENTS = {
     "opowiadanie": masters.Master,
     "powiesc": masters.Master,
 
+    "blok": tools.WLElement,
+    
     "autor_utworu": front.AutorUtworu,
     "dzielo_nadrzedne": front.DzieloNadrzedne,
     "nazwa_utworu": front.NazwaUtworu,
@@ -67,6 +69,7 @@ WL_ELEMENTS = {
     "wers_akap": poetry.WersAkap,
     "zastepnik_wersu": poetry.ZastepnikWersu,
     "wers_do_prawej": poetry.WersDoPrawej,
+    "wers_srodek": poetry.WersSrodek,
     
     "pa": footnotes.PA,
     "pe": footnotes.PE,
@@ -117,6 +120,8 @@ WL_ELEMENTS = {
     "ilustr": figures.Ilustr,
 
     "numeracja": tools.Numeracja,
+    "rownolegle": tools.Rownolegle,
+    "tab": tools.Tab,
 
     # Section
     "wywiad_pyt": blocks.WywiadPyt,

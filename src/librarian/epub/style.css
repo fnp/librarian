@@ -402,3 +402,14 @@ th, td {
 	font-size: 1.3em;
 	line-height: 1.4em;
 }
+
+.rownolegly-blok {
+    border-left: 2px solid red;
+    padding-left: .5em;
+}
+.rownolegly-blok.first {
+    border-radius: 0 0 0 .75em;
+}
+.rownolegly-blok.last {
+    border-radius: .75em 0 0 0;
+}

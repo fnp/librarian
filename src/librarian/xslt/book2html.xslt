@@ -331,7 +331,7 @@
             <xsl:when test="count(br) > 0">
                 <xsl:call-template name="verse">
                     <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::text() | br[1]/preceding-sibling::node()" />
-                    <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej'][1]" />
+                    <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej' or name() = 'wers_srodek'][1]" />
                 </xsl:call-template>
                 <xsl:for-each select="br">		
         			<!-- Each BR tag "consumes" text after it -->
@@ -339,14 +339,14 @@
                     <xsl:call-template name="verse">
                         <xsl:with-param name="verse-content"
                             select="following-sibling::text()[count(preceding-sibling::br) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />
-                        <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej')][1]" />
+                        <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej' or name() = 'wers_srodek')][1]" />
                     </xsl:call-template>
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:call-template name="verse">
                     <xsl:with-param name="verse-content" select="text() | node()" />
-                    <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd|wers_do_prawej[1]" />
+                    <xsl:with-param name="verse-type" select="wers_wciety|wers_akap|wers_cd|wers_do_prawej|wers_srodek[1]" />
                  </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
@@ -376,6 +376,9 @@
             </xsl:when>
             <xsl:when test="name($verse-type) = 'wers_do_prawej'">
                 <xsl:attribute name="style">text-align: right</xsl:attribute>
+            </xsl:when>
+            <xsl:when test="name($verse-type) = 'wers_srodek'">
+                <xsl:attribute name="style">text-align: center</xsl:attribute>
             </xsl:when>
         </xsl:choose>
         <xsl:apply-templates select="$verse-content" mode="inline" />
@@ -532,6 +535,47 @@
 
 <xsl:template match="text()" mode="person">
     <xsl:value-of select="wl:person_name(.)" />
+</xsl:template>
+
+<xsl:template match="rownolegle">
+    <xsl:apply-templates mode="rownolegle" />
+</xsl:template>
+<xsl:template match="*" mode="rownolegle">
+  <!-- is it last? -->
+  <div>
+    <xsl:attribute name="class">
+      <xsl:text>rownolegly-blok</xsl:text>
+      <xsl:if test="not(following-sibling::*)">
+        <xsl:text> last</xsl:text>
+      </xsl:if>
+      <xsl:if test="not(preceding-sibling::*)">
+        <xsl:text> first</xsl:text>
+      </xsl:if>
+    </xsl:attribute>
+    <xsl:attribute name="style">
+      <xsl:text>border-left: 2px solid red; padding-left: .5em;</xsl:text>
+      <xsl:if test="not(following-sibling::*)">
+        <xsl:text> border-radius: 0 0 0 .75em;</xsl:text>
+      </xsl:if>
+      <xsl:if test="not(preceding-sibling::*)">
+        <xsl:text> border-radius: .75em 0 0 0;</xsl:text>
+      </xsl:if>
+    </xsl:attribute>
+    <xsl:apply-templates match="." />
+  </div>
+</xsl:template>
+
+<xsl:template match="tab" mode="inline">
+  <span>
+    <xsl:choose>
+      <xsl:when test="@szer">
+        <xsl:attribute name="style">display: inline-block; width: <xsl:value-of select="@szer" />em</xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="style">display: inline-block; width: 1em</xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </span>
 </xsl:template>
 
 
