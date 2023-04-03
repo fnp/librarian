@@ -40,9 +40,9 @@ class WLDocument:
     def build(self, builder, base_url=None, **kwargs):
         return builder(base_url=base_url).build(self, **kwargs)
 
-    def assign_ids(self):
+    def assign_ids(self, existing=None):
         # Find all existing IDs.
-        existing = set()
+        existing = existing or set()
         que = [self.tree.getroot()]
         while que:
             item = que.pop(0)
