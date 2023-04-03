@@ -36,11 +36,37 @@ class WLDocument:
                 filename=self.provider.by_slug(part_uri.slug),
                 provider=self.provider
             )
-            
     
     def build(self, builder, base_url=None, **kwargs):
         return builder(base_url=base_url).build(self, **kwargs)
 
+    def assign_ids(self):
+        # Find all existing IDs.
+        existing = set()
+        que = [self.tree.getroot()]
+        while que:
+            item = que.pop(0)
+            try:
+                item.normalize_insides()
+            except AttributeError:
+                pass
+            existing.add(item.attrib.get('id'))
+            que.extend(item)
+
+        i = 1
+        que = [self.tree.getroot()]
+        while que:
+            item = que.pop(0)
+            que.extend(item)
+            if item.attrib.get('id'):
+                continue
+            if not getattr(item, 'SHOULD_HAVE_ID', False):
+                continue
+            while f'e{i}' in existing:
+                i += 1
+            item.attrib['id'] = f'e{i}'
+            i += 1
+    
     def _compat_assign_ordered_ids(self):
         """
         Compatibility: ids in document order, to be roughly compatible with legacy

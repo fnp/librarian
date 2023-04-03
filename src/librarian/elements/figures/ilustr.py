@@ -4,6 +4,8 @@ from ..base import WLElement
 
 
 class Ilustr(WLElement):
+    SHOULD_HAVE_ID = True
+
     EPUB_TAG = HTML_TAG = 'img'
 
     def get_html_attr(self, builder):

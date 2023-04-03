@@ -5,6 +5,8 @@ from .wers import Wers
 
 
 class Strofa(WLElement):
+    SHOULD_HAVE_ID = True
+
     TXT_TOP_MARGIN = 2
     TXT_BOTTOM_MARGIN = 2
     TXT_LEGACY_TOP_MARGIN = 1

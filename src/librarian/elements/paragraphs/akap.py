@@ -3,6 +3,7 @@ from ..base import WLElement
 
 class Akap(WLElement):
     STRIP = True
+    SHOULD_HAVE_ID = True
 
     TXT_TOP_MARGIN = 2
     TXT_BOTTOM_MARGIN = 2

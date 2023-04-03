@@ -2,6 +2,8 @@ from ..base import WLElement
 
 
 class Tabela(WLElement):
+    SHOULD_HAVE_ID = True
+
     EPUB_TAG = HTML_TAG = 'table'
 
     def get_html_attr(self, builder):

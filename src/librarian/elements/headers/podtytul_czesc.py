@@ -2,6 +2,8 @@ from ..base import WLElement
 
 
 class PodtytulCzesc(WLElement):
+    SHOULD_HAVE_ID = True
+
     TXT_TOP_MARGIN = 2
     TXT_BOTTOM_MARGIN = 2
 

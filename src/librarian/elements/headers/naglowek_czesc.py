@@ -3,6 +3,7 @@ from ..base import WLElement
 
 class NaglowekCzesc(WLElement):
     SECTION_PRECEDENCE = 1
+    SHOULD_HAVE_ID = True
     
     TXT_TOP_MARGIN = 5
     TXT_BOTTOM_MARGIN = 2

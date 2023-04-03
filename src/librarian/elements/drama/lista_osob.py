@@ -4,6 +4,7 @@ from ..base import WLElement
 
 class ListaOsob(WLElement):
     CAN_HAVE_TEXT = False
+    SHOULD_HAVE_ID = True
 
     TXT_TOP_MARGIN = 3
     TXT_BOTTOM_MARGIN = 3

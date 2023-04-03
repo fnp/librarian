@@ -185,7 +185,10 @@
 
 <xsl:template match="motto">
     <xsl:call-template name="section-anchor"/>
-    <div class="motto"><xsl:apply-templates /></div>
+    <div class="motto">
+      <xsl:call-template name="block-args" />
+      <xsl:apply-templates />
+    </div>
 </xsl:template>
 
 <xsl:template match="ilustr" mode="inline">
@@ -194,6 +197,7 @@
 
 <xsl:template match="ilustr">
   <div>
+    <xsl:call-template name="block-args" />
 
     <xsl:attribute name="class">
       <xsl:text>ilustr </xsl:text>
@@ -238,6 +242,7 @@
 
 <xsl:template match="animacja">
   <div class="animacja cycle-slideshow" data-cycle-pause-on-hover="true" data-cycle-next="> img" data-cycle-fx="fadeout" data-cycle-paused="true">
+    <xsl:call-template name="block-args" />
     <xsl:apply-templates/>
   </div>
 </xsl:template>
@@ -249,64 +254,94 @@
 <!-- ========================================== -->
 <!-- Title page -->
 <xsl:template match="autor_utworu" mode="header">
-    <span class="author"><xsl:apply-templates mode="inline" /></span>
+  <span class="author">
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </span>
 </xsl:template>
 
 <xsl:template match="nazwa_utworu" mode="header">
-    <span class="title"><xsl:apply-templates mode="inline" /></span>
+  <span class="title">
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </span>
 </xsl:template>
 
 <xsl:template match="dzielo_nadrzedne" mode="header">
-    <span class="collection"><xsl:apply-templates mode="inline" /></span>
+  <span class="collection">
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </span>
 </xsl:template>
 
 <xsl:template match="podtytul" mode="header">
-    <span class="subtitle"><xsl:apply-templates mode="inline" /></span>
+  <span class="subtitle">
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </span>
 </xsl:template>
 
 <!-- Section headers (included in index)-->
 <xsl:template match="naglowek_akt|naglowek_czesc|srodtytul">
   <xsl:call-template name="section-anchor"/>
-    <h2><xsl:apply-templates mode="inline" /></h2>
+  <h2>
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </h2>
 </xsl:template>
 
 <xsl:template match="podtytul_akt|podtytul_czesc">
   <div class="subtitle2">
+    <xsl:call-template name="block-args" />
     <xsl:apply-templates mode="inline" />
   </div>
 </xsl:template>
 
 <xsl:template match="naglowek_scena|naglowek_rozdzial">
     <xsl:call-template name="section-anchor"/>
-    <h3><xsl:apply-templates mode="inline" /></h3>
+    <h3>
+      <xsl:call-template name="block-args" />
+      <xsl:apply-templates mode="inline" />
+    </h3>
 </xsl:template>
 
 <xsl:template match="podtytul_scena|podtytul_rozdzial">
   <div class="subtitle3">
+    <xsl:call-template name="block-args" />
     <xsl:apply-templates mode="inline" />
   </div>
 </xsl:template>
 
 <xsl:template match="naglowek_osoba|naglowek_podrozdzial">
-      <xsl:call-template name="section-anchor"/>
-    <h4><xsl:apply-templates mode="inline" /></h4>
+  <xsl:call-template name="section-anchor"/>
+  <h4>
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </h4>
 </xsl:template>
 
 <xsl:template match="podtytul_podrozdzial">
   <div class="subtitle4">
+    <xsl:call-template name="block-args" />
     <xsl:apply-templates mode="inline" />
   </div>
 </xsl:template>
 
 <!-- Other paragraph tags -->
 <xsl:template match="miejsce_czas">
-      <xsl:call-template name="section-anchor"/>
-    <p class="place-and-time"><xsl:apply-templates mode="inline" /></p>
+  <xsl:call-template name="section-anchor"/>
+  <p class="place-and-time">
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </p>
 </xsl:template>
 
 <xsl:template match="didaskalia">
-      <xsl:call-template name="section-anchor"/>
-    <div class="didaskalia"><xsl:apply-templates mode="inline" /></div>
+  <xsl:call-template name="section-anchor"/>
+  <div class="didaskalia">
+    <xsl:call-template name="block-args" />
+    <xsl:apply-templates mode="inline" />
+  </div>
 </xsl:template>
 
 <xsl:template match="lista_osoba">
@@ -315,6 +350,7 @@
 
 <xsl:template match="akap|akap_dialog|akap_cd">
     <p class="paragraph">
+      <xsl:call-template name="block-args" />
       <xsl:call-template name="section-anchor"/>
 	<xsl:apply-templates mode="inline" />
     </p>
@@ -325,7 +361,8 @@
 </xsl:template>
 
 <xsl:template match="strofa">
-    <div class="stanza">
+  <div class="stanza">
+    <xsl:call-template name="block-args" />
       <xsl:call-template name="section-anchor"/>
         <xsl:choose>
             <xsl:when test="count(br) > 0">
@@ -387,17 +424,26 @@
 
 <xsl:template match="motto_podpis">
     <xsl:call-template name="section-anchor"/>
-    <p class="motto_podpis"><xsl:apply-templates mode="inline" /></p>
+    <p class="motto_podpis">
+      <xsl:call-template name="block-args" />
+      <xsl:apply-templates mode="inline" />
+    </p>
 </xsl:template>
 
 <xsl:template match="tabela|tabelka">
     <xsl:call-template name="section-anchor"/>
     <xsl:choose>
         <xsl:when test="@ramka = '1'">
-            <table class="border"><xsl:apply-templates /></table>
+          <table class="border">
+            <xsl:call-template name="block-args" />
+            <xsl:apply-templates />
+          </table>
         </xsl:when>
         <xsl:otherwise>
-            <table><xsl:apply-templates /></table>
+          <table>
+            <xsl:call-template name="block-args" />
+            <xsl:apply-templates />
+          </table>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
@@ -609,6 +655,15 @@
        - create an <a name="sec123"/> tag.
   -->
         <a name="{concat('sec', count(ancestor-or-self::*[last()-2]/preceding-sibling::*) + 1)}" />
+</xsl:template>
+
+<xsl:template name="block-args">
+  <xsl:if test="@id">
+    <xsl:attribute name="id">
+      <xsl:text>wl-</xsl:text>
+      <xsl:value-of select="@id"/>
+    </xsl:attribute>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template match="numeracja">
