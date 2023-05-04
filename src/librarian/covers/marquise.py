@@ -99,20 +99,25 @@ class MarquiseCover(Cover):
                 (self.m.marquise_xl, None),
             ]
 
-        for marquise_h, lines in layout_options:
-            title_box_height = marquise_h - self.m.title_box_top - self.m.margin
-            try:
-                title_box = TitleBox(
-                    self,
-                    self.m.width - 2 * self.m.margin,
-                    title_box_height,
-                    lines,
-                    force=lines is None
-                )
-            except DoesNotFit:
-                continue
-            else:
-                break
+        # Trying all the layout options with decreasing scale.
+        title_box = None
+        title_scale = 1
+        while title_box is None:
+            for marquise_h, lines in layout_options:
+                title_box_height = marquise_h - self.m.title_box_top - self.m.margin
+                try:
+                    title_box = TitleBox(
+                        self,
+                        self.m.width - 2 * self.m.margin,
+                        title_box_height,
+                        lines,
+                        scale=title_scale
+                    )
+                except DoesNotFit:
+                    continue
+                else:
+                    break
+            title_scale *= .99
 
         self.marquise_height = marquise_h
         marquise = Marquise(self, marquise_h)

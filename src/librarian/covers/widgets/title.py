@@ -10,29 +10,14 @@ class TitleBox(Widget):
     leading = 176  # 50pt
     tracking = 2.385
 
-    def __init__(self, cover, width, height, lines, force=False):
+    def __init__(self, cover, width, height, lines, scale=1):
         self.width = width
         self.height = height
         self.lines = lines
-        self.force = force
-        self.m = Metric(self, cover.m._scale)
+        self.m = Metric(self, cover.m._scale * scale)
         super().__init__(cover)
 
     def setup(self):
-        m = self.m
-        while True:
-            try:
-                self.build_box()
-            except:
-                if self.force:
-                    self.m = Metric(self, self.m._scale * .99)
-                    print('lower to', self.m.font_size)
-                else:
-                    raise
-            else:
-                break
-
-    def build_box(self):
         title_font = PIL.ImageFont.truetype(
             get_resource('fonts/SourceSans3VF-Roman.ttf'),
             self.m.font_size,
