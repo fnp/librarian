@@ -18,7 +18,11 @@ class NameIdentifier(TextValue):
 class LegimiCategory(NameIdentifier):
     pass
 
-    
+
+class ThemaCategory(NameIdentifier):
+    pass
+
+
 class Epoch(NameIdentifier):
     pass
 
