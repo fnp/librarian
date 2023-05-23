@@ -72,7 +72,7 @@ class TextBox(object):
                     break
                 line = parts[0]
 
-                if line[-2] == ' ':
+                if len(line) > 2 and line[-2] == ' ':
                     line = line[:-2]
 
                 line_width = self.draw.textsize(line, font=font)[0]
