@@ -7,6 +7,6 @@ Wersja lektury w opracowaniu merytorycznym i krytycznym (przypisy i motywy) dost
 
 Utwór opracowany został w ramach projektu Wolne Lektury przez fundację Nowoczesna Polska.
 
-%(license_description)s.%(source)s%(publisher)s
+%(license_description)s%(source)s%(publisher)s
 
 %(description)s%(contributors)s%(funders)s%(isbn)s

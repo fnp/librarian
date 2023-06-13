@@ -104,7 +104,8 @@ class WLElement(etree.ElementBase):
                 newt += builder.hyphenator.inserted(w, u'\u00AD')
             text = newt
 
-        text = re.sub(r'(?<=\s\w)\s+', u'\u00A0', text)
+        if builder.orphans:
+            text = re.sub(r'(?<=\s\w)\s+', u'\u00A0', text)
 
         return text
 

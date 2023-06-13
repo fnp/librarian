@@ -18,6 +18,7 @@ class HtmlBuilder:
     with_footnotes = True
     with_nota_red = True
     no_externalities = False
+    orphans = True
 
     def __init__(self, base_url=None):
         self._base_url = base_url

@@ -5,6 +5,7 @@
 #
 from __future__ import unicode_literals
 
+import unittest
 from librarian import NoDublinCore
 from librarian.builders import builders
 from librarian.parser import WLDocument as LegacyWLDocument
@@ -13,34 +14,39 @@ from nose.tools import *
 from .utils import get_fixture
 
 
-def test_transform_legacy():
-    expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.txt')
+class TextTests(unittest.TestCase):
+    maxDiff = None
 
-    text = LegacyWLDocument.from_file(
+    def test_transform_legacy(self):
+        expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.txt')
+
+        text = LegacyWLDocument.from_file(
             get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
-        ).as_text().get_bytes()
+        ).as_text().get_bytes().decode('utf-8')
 
-    assert_equal(text, open(expected_output_file_path, 'rb').read())
+        with open(expected_output_file_path, 'rb') as f:
+            self.assertEqual(text, f.read().decode('utf-8'))
 
+    def test_transform(self):
+        expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.txt')
 
-def test_transform():
-    expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected.txt')
+        text = WLDocument(
+            filename=get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
+        ).build(builders['txt']).get_bytes().decode('utf-8')
 
-    text = WLDocument(
-        filename=get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
-    ).build(builders['txt']).get_bytes()
-
-    assert_equal(text, open(expected_output_file_path, 'rb').read())
+        with open(expected_output_file_path, 'rb') as f:
+            self.assertEqual(text, f.read().decode('utf-8'))
 
     
-def test_transform_raw():
-    expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected_raw.txt')
+    def test_transform_raw(self):
+        expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_expected_raw.txt')
 
-    text = LegacyWLDocument.from_file(
+        text = LegacyWLDocument.from_file(
             get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml')
-        ).as_text(flags=['raw-text']).get_bytes()
+        ).as_text(flags=['raw-text']).get_bytes().decode('utf-8')
 
-    assert_equal(text, open(expected_output_file_path, 'rb').read())
+        with open(expected_output_file_path, 'rb') as f:
+            self.assertEqual(text, f.read().decode('utf-8'))
 
 
 @raises(NoDublinCore)

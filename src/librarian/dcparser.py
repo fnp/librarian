@@ -15,7 +15,6 @@ import lxml.etree as etree
 from lxml.etree import XMLSyntaxError
 
 from librarian.meta.types.bool import BoolValue
-from librarian.meta.types.date import DateValue
 from librarian.meta.types.person import Person
 from librarian.meta.types.wluri import WLURI
 from librarian.meta.types import text
@@ -121,7 +120,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
         Field(DCNS('contributor.thanks'), 'thanks', required=False),
 
         Field(DCNS('date'), 'created_at'),
-        Field(DCNS('date.pd'), 'released_to_public_domain_at', DateValue,
+        Field(DCNS('date.pd'), 'released_to_public_domain_at',
               required=False),
         Field(DCNS('publisher'), 'publisher', multiple=True),
 

@@ -17,7 +17,7 @@ class FragmentsTest(unittest.TestCase):
         expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_fragments.html')
 
         closed_fragments, open_fragments = extract_fragments(
-            get_fixture('text', 'asnyk_miedzy_nami_expected.html'))
+            get_fixture('text', 'asnyk_miedzy_nami_expected.legacy.html'))
         assert not open_fragments
         fragments_text = u"\n\n".join(u"%s: %s\n%s" % (f.id, f.themes, f) for f in sorted(closed_fragments.values(), key=lambda f: f.id))
         self.assertEqual(fragments_text, open(expected_output_file_path, 'rb').read().decode('utf-8'))

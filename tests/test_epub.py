@@ -78,7 +78,7 @@ def test_transform():
     )
     assert_equals(
         book.get_metadata(DC, "creator"),
-        [('Adam Asnyk', {"id": "creator"})]
+        [('Adam Asnyk', {"id": "creator0"})]
     )
     assert_equals(
         book.get_metadata(DC, "publisher"),

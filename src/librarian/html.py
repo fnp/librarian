@@ -241,7 +241,8 @@ def extract_fragments(input_filename):
                 for parent in parents:
                     fragment.append('start', parent)
 
-                open_fragments[fragment.id] = fragment
+                if fragment.id not in open_fragments:
+                    open_fragments[fragment.id] = fragment
 
             # Close existing fragment
             else:

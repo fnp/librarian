@@ -4,7 +4,7 @@ from .base import MetaValue
 
 class WLURI(MetaValue):
     """Represents a WL URI. Extracts slug from it."""
-    example = 'http://wolnelektury.pl/katalog/lektura/template/'
+    template = 'http://wolnelektury.pl/katalog/lektura/%s/'
     _re_wl_uri = re.compile(
         r'http://(www\.)?wolnelektury.pl/katalog/lektur[ay]/'
         '(?P<slug>[-a-z0-9]+)/?$'
@@ -13,12 +13,12 @@ class WLURI(MetaValue):
     def __init__(self, slug, uri=None):
         """Contructs an URI from slug.
 
-        >>> print(WLURI.from_slug('a-slug').uri)
+        >>> print(WLURI('a-slug').uri)
         http://wolnelektury.pl/katalog/lektura/a-slug/
 
         """
         if uri is None:
-            uri = 'http://wolnelektury.pl/katalog/lektura/%s/' % slug
+            uri = self.template % slug
         self.uri = uri
         return super().__init__(slug)
 

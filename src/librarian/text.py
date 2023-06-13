@@ -81,7 +81,7 @@ def transform(wldoc, flags=None, **options):
                 "należy pamiętać o zapisach licencji oraz zasadach, które "
                 "spisaliśmy w Zasadach wykorzystania Wolnych Lektur: "
                 "https://wolnelektury.pl/info/zasady-wykorzystania/\nZapoznaj "
-                "się z nimi, zanim udostępnisz dalej nasze książki"
+                "się z nimi, zanim udostępnisz dalej nasze książki."
             )
             license_description = "\n".join(license_description)
 

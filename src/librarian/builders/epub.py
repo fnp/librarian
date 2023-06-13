@@ -11,8 +11,6 @@ import librarian.epub
 from librarian.fonts import strip_font
 
 
-
-
 class Xhtml:
     def __init__(self):
         self.element = etree.XML('''<html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" href="style.css" type="text/css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>WolneLektury.pl</title></head><body/></html>''')
@@ -61,8 +59,6 @@ class Builder:
     def forget_fragment(self, name):
         del self.cursors[name]
 
-
-
     @property
     def base_url(self):
         if self._base_url is not None:
@@ -80,6 +76,7 @@ class Builder:
 class EpubBuilder(Builder):
     file_extension = 'epub'
     isbn_field = 'isbn_epub'
+    orphans = True
 
     def __init__(self, *args, **kwargs):
         self.chars = set()

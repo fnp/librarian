@@ -17,11 +17,7 @@ class WLPictureURI(WLURI):
     _re_wl_uri = re.compile(
         'http://wolnelektury.pl/katalog/obraz/(?P<slug>[-a-z0-9]+)/?$'
     )
-
-    @classmethod
-    def from_slug(cls, slug):
-        uri = 'http://wolnelektury.pl/katalog/obraz/%s/' % slug
-        return cls(uri)
+    template = 'http://wolnelektury.pl/katalog/obraz/%s/'
 
 
 def as_wlpictureuri_strict(text):
