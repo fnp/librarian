@@ -2,6 +2,7 @@ from ..base import WLElement
 
 
 class Motyw(WLElement):
+    ASIDE = True
     HTML_TAG = "a"
 
     def txt_build(self, builder):

@@ -24,7 +24,7 @@ class HtmlBuilder:
         self._base_url = base_url
 
         self.tree = text = etree.Element('div', **{'id': 'book-text'})
-        self.header = etree.SubElement(text, 'h1')
+        self.header = etree.Element('h1')
 
         self.footnotes = etree.Element('div', id='footnotes')
         self.footnote_counter = 0
@@ -109,6 +109,9 @@ class HtmlBuilder:
         if self.with_toc:
             add_table_of_contents(self.tree)
 
+        if len(self.header):
+            self.tree.insert(0, self.header)
+            
         if self.footnote_counter:
             fnheader = etree.Element("h3")
             fnheader.text = _("Footnotes")
@@ -183,6 +186,15 @@ class StandaloneHtmlBuilder(HtmlBuilder):
             )
 
 
+class SnippetHtmlBuilder(HtmlBuilder):
+    with_anchors = False
+    with_themes = False
+    with_toc = False
+    with_footnotes = False
+    with_nota_red = False
+    with_refs = False
+
+            
 class DaisyHtmlBuilder(StandaloneHtmlBuilder):
     file_extension = 'xhtml'
     with_anchors = False

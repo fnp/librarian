@@ -1,10 +1,11 @@
 from lxml import etree
 from . import (blocks, comments, drama, figures, footnotes, front, headers,
                masters, paragraphs, poetry, ref, root, separators, styles, themes,
-               tools)
+               tools, base)
 
 
 WL_ELEMENTS = {
+    'snippet': base.Snippet,
     'meta': etree.ElementBase,
     'coverClass': etree.ElementBase,
     "developmentStage": etree.ElementBase,

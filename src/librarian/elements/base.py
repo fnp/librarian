@@ -1,13 +1,25 @@
-# -*- coding: utf-8
-
+import copy
 import re
 from lxml import etree
 from librarian import dcparser, RDFNS
 from librarian.util import get_translation
 
+def last_words(text, n):
+    words = []
+    for w in reversed(text.split()):
+        words.append(w)
+        if len(w) > 2:
+            n -= 1
+            if not n: break
+    if n:
+        return n, text
+    else:
+        return n, ' '.join(reversed(words))
+
 
 class WLElement(etree.ElementBase):
     SECTION_PRECEDENCE = None
+    ASIDE = False
 
     TXT_TOP_MARGIN = 0
     TXT_BOTTOM_MARGIN = 0
@@ -153,7 +165,7 @@ class WLElement(etree.ElementBase):
         # always copy the id attribute (?)
         if self.attrib.get('id'):
             attr['id'] = self.attrib['id']
-        elif '_compat_section_id' in self.attrib:
+        elif getattr(self, 'SHOULD_HAVE_ID', False) and '_compat_section_id' in self.attrib:
             attr['id'] = self.attrib['_compat_section_id']
         return attr
 
@@ -234,3 +246,77 @@ class WLElement(etree.ElementBase):
         for e in self:
             if isinstance(e, WLElement):
                 e.sanitize()
+
+    def snip(self, words, before=None, sub=False):
+        if sub and self.ASIDE:
+            return words, []
+
+        snippet = []
+        if before is not None:
+            i = self.index(before)
+        else:
+            i = len(self)
+
+        while i > 0:
+            i -= 1
+            if self[i].tail:
+                if words:
+                    words, text = last_words(self[i].tail, words)
+                    snippet = [('text', text)] + snippet
+
+            if words:
+                words, subsnip = self[i].snip(words, sub=True)
+                snippet = subsnip + snippet
+
+        if words and self.text:
+            words, text = last_words(self.text, words)
+            snippet = [('text', text)] + snippet
+                    
+        snippet = [('start', self.tag, self.attrib)] + snippet + [('end',)]
+
+        if not sub and words and not self.ASIDE:
+            # do we dare go up?
+            parent = self.getparent()
+            if parent is not None and parent.CAN_HAVE_TEXT:
+                print(etree.tostring(self, encoding='unicode'))
+                assert False
+                words, parsnip = parent.snip(words, before=self)
+                return words, parsnip[:-1] + snippet + parsnip[-1:]
+
+        return words, snippet
+
+    def get_snippet(self, words=15):
+        from librarian.parser import parser
+
+        words, snippet = self.getparent().snip(words=words, before=self)
+        
+        cursor = snipelem = parser.makeelement('snippet')
+        snipelem._meta_object = self.meta
+        for s in snippet:
+            if s[0] == 'start':
+                elem = parser.makeelement(s[1], **s[2])
+                cursor.append(elem)
+                cursor = elem
+            elif s[0] == 'end':
+                cursor = cursor.getparent()
+            else:
+                if len(cursor):
+                    cursor[-1].tail = (cursor[-1].tail or '') + s[1]
+                else:
+                    cursor.text = (cursor.text or '') + s[1]
+
+        return snipelem
+
+    def get_link(self):
+        sec = getattr(self, 'SHOULD_HAVE_ID', False) and self.attrib.get('_compat_section_id')
+        if sec:
+            return sec
+        parent_index = self.getparent().index(self)
+        if parent_index:
+            return self.getparent()[parent_index - 1].get_link()
+        else:
+            return self.getparent().get_link()
+
+
+class Snippet(WLElement):
+    pass

@@ -115,3 +115,5 @@ class WLDocument:
             persons.remove(None)
         return persons
 
+    def references(self):
+        return self.tree.findall('.//ref')

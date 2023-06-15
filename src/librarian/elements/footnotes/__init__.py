@@ -7,6 +7,7 @@ from ..base import WLElement
 class Footnote(WLElement):
     NO_TOC = True
     START_INLINE = True
+    ASIDE = True
 
     def signal(self, signal):
         if signal == 'INLINE':
