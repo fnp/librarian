@@ -101,7 +101,10 @@ class WLDocument:
         def _compat_assigns_section_ids_in_elem(elem, prefix='sec'):
             for i, child in enumerate(elem):
                 idfier = '{}{}'.format(prefix, i + 1)
-                child.attrib['_compat_section_id'] = idfier
+                try:
+                    child.attrib['_compat_section_id'] = idfier
+                except:
+                    pass
                 _compat_assigns_section_ids_in_elem(child, idfier + '-')
         _compat_assigns_section_ids_in_elem(self.tree.getroot().master)
 

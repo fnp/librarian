@@ -278,8 +278,6 @@ class WLElement(etree.ElementBase):
             # do we dare go up?
             parent = self.getparent()
             if parent is not None and parent.CAN_HAVE_TEXT:
-                print(etree.tostring(self, encoding='unicode'))
-                assert False
                 words, parsnip = parent.snip(words, before=self)
                 return words, parsnip[:-1] + snippet + parsnip[-1:]
 

@@ -51,7 +51,8 @@ class HtmlBuilder:
         return self.current_cursors[-1]
 
     def enter_fragment(self, fragment):
-        self.current_cursors.append(self.cursors[fragment])
+        cursor = self.cursors.get(fragment, self.cursor)
+        self.current_cursors.append(cursor)
 
     def exit_fragment(self):
         self.current_cursors.pop()
