@@ -14,8 +14,9 @@ class Widget:
 
     def apply(self, img, x, y, w=None, h=None):
         my_img = self.build(w, h)
-        img.paste(
-            my_img,
-            (round(x), round(y - self.margin_top)),
-            my_img if self.transparency else None
-        )
+        if my_img is not None:
+            img.paste(
+                my_img,
+                (round(x), round(y - self.margin_top)),
+                my_img if self.transparency else None
+            )

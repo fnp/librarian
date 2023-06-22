@@ -989,7 +989,7 @@ class FactoryCover(LogoWLCover):
 from librarian.covers.marquise import MarquiseCover, LabelMarquiseCover
 
 COVER_CLASSES = {
-    'default': LogoWLCover,
+    'legacy': LogoWLCover,
     'kmlu': KMLUCover,
     'mpw': MPWCover,
     'atrium': AtriumCover,
@@ -1000,6 +1000,7 @@ COVER_CLASSES = {
     'factory': FactoryCover,
     'm': MarquiseCover,
     'm-label': LabelMarquiseCover,
+    'default': MarquiseCover,
 }
 
 

@@ -31,6 +31,7 @@ class AuthorBox(Widget):
 
         authors = [a.readable() for a in self.cover.book_info.authors]
         translators = [a.readable() for a in self.cover.book_info.translators]
+        self.textboxes = []
 
         if authors and translators:
             # Try with two boxes.
@@ -130,7 +131,8 @@ class AuthorBox(Widget):
 
             self.textboxes = [author_box]
 
-        self.margin_top = self.textboxes[0].margin_top
+        if self.textboxes:
+            self.margin_top = self.textboxes[0].margin_top
 
     def build(self, w, h):
         img = PIL.Image.new('RGBA', (self.width, self.m.leading * 2))

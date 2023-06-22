@@ -80,6 +80,8 @@ class TextBox:
     def find_grouping(self, groups, ngroups, glue):
         best = None
         best_var = None
+        if not groups:
+            return []
 
         mean = sum(g[0] for g in groups) + (len(groups) - ngroups) * glue
         if mean > self.width * ngroups:

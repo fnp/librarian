@@ -9,6 +9,7 @@ class Background(Widget):
     transparency = False
 
     def setup(self):
+        self.img = None
         if self.cover.book_info.cover_url:
             while True:
                 try:
@@ -34,6 +35,8 @@ class Background(Widget):
             self.img = img
 
     def build(self, w, h):
+        if not self.img:
+            return
         kwadrat = round(max(w, h))
         img = self.img
         img = self.img.resize((kwadrat, kwadrat))
