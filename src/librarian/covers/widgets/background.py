@@ -8,6 +8,10 @@ from .base import Widget
 class Background(Widget):
     transparency = False
 
+    def __init__(self, cover, crop_to_square=True):
+        self.crop_to_square = crop_to_square
+        super().__init__(cover)
+
     def setup(self):
         self.img = None
         if self.cover.book_info.cover_url:
@@ -21,25 +25,32 @@ class Background(Widget):
                 
             img = PIL.Image.open(data)
 
-            # crop top square.
-            if img.size[1] > img.size[0]:
-                img = img.crop((0, 0, img.size[0], img.size[0]))
-            else:
-                left = round((img.size[0] - img.size[1])/2)
-                img = img.crop((
-                    left,
-                    0,
-                    left + img.size[1],
-                    img.size[1]
-                ))
+            if self.crop_to_square:
+                # crop top square.
+                if img.size[1] > img.size[0]:
+                    img = img.crop((0, 0, img.size[0], img.size[0]))
+                else:
+                    left = round((img.size[0] - img.size[1])/2)
+                    img = img.crop((
+                        left,
+                        0,
+                        left + img.size[1],
+                        img.size[1]
+                    ))
             self.img = img
 
     def build(self, w, h):
         if not self.img:
             return
-        kwadrat = round(max(w, h))
         img = self.img
-        img = self.img.resize((kwadrat, kwadrat))
+        scale = max(
+            w / img.size[0],
+            h / img.size[1]
+        )
+        img = self.img.resize((
+            round(scale * img.size[0]),
+            round(scale * img.size[1]),
+        ))
         img = img.crop((
             int((img.size[0] - w) / 2),
             0,

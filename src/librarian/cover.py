@@ -153,6 +153,15 @@ class Cover(object):
 
     def __init__(self, book_info, format=None, width=None, height=None, cover_logo=None):
         self.book_info = book_info
+
+        self.predesigned = False
+        if book_info.cover_class == 'image':
+            self.predesigned = True
+
+        # TODO: deprecated
+        if book_info.cover_box_position == 'none':
+            self.predesigned = True
+
         self.authors = [auth.readable() for auth in book_info.authors]
         self.title = book_info.title
         if format is not None:
@@ -1005,9 +1014,10 @@ COVER_CLASSES = {
 
 
 def make_cover(book_info, *args, **kwargs):
+    cover_class_name = None
     if 'cover_class' in kwargs:
         cover_class_name = kwargs.pop('cover_class')
-    else:
-        cover_class_name = book_info.cover_class
+    if not cover_class_name:
+        cover_class_name = 'default'
     cover_class = COVER_CLASSES[cover_class_name]
     return cover_class(book_info, *args, **kwargs)

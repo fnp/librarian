@@ -81,74 +81,81 @@ class MarquiseCover(Cover):
     def image(self):
         img = PIL.Image.new('RGB', (self.m.width, self.m.height), self.background_color)
         
-        bg = Background(self)
-
-        if self.square_variant:
-            layout_options = [
-                (self.m.marquise_small, 1),
-                (self.m.marquise_big, 2),
-                (self.m.marquise_big, 3),
-                (self.m.marquise_big, None),
-            ]
+        if self.predesigned:
+            bg = Background(self, crop_to_square=False)
+            bg.apply(
+                img,
+                0, 0,
+                self.m.width, self.m.height
+            )
         else:
-            layout_options = [
-                (self.m.marquise_small, 2),
-                (self.m.marquise_small, 1),
-                (self.m.marquise_big, 3),
-                (self.m.marquise_xl, 4),
-                (self.m.marquise_xl, None),
-            ]
+            bg = Background(self)
+            if self.square_variant:
+                layout_options = [
+                    (self.m.marquise_small, 1),
+                    (self.m.marquise_big, 2),
+                    (self.m.marquise_big, 3),
+                    (self.m.marquise_big, None),
+                ]
+            else:
+                layout_options = [
+                    (self.m.marquise_small, 2),
+                    (self.m.marquise_small, 1),
+                    (self.m.marquise_big, 3),
+                    (self.m.marquise_xl, 4),
+                    (self.m.marquise_xl, None),
+                ]
 
-        # Trying all the layout options with decreasing scale.
-        title_box = None
-        title_scale = 1
-        while title_box is None:
-            for marquise_h, lines in layout_options:
-                title_box_height = marquise_h - self.m.title_box_top - self.m.margin
-                try:
-                    title_box = TitleBox(
-                        self,
-                        self.m.width - 2 * self.m.margin,
-                        title_box_height,
-                        lines,
-                        scale=title_scale
-                    )
-                except DoesNotFit:
-                    continue
-                else:
-                    break
-            title_scale *= .99
+            # Trying all the layout options with decreasing scale.
+            title_box = None
+            title_scale = 1
+            while title_box is None:
+                for marquise_h, lines in layout_options:
+                    title_box_height = marquise_h - self.m.title_box_top - self.m.margin
+                    try:
+                        title_box = TitleBox(
+                            self,
+                            self.m.width - 2 * self.m.margin,
+                            title_box_height,
+                            lines,
+                            scale=title_scale
+                        )
+                    except DoesNotFit:
+                        continue
+                    else:
+                        break
+                title_scale *= .99
 
-        self.marquise_height = marquise_h
-        marquise = Marquise(self, marquise_h)
+            self.marquise_height = marquise_h
+            marquise = Marquise(self, self.marquise_height)
 
-        bg.apply(
-            img,
-            0, marquise.edge_top,
-            self.m.width, self.m.height - marquise.edge_top
-        )
-        self.set_color_scheme_from(
-            img.crop((
+            bg.apply(
+                img,
                 0, marquise.edge_top,
-                self.m.width, marquise.edge_top + (
-                    self.m.height - marquise.edge_top
-                ) / 4
-            ))
-        )
+                self.m.width, self.m.height - marquise.edge_top
+            )
+            self.set_color_scheme_from(
+                img.crop((
+                    0, marquise.edge_top,
+                    self.m.width, marquise.edge_top + (
+                        self.m.height - marquise.edge_top
+                    ) / 4
+                ))
+            )
 
-        marquise.apply(
-            img, 0, 0, self.m.width
-        )
-        title_box.apply(
-            img,
-            marquise.title_box_position[0],
-            marquise.title_box_position[1],
-        )
+            marquise.apply(
+                img, 0, 0, self.m.width
+            )
+            title_box.apply(
+                img,
+                marquise.title_box_position[0],
+                marquise.title_box_position[1],
+            )
 
-        AuthorBox(self, self.m.author_width).apply(
-            img, self.m.width - self.m.margin - self.m.author_width, self.m.margin
-        )
-        WLLogo(self).apply(img, self.m.margin, self.m.margin, None, self.m.logo_h)
+            AuthorBox(self, self.m.author_width).apply(
+                img, self.m.width - self.m.margin - self.m.author_width, self.m.margin
+            )
+            WLLogo(self).apply(img, self.m.margin, self.m.margin, None, self.m.logo_h)
 
                               
         for logo in self.additional_logos:
@@ -167,13 +174,13 @@ class LabelMarquiseCover(MarquiseCover):
     
     def image(self):
         img = super().image()
-
-        Label(self).apply(
-            img,
-            self.m.label_left,
-            self.marquise_height - self.m.label_top,
-            self.m.label_w,
-            self.m.label_h
-        )
+        if not self.predesigned:
+            Label(self).apply(
+                img,
+                self.m.label_left,
+                self.marquise_height - self.label_top,
+                self.m.label_w,
+                self.m.label_h
+            )
 
         return img
