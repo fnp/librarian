@@ -86,7 +86,7 @@ WL_ELEMENTS = {
     "nota": blocks.Nota,
 
     "nota_red": comments.NotaRed,
-    "extra": comments.Abstrakt,
+    "extra": comments.Uwaga,
     "abstrakt": comments.Abstrakt,
 
     "naglowek_czesc": headers.NaglowekCzesc,
