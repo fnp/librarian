@@ -1,33 +1,28 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import print_function, unicode_literals
-
+import io
 import os
 import re
 import shutil
 from tempfile import NamedTemporaryFile
 import urllib
 from lxml import etree
-import six
-from six.moves.urllib.request import FancyURLopener
+from urllib.request import FancyURLopener
 from .util import makedirs
 
 # Compatibility imports.
 from .meta.types.wluri import WLURI
 
 
-@six.python_2_unicode_compatible
 class UnicodeException(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
         args = self.args[0] if len(self.args) == 1 else self.args
         try:
-            message = six.text_type(args)
+            message = str(args)
         except UnicodeDecodeError:
-            message = six.text_type(args, encoding='utf-8', errors='ignore')
+            message = str(args, encoding='utf-8', errors='ignore')
         return message
 
 
@@ -49,7 +44,7 @@ class NoProvider(UnicodeException):
     pass
 
 
-class XMLNamespace(object):
+class XMLNamespace:
     '''A handy structure to repsent names in an XML namespace.'''
 
     def __init__(self, uri):
@@ -86,7 +81,7 @@ PLMETNS = XMLNamespace("http://dl.psnc.pl/schemas/plmet/")
 WLNS = EmptyNamespace()
 
 
-class DocProvider(object):
+class DocProvider:
     """Base class for a repository of XML files.
 
     Used for generating joined files, like EPUBs.
@@ -113,7 +108,7 @@ def get_resource(path):
     return os.path.join(os.path.dirname(__file__), path)
 
 
-class OutputFile(object):
+class OutputFile:
     """Represents a file returned by one of the converters."""
 
     _bytes = None
@@ -155,7 +150,7 @@ class OutputFile(object):
         """Get file as a file-like object."""
 
         if self._bytes is not None:
-            return six.BytesIO(self._bytes)
+            return io.BytesIO(self._bytes)
         elif self._filename is not None:
             return open(self._filename, 'rb')
 
@@ -182,7 +177,7 @@ class OutputFile(object):
 
 
 class URLOpener(FancyURLopener):
-    version = 'FNP Librarian (http://github.com/fnp/librarian)'
+    version = 'WL Librarian (http://github.com/fnp/librarian)'
 
 
 urllib._urlopener = URLOpener()

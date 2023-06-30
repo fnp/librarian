@@ -1,3 +1,6 @@
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 import PIL.ImageFont
 from librarian import get_resource
 from librarian.cover import Metric
@@ -21,7 +24,7 @@ class TitleBox(Widget):
         title_font = PIL.ImageFont.truetype(
             get_resource('fonts/SourceSans3VF-Roman.ttf'),
             self.m.font_size,
-            layout_engine=PIL.ImageFont.LAYOUT_BASIC
+            layout_engine=PIL.ImageFont.Layout.BASIC
         )
         title_font.set_variation_by_axes([800])
 

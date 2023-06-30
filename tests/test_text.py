@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import unicode_literals
-
 import unittest
 from librarian import NoDublinCore
 from librarian.builders import builders
 from librarian.parser import WLDocument as LegacyWLDocument
 from librarian.document import WLDocument
-from nose.tools import *
 from .utils import get_fixture
 
 
@@ -48,17 +43,15 @@ class TextTests(unittest.TestCase):
         with open(expected_output_file_path, 'rb') as f:
             self.assertEqual(text, f.read().decode('utf-8'))
 
+    def test_no_dublincore(self):
+        with self.assertRaises(NoDublinCore):
+            LegacyWLDocument.from_file(
+                get_fixture('text', 'asnyk_miedzy_nami_nodc.xml')
+            ).as_text()
 
-@raises(NoDublinCore)
-def test_no_dublincore():
-    LegacyWLDocument.from_file(
-            get_fixture('text', 'asnyk_miedzy_nami_nodc.xml')
-        ).as_text()
-
-
-def test_passing_parse_dublincore_to_transform():
-    """Passing parse_dublincore=False to the constructor omits DublinCore parsing."""
-    LegacyWLDocument.from_file(
+    def test_passing_parse_dublincore_to_transform(self):
+        """Passing parse_dublincore=False to the constructor omits DublinCore parsing."""
+        LegacyWLDocument.from_file(
             get_fixture('text', 'asnyk_miedzy_nami_nodc.xml'),
             parse_dublincore=False,
         ).as_text()

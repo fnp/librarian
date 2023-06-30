@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import unicode_literals
-
 import re
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
-from six import BytesIO
+from io import BytesIO
 from librarian import get_resource, OutputFile, URLOpener
 
 
-class Metric(object):
+class Metric:
     """Gets metrics from an object, scaling it by a factor."""
     def __init__(self, obj, scale):
         self._obj = obj
@@ -25,7 +21,7 @@ class Metric(object):
             return src
 
 
-class TextBox(object):
+class TextBox:
     """Creates an Image with a series of centered strings."""
 
     SHADOW_X = 3
@@ -108,7 +104,7 @@ class TextBox(object):
         return image
 
 
-class Cover(object):
+class Cover:
     """Abstract base class for cover images generator."""
     width = 600
     height = 800
@@ -216,7 +212,7 @@ class Cover(object):
 
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size,
-            layout_engine=ImageFont.LAYOUT_BASIC)
+            layout_engine=ImageFont.Layout.BASIC)
         for pa in self.pretty_authors():
             tbox.text(pa, self.author_color, author_font, metr.author_lineskip,
                       self.author_shadow)
@@ -230,7 +226,7 @@ class Cover(object):
             )
         title_font = ImageFont.truetype(
             self.title_font_ttf, metr.title_font_size,
-            layout_engine=ImageFont.LAYOUT_BASIC)
+            layout_engine=ImageFont.Layout.BASIC)
         tbox.text(self.pretty_title(), self.title_color, title_font,
                   metr.title_lineskip, self.title_shadow)
         text_img = tbox.image()
@@ -244,7 +240,7 @@ class Cover(object):
             img = img.resize((
                     int(round(img.size[0] * self.scale_after)),
                     int(round(img.size[1] * self.scale_after))),
-                Image.ANTIALIAS)
+                Image.Resampling.LANCZOS)
         return img
 
     def mime_type(self):
@@ -306,22 +302,22 @@ class WLCover(Cover):
     format = 'JPEG'
 
     epoch_colors = {
-        u'Starożytność': '#9e3610',
-        u'Średniowiecze': '#564c09',
-        u'Renesans': '#8ca629',
-        u'Barok': '#a6820a',
-        u'Oświecenie': '#f2802e',
-        u'Romantyzm': '#db4b16',
-        u'Pozytywizm': '#961060',
-        u'Modernizm': '#7784e0',
-        u'Dwudziestolecie międzywojenne': '#3044cf',
-        u'Współczesność': '#06393d',
+        'Starożytność': '#9e3610',
+        'Średniowiecze': '#564c09',
+        'Renesans': '#8ca629',
+        'Barok': '#a6820a',
+        'Oświecenie': '#f2802e',
+        'Romantyzm': '#db4b16',
+        'Pozytywizm': '#961060',
+        'Modernizm': '#7784e0',
+        'Dwudziestolecie międzywojenne': '#3044cf',
+        'Współczesność': '#06393d',
     }
     set_title_color = True
 
     kind_box_position = {
-        u'Liryka': 'top',
-        u'Epika': 'bottom',
+        'Liryka': 'top',
+        'Epika': 'bottom',
     }
 
     def __init__(self, book_info, format=None, width=None, height=None,
@@ -387,7 +383,7 @@ class WLCover(Cover):
                       )
         author_font = ImageFont.truetype(
             self.author_font_ttf, metr.author_font_size,
-            layout_engine=ImageFont.LAYOUT_BASIC)
+            layout_engine=ImageFont.Layout.BASIC)
         for pa in self.pretty_authors():
             box.text(pa, font=author_font, line_height=metr.author_lineskip,
                      color=self.author_color, shadow_color=self.author_shadow,
@@ -404,7 +400,7 @@ class WLCover(Cover):
         # Write title.
         title_font = ImageFont.truetype(
             self.title_font_ttf, metr.title_font_size,
-            layout_engine=ImageFont.LAYOUT_BASIC)
+            layout_engine=ImageFont.Layout.BASIC)
         box.text(self.pretty_title(),
                  line_height=metr.title_lineskip,
                  font=title_font,
@@ -508,7 +504,7 @@ class WLCover(Cover):
                     cut = 0
                 else:
                     cut = (resized[1] - trg_size[1]) // 2
-                src = src.resize(resized, Image.ANTIALIAS)
+                src = src.resize(resized, Image.Resampling.LANCZOS)
                 src = src.crop((0, cut, src.size[0], src.size[1] - cut))
             else:
                 resized = (
@@ -516,7 +512,7 @@ class WLCover(Cover):
                     trg_size[1],
                 )
                 cut = (resized[0] - trg_size[0]) // 2
-                src = src.resize(resized, Image.ANTIALIAS)
+                src = src.resize(resized, Image.Resampling.LANCZOS)
                 src = src.crop((cut, 0, src.size[0] - cut, src.size[1]))
 
             img.paste(src, (metr.bar_width, 0))
@@ -671,7 +667,7 @@ class LogoWLCover(WLCover):
                         logo.size[1] * widths[i] / logo.size[0] * L_scale
                     ))
                 ),
-                Image.ANTIALIAS)
+                Image.Resampling.LANCZOS)
             if self.logos_right:
                 cursor -= logo.size[0]
 
@@ -694,7 +690,7 @@ class LogoWLCover(WLCover):
             draw = ImageDraw.Draw(img2)
             author_font = ImageFont.truetype(
                 self.author_font_ttf, metr.annotation_height,
-                layout_engine=ImageFont.LAYOUT_BASIC)
+                layout_engine=ImageFont.Layout.BASIC)
             draw.text((self.annotation_height, self.annotation_height), self.annotation, font=author_font, fill='#FFFFFF')
             img2.show()
             img2 = img2.rotate(90)
@@ -884,7 +880,7 @@ class PrestigioCover(Cover):
     title_font_size = 50
 
     def pretty_title(self):
-        return u"„%s”" % self.title
+        return "„%s”" % self.title
 
 
 class BookotekaCover(Cover):

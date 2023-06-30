@@ -1,3 +1,6 @@
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 from functools import total_ordering
 from .base import MetaValue
 
@@ -33,7 +36,7 @@ class Person(MetaValue):
         return cls(surname, *names)
 
     def readable(self):
-        return u" ".join(self.first_names + (self.last_name,))
+        return " ".join(self.first_names + (self.last_name,))
 
     def __eq__(self, right):
         return (self.last_name == right.last_name

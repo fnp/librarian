@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import unicode_literals
-
 from lxml import etree
 import re
 from ebooklib import epub
@@ -21,11 +17,11 @@ def _register_function(f):
 
 def reg_substitute_entities():
     entity_substitutions = [
-        (u'---', u'—'),
-        (u'--', u'–'),
-        (u'...', u'…'),
-        (u',,', u'„'),
-        (u'"', u'”'),
+        ('---', '—'),
+        ('--', '–'),
+        ('...', '…'),
+        (',,', '„'),
+        ('"', '”'),
     ]
 
     def substitute_entities(context, text):
@@ -131,7 +127,7 @@ def mathml_latex(context, trees):
     from librarian.embeds.mathml import MathML
     text = MathML(trees[0]).to_latex().data
     # Remove invisible multiplications, they produce unwanted spaces.
-    text = text.replace(u'\u2062', '')
+    text = text.replace('\u2062', '')
     return text
 
 

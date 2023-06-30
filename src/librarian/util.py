@@ -2,10 +2,7 @@
 # by Paul Winkler
 # http://code.activestate.com/recipes/81611-roman-numerals/
 # PSFL (GPL compatible)
-from __future__ import print_function, unicode_literals
-
 import os
-import six
 
 
 def int_to_roman(input):
@@ -94,7 +91,7 @@ def roman_to_int(input):
      ...
     ValueError: input is not a valid roman numeral: IL
     """
-    if not isinstance(input, six.text_type):
+    if not isinstance(input, str):
         raise TypeError("expected string, got %s" % type(input))
     input = input.upper()
     nums = ['M', 'D', 'C', 'L', 'X', 'V', 'I']

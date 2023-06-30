@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
 """PDF creation library.
 
@@ -9,8 +7,7 @@ Creates one big XML from the book and its children, converts it to LaTeX
 with TeXML, then runs it by XeLaTeX.
 
 """
-from __future__ import print_function, unicode_literals
-
+import io
 import os
 import os.path
 import shutil
@@ -19,12 +16,13 @@ import re
 from copy import deepcopy
 from subprocess import call, PIPE
 from itertools import chain
+import urllib.parse
+import urllib.request
 
 from PIL import Image
 from Texml.processor import process
 from lxml import etree
 from lxml.etree import XMLSyntaxError, XSLTApplyError
-import six
 
 from librarian.dcparser import Person
 from librarian.parser import WLDocument
@@ -294,15 +292,15 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         # add customizations
         if customizations is not None:
-            root.set('customizations', u','.join(customizations))
+            root.set('customizations', ','.join(customizations))
 
         # add editors info
         editors = document.editors()
         if editors:
-            root.set('editors', u', '.join(sorted(
+            root.set('editors', ', '.join(sorted(
                 editor.readable() for editor in editors)))
         if document.book_info.funders:
-            root.set('funders', u', '.join(document.book_info.funders))
+            root.set('funders', ', '.join(document.book_info.funders))
         if document.book_info.thanks:
             root.set('thanks', document.book_info.thanks)
 
@@ -325,11 +323,11 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         temp = mkdtemp('-wl2pdf')
 
         for i, ilustr in enumerate(document.edoc.findall('//ilustr')):
-            url = six.moves.urllib.parse.urljoin(
+            url = urllib.parse.urljoin(
                 base_url,
                 ilustr.get('src')
             )
-            imgfile = six.moves.urllib.request.urlopen(url)
+            imgfile = urllib.request.urlopen(url)
             img = Image.open(imgfile)
 
             th_format, ext, media_type = {
@@ -371,7 +369,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
 
         tex_path = os.path.join(temp, 'doc.tex')
         fout = open(tex_path, 'wb')
-        process(six.BytesIO(texml), fout, 'utf-8')
+        process(io.BytesIO(texml), fout, 'utf-8')
         fout.close()
         del texml
 

@@ -1,13 +1,15 @@
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 from datetime import date
+import io
 import os
 import tempfile
 from ebooklib import epub
 from lxml import etree
-import six
 from librarian import functions, OutputFile, get_resource, XHTMLNS
 from librarian.cover import make_cover
 from librarian.embeds.mathml import MathML
-import librarian.epub
 from librarian.fonts import strip_font
 
 
@@ -235,7 +237,7 @@ class EpubBuilder(Builder):
 
         p = etree.XML("""<p class="info">
               <a>Ta lektura</a>, podobnie jak tysiące innych, jest dostępna on-line na stronie
-              <a href="http://www.wolnelektury.pl/">wolnelektury.pl</a>.
+              <a href="https://wolnelektury.pl/">wolnelektury.pl</a>.
             </p>""")
         p[0].attrib['href'] = str(self.document.meta.url)
         tp.append(p)
@@ -245,7 +247,7 @@ class EpubBuilder(Builder):
         
         tp.append(etree.XML("""
           <p class="info">
-            Utwór opracowany został w&#160;ramach projektu<a href="http://www.wolnelektury.pl/"> Wolne Lektury</a> przez<a href="http://www.nowoczesnapolska.org.pl/"> fundację Nowoczesna Polska</a>.
+            Utwór opracowany został w&#160;ramach projektu<a href="https://wolnelektury.pl/"> Wolne Lektury</a> przez<a href="https://fundacja.wolnelektury.pl/"> fundację Wolne Lektury</a>.
           </p>
         """))
 
@@ -253,7 +255,7 @@ class EpubBuilder(Builder):
             etree.SubElement(tp, 'p', **{"class": "info"}).text = getattr(self.document.meta, self.isbn_field)
 
         tp.append(etree.XML("""<p class="footer info">
-            <a href="http://www.wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a>
+            <a href="https://wolnelektury.pl/"><img src="logo_wolnelektury.png" alt="WolneLektury.pl" /></a>
         </p>"""))
 
         self.add_html(
@@ -280,13 +282,13 @@ class EpubBuilder(Builder):
         for i, author in enumerate(self.document.meta.authors):
             self.output.add_author(
                 author.readable(),
-                file_as=six.text_type(author),
+                file_as=str(author),
                 uid='creator{}'.format(i)
             )
         for translator in self.document.meta.translators:
             self.output.add_author(
                 translator.readable(),
-                file_as=six.text_type(translator),
+                file_as=str(translator),
                 role='trl',
                 uid='translator{}'.format(i)
             )
@@ -317,7 +319,7 @@ class EpubBuilder(Builder):
 
     def add_support_page(self):
         self.add_file(
-            get_resource('epub/support.xhtml'),
+            get_resource('res/epub/support.xhtml'),
             spine=True,
             toc='Wesprzyj Wolne Lektury'
         )
@@ -327,7 +329,7 @@ class EpubBuilder(Builder):
             media_type='image/png'
         )
         self.add_file(
-            get_resource('epub/style.css'),
+            get_resource('res/epub/style.css'),
             media_type='text/css'
         )
 
@@ -378,8 +380,6 @@ class EpubBuilder(Builder):
             encoding="utf-8",
             doctype='<!DOCTYPE html>'
         )
-
-        html = librarian.epub.squeeze_whitespace(html)
 
         self.add_file(
             content=html,
@@ -556,7 +556,7 @@ class EpubBuilder(Builder):
         p[-1].tail = '.'
         etree.SubElement(p, "br")
         p[-1].tail = (
-            "Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania "
+            "Fundacja Wolne Lektury zastrzega sobie prawa do wydania "
             "krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich "
             "i prawach pokrewnych. Wykorzystując zasoby z Wolnych Lektur, "
             "należy pamiętać o zapisach licencji oraz zasadach, które "
@@ -587,9 +587,11 @@ class EpubBuilder(Builder):
             newp().text = m.description
 
 
-        if m.editors:
+        editors = self.document.editors()
+        if editors:
             newp().text = 'Opracowanie redakcyjne i przypisy: %s.' % (
-                ', '.join(e.readable() for e in sorted(self.document.editors())))
+                ', '.join(e.readable() for e in sorted(editors))
+            )
 
         if m.funders:
             etree.SubElement(d, 'p', {'class': 'minor-info'}).text = '''Publikację wsparli i wsparły:
@@ -664,7 +666,7 @@ class EpubBuilder(Builder):
 
         cover_maker = self.make_cover
 
-        cover_file = six.BytesIO()
+        cover_file = io.BytesIO()
         cover = cover_maker(self.document.meta, width=600)
         cover.save(cover_file)
         cover_name = 'cover.%s' % cover.ext()

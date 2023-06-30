@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
 import os
 import os.path
@@ -27,24 +27,24 @@ setup(
     author="Marek Stępniowski",
     author_email='marek@stepniowski.com',
     maintainer='Radek Czajka',
-    maintainer_email='radoslaw.czajka@nowoczesnapolska.org.pl',
+    maintainer_email='radekczajka@wolnelektury.pl',
     url='http://github.com/fnp/librarian',
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    package_data={'librarian': ['xslt/*.xslt', 'xslt/*.xml', 'epub/*', 'pdf/*', 'fb2/*', 'fonts/*'] +
+    package_data={'librarian': ['xslt/*.xslt', 'pdf/*', 'fb2/*', 'fonts/*'] +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'res') +
-                                whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'font-optimizer') +
                                 whole_tree(os.path.join(os.path.dirname(__file__), 'src/librarian'), 'locale')},
     include_package_data=True,
     install_requires=[
         'lxml>=2.2,<5.0',
-        'Pillow',
-        'six',
+        'Pillow>=9.1.0',
         'texml',
         'ebooklib',
         'aeneas',
         'mutagen',
         'qrcode',
+        'requests',
+        'fonttools',
     ],
     entry_points = {
         "console_scripts": [
@@ -53,12 +53,8 @@ setup(
     },
     scripts=['scripts/book2html',
              'scripts/book2txt',
-             'scripts/book2epub',
-             'scripts/book2mobi',
              'scripts/book2pdf',
              'scripts/book2fb2',
-             'scripts/book2partner',
              'scripts/book2cover',
-             'scripts/bookfragments',
-             'scripts/genslugs'],
+             ],
 )

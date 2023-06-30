@@ -1,10 +1,10 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Andersen/Brzydkie_kaczątko">
+    <rdf:Description rdf:about="http://redakcja.wolnelektury.pl/documents/book/brzydkie-kaczatko/">
         <dc:creator xml:lang="pl">Andersen, Hans Christian</dc:creator>
         <dc:title xml:lang="pl">Brzydkie kaczątko</dc:title>
         <dc:contributor.translator xml:lang="pl">Niewiadomska, Cecylia</dc:contributor.translator>
         <dc:contributor.technical_editor xml:lang="pl">Gałecki, Dariusz</dc:contributor.technical_editor>
-        <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+        <dc:publisher xml:lang="pl">Fundacja Wolne Lektury</dc:publisher>
         <dc:subject.period xml:lang="pl">Romantyzm</dc:subject.period>
         <dc:subject.type xml:lang="pl">Epika</dc:subject.type>
         <dc:subject.genre xml:lang="pl">Baśń</dc:subject.genre>

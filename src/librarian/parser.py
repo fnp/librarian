@@ -1,26 +1,17 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import unicode_literals
-
 from collections import Counter
-
+import io
+import os
+import re
+from xml.parsers.expat import ExpatError
+from lxml import etree
+from lxml.etree import XMLSyntaxError, XSLTApplyError
 from librarian import ValidationError, NoDublinCore,  ParseError, NoProvider
 from librarian import RDFNS
 from librarian.cover import make_cover
 from librarian import dcparser
-
-from xml.parsers.expat import ExpatError
-from lxml import etree
-from lxml.etree import XMLSyntaxError, XSLTApplyError
-
-import os
-import re
-import six
-
-
 from .elements import WL_ELEMENTS
 
 
@@ -43,7 +34,7 @@ parser.set_element_class_lookup(
 
 
 
-class WLDocument(object):
+class WLDocument:
     """Legacy class, to be replaced with documents.WLDocument."""
     LINE_SWAP_EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
     provider = None
@@ -136,13 +127,13 @@ class WLDocument(object):
 
     @classmethod
     def from_bytes(cls, xml, *args, **kwargs):
-        return cls.from_file(six.BytesIO(xml), *args, **kwargs)
+        return cls.from_file(io.BytesIO(xml), *args, **kwargs)
 
     @classmethod
     def from_file(cls, xmlfile, *args, **kwargs):
 
         # first, prepare for parsing
-        if isinstance(xmlfile, six.text_type):
+        if isinstance(xmlfile, str):
             file = open(xmlfile, 'rb')
             try:
                 data = file.read()
@@ -151,14 +142,14 @@ class WLDocument(object):
         else:
             data = xmlfile.read()
 
-        if not isinstance(data, six.text_type):
+        if not isinstance(data, str):
             data = data.decode('utf-8')
 
-        data = data.replace(u'\ufeff', '')
+        data = data.replace('\ufeff', '')
 
         try:
             parser = etree.XMLParser(remove_blank_text=False)
-            tree = etree.parse(six.BytesIO(data.encode('utf-8')), parser)
+            tree = etree.parse(io.BytesIO(data.encode('utf-8')), parser)
 
             return cls(tree, *args, **kwargs)
         except (ExpatError, XMLSyntaxError, XSLTApplyError) as e:
@@ -192,9 +183,8 @@ class WLDocument(object):
             raise NoDublinCore('No Dublin Core in document.')
         for part_uri in self.book_info.parts:
             try:
-                yield self.from_file(
-                    self.provider.by_slug(part_uri.slug), provider=self.provider
-                )
+                with self.provider.by_slug(part_uri.slug) as f:
+                    yield self.from_file(f, provider=self.provider)
             except Exception as e:
                 if pass_part_errors:
                     yield e
@@ -298,17 +288,9 @@ class WLDocument(object):
         from librarian import text
         return text.transform(self, *args, **kwargs)
 
-    def as_epub(self, *args, **kwargs):
-        from librarian import epub
-        return epub.transform(self, *args, **kwargs)
-
     def as_pdf(self, *args, **kwargs):
         from librarian import pdf
         return pdf.transform(self, *args, **kwargs)
-
-    def as_mobi(self, *args, **kwargs):
-        from librarian import mobi
-        return mobi.transform(self, *args, **kwargs)
 
     def as_fb2(self, *args, **kwargs):
         from librarian import fb2
@@ -333,7 +315,7 @@ class WLDocument(object):
             if make_author_dir:
                 save_path = os.path.join(
                     save_path,
-                    six.text_type(self.book_info.author).encode('utf-8')
+                    str(self.book_info.author).encode('utf-8')
                 )
             save_path = os.path.join(save_path, self.book_info.url.slug)
             if ext:

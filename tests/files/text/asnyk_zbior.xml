@@ -5,7 +5,7 @@
 <rdf:Description rdf:about="http://redakcja.wolnelektury.pl/documents/book/asnyk-poezye/">
 <dc:creator xml:lang="pl">Asnyk, Adam</dc:creator>
 <dc:title xml:lang="pl">Poezye</dc:title>
-<dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+<dc:publisher xml:lang="pl">Fundacja Wolne Lektury</dc:publisher>
 <dc:subject.period xml:lang="pl">Pozytywizm</dc:subject.period>
 <dc:subject.type xml:lang="pl">Liryka</dc:subject.type>
 <dc:subject.genre xml:lang="pl">Wiersz</dc:subject.genre>

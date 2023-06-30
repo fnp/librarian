@@ -5,12 +5,9 @@ include tox.ini
 recursive-include scripts *.py *.css
 recursive-include tests *.py *.xml *.html *.out *.txt *.jpeg
 include src/librarian/xslt/*.xslt
-include src/librarian/xslt/*.xml
-include src/librarian/epub/*
 include src/librarian/pdf/*
 include src/librarian/fb2/*
 include src/librarian/fonts/*
 recursive-include src/librarian/locale *.po *.mo
 graft src/librarian/res
-graft src/librarian/font-optimizer
 

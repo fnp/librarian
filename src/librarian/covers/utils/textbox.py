@@ -1,3 +1,6 @@
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 import PIL.Image
 import PIL.ImageDraw
 
@@ -18,7 +21,8 @@ def split_words(text):
 def text_with_tracking(draw, tracking, pos, text, fill=None, font=None):
     x, y = pos
     for c in text:
-        width = font.getsize(c)[0]
+        # TODO: adjust for kerning?
+        width = font.getlength(c)
         draw.text((x, y), c, fill=fill, font=font)
         x += width + tracking
 

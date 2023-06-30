@@ -1,3 +1,6 @@
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 import copy
 import re
 from lxml import etree
@@ -39,11 +42,11 @@ class WLElement(etree.ElementBase):
     STRIP = False
 
     text_substitutions = [
-        (u'---', u'—'),
-        (u'--', u'–'),
-        #(u'...', u'…'),  # Temporary turnoff for epub
-        (u',,', u'„'),
-        (u'"', u'”'),
+        ('---', '—'),
+        ('--', '–'),
+        #('...', '…'),  # Temporary turnoff for epub
+        (',,', '„'),
+        ('"', '”'),
         ('\ufeff', ''),
 
         ("'", "\u2019"),    # This was enabled for epub.
@@ -113,11 +116,11 @@ class WLElement(etree.ElementBase):
             newt = ''
             wlist = re.compile(r'\w+|[^\w]', re.UNICODE).findall(text)
             for w in wlist:
-                newt += builder.hyphenator.inserted(w, u'\u00AD')
+                newt += builder.hyphenator.inserted(w, '\u00AD')
             text = newt
 
         if builder.orphans:
-            text = re.sub(r'(?<=\s\w)\s+', u'\u00A0', text)
+            text = re.sub(r'(?<=\s\w)\s+', '\u00A0', text)
 
         return text
 

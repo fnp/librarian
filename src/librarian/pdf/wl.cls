@@ -332,7 +332,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \ifflaglessadvertising
     \else
         \href{\bookurl}{Ta lektura}, podobnie jak tysiące innych, jest dostępna on-line na stronie
-        \href{http://www.wolnelektury.pl/}{wolnelektury.pl}.
+        \href{https://wolnelektury.pl/}{wolnelektury.pl}.
         \vspace{.5em}
     \fi
 
@@ -341,8 +341,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \vspace{.5em}
     \fi
 
-    Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
-    przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
+    Utwór opracowany został w ramach projektu \href{https://wolnelektury.pl/}{Wolne Lektury}
+    przez \href{https://fundacja.wolnelektury.pl}{fundację Wolne Lektury}.
 
     \end{minipage}
     \noindent \rule{\linewidth}{0.4pt}
@@ -375,7 +375,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
     Wszystkie materiały dodatkowe (przypisy, motywy literackie) są udostępnione na
     \href{https://artlibre.org/licence/lal/pl/}{Licencji Wolnej Sztuki 1.3}.
 
-    Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania
+    Fundacja Wolne Lektury zastrzega sobie prawa do wydania
     krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich
     i prawach pokrewnych. Wykorzystując zasoby z Wolnych Lektur,
     należy pamiętać o zapisach licencji oraz zasadach, które spisaliśmy
@@ -413,7 +413,7 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \vspace{.6em}
     \emph{Wesprzyj Wolne Lektury!}
 
-    Wolne Lektury to projekt fundacji Nowoczesna Polska – organizacji
+    Wolne Lektury to projekt fundacji Wolne Lektury – organizacji
     pożytku publicznego działającej na rzecz wolności korzystania
     z dóbr kultury.
 
@@ -423,13 +423,13 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \vspace{.6em}
     \emph{Jak możesz pomóc?}
 
-    Przekaż 1\% podatku na rozwój Wolnych Lektur:
-    Fundacja Nowoczesna Polska, KRS 0000070056.
+    Przekaż 1,5\% podatku na rozwój Wolnych Lektur:
+    Fundacja Wolne Lektury, KRS 0000070056.
 
-    Dołącz do \href{https://wolnelektury.pl/towarzystwo/}{Towarzystwa Przyjaciół Wolnych Lektur} i pomóż nam rozwijać bibliotekę.
+    \href{https://wolnelektury.pl/pomagam/}{Wspieraj Wolne Lektury} i pomóż nam rozwijać bibliotekę.
 
     Przekaż darowiznę na konto:
-    \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
+    \href{https://fundacja.wolnelektury.pl/pomoz-nam/darowizna/}{szczegóły na stronie Fundacji}.
 
     \color{black}
   }

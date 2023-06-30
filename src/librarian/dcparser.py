@@ -1,11 +1,11 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
 from xml.parsers.expat import ExpatError
 from datetime import date
+import io
 import time
 import re
-import six
 from librarian.util import roman_to_int
 
 from librarian import (ValidationError, NoDublinCore, ParseError, DCNS, RDFNS,
@@ -20,7 +20,7 @@ from librarian.meta.types.wluri import WLURI
 from librarian.meta.types import text
 
 
-class Field(object):
+class Field:
     def __init__(self, uri, attr_name, value_type=text.TextValue,
                  multiple=False, salias=None, **kwargs):
         self.uri = uri
@@ -103,7 +103,7 @@ class DCInfo(type):
         return super(DCInfo, mcs).__new__(mcs, classname, bases, class_dict)
 
 
-class WorkInfo(six.with_metaclass(DCInfo, object)):
+class WorkInfo(metaclass=DCInfo):
     FIELDS = (
         Field(DCNS('creator'), 'authors', Person, salias='author',
               multiple=True),
@@ -150,7 +150,7 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
     
     @classmethod
     def from_bytes(cls, xml, *args, **kwargs):
-        return cls.from_file(six.BytesIO(xml), *args, **kwargs)
+        return cls.from_file(io.BytesIO(xml), *args, **kwargs)
 
     @classmethod
     def from_file(cls, xmlfile, *args, **kwargs):
@@ -301,11 +301,11 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
                     for x in v:
                         e = etree.Element(field.uri)
                         if x is not None:
-                            e.text = six.text_type(x)
+                            e.text = str(x)
                         description.append(e)
                 else:
                     e = etree.Element(field.uri)
-                    e.text = six.text_type(v)
+                    e.text = str(v)
                     description.append(e)
 
         return root
@@ -320,9 +320,9 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
                 if field.multiple:
                     if len(v) == 0:
                         continue
-                    v = [six.text_type(x) for x in v if x is not None]
+                    v = [str(x) for x in v if x is not None]
                 else:
-                    v = six.text_type(v)
+                    v = str(v)
 
                 dc[field.name] = {'uri': field.uri, 'value': v}
         rdf['fields'] = dc
@@ -337,15 +337,15 @@ class WorkInfo(six.with_metaclass(DCInfo, object)):
                 if field.multiple:
                     if len(v) == 0:
                         continue
-                    v = [six.text_type(x) for x in v if x is not None]
+                    v = [str(x) for x in v if x is not None]
                 else:
-                    v = six.text_type(v)
+                    v = str(v)
                 result[field.name] = v
 
             if field.salias:
                 v = getattr(self, field.salias)
                 if v is not None:
-                    result[field.salias] = six.text_type(v)
+                    result[field.salias] = str(v)
 
         return result
 

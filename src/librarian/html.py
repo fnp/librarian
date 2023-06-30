@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import print_function, unicode_literals
-
+import io
 import os
 import re
 import copy
+import urllib.parse
+import urllib.request
 
 from lxml import etree
 from librarian import XHTMLNS, ParseError, OutputFile
@@ -15,7 +14,6 @@ from librarian import functions
 from PIL import Image
 
 from lxml.etree import XMLSyntaxError, XSLTApplyError
-import six
 
 
 functions.reg_substitute_entities()
@@ -23,8 +21,6 @@ functions.reg_person_name()
 
 STYLESHEETS = {
     'legacy': 'xslt/book2html.xslt',
-    'full': 'xslt/wl2html_full.xslt',
-    'partial': 'xslt/wl2html_partial.xslt'
 }
 
 
@@ -42,7 +38,7 @@ def transform_abstrakt(abstrakt_element):
     style_filename = get_stylesheet('legacy')
     style = etree.parse(style_filename)
     xml = etree.tostring(abstrakt_element, encoding='unicode')
-    document = etree.parse(six.StringIO(
+    document = etree.parse(io.StringIO(
         xml.replace('abstrakt', 'dlugi_cytat')
     ))  # HACK
     result = document.xslt(style)
@@ -56,9 +52,9 @@ def add_image_sizes(tree, gallery_path, gallery_url, base_url):
 
     for i, ilustr in enumerate(tree.findall('//ilustr')):
         rel_path = ilustr.attrib['src']
-        img_url = six.moves.urllib.parse.urljoin(base_url, rel_path)
+        img_url = urllib.parse.urljoin(base_url, rel_path)
 
-        f = six.moves.urllib.request.urlopen(img_url)
+        f = urllib.request.urlopen(img_url)
         img = Image.open(f)
         ext = {'GIF': 'gif', 'PNG': 'png'}.get(img.format, 'jpg')
 
@@ -151,8 +147,7 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, ga
         raise ParseError(e)
 
 
-@six.python_2_unicode_compatible
-class Fragment(object):
+class Fragment:
     def __init__(self, id, themes):
         super(Fragment, self).__init__()
         self.id = id
@@ -180,7 +175,7 @@ class Fragment(object):
         result = []
         for event, element in self.closed_events():
             if event == 'start':
-                result.append(u'<%s %s>' % (
+                result.append('<%s %s>' % (
                     element.tag,
                     ' '.join(
                         '%s="%s"' % (k, v)
@@ -190,7 +185,7 @@ class Fragment(object):
                 if element.text:
                     result.append(element.text)
             elif event == 'end':
-                result.append(u'</%s>' % element.tag)
+                result.append('</%s>' % element.tag)
                 if element.tail:
                     result.append(element.tail)
             else:
@@ -209,7 +204,7 @@ def extract_fragments(input_filename):
 
     # iterparse would die on a HTML document
     parser = etree.HTMLParser(encoding='utf-8')
-    buf = six.BytesIO()
+    buf = io.BytesIO()
     buf.write(etree.tostring(
         etree.parse(input_filename, parser).getroot()[0][0],
         encoding='utf-8'
@@ -294,13 +289,13 @@ def add_anchor(element, prefix, with_link=True, with_target=True,
             link_text = prefix
         anchor = etree.Element('a', href='#%s' % prefix)
         anchor.set('class', 'anchor')
-        anchor.text = six.text_type(link_text)
+        anchor.text = str(link_text)
         parent.insert(index, anchor)
 
     if with_target:
         anchor_target = etree.Element('a', name='%s' % prefix)
         anchor_target.set('class', 'target')
-        anchor_target.text = u' '
+        anchor_target.text = ' '
         parent.insert(index, anchor_target)
 
 
@@ -379,7 +374,7 @@ def add_table_of_contents(root):
     toc = etree.Element('div')
     toc.set('id', 'toc')
     toc_header = etree.SubElement(toc, 'h2')
-    toc_header.text = u'Spis treści'
+    toc_header.text = 'Spis treści'
     toc_list = etree.SubElement(toc, 'ol')
 
     for n, section, text, subsections in sections:

@@ -1,20 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import print_function, unicode_literals
-
 import os.path
 import optparse
-import six
 from librarian import DirDocProvider, ParseError
 from librarian.parser import WLDocument
 from librarian.cover import make_cover, COVER_CLASSES
 
 
-class Option(object):
+class Option:
     """Option for optparse. Use it like `optparse.OptionParser.add_option`."""
     def __init__(self, *names, **options):
         self.names = names
@@ -30,7 +24,7 @@ class Option(object):
         return getattr(options, self.name())
 
 
-class Book2Anything(object):
+class Book2Anything:
     """A class for creating book2... scripts.
 
     Subclass it for any format you want to convert to.
@@ -137,7 +131,7 @@ class Book2Anything(object):
                 if options.verbose:
                     print(main_input)
 
-            if isinstance(main_input, six.binary_type):
+            if isinstance(main_input, bytes):
                 main_input = main_input.decode('utf-8')
 
             # Where to find input?

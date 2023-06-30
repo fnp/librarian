@@ -1,5 +1,7 @@
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 import os
-import six
 import subprocess
 from tempfile import NamedTemporaryFile
 from librarian import functions, get_resource, OutputFile
@@ -41,5 +43,6 @@ class MobiBuilder(EpubBuilder):
                                '--mobi-file-type=both',
                                '--mobi-ignore-margins',
                                ], **gen_kwargs)
+        devnull.close()
         return OutputFile.from_filename(output_file.name)
 

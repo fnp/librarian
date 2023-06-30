@@ -1,5 +1,5 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Kochanowski/Pieśni/Pieśń_VII_(1)">
+    <rdf:Description rdf:about="http://redakcja.wolnelektury.pl/documents/book/piesni-piesn-vii/">
         <dc:creator xml:lang="pl">Kochanowski, Jan</dc:creator>
         <dc:title xml:lang="pl">Pieśń VII (Trudna rada w tej mierze: przyjdzie się rozjechać...)</dc:title>
         <dc:relation.isPartOf xml:lang="pl">http://www.wolnelektury.pl/lektura/piesni-ksiegi-pierwsze</dc:relation.isPartOf>
@@ -7,7 +7,7 @@
         <dc:contributor.editor xml:lang="pl">Krzyżanowski, Julian</dc:contributor.editor>
         <dc:contributor.editor xml:lang="pl">Otwinowska, Barbara</dc:contributor.editor>
         <dc:contributor.technical_editor xml:lang="pl">Gałecki, Dariusz</dc:contributor.technical_editor>
-        <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+        <dc:publisher xml:lang="pl">Fundacja Wolne Lektury</dc:publisher>
         <dc:subject.period xml:lang="pl">Renesans</dc:subject.period>
         <dc:subject.type xml:lang="pl">Liryka</dc:subject.type>
         <dc:subject.genre xml:lang="pl">Pieśń</dc:subject.genre>

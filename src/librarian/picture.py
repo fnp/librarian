@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 from operator import and_
-
+import functools
+import io
 from .dcparser import Field, WorkInfo, DCNS
 from librarian import (RDFNS, ValidationError, NoDublinCore, ParseError, WLURI)
 from xml.parsers.expat import ExpatError
@@ -10,7 +11,6 @@ from os import path
 from lxml import etree
 from lxml.etree import (XMLSyntaxError, XSLTApplyError, Element)
 import re
-import six
 
 
 class WLPictureURI(WLURI):
@@ -48,7 +48,7 @@ class PictureInfo(WorkInfo):
     )
 
 
-class ImageStore(object):
+class ImageStore:
     EXT = ['gif', 'jpeg', 'png', 'swf', 'psd', 'bmp'
            'tiff', 'tiff', 'jpc', 'jp2', 'jpf', 'jb2', 'swc',
            'aiff', 'wbmp', 'xbm']
@@ -83,7 +83,7 @@ class ImageStore(object):
         return path.join(self.dir, slug + '.' + ext)
 
 
-class WLPicture(object):
+class WLPicture:
     def __init__(self, edoc, parse_dublincore=True, image_store=None):
         self.edoc = edoc
         self.image_store = image_store
@@ -113,13 +113,13 @@ class WLPicture(object):
 
     @classmethod
     def from_bytes(cls, xml, *args, **kwargs):
-        return cls.from_file(six.BytesIO(xml), *args, **kwargs)
+        return cls.from_file(io.BytesIO(xml), *args, **kwargs)
 
     @classmethod
     def from_file(cls, xmlfile, parse_dublincore=True, image_store=None):
 
         # first, prepare for parsing
-        if isinstance(xmlfile, six.text_type):
+        if isinstance(xmlfile, str):
             file = open(xmlfile, 'rb')
             try:
                 data = file.read()
@@ -128,10 +128,10 @@ class WLPicture(object):
         else:
             data = xmlfile.read()
 
-        if not isinstance(data, six.text_type):
+        if not isinstance(data, str):
             data = data.decode('utf-8')
 
-        data = data.replace(u'\ufeff', '')
+        data = data.replace('\ufeff', '')
 
         # assume images are in the same directory
         if image_store is None and getattr(xmlfile, 'name', None):
@@ -139,7 +139,7 @@ class WLPicture(object):
 
         try:
             parser = etree.XMLParser(remove_blank_text=False)
-            tree = etree.parse(six.BytesIO(data.encode('utf-8')), parser)
+            tree = etree.parse(io.BytesIO(data.encode('utf-8')), parser)
 
             me = cls(tree, parse_dublincore=parse_dublincore,
                      image_store=image_store)
@@ -177,7 +177,7 @@ class WLPicture(object):
             return [[0, 0], [-1, -1]]
 
         def has_all_props(node, props):
-            return six.moves.reduce(
+            return functools.reduce(
                 and_, map(lambda prop: prop in node.attrib, props)
             )
 
@@ -203,18 +203,18 @@ class WLPicture(object):
             pd['coords'] = coords
 
             def want_unicode(x):
-                if not isinstance(x, six.text_type):
+                if not isinstance(x, str):
                     return x.decode('utf-8')
                 else:
                     return x
             pd['object'] = (
                 part.attrib['type'] == 'object'
-                and want_unicode(part.attrib.get('object', u''))
+                and want_unicode(part.attrib.get('object', ''))
                 or None
             )
             pd['themes'] = (
                 part.attrib['type'] == 'theme'
-                and [part.attrib.get('theme', u'')]
+                and [part.attrib.get('theme', '')]
                 or []
             )
             yield pd

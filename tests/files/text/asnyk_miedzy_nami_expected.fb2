@@ -8,9 +8,9 @@
     <epigraph>
       <p>
 					Utwór opracowany został w ramach projektu
-						<a l:href="http://www.wolnelektury.pl/">Wolne Lektury</a>
-					przez <a l:href="http://www.nowoczesnapolska.org.pl/">fundację
-						Nowoczesna Polska</a>.
+						<a l:href="https://wolnelektury.pl/">Wolne Lektury</a>
+					przez <a l:href="https://fundacja.wolnelektury.pl/">fundację
+						Wolne Lektury</a>.
 				</p>
     </epigraph>
     <section>
@@ -36,11 +36,15 @@
         <stanza>
           <v>Prócz tych wspólnych, jasnych zdrojów,</v>
           <v>Z których serce zachwyt piło;</v>
-          <v>Prócz pierwiosnków i powojów,—</v>
+          <v>Prócz pierwiosnków<a type="note" l:href="#fn1">[1]</a> i powojów,—</v>
           <v>Między nami nic nie było!</v>
         </stanza>
       </poem>
     </section>
   </body>
-  <body name="notes"/>
+  <body name="notes">
+    <section id="fn1">
+      <p><emphasis>pierwiosnek</emphasis> — taki kwiatek [przypis edytorski]</p>
+    </section>
+  </body>
 </FictionBook>

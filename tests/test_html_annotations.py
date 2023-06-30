@@ -1,24 +1,37 @@
-# -*- coding: utf-8
-from __future__ import unicode_literals
-
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
+import unittest
 from librarian.parser import WLDocument
 from librarian.html import extract_annotations
-from nose.tools import eq_
 
 
-def _test_annotation(expected, got, name):
-    assert got[0].startswith('anchor-'), "%s: Unexpected anchor: '%s', should begin with 'anchor-'" % (name, got[0])
-    eq_(expected[0], got[1], "%s: Unexpected type, expected '%s', got '%s'" % (name, expected[0], got[1]))
-    eq_(expected[1], got[2], "%s: Unexpected qualifier, expected '%s', got '%s'" % (name, expected[1], got[2]))
-    eq_(expected[2], got[3], "%s: Unexpected text representation, expected '%s', got '%s'" %
-        (name, expected[2], got[3]))
-    exp_html = '<div class="fn-%s">%s</div>' % (expected[0], expected[3])
-    eq_(exp_html, got[4], "%s: Unexpected html representation, expected '%s', got '%s'" % (name, exp_html, got[4]))
+class AnnotationsTests(unittest.TestCase):
+    def _test_annotation(self, expected, got, name):
+        self.assertTrue(
+            got[0].startswith('anchor-'),
+            "%s: Unexpected anchor: '%s', should begin with 'anchor-'" % (name, got[0])
+        )
+        self.assertEqual(
+            expected[0], got[1],
+            "%s: Unexpected type, expected '%s', got '%s'" % (name, expected[0], got[1])
+        )
+        self.assertEqual(
+            expected[1], got[2],
+            "%s: Unexpected qualifier, expected '%s', got '%s'" % (name, expected[1], got[2])
+        )
+        self.assertEqual(
+            expected[2], got[3],
+            "%s: Unexpected text representation, expected '%s', got '%s'" % (name, expected[2], got[3])
+        )
+        exp_html = '<div class="fn-%s">%s</div>' % (expected[0], expected[3])
+        self.assertEqual(
+            exp_html, got[4],
+            "%s: Unexpected html representation, expected '%s', got '%s'" % (name, exp_html, got[4])
+        )
 
-
-def test_annotations():
-    annotations = (
-
+    def test_annotations(self):
+        annotations = (
         ('<pe/>', (
             'pe',
             [],
@@ -101,15 +114,15 @@ def test_annotations():
             '\u2014 częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu. [przypis edytorski]</p>'
             ),
             'Footnote with multiple and qualifiers and emphasis.'),
+        )
 
-    )
+        xml_src = '''<utwor><akap> %s </akap></utwor>''' % "".join(
+            t[0] for t in annotations)
+        html = WLDocument.from_bytes(
+            xml_src.encode('utf-8'),
+            parse_dublincore=False).as_html().get_file()
+        res_annotations = list(extract_annotations(html))
 
-    xml_src = '''<utwor><akap> %s </akap></utwor>''' % "".join(
-        t[0] for t in annotations)
-    html = WLDocument.from_bytes(
-        xml_src.encode('utf-8'),
-        parse_dublincore=False).as_html().get_file()
-    res_annotations = list(extract_annotations(html))
-
-    for i, (src, expected, name) in enumerate(annotations):
-        yield _test_annotation, expected, res_annotations[i], name
+        for i, (src, expected, name) in enumerate(annotations):
+            with self.subTest(i=i):
+                self._test_annotation(expected, res_annotations[i], name)

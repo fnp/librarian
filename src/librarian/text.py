@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-# Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from __future__ import unicode_literals
-
 import copy
 from librarian import functions, OutputFile, get_resource
 from lxml import etree
 import io
 import os
-import six
 
 
 functions.reg_substitute_entities()
@@ -75,7 +70,7 @@ def transform(wldoc, flags=None, **options):
                 "Wszystkie materiały dodatkowe (przypisy, motywy literackie) są "
                 "udostępnione na Licencji Wolnej Sztuki 1.3: "
                 "https://artlibre.org/licence/lal/pl/\n"
-                "Fundacja Nowoczesna Polska zastrzega sobie prawa do wydania "
+                "Fundacja Wolne Lektury zastrzega sobie prawa do wydania "
                 "krytycznego zgodnie z art. Art.99(2) Ustawy o prawach autorskich "
                 "i prawach pokrewnych.\nWykorzystując zasoby z Wolnych Lektur, "
                 "należy pamiętać o zapisach licencji oraz zasadach, które "
@@ -105,7 +100,7 @@ def transform(wldoc, flags=None, **options):
                 )
             funders = ', '.join(parsed_dc.funders)
             if funders:
-                funders = u"\n\nPublikację wsparli i wsparły: %s." % funders
+                funders = "\n\nPublikację wsparli i wsparły: %s." % funders
             publisher = '\n\nWydawca: ' + ', '.join(parsed_dc.publisher)
             isbn = getattr(parsed_dc, 'isbn_txt', None)
             if isbn:
@@ -126,7 +121,7 @@ def transform(wldoc, flags=None, **options):
             'description': description,
             'url': url,
             'license_description': license_description,
-            'text': six.text_type(result),
+            'text': str(result),
             'source': source,
             'contributors': contributors,
             'funders': funders,
@@ -134,5 +129,5 @@ def transform(wldoc, flags=None, **options):
             'isbn': isbn,
         }).encode('utf-8')
     else:
-        result = six.text_type(result).encode('utf-8')
+        result = str(result).encode('utf-8')
     return OutputFile.from_bytes(b"\r\n".join(result.splitlines()) + b"\r\n")

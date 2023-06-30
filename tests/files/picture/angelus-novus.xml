@@ -1,9 +1,9 @@
 <picture>
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <rdf:Description rdf:about="http://wiki.wolnepodreczniki.pl/Lektury:Andersen/Brzydkie_kaczątko">
+    <rdf:Description rdf:about="http://redakcja.wolnelektury.pl/documents/image/angelus-novus/">
       <dc:creator xml:lang="pl">Klee, Paul</dc:creator>
       <dc:title xml:lang="la">Angelus Novus</dc:title>
-      <dc:publisher xml:lang="pl">Fundacja Nowoczesna Polska</dc:publisher>
+      <dc:publisher xml:lang="pl">Fundacja Wolne Lektury</dc:publisher>
       <dc:contributor.editor xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Sekuła, Aleksandra</dc:contributor.editor>
       <dc:contributor.editor xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Kwiatkowska, Katarzyna</dc:contributor.editor>
       <dc:contributor.technical_editor xml:lang="pl" xmlns:dc="http://purl.org/dc/elements/1.1/">Trzeciak, Weronika</dc:contributor.technical_editor>

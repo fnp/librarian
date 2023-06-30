@@ -2,7 +2,7 @@
 <!--
 
 	This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
-	Copyright © Fundacja Nowoczesna Polska. See NOTICE for more information.
+	Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -46,9 +46,9 @@
 			<epigraph>
 				<p>
 					Utwór opracowany został w&#160;ramach projektu
-						<a l:href="http://www.wolnelektury.pl/">Wolne Lektury</a>
-					przez <a l:href="http://www.nowoczesnapolska.org.pl/">fundację
-						Nowoczesna Polska</a>.
+						<a l:href="https://wolnelektury.pl/">Wolne Lektury</a>
+					przez <a l:href="https://fundacja.wolnelektury.pl/">fundację
+						Wolne Lektury</a>.
 				</p>
 			</epigraph>
 

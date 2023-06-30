@@ -1,10 +1,7 @@
-# coding: utf-8
-from __future__ import unicode_literals
-
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib2 import urlopen
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
+from urllib.request import urlopen
 from lxml import etree
 from librarian.html import add_anchors, add_table_of_contents, add_table_of_themes
 from librarian import OutputFile
@@ -101,6 +98,9 @@ class HtmlBuilder:
             )
             self.exit_fragment()
 
+        if len(self.header):
+            self.tree.insert(0, self.header)
+            
         if self.with_anchors:
             add_anchors(self.tree)
         if self.with_nota_red and len(self.nota_red):
@@ -110,9 +110,6 @@ class HtmlBuilder:
         if self.with_toc:
             add_table_of_contents(self.tree)
 
-        if len(self.header):
-            self.tree.insert(0, self.header)
-            
         if self.footnote_counter:
             fnheader = etree.Element("h3")
             fnheader.text = _("Footnotes")

@@ -3,7 +3,7 @@ License
 
   ![AGPL Logo](http://www.gnu.org/graphics/agplv3-155x51.png)
 
-    Copyright © 2008-2019 Fundacja Nowoczesna Polska <fundacja@nowoczesnapolska.org.pl>
+    Copyright © 2008-2023 Fundacja Wolne Lektury <fundacja@wolnelektury.pl>
 
     For full list of contributors see AUTHORS file.
 
@@ -24,7 +24,7 @@ License
 About
 ------
 
-Librarian converts XML-based markup language used by FNP for writing books to
+Librarian converts XML-based markup language used by WL for writing books to
 other formats, which are more suitable for presentation.
 
 Currently we support:

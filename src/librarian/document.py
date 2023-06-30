@@ -1,8 +1,11 @@
+# This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
+# Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
+#
 import gettext
 import os
 import re
+import urllib.request
 from lxml import etree
-import six
 from .parser import parser
 from . import dcparser, DCNS, DirDocProvider
 from .functions import lang_code_3to2
@@ -10,7 +13,7 @@ from .functions import lang_code_3to2
 
 class WLDocument:
     def __init__(self, filename=None, url=None, provider=None):
-        source = filename or six.moves.urllib.request.urlopen(url)
+        source = filename or urllib.request.urlopen(url)
         tree = etree.parse(source, parser=parser)
         self.tree = tree
         tree.getroot().document = self
@@ -32,10 +35,8 @@ class WLDocument:
     @property
     def children(self):
         for part_uri in self.meta.parts or []:
-            yield type(self)(
-                filename=self.provider.by_slug(part_uri.slug),
-                provider=self.provider
-            )
+            with self.provider.by_slug(part_uri.slug) as f:
+                yield type(self)(filename=f, provider=self.provider)
     
     def build(self, builder, base_url=None, **kwargs):
         return builder(base_url=base_url).build(self, **kwargs)
