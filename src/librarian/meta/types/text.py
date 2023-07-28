@@ -25,6 +25,9 @@ class LegimiCategory(NameIdentifier):
 class ThemaCategory(NameIdentifier):
     pass
 
+class MainThemaCategory(ThemaCategory):
+    pass
+
 
 class Epoch(NameIdentifier):
     pass
