@@ -362,8 +362,8 @@ class BookInfo(WorkInfo):
         Field(DCNS('subject.genre'), 'genres', text.Genre, salias='genre', multiple=True,
               required=False),
         Field('category.legimi', 'legimi', text.LegimiCategory, required=False),
-        Field('category.thema.main', 'thema_main', text.ThemaCategory, required=False),
-        Field('category.thema', 'thema', text.MainThemaCategory, required=False, multiple=True),
+        Field('category.thema.main', 'thema_main', text.MainThemaCategory, required=False),
+        Field('category.thema', 'thema', text.ThemaCategory, required=False, multiple=True),
         Field(DCNS('subject.location'), 'location', required=False),
 
         Field(DCNS('contributor.translator'), 'translators',
