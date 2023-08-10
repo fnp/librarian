@@ -67,64 +67,6 @@ class WLDocument:
         else:
             self.book_info = None
 
-    def get_statistics(self):
-        def count_text(text, counter, in_fn=False, stanza=False):
-            if text:
-                text = re.sub(r'\s+', ' ', text)
-
-                chars = len(text) if text.strip() else 0
-                words = len(text.split()) if text.strip() else 0
-                
-                counter['chars_with_fn'] += chars
-                counter['words_with_fn'] += words
-                if not in_fn:
-                    counter['chars'] += chars
-                    counter['words'] += words
-                if not stanza:
-                    counter['chars_out_verse_with_fn'] += chars
-                    if not in_fn:
-                        counter['chars_out_verse'] += chars
-                
-        def count(elem, counter, in_fn=False, stanza=False):
-            if elem.tag in (RDFNS('RDF'), 'nota_red', 'abstrakt', 'uwaga', 'ekstra'):
-                return
-            if not in_fn and elem.tag in ('pa', 'pe', 'pr', 'pt', 'motyw'):
-                in_fn = True
-            if elem.tag == 'strofa':
-                # count verses now
-                verses = len(elem.findall('.//br')) + 1
-                counter['verses_with_fn'] += verses
-                if not in_fn:
-                    counter['verses'] += verses
-                stanza = True
-            count_text(elem.text, counter, in_fn=in_fn, stanza=stanza)
-            for child in elem:
-                count(child, counter, in_fn=in_fn, stanza=stanza)
-                count_text(child.tail, counter, in_fn=in_fn, stanza=stanza)
-
-        self.swap_endlines()
-
-        data = {
-            "self": Counter(),
-            "parts": [],
-            "total": {
-            }
-        }
-
-        count(self.edoc.getroot(), data['self'])
-        for k, v in data['self'].items():
-            data['total'][k] = v
-        
-        for part in self.parts(pass_part_errors=True):
-            if isinstance(part, Exception):
-                data['parts'].append((None, {}))
-            else:
-                data['parts'].append((part, part.get_statistics()))
-                for k, v in data['parts'][-1][1]['total'].items():
-                    data['total'][k] = data['total'].get(k, 0) + v
-            
-        return data
-
     @classmethod
     def from_bytes(cls, xml, *args, **kwargs):
         return cls.from_file(io.BytesIO(xml), *args, **kwargs)

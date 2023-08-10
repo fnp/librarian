@@ -2,6 +2,54 @@
 
 This document records all notable changes to Librarian.
 
+## 23.08
+
+- Move statistics counter to L2 WLDocument.
+
+## 23.07.1
+
+- Add <category.thema.main>.
+
+## 2.6.1
+
+- Fix for better ignoring <extra>.
+
+## 2.6
+
+- Change default cover to marquise.
+- Add support for full predesigned covers to marquise.
+- Remove support for changing actual cover class via coverClass.
+
+## 2.5.1
+
+- Bugfix release.
+
+## 2.5
+
+- Add html-snippet builder.
+- Remove DateValue class.
+- Fix some texts and tests.
+- Drop Python < 3.6. Up to 3.9 is supported.
+
+## 2.4.13
+
+- Added thema meta field.
+
+## 2.4.12
+
+- Fix for marquise cover: allow scaling title text in all layouts.
+
+## 2.4.11.1
+
+- Added assigning and preserving id attribute .
+
+## 2.4.10
+
+- Added <wers_srodek>, <tab>, <rownlolegle> and <blok>.
+
+## 2.4.9
+
+- Added verse counters to document statistics.
 
 ## 2.4.8 (2022-07-23)
 
