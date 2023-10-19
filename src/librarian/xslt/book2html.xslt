@@ -394,31 +394,31 @@
     <xsl:param name="verse-content" />
     <xsl:param name="verse-type" />
     <div class="verse">
+      <xsl:attribute name="class">
+        <xsl:text>verse</xsl:text>
         <xsl:choose>
             <xsl:when test="name($verse-type) = 'wers_akap'">
-                <xsl:attribute name="style">padding-left: 1em</xsl:attribute>
+              <xsl:text> verse-p</xsl:text>
             </xsl:when>
             <xsl:when test="name($verse-type) = 'wers_wciety'">
-                <xsl:choose>
-                    <xsl:when test="$verse-content/@typ">
-                        <xsl:attribute name="style">padding-left: <xsl:value-of select="$verse-content/@typ" />em</xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="style">padding-left: 1em</xsl:attribute>
-                    </xsl:otherwise>
-                </xsl:choose>
+              <xsl:text> verse-indent</xsl:text>
+              <xsl:if test="$verse-content/@typ">
+                <xsl:text> verse-indent-</xsl:text>
+                <xsl:value-of select="$verse-content/@typ" />
+              </xsl:if>
             </xsl:when>
             <xsl:when test="name($verse-type) = 'wers_cd'">
-                <xsl:attribute name="style">padding-left: 12em</xsl:attribute>
+              <xsl:text> verse-cont</xsl:text>
             </xsl:when>
             <xsl:when test="name($verse-type) = 'wers_do_prawej'">
-                <xsl:attribute name="style">text-align: right</xsl:attribute>
+              <xsl:text> verse-right</xsl:text>
             </xsl:when>
             <xsl:when test="name($verse-type) = 'wers_srodek'">
-                <xsl:attribute name="style">text-align: center</xsl:attribute>
+              <xsl:text> verse-center</xsl:text>
             </xsl:when>
         </xsl:choose>
-        <xsl:apply-templates select="$verse-content" mode="inline" />
+      </xsl:attribute>
+      <xsl:apply-templates select="$verse-content" mode="inline" />
     </div>
 </xsl:template>
 

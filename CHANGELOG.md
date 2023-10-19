@@ -2,6 +2,10 @@
 
 This document records all notable changes to Librarian.
 
+## 23.10
+
+- Remove direct verse styling from HTML.
+
 ## 23.08
 
 - Move statistics counter to L2 WLgit lDocument.
