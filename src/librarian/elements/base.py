@@ -136,6 +136,8 @@ class WLElement(etree.ElementBase):
         for i, child in enumerate(self):
             if isinstance(child, WLElement):
                 getattr(child, build_method)(builder)
+            elif getattr(builder, 'debug') and child.tag is etree.Comment:
+                builder.process_comment(child)
             if self.CAN_HAVE_TEXT and child.tail:
                 text = self.normalize_text(child.tail, builder)
                 if self.STRIP and i == child_count - 1:
@@ -198,7 +200,7 @@ class WLElement(etree.ElementBase):
         # TEMPORARY
         self.CAN_HAVE_TEXT = True
         self.STRIP = False
-       
+
         start_chunk = self.EPUB_START_CHUNK and isinstance(self.getparent(), Master)
 
         if start_chunk:
@@ -220,6 +222,11 @@ class WLElement(etree.ElementBase):
             attr = self.get_epub_attr(builder)
             if fragment:
                 attr['id'] = fragment
+            if builder.debug:
+                chunkno, sourceline = 0, self.sourceline
+                if builder.splits:
+                    chunkno, sourceline = len(builder.splits), sourceline - builder.splits[-1]
+                attr['data-debug'] = f'{chunkno}:{sourceline}'
             builder.start_element(
                 self.EPUB_TAG,
                 attr

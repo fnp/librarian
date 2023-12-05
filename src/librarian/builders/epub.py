@@ -4,6 +4,7 @@
 from datetime import date
 import io
 import os
+import re
 import tempfile
 from ebooklib import epub
 from lxml import etree
@@ -80,9 +81,11 @@ class EpubBuilder(Builder):
     isbn_field = 'isbn_epub'
     orphans = True
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, debug=False, **kwargs):
         self.chars = set()
         self.fundr = 0
+        self.debug = debug
+        self.splits = []
         super().__init__(*args, **kwargs)
     
     def build(self, document, **kwargs):
@@ -707,3 +710,8 @@ class EpubBuilder(Builder):
             file_name=name
         )
         return name
+
+    def process_comment(self, comment):
+        m = re.match(r'TRIM:(\d+)', comment.text)
+        if m is not None:
+            self.splits.append(comment.sourceline - int(m.group(1)))

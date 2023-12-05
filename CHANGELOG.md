@@ -2,6 +2,10 @@
 
 This document records all notable changes to Librarian.
 
+## 23.12
+
+- Added debug version for epub and epubcheck utility.
+
 ## 23.10
 
 - Remove direct verse styling from HTML.
