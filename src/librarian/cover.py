@@ -163,6 +163,7 @@ class Cover:
         if format is not None:
             self.format = format
         self.set_size(width, height)
+        self.cover_logo = cover_logo
 
     def set_size(self, width, height):
         if width and height:

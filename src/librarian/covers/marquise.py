@@ -7,7 +7,7 @@ from .utils.color import algo_contrast_or_hue, luminance, is_very_bright
 from .utils.textbox import DoesNotFit
 from .widgets.author import AuthorBox
 from .widgets.background import Background
-from .widgets.image import WLLogo, Label
+from .widgets.image import WLLogo, Label, LogoSticker
 from .widgets.marquise import Marquise
 from .widgets.title import TitleBox
 
@@ -21,6 +21,10 @@ class MarquiseCover(Cover):
     margin = 100
     logo_h = 177
     author_width = 1300
+    sticker_size = 400
+    sticker_padding_x = 30
+    sticker_padding_y = 50
+    sticker_radius = 10
 
     title_box_top = 262
 
@@ -160,7 +164,14 @@ class MarquiseCover(Cover):
             )
             WLLogo(self).apply(img, self.m.margin, self.m.margin, None, self.m.logo_h)
 
-                              
+
+        if self.cover_logo:
+            LogoSticker(self, self.cover_logo).apply(
+                img,
+                self.m.width - self.m.margin - self.m.sticker_size,
+                self.m.height - self.m.margin,
+                self.m.sticker_size, self.m.sticker_size, self.m.sticker_padding_x, self.m.sticker_padding_y, self.m.sticker_radius
+            )
         for logo in self.additional_logos:
             LogoSticker(self, logo).apply(img, 0, 0)
 
