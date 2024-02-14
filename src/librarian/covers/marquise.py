@@ -20,7 +20,7 @@ class MarquiseCover(Cover):
     height = 2970
     margin = 100
     logo_h = 177
-    author_width = 1300
+    author_width = 1400
     sticker_size = 400
     sticker_padding_x = 30
     sticker_padding_y = 50
