@@ -2,6 +2,14 @@
 
 This document records all notable changes to Librarian.
 
+## 24.4
+
+- Add fundraising inserts in PDF.
+
+## 24.1
+
+- Added cover logos support.
+
 ## 23.12
 
 - Added debug version for epub and epubcheck utility.
