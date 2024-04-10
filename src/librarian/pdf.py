@@ -196,7 +196,7 @@ def add_fundraising(doc, fundraising):
         naglowek.addprevious(spot)
         spots.append(spot)
     spot = etree.Element('f_spot')
-    doc.getroot()[-1][-1].append(spot)
+    doc.getroot()[-1].append(spot)
     spots.append(spot)
     e = len(spots)
     nfunds = len(fundraising)
