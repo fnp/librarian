@@ -678,4 +678,39 @@
 </xsl:template>
 
 
+
+<xsl:template match="f_spot">
+  <xsl:if test="@active">
+    <cmd name="clearpage"/>
+    <cmd name="thispagestyle"><parm>empty</parm></cmd>
+    <cmd name="vspace*"><parm><cmd name="fill"/></parm></cmd>
+    <env name="center">
+      <env name="framed">
+        <cmd name="vspace*"><parm>2em</parm></cmd>
+        <cmd name="Large"><parm>
+          <xsl:apply-templates mode="fspot"/>
+        </parm></cmd>
+        <cmd name="vspace*"><parm>2em</parm></cmd>
+      </env>
+    </env>
+    <cmd name="vspace*"><parm><cmd name="fill"/></parm></cmd>
+  </xsl:if>
+</xsl:template>
+<xsl:template match="br" mode="fspot">
+  <TeXML escape="0">
+    \\
+  </TeXML>
+</xsl:template>
+<xsl:template match="text()" mode="fspot">
+  <xsl:value-of select="." />
+</xsl:template>
+<xsl:template match="a" mode="fspot">
+  <TeXML escape="0">\href{<xsl:value-of select="@href" />}{<TeXML escape="1"><xsl:apply-templates mode="fspot" /></TeXML>}</TeXML>
+</xsl:template>
+<xsl:template match="nbsp" mode="fspot">
+  <spec cat="tilde" />
+</xsl:template>
+
+
+
 </xsl:stylesheet>

@@ -188,6 +188,29 @@ def hack_motifs(doc):
                 break
 
 
+def add_fundraising(doc, fundraising):
+    # Before each naglowek_rozdzial and naglowek_scena and in the end
+    spots = []
+    for naglowek in doc.xpath('//naglowek_czesc|//naglowek_akt'):
+        spot = etree.Element('f_spot')
+        naglowek.addprevious(spot)
+        spots.append(spot)
+    spot = etree.Element('f_spot')
+    doc.getroot()[-1][-1].append(spot)
+    spots.append(spot)
+    e = len(spots)
+    nfunds = len(fundraising)
+    if e > 4 * nfunds:
+        nfunds *= 2
+    for f in range(nfunds):
+        spot_index = int(f / nfunds * e)
+        spots[spot_index].set('active', 'true')
+        elem = etree.fromstring('<f_spot>' + fundraising[f % len(fundraising)] + '</f_spot>')
+        spots[spot_index].text = elem.text
+        for c in elem:
+            spots[spot_index].append(c)
+
+
 def parse_creator(doc):
     """Generates readable versions of creator and translator tags.
 
@@ -242,7 +265,7 @@ def package_available(package, args='', verbose=False):
 
 def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
               cover=None, flags=None, customizations=None, base_url='file://./',
-              latex_dir=False):
+              latex_dir=False, fundraising=None):
     """ produces a PDF file with XeLaTeX
 
     wldoc: a WLDocument
@@ -305,6 +328,8 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
             root.set('thanks', document.book_info.thanks)
 
         # hack the tree
+        if fundraising:
+            add_fundraising(document.edoc, fundraising)
         move_motifs_inside(document.edoc)
         hack_motifs(document.edoc)
         parse_creator(document.edoc)

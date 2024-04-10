@@ -722,6 +722,7 @@ Letters={Uppercase}
 \par{\emph{#1}}%
 }
 
+\usepackage{framed}
 \usepackage{intcalc}
 \usepackage{color}
 \definecolor{gray}{RGB}{200,200,200}
