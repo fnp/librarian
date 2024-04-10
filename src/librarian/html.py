@@ -39,7 +39,7 @@ def transform_abstrakt(abstrakt_element):
     style = etree.parse(style_filename)
     xml = etree.tostring(abstrakt_element, encoding='unicode')
     document = etree.parse(io.StringIO(
-        xml.replace('abstrakt', 'dlugi_cytat')
+        xml.replace('<abstrakt', '<dlugi_cytat').replace('</abstrakt', '</dlugi_cytat')
     ))  # HACK
     result = document.xslt(style)
     html = re.sub('<a name="sec[0-9]*"/>', '',
@@ -49,6 +49,10 @@ def transform_abstrakt(abstrakt_element):
 
 def add_image_sizes(tree, gallery_path, gallery_url, base_url):
     widths = [360, 600, 1200, 1800, 2400]
+    try:
+        os.makedirs(gallery_path)
+    except:
+        pass
 
     for i, ilustr in enumerate(tree.findall('//ilustr')):
         rel_path = ilustr.attrib['src']
