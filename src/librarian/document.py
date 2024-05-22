@@ -81,6 +81,7 @@ class WLDocument:
         """
         EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
         def _compat_assign_ordered_ids_in_elem(elem, i):
+            if isinstance(elem, etree._Comment): return i
             elem.attrib['_compat_ordered_id'] = str(i)
             i += 1
             if getattr(elem, 'HTML_CLASS', None) == 'stanza':
