@@ -8,6 +8,9 @@ from PIL import Image
 from ..base import WLElement
 
 
+MAX_PNG_WEIGHT = 200000
+
+
 class Ilustr(WLElement):
     SHOULD_HAVE_ID = True
 
@@ -28,7 +31,7 @@ class Ilustr(WLElement):
             'PNG': ('PNG', 'png', 'image/png'),
         }.get(img.format, ('JPEG', 'jpg', 'image/jpeg'))
 
-        width = 1200
+        width = 600
         if img.size[0] < width:
             th = img
         else:
@@ -36,6 +39,19 @@ class Ilustr(WLElement):
 
         buffer = io.BytesIO()
         th.save(buffer, format=th_format)
+
+        # Limit PNG to 200K. If larger, convert to JPEG.
+        if th_format == 'PNG' and buffer.tell() > MAX_PNG_WEIGHT:
+            th_format, ext, media_type = 'JPEG', 'jpg', 'image/jpeg'
+            if th.mode != 'RGB':
+                buffer = io.BytesIO()
+                th = Image.alpha_composite(
+                    Image.new('RGBA', th.size, '#fff'),
+                    th.convert('RGBA')
+                )
+                th = th.convert('RGB')
+            th.save(buffer, format=th_format)
+
         imgfile.close()
         file_name = 'image%d.%s' % (
             builder.assign_image_number(),

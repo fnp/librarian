@@ -2,6 +2,11 @@
 
 This document records all notable changes to Librarian.
 
+## 24.5
+
+- Smaller images in EPUB (600px width instead of 1200px).
+- Convert PNG to JPEGs if too large in EPUBs.
+
 ## 24.4
 
 - Add fundraising inserts in PDF.
