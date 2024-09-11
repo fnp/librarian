@@ -5,9 +5,10 @@ from ..base import WLElement
 
 
 class NaglowekListy(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     HTML_TAG = "h3"
+    HTML_CLASS = "wl"
 
     EPUB_TAG = "div"
     EPUB_CLASS = "h3"

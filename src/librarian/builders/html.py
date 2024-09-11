@@ -1,30 +1,38 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
+from collections import defaultdict
+import os
 from urllib.request import urlopen
 from lxml import etree
-from librarian.html import add_anchors, add_table_of_contents, add_table_of_themes
+from librarian.html import add_table_of_contents, add_table_of_themes, add_image_sizes
 from librarian import OutputFile
 
 
 class HtmlBuilder:
     file_extension = "html"
-    with_anchors = True
     with_themes = True
     with_toc = True
     with_footnotes = True
     with_nota_red = True
+    with_ids = True
+    with_numbering = True
     no_externalities = False
     orphans = True
 
-    def __init__(self, base_url=None):
-        self._base_url = base_url
+    root_tag = 'div'
+    root_attrib = {'id': 'book-text'}
 
-        self.tree = text = etree.Element('div', **{'id': 'book-text'})
+    def __init__(self, gallery_path=None, gallery_url=None, base_url=None):
+        self._base_url = base_url
+        self.gallery_path = gallery_path
+        self.gallery_url = gallery_url
+
+        self.tree = text = etree.Element(self.root_tag, **self.root_attrib)
         self.header = etree.Element('h1')
 
         self.footnotes = etree.Element('div', id='footnotes')
-        self.footnote_counter = 0
+        self.counters = defaultdict(lambda: 1)
 
         self.nota_red = etree.Element('div', id='nota_red')
 
@@ -61,19 +69,38 @@ class HtmlBuilder:
     def forget_fragment(self, name):
         del self.cursors[name]
 
-    def preprocess(self, document):
-        document._compat_assign_ordered_ids()
-        document._compat_assign_section_ids()
-
-    def build(self, document, **kwargs):
+    def build(self, document, element=None, **kwargs):
         self.document = document
 
-        self.preprocess(document)
-        document.tree.getroot().html_build(self)
+        self.assign_ids(self.document.tree)
+        self.prepare_images()
+
+        if element is None:
+            element = document.tree.getroot()
+
+        element.html_build(self)
         self.postprocess(document)
         return self.output()
 
+    def assign_ids(self, tree):
+        # Assign IDs depth-first, to account for any <numeracja> inside.
+        for _e, elem in etree.iterwalk(tree, events=('end',)):
+            if getattr(elem, 'NUMBERING', None):
+                elem.assign_id(self)
+
+    def prepare_images(self):
+        # Temporarily use the legacy method, before transitioning to external generators.
+        if self.gallery_path is None:
+            return
+        try:
+            os.makedirs(self.gallery_path)
+        except OSError:
+            pass
+        add_image_sizes(self.document.tree, self.gallery_path, self.gallery_url, self.base_url)
+
     def output(self):
+        if not len(self.tree):
+            return None
         return OutputFile.from_bytes(
             etree.tostring(
                 self.tree,
@@ -84,7 +111,7 @@ class HtmlBuilder:
         )
 
     def postprocess(self, document):
-        _ = document.tree.getroot().master.gettext
+        _ = document.tree.getroot().gettext
 
         if document.meta.translators:
             self.enter_fragment('header')
@@ -101,8 +128,6 @@ class HtmlBuilder:
         if len(self.header):
             self.tree.insert(0, self.header)
             
-        if self.with_anchors:
-            add_anchors(self.tree)
         if self.with_nota_red and len(self.nota_red):
             self.tree.append(self.nota_red)
         if self.with_themes:
@@ -110,7 +135,7 @@ class HtmlBuilder:
         if self.with_toc:
             add_table_of_contents(self.tree)
 
-        if self.footnote_counter:
+        if self.counters['fn'] > 1:
             fnheader = etree.Element("h3")
             fnheader.text = _("Footnotes")
             self.footnotes.insert(0, fnheader)
@@ -133,6 +158,15 @@ class HtmlBuilder:
         else:
             cursor.text = (cursor.text or '') + text
 
+    def add_visible_number(self, element):
+        assert '_id' in element.attrib, etree.tostring(element)
+        self.start_element('a', {
+            'href': f'#{element.attrib["_id"]}',
+            'class': 'wl-num',
+        })
+        self.push_text(element.attrib['_visible_numbering'])
+        self.end_element()
+
 
 class StandaloneHtmlBuilder(HtmlBuilder):
     css_url = "https://static.wolnelektury.pl/css/compressed/book_text.css"
@@ -147,7 +181,6 @@ class StandaloneHtmlBuilder(HtmlBuilder):
 
         head = etree.Element('head')
         tree.insert(0, head)
-
 
         etree.SubElement(head, 'meta', charset='utf-8')
         etree.SubElement(head, 'title').text = document.meta.title
@@ -185,23 +218,41 @@ class StandaloneHtmlBuilder(HtmlBuilder):
 
 
 class SnippetHtmlBuilder(HtmlBuilder):
-    with_anchors = False
     with_themes = False
     with_toc = False
     with_footnotes = False
     with_nota_red = False
-    with_refs = False
+    with_ids = False
+    with_numbering = False
+
+
+class AbstraktHtmlBuilder(HtmlBuilder):
+    with_themes = False
+    with_toc = False
+    with_footnotes = False
+    with_nota_red = False
+    with_ids = False
+    with_numbering = False
+
+    root_tag = 'blockquote'
+    root_attrib = {}
+
+    def build(self, document, element=None, **kwargs):
+        if element is None:
+            element = document.tree.find('//abstrakt')
+        element.attrib['_force'] = '1'
+        return super().build(document, element, **kwargs)
 
             
 class DaisyHtmlBuilder(StandaloneHtmlBuilder):
     file_extension = 'xhtml'
-    with_anchors = False
     with_themes = False
     with_toc = False
     with_footnotes = False
     with_nota_red = False
     with_deep_identifiers = False
     no_externalities = True
+    with_numbering = False
 
     def output(self):
         tree = etree.ElementTree(self.tree)

@@ -5,9 +5,10 @@ from ..base import WLElement
 
 
 class MottoPodpis(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
+
     HTML_TAG = "p"
-    EPUB_CLASS = HTML_CLASS = "motto_podpis"
+    HTML_CLASS = "wl motto_podpis"
 
     EPUB_TAG = "div"
-    
+    EPUB_CLASS = "motto_podpis"

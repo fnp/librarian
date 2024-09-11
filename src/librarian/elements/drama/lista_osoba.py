@@ -5,6 +5,8 @@ from ..base import WLElement
 
 
 class ListaOsoba(WLElement):
+    NUMBERING = "i"
+
     TXT_TOP_MARGIN = 1
     TXT_BOTTOM_MARGIN = 1
     TXT_LEGACY_TOP_MARGIN = 1
@@ -12,6 +14,7 @@ class ListaOsoba(WLElement):
     TXT_PREFIX = " * "
 
     EPUB_TAG = HTML_TAG = "li"
+    HTML_CLASS = "wl"
 
     def html_build(self, builder):
         builder.enter_fragment('list')

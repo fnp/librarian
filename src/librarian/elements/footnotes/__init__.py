@@ -6,8 +6,10 @@ from ..base import WLElement
 
 class Footnote(WLElement):
     NO_TOC = True
+    DISABLE_NUMBERING = True
     START_INLINE = True
     ASIDE = True
+    NUMBERING = 'fn'
 
     def signal(self, signal):
         if signal == 'INLINE':
@@ -22,10 +24,9 @@ class Footnote(WLElement):
         if not builder.with_footnotes:
             return
 
-        builder.footnote_counter += 1
-        fn_no = builder.footnote_counter
-        footnote_id = 'footnote-idm{}'.format(self.attrib['_compat_ordered_id'])
-        anchor_id = 'anchor-idm{}'.format(self.attrib['_compat_ordered_id'])
+        fn_no = self.attrib.get('_visible_numbering')
+        footnote_id = 'footnote-id{}'.format(fn_no)
+        anchor_id = 'anchor-id{}'.format(fn_no)
 
         # Add anchor.
         builder.start_element(

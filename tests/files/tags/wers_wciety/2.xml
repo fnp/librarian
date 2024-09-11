@@ -1,0 +1,10 @@
+<strofa>
+  <wers>zwykły</wers>
+  <wers_wciety>wcięty</wers_wciety>
+  <wers_wciety typ="1">wcięty 1</wers_wciety>
+  <wers_wciety typ="2">wcięty 2</wers_wciety>
+  <wers_wciety typ="25">wcięty 25</wers_wciety>
+  <wers_akap>akapitowy</wers_akap>
+  <wers_srodek>środek</wers_srodek>
+  <wers_do_prawej>do prawej</wers_do_prawej>
+</strofa>

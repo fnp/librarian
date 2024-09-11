@@ -9,42 +9,8 @@ import urllib.parse
 import urllib.request
 
 from lxml import etree
-from librarian import XHTMLNS, ParseError, OutputFile
 from librarian import functions
 from PIL import Image
-
-from lxml.etree import XMLSyntaxError, XSLTApplyError
-
-
-functions.reg_substitute_entities()
-functions.reg_person_name()
-
-STYLESHEETS = {
-    'legacy': 'xslt/book2html.xslt',
-}
-
-
-def get_stylesheet(name):
-    return os.path.join(os.path.dirname(__file__), STYLESHEETS[name])
-
-
-def html_has_content(text):
-    return etree.ETXPath(
-        '//p|//{%(ns)s}p|//h1|//{%(ns)s}h1' % {'ns': str(XHTMLNS)}
-    )(text)
-
-
-def transform_abstrakt(abstrakt_element):
-    style_filename = get_stylesheet('legacy')
-    style = etree.parse(style_filename)
-    xml = etree.tostring(abstrakt_element, encoding='unicode')
-    document = etree.parse(io.StringIO(
-        xml.replace('<abstrakt', '<dlugi_cytat').replace('</abstrakt', '</dlugi_cytat')
-    ))  # HACK
-    result = document.xslt(style)
-    html = re.sub('<a name="sec[0-9]*"/>', '',
-                  etree.tostring(result, encoding='unicode'))
-    return re.sub('</?blockquote[^>]*>', '', html)
 
 
 def add_image_sizes(tree, gallery_path, gallery_url, base_url):
@@ -90,65 +56,6 @@ def add_image_sizes(tree, gallery_path, gallery_url, base_url):
         ilustr.attrib['src'] = largest_url
 
         f.close()
-
-
-def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, gallery_path='img/', gallery_url='img/', base_url='file://./'):
-    """Transforms the WL document to XHTML.
-
-    If output_filename is None, returns an XML,
-    otherwise returns True if file has been written,False if it hasn't.
-    File won't be written if it has no content.
-    """
-    # Parse XSLT
-    try:
-        style_filename = get_stylesheet(stylesheet)
-        style = etree.parse(style_filename)
-
-        document = copy.deepcopy(wldoc)
-        del wldoc
-        document.swap_endlines()
-
-        if flags:
-            for flag in flags:
-                document.edoc.getroot().set(flag, 'yes')
-
-        document.clean_ed_note()
-        document.clean_ed_note('abstrakt')
-        document.fix_pa_akap()
-        
-        if not options:
-            options = {}
-
-        try:
-            os.makedirs(gallery_path)
-        except OSError:
-            pass
-
-        add_image_sizes(document.edoc, gallery_path, gallery_url, base_url)
-
-        css = (
-            css
-            or 'https://static.wolnelektury.pl/css/compressed/book_text.css'
-        )
-        css = "'%s'" % css
-        result = document.transform(style, css=css, **options)
-        del document  # no longer needed large object :)
-
-        if html_has_content(result):
-            add_anchors(result.getroot())
-            add_table_of_themes(result.getroot())
-            add_table_of_contents(result.getroot())
-
-            return OutputFile.from_bytes(etree.tostring(
-                result, method='html', xml_declaration=False,
-                pretty_print=True, encoding='utf-8'
-            ))
-        else:
-            return None
-    except KeyError:
-        raise ValueError("'%s' is not a valid stylesheet.")
-    except (XMLSyntaxError, XSLTApplyError) as e:
-        raise ParseError(e)
 
 
 class Fragment:
@@ -265,7 +172,7 @@ def extract_fragments(input_filename):
         else:
             # Omit annotation tags
             if (len(element.get('name', '')) or
-                    element.get('class', '') in ('annotation', 'anchor')):
+                    element.get('class', '') in ('annotation-anchor', 'anchor', 'wl-num', 'reference')):
                 if event == 'end' and element.tail:
                     for fragment_id in open_fragments:
                         open_fragments[fragment_id].append(
@@ -283,24 +190,16 @@ def extract_fragments(input_filename):
     return closed_fragments, open_fragments
 
 
-def add_anchor(element, prefix, with_link=True, with_target=True,
-               link_text=None):
+def add_anchor(element, prefix, link_text=None):
     parent = element.getparent()
     index = parent.index(element)
 
-    if with_link:
-        if link_text is None:
-            link_text = prefix
-        anchor = etree.Element('a', href='#%s' % prefix)
-        anchor.set('class', 'anchor')
-        anchor.text = str(link_text)
-        parent.insert(index, anchor)
-
-    if with_target:
-        anchor_target = etree.Element('a', name='%s' % prefix)
-        anchor_target.set('class', 'target')
-        anchor_target.text = ' '
-        parent.insert(index, anchor_target)
+    if link_text is None:
+        link_text = prefix
+    anchor = etree.Element('a', href='#%s' % prefix)
+    anchor.set('class', 'anchor')
+    anchor.text = str(link_text)
+    parent.insert(index, anchor)
 
 
 def any_ancestor(element, test):
@@ -310,43 +209,9 @@ def any_ancestor(element, test):
     return False
 
 
-def add_anchors(root):
-    counter = 1
-    visible_counter = 1
-    for element in root.iterdescendants():
-        def f(e):
-            return (
-                e.get('class') in (
-                    'note', 'motto', 'motto_podpis', 'dedication', 'frame'
-                )
-                or e.get('id') == 'nota_red'
-                or e.tag == 'blockquote'
-                or e.get('id') == 'footnotes'
-            )
-
-        if element.get('class') == 'numeracja':
-            try:
-                visible_counter = int(element.get('data-start'))
-            except ValueError:
-                visible_counter = 1
-
-        if any_ancestor(element, f):
-            continue
-
-        if element.tag == 'div' and 'verse' in element.get('class', ''):
-            if visible_counter == 1 or visible_counter % 5 == 0:
-                add_anchor(element, "f%d" % counter, link_text=visible_counter)
-            counter += 1
-            visible_counter += 1
-        elif 'paragraph' in element.get('class', ''):
-            add_anchor(element, "f%d" % counter, link_text=visible_counter)
-            counter += 1
-            visible_counter += 1
-
-
 def raw_printable_text(element):
     working = copy.deepcopy(element)
-    for e in working.findall('a'):
+    for e in working.findall('.//a'):
         if e.get('class') in ('annotation', 'theme-begin'):
             e.text = ''
     return etree.tostring(working, method='text', encoding='unicode').strip()
@@ -354,7 +219,6 @@ def raw_printable_text(element):
 
 def add_table_of_contents(root):
     sections = []
-    counter = 1
     for element in root.iterdescendants():
         if element.tag in ('h2', 'h3'):
             if any_ancestor(
@@ -368,12 +232,13 @@ def add_table_of_contents(root):
             if (element.tag == 'h3' and len(sections)
                     and sections[-1][1] == 'h2'):
                 sections[-1][3].append(
-                    (counter, element.tag, element_text, [])
+                    (element.attrib['id'], element.tag, element_text, [])
                 )
             else:
-                sections.append((counter, element.tag, element_text, []))
-            add_anchor(element, "s%d" % counter, with_link=False)
-            counter += 1
+                sections.append((element.attrib['id'], element.tag, element_text, []))
+
+    if not sections:
+        return
 
     toc = etree.Element('div')
     toc.set('id', 'toc')
@@ -383,14 +248,14 @@ def add_table_of_contents(root):
 
     for n, section, text, subsections in sections:
         section_element = etree.SubElement(toc_list, 'li')
-        add_anchor(section_element, "s%d" % n, with_target=False,
+        add_anchor(section_element, n,
                    link_text=text)
 
         if len(subsections):
             subsection_list = etree.SubElement(section_element, 'ol')
             for n1, subsection, subtext, _ in subsections:
                 subsection_element = etree.SubElement(subsection_list, 'li')
-                add_anchor(subsection_element, "s%d" % n1, with_target=False,
+                add_anchor(subsection_element, n1,
                            link_text=subtext)
 
     root.insert(0, toc)
@@ -421,7 +286,13 @@ def add_table_of_themes(root):
             item = etree.SubElement(themes_li, 'a', href="#%s" % fragment)
             item.text = str(i + 1)
             item.tail = ' '
+
+    if not len(themes_ol):
+        return
+
     root.insert(0, themes_div)
+    themes_div.tail = root.text
+    root.text = None
 
 
 def extract_annotations(html_path):
@@ -458,8 +329,8 @@ def extract_annotations(html_path):
                     candidate = candidate.strip()
                     if candidate in FN_QUALIFIERS:
                         qualifiers.append(candidate)
-                    elif candidate.startswith('z '):
-                        subcandidate = candidate.split()[1]
+                    elif candidate.startswith('z\u00A0'):
+                        subcandidate = candidate.split('\u00A0')[1].split()[0]
                         if subcandidate in FN_QUALIFIERS:
                             qualifiers.append(subcandidate)
             else:

@@ -11,12 +11,14 @@ from lxml import etree
 class RefTests(TestCase):
     def test_snippet(self):
         doc = WLDocument(filename=get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml'))
-        doc._compat_assign_section_ids()
+
+        hb = builders['html']()
+        hb.assign_ids(doc.tree)
 
         refs = []
         for ref in doc.references():
             snippet = ref.get_snippet()
-            b = builders['html']()
+            b = builders['html-snippet']()
 
             for s in snippet:
                 s.html_build(b)

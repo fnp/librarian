@@ -40,7 +40,6 @@ setup(
         'Pillow>=9.1.0',
         'texml',
         'ebooklib',
-        'aeneas',
         'mutagen',
         'qrcode',
         'requests',

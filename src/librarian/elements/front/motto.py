@@ -5,7 +5,7 @@ from ..base import WLElement
 
 
 class Motto(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     TXT_LEGACY_TOP_MARGIN = 4
     TXT_LEGACY_BOTTOM_MARGIN = 2

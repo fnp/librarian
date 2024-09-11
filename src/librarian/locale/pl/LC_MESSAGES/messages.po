@@ -17,26 +17,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3\n"
 
-#: src/librarian/builders/html.py:84
+#: src/librarian/builders/html.py:94
 msgid "translated by"
 msgstr "tłum."
 
-#: src/librarian/builders/html.py:104
+#: src/librarian/builders/html.py:118
 msgid "Footnotes"
 msgstr "Przypisy"
 
-#: src/librarian/elements/footnotes/__init__.py:55
+#: src/librarian/elements/footnotes/__init__.py:111
 msgid "author's footnote"
 msgstr "przypis autorski"
 
-#: src/librarian/elements/footnotes/__init__.py:63
+#: src/librarian/elements/footnotes/__init__.py:119
 msgid "translator's footnote"
 msgstr "przypis tłumacza"
 
-#: src/librarian/elements/footnotes/__init__.py:71
+#: src/librarian/elements/footnotes/__init__.py:127
 msgid "editor's footnote"
 msgstr "przypis redakcyjny"
 
-#: src/librarian/elements/footnotes/__init__.py:79
+#: src/librarian/elements/footnotes/__init__.py:135
 msgid "source editor's footnote"
 msgstr "przypis edytorski"

@@ -5,8 +5,6 @@ from copy import deepcopy
 import subprocess
 import tempfile
 import zipfile
-from aeneas.executetask import ExecuteTask
-from aeneas.task import Task
 from lxml import etree
 import mutagen
 from librarian import OutputFile, get_resource
@@ -117,75 +115,11 @@ class DaisyBuilder:
                 directory + "book%d.mp3" % i,
             )
 
-            config_string = "task_language=pol|is_text_type=unparsed|is_text_unparsed_id_regex=sec\d+$|is_text_unparsed_id_sort=numeric|os_task_file_format=tab"
-            task = Task(config_string=config_string)
-
-            with tempfile.TemporaryDirectory() as temp:
-                syncfile = temp + "/sync"
-                task.audio_file_path_absolute = mp3[i]
-                task.text_file_path_absolute = html.get_filename()
-                task.sync_map_file_path_absolute = syncfile
-
-                ExecuteTask(task).execute()
-                task.output_sync_map_file()
-
-                sync = []
-                with open(syncfile) as f:
-                    for line in f:
-                        start, end, sec = line.strip().split('\t')
-                        start = float(start)
-                        end = float(end)
-                        sync.append([start, end, sec])
-
-            hms = format_hms(durations[i])
-            elapsed_hms = format_hms(sum(durations[:i]))
-
-            context = {
-                "VERSION": "1.10",
-
-                "HHMMSSmmm": hms,
-                "HHMMSS": hms.split('.')[0],
-                "Sd": "%.1f" % durations[i],
-                "ELAPSED": elapsed_hms,
-
-                "TITLE": document.meta.title,
-                "PUBLISHER": document.meta.publisher[0],
-                "YEAR": document.meta.created_at[:4],
-                "MONTH": document.meta.created_at[5:7],
-                "AUTHOR": document.meta.author.readable(),
-
-                "NARRATOR": narrator,
-            }
-
-            with open(get_resource('res/daisy/content.smil')) as f:
-                tree = etree.parse(f)
             populate(tree.getroot(), context)
 
-            seq = tree.find('//seq')
-            for si, item in enumerate(sync):
-                par = etree.SubElement(seq, 'par', id="par%06d" % (si + 1), endsync="last")
-                etree.SubElement(
-                    par,
-                    "text",
-                    src="book%d.html#%s" % (i, item[2]))
-
-                audio = etree.SubElement(
-                    par,
-                    "audio",
-                    src="book%d.mp3" % i,
-                    **{
-                        "clip-begin": "npt=%.3fs" % item[0],
-                        "clip-end": "npt=%.3fs" % item[1],
-                    }
-                )
-
-            zipf.writestr(
+            zipf.write(
+                syncfiles[i],
                 directory + 'content%d.smil' % i,
-                etree.tostring(
-                    tree,
-                    xml_declaration=True,
-                    pretty_print=True,
-                ),
             )
 
         for fname in ('smil10.dtd', 'xhtml1-transitional.dtd', 'xhtml-lat1.ent', 'xhtml-special.ent', 'xhtml-symbol.ent'):

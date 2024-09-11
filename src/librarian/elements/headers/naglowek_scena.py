@@ -5,8 +5,8 @@ from ..base import WLElement
 
 
 class NaglowekScena(WLElement):
+    NUMBERING = 's'
     SECTION_PRECEDENCE = 2
-    SHOULD_HAVE_ID = True
 
     TXT_TOP_MARGIN = 4
     TXT_BOTTOM_MARGIN = 2

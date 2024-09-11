@@ -6,15 +6,19 @@ from ..base import WLElement
 
 class Akap(WLElement):
     STRIP = True
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'main'
 
     TXT_TOP_MARGIN = 2
     TXT_BOTTOM_MARGIN = 2
     TXT_LEGACY_TOP_MARGIN = 2
     TXT_LEGACY_BOTTOM_MARGIN = 0
 
+    EPUB_CLASS = 'paragraph'
+
     HTML_TAG = 'p'
-    EPUB_CLASS = HTML_CLASS = 'paragraph'
+    HTML_CLASS = 'wl paragraph'
+
+    has_visible_numbering = True
 
     @property
     def EPUB_TAG(self):

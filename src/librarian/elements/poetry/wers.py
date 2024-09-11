@@ -13,7 +13,10 @@ class Wers(WLElement):
     TXT_LEGACY_BOTTOM_MARGIN = 0
 
     EPUB_TAG = HTML_TAG = 'div'
-    EPUB_CLASS = HTML_CLASS = 'verse'
+    EPUB_CLASS = 'verse'
+    HTML_CLASS = 'wl verse'
+
+    NUMBERING = 'main'
 
     @property
     def meta(self):
@@ -25,3 +28,27 @@ class Wers(WLElement):
         super()._epub_build_inner(builder)
         builder.push_text('''\u00a0''')
 
+    @property
+    def has_visible_numbering(self):
+        try:
+            number = int(self.attrib['_visible_numbering'])
+        except:
+            return False
+        return number == 1 or not(number % 5)
+
+    @property
+    def is_stretched(self):
+        return self.find('.//tab[@szer="*"]') is not None
+
+    def get_html_attr(self, builder):
+        attr = super().get_html_attr(builder)
+        if self.is_stretched:
+            attr['class'] += ' verse-stretched'
+        return attr
+
+    def _html_build_inner(self, builder):
+        if self.is_stretched:
+            builder.start_element('span')
+        super()._html_build_inner(builder)
+        if self.is_stretched:
+            builder.end_element()

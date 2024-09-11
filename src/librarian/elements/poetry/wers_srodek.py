@@ -7,6 +7,8 @@ from .wers import Wers
 class WersSrodek(Wers):
     TXT_PREFIX = '           '
 
-    EPUB_ATTR = HTML_ATTR = {
+    HTML_CLASS = Wers.HTML_CLASS + ' verse-center'
+
+    EPUB_ATTR = {
         "style": "text-align: center",
     }

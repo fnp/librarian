@@ -5,8 +5,9 @@ from ..paragraphs import Akap
 
 
 class MiejsceCzas(Akap):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
+
+    HTML_CLASS = 'wl place-and-time'
 
     EPUB_TAG = "div"
-    EPUB_CLASS = HTML_CLASS = 'place-and-time'
-    
+    EPUB_CLASS = 'place-and-time'

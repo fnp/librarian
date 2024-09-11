@@ -8,7 +8,7 @@ from .wers import Wers
 
 
 class Strofa(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     TXT_TOP_MARGIN = 2
     TXT_BOTTOM_MARGIN = 2
@@ -28,8 +28,8 @@ class Strofa(WLElement):
         )
         builder.push_text('\u00a0');
         builder.end_element()
-    
-    def get_verses(self):
+
+    def preprocess(self):
         from librarian.parser import parser
 
         verses = [
@@ -57,15 +57,15 @@ class Strofa(WLElement):
             else:
                 verses[-1].append(child)
 
-        for verse in verses:
-            verse.stanza = self
-            if len(verse) == 1 and isinstance(verse[0], Wers):
-                assert not (verse.text or '').strip()
-                assert not (verse[0].tail or '').strip()
-                yield verse[0]
-            else:
-                yield verse
+        verses = [
+            verse[0] if len(verse) == 1 and isinstance(verse[0], Wers)
+            else verse
+            for verse in verses
+        ]
 
-    def _build_inner(self, builder, build_method):
-        for child in self.get_verses():
-            getattr(child, build_method)(builder)
+        while len(self):
+            self.remove(self[0])
+        self.text = None
+
+        for verse in verses:
+            self.append(verse)

@@ -9,7 +9,9 @@ class Abstrakt(WLElement):
         pass
 
     def html_build(self, builder):
-        pass
+        if not self.attrib['_force']:
+            return
+        return super().html_build(builder)
 
     def epub_build(self, builder):
         pass

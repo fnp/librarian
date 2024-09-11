@@ -1,0 +1,41 @@
+<akap>
+  Oznaczmy odległość tych miejsc przez δ,
+  dalej odległość kliszy od kondensatora przez <wyroznienie>h</wyroznienie>,
+  długość płyt metalowych kondensatora przez <wyroznienie>l</wyroznienie>,
+  natężenie pola elektryczności przez <wyroznienie>F</wyroznienie>,
+  masę elektronu przez <wyroznienie>m</wyroznienie>,
+  jego ładunek przez <wyroznienie>e</wyroznienie>,
+  a prędkość przez <wyroznienie>v</wyroznienie>.
+  Możemy wyprowadzić wzór następujący
+  <mat><mrow>
+    <mi>δ</mi>
+    <mo>=</mo>
+    <mfrac>
+      <mrow>
+        <mi>e</mi>
+        <mo>⁢</mo>
+        <mi>F</mi>
+        <mo>⁢</mo>
+        <mi>l</mi>
+        <mo>×</mo>
+        <mfenced><mrow>
+          <mfrac>
+            <mi>l</mi>
+            <mn>2</mn>
+          </mfrac>
+          <mo>+</mo>
+          <mi>h</mi>
+        </mrow>
+        </mfenced>
+      </mrow>
+      <mrow>
+        <mi>m</mi>
+        <mo>⁢</mo>
+        <msup>
+          <mi>v</mi>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+    </mfrac>
+  </mrow></mat>
+</akap>

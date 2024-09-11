@@ -2,16 +2,19 @@
 # Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
 import unittest
-from librarian.parser import WLDocument
-from librarian.html import transform_abstrakt
+from librarian.document import WLDocument
+from librarian.builders.html import AbstraktHtmlBuilder
 from .utils import get_fixture
 
 
 class AbstractTests(unittest.TestCase):
     def test_abstrakt(self):
-        transform_abstrakt(
-            WLDocument.from_file(
-                get_fixture('text', 'abstrakt.xml'),
-                parse_dublincore=False
-            ).edoc.getroot().find('.//abstrakt')
-        )
+        builder = AbstraktHtmlBuilder()
+        got = builder.build(
+            WLDocument(
+                filename=get_fixture('text', 'abstrakt.xml'),
+            )
+        ).get_bytes().decode('utf-8')
+        with open(get_fixture('text', 'abstrakt.expected.html')) as f:
+            expected = f.read()
+        self.assertEqual(expected, got)

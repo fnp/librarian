@@ -5,8 +5,8 @@ from ..base import WLElement
 
 
 class NaglowekPodrozdzial(WLElement):
+    NUMBERING = 's'
     SECTION_PRECEDENCE = 3
-    SHOULD_HAVE_ID = True
 
     TXT_TOP_MARGIN = 3
     TXT_BOTTOM_MARGIN = 2

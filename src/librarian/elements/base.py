@@ -40,6 +40,7 @@ class WLElement(etree.ElementBase):
    
     CAN_HAVE_TEXT = True
     STRIP = False
+    NUMBERING = None
 
     text_substitutions = [
         ('---', '—'),
@@ -84,6 +85,15 @@ class WLElement(etree.ElementBase):
             return getattr(parent, setting)
         except AttributeError:
             return parent.in_context_of(setting)
+
+    def get_context_map(self, setting, key, default=None):
+        parent = self.getparent()
+        if parent is None:
+            return default
+        try:
+            return getattr(parent, setting)[key]
+        except AttributeError:
+            return parent.get_context_map(setting, key, default)
 
     def signal(self, signal):
         parent = self.getparent()
@@ -136,7 +146,8 @@ class WLElement(etree.ElementBase):
         for i, child in enumerate(self):
             if isinstance(child, WLElement):
                 getattr(child, build_method)(builder)
-            elif getattr(builder, 'debug') and child.tag is etree.Comment:
+            # FIXME base builder api
+            elif getattr(builder, 'debug', False) and child.tag is etree.Comment:
                 builder.process_comment(child)
             if self.CAN_HAVE_TEXT and child.tail:
                 text = self.normalize_text(child.tail, builder)
@@ -167,14 +178,21 @@ class WLElement(etree.ElementBase):
         attr = self.HTML_ATTR.copy()
         if self.HTML_CLASS:
             attr['class'] = self.HTML_CLASS
-        # always copy the id attribute (?)
-        if self.attrib.get('id'):
-            attr['id'] = self.attrib['id']
-        elif getattr(self, 'SHOULD_HAVE_ID', False) and '_compat_section_id' in self.attrib:
-            attr['id'] = self.attrib['_compat_section_id']
+        if builder.with_ids:
+            # always copy the id attribute (?)
+            if self.attrib.get('id'):
+                attr['id'] = self.attrib['id']
+            if self.attrib.get('_id'):
+                attr['id'] = self.attrib['_id']
         return attr
 
     def html_build(self, builder):
+        # Do we need a number?
+        numbering = self.numbering
+        if numbering == 'main':
+            if builder.with_numbering and self.has_visible_numbering:
+                builder.add_visible_number(self)
+
         if self.HTML_TAG:
             builder.start_element(
                 self.HTML_TAG,
@@ -315,15 +333,38 @@ class WLElement(etree.ElementBase):
 
         return snipelem
 
+    @property
+    def numbering(self):
+        numbering = self.NUMBERING
+        if numbering is None or self.in_context_of('DISABLE_NUMBERING'):
+            return None
+        numbering = self.get_context_map('SUPPRESS_NUMBERING', numbering, numbering)
+        return numbering
+
+    @property
+    def id_prefix(self):
+        prefix = self.numbering
+        if prefix == 'main':
+            # TODO: self.context.main_numbering_prefix
+            prefix = 'f' # default numbering prefix
+        return prefix
+
+    def assign_id(self, builder):
+        numbering = self.numbering
+        if numbering:
+            number = str(builder.counters[numbering])
+            self.attrib['_id'] = self.id_prefix + number
+            builder.counters[numbering] += 1
+
+            if numbering == 'main':
+                self.attrib['_visible_numbering'] = str(builder.counters['_visible'])
+                builder.counters['_visible'] += 1
+
+            if numbering == 'fn':
+                self.attrib['_visible_numbering'] = number
+
     def get_link(self):
-        sec = getattr(self, 'SHOULD_HAVE_ID', False) and self.attrib.get('_compat_section_id')
-        if sec:
-            return sec
-        parent_index = self.getparent().index(self)
-        if parent_index:
-            return self.getparent()[parent_index - 1].get_link()
-        else:
-            return self.getparent().get_link()
+        return self.attrib.get('_id') or self.getparent().get_link()
 
 
 class Snippet(WLElement):

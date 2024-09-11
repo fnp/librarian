@@ -16,6 +16,7 @@ class MarquiseCover(Cover):
     additional_logos = []
     square_variant = False
 
+    background_color = '#000'
     width = 2100
     height = 2970
     margin = 100

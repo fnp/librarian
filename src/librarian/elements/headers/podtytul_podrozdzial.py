@@ -5,7 +5,7 @@ from ..base import WLElement
 
 
 class PodtytulPodrozdzial(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     TXT_TOP_MARGIN = 2
     TXT_BOTTOM_MARGIN = 2

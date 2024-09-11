@@ -1,0 +1,17 @@
+<strofa>
+  A<tab/>B/
+  A<tab szer="1" />1/
+  A<tab szer="2" />2/
+  A<tab szer="3" />3/
+  A<tab szer="4" />4/
+  A<tab szer="5" />5/
+  A<tab szer="6" />6/
+  A<tab szer="1em" />1em/
+  A<tab szer="2em" />2em/
+  A<tab szer="3em" />3em/
+  A<tab szer="4em" />4em/
+  A<tab szer="5em" />5em/
+  A<tab szer="6em" />6em/
+  A<tab szer="*" />*/
+  Rozszerzony tabulator <wyroznienie>wewnątrz<tab szer="*" />wyróżnienia</wyroznienie>
+</strofa>

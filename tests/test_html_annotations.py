@@ -1,12 +1,16 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
+import io
 import unittest
-from librarian.parser import WLDocument
+from librarian.builders import HtmlBuilder
+from librarian.document import WLDocument
 from librarian.html import extract_annotations
 
 
 class AnnotationsTests(unittest.TestCase):
+    maxDiff = None
+
     def _test_annotation(self, expected, got, name):
         self.assertTrue(
             got[0].startswith('anchor-'),
@@ -108,19 +112,19 @@ class AnnotationsTests(unittest.TestCase):
          'częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu.</pe>', (
             'pe',
             ['daw.', 'niem.'],
-            'gemajna (daw., z niem. gemein: zwykły) \u2014 częściej: gemajn, '
-            'szeregowiec w wojsku polskim cudzoziemskiego autoramentu. [przypis edytorski]',
-            '<p><em class="foreign-word">gemajna</em> (daw., z niem. <em class="foreign-word">gemein</em>: zwykły) '
-            '\u2014 częściej: gemajn, szeregowiec w wojsku polskim cudzoziemskiego autoramentu. [przypis edytorski]</p>'
+            'gemajna (daw., z\u00A0niem. gemein: zwykły) \u2014 częściej: gemajn, '
+            'szeregowiec w\u00A0wojsku polskim cudzoziemskiego autoramentu. [przypis edytorski]',
+            '<p><em class="foreign-word">gemajna</em> (daw., z\u00A0niem. <em class="foreign-word">gemein</em>: zwykły) '
+            '\u2014 częściej: gemajn, szeregowiec w\u00A0wojsku polskim cudzoziemskiego autoramentu. [przypis edytorski]</p>'
             ),
             'Footnote with multiple and qualifiers and emphasis.'),
         )
 
         xml_src = '''<utwor><akap> %s </akap></utwor>''' % "".join(
             t[0] for t in annotations)
-        html = WLDocument.from_bytes(
-            xml_src.encode('utf-8'),
-            parse_dublincore=False).as_html().get_file()
+        html = WLDocument(
+            filename=io.BytesIO(xml_src.encode('utf-8'))
+        ).build(HtmlBuilder, base_url='/').get_file()
         res_annotations = list(extract_annotations(html))
 
         for i, (src, expected, name) in enumerate(annotations):

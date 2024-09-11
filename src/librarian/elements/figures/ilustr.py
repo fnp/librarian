@@ -12,13 +12,36 @@ MAX_PNG_WEIGHT = 200000
 
 
 class Ilustr(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     EPUB_TAG = HTML_TAG = 'img'
 
     def get_html_attr(self, builder):
-        ## TODO: thumbnail.
+        cls = 'ilustr'
+        if self.attrib.get('wyrownanie'):
+            cls += ' ' + self.attrib['wyrownanie']
+        if self.attrib.get('oblew'):
+            cls += ' oblew'
+        attr = {
+            'class': cls,
+            'alt': self.attrib.get('alt', ''),
+            'title': self.attrib.get('alt', ''),
+            'src': self.attrib.get('src', ''),
+            }
+        if self.attrib.get('srcset'):
+            attr['srcset'] = self.attrib['srcset']
+            attr['sizes'] = '''
+            (min-width: 718px) 600px,
+            (min-width: 600px) calc(100vw - 118px),
+            (min-width: 320px) calc(100vw - 75px),
+            (min-width: 15em) calc(100wv - 60px),
+            calc(100wv - 40px)
+            '''
+        if self.attrib.get('szer'):
+            attr['style'] = 'width: ' + self.attrib['szer']
+        return attr
 
+    def get_epub_attr(self, builder):
         url = urllib.parse.urljoin(
             builder.base_url,
             self.get('src')
@@ -69,5 +92,3 @@ class Ilustr(WLElement):
             'alt': self.attrib.get('alt', ''),
             'title': self.attrib.get('alt', ''),
         }
-
-    get_epub_attr = get_html_attr

@@ -5,7 +5,7 @@ from ..base import WLElement
 
 
 class NaglowekOsoba(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     TXT_TOP_MARGIN = 3
     TXT_BOTTOM_MARGIN = 2

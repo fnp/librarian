@@ -18,6 +18,9 @@ class WLDocument:
         tree = etree.parse(source, parser=parser)
         self.tree = tree
         tree.getroot().document = self
+
+        self.preprocess()
+
         self.base_meta = dcparser.BookInfo({}, {
             DCNS('language'): ["pol"],
         }, validate_required=False)
@@ -33,6 +36,11 @@ class WLDocument:
         return self.tree.getroot().meta
         return master.meta
 
+    def preprocess(self):
+        # Change slash-verses into real verses.
+        for _e, elem in etree.iterwalk(self.tree, ('start',), 'strofa'):
+            elem.preprocess()
+
     @property
     def children(self):
         for part_uri in self.meta.parts or []:
@@ -45,76 +53,6 @@ class WLDocument:
 
     def build(self, builder, base_url=None, **kwargs):
         return builder(base_url=base_url).build(self, **kwargs)
-
-    def assign_ids(self, existing=None):
-        # Find all existing IDs.
-        existing = existing or set()
-        que = [self.tree.getroot()]
-        while que:
-            item = que.pop(0)
-            try:
-                item.normalize_insides()
-            except AttributeError:
-                pass
-            existing.add(item.attrib.get('id'))
-            que.extend(item)
-
-        i = 1
-        que = [self.tree.getroot()]
-        while que:
-            item = que.pop(0)
-            que.extend(item)
-            if item.attrib.get('id'):
-                continue
-            if not getattr(item, 'SHOULD_HAVE_ID', False):
-                continue
-            while f'e{i}' in existing:
-                i += 1
-            item.attrib['id'] = f'e{i}'
-            i += 1
-
-    def _compat_assign_ordered_ids(self):
-        """
-        Compatibility: ids in document order, to be roughly compatible with legacy
-        footnote ids. Just for testing consistency, change to some sane identifiers
-        at convenience.
-        """
-        EXPR = re.compile(r'/\s', re.MULTILINE | re.UNICODE)
-        def _compat_assign_ordered_ids_in_elem(elem, i):
-            if isinstance(elem, etree._Comment): return i
-            elem.attrib['_compat_ordered_id'] = str(i)
-            i += 1
-            if getattr(elem, 'HTML_CLASS', None) == 'stanza':
-                if elem.text:
-                    i += len(EXPR.split(elem.text)) - 1
-                for sub in elem:
-                    i = _compat_assign_ordered_ids_in_elem(sub, i)
-                    if sub.tail:
-                        i += len(EXPR.split(sub.tail)) - 1
-            else:
-                if elem.tag in ('uwaga', 'extra'):
-                    return i
-                for sub in elem:
-                    i = _compat_assign_ordered_ids_in_elem(sub, i)
-            return i
-
-        _compat_assign_ordered_ids_in_elem(self.tree.getroot(), 4)
-
-    def _compat_assign_section_ids(self):
-        """
-        Ids in master-section order. These need to be compatible with the
-        #secN anchors used by WL search results page to link to fragments.
-        """
-        def _compat_assigns_section_ids_in_elem(elem, prefix='sec'):
-            for i, child in enumerate(elem):
-                idfier = '{}{}'.format(prefix, i + 1)
-                try:
-                    child.attrib['_compat_section_id'] = idfier
-                except:
-                    pass
-                _compat_assigns_section_ids_in_elem(child, idfier + '-')
-        _compat_assigns_section_ids_in_elem(self.tree.getroot().master)
-
 
     def editors(self):
         persons = set(self.meta.editors

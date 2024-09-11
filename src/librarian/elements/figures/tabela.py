@@ -5,7 +5,7 @@ from ..base import WLElement
 
 
 class Tabela(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     EPUB_TAG = HTML_TAG = 'table'
 

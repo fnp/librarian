@@ -5,6 +5,8 @@ from .wers import Wers
 
 
 class WersWciety(Wers):
+    HTML_CLASS = Wers.HTML_CLASS + ' verse-indent'
+
     @property
     def typ(self):
         v = self.attrib.get('typ')
@@ -19,7 +21,7 @@ class WersWciety(Wers):
 
     def get_html_attr(self, builder):
         attr = super(WersWciety, self).get_html_attr(builder)
-        attr['style'] = "padding-left: {}em".format(self.typ)
+        attr['class'] += f" verse-indent-{self.typ}"
         return attr
 
     def get_epub_attr(self, builder):

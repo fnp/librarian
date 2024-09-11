@@ -13,7 +13,7 @@ class FragmentsTest(unittest.TestCase):
         expected_output_file_path = get_fixture('text', 'asnyk_miedzy_nami_fragments.html')
 
         closed_fragments, open_fragments = extract_fragments(
-            get_fixture('text', 'asnyk_miedzy_nami_expected.legacy.html'))
+            get_fixture('text', 'asnyk_miedzy_nami_expected.html'))
         assert not open_fragments
         fragments_text = "\n\n".join("%s: %s\n%s" % (f.id, f.themes, f) for f in sorted(closed_fragments.values(), key=lambda f: f.id))
         with open(expected_output_file_path, 'rb') as f:

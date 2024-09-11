@@ -5,7 +5,7 @@ from ..base import WLElement
 
 
 class Didaskalia(WLElement):
-    SHOULD_HAVE_ID = True
+    NUMBERING = 'i'
 
     TXT_TOP_PARGIN = 2
     TXT_BOTTOM_MARGIN = 2
@@ -14,5 +14,5 @@ class Didaskalia(WLElement):
     TXT_PREFIX = "/ "
     TXT_SUFFIX = " /"
 
-    EPUB_TAG =_HTML_TAG = "div"
+    EPUB_TAG = HTML_TAG = "div"
     EPUB_CLASS = HTML_CLASS = "didaskalia"

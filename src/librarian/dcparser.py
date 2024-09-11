@@ -87,23 +87,7 @@ class Field:
         return False
 
 
-class DCInfo(type):
-    def __new__(mcs, classname, bases, class_dict):
-        fields = list(class_dict['FIELDS'])
-
-        for base in bases[::-1]:
-            if hasattr(base, 'FIELDS'):
-                for field in base.FIELDS[::-1]:
-                    try:
-                        fields.index(field)
-                    except ValueError:
-                        fields.insert(0, field)
-
-        class_dict['FIELDS'] = tuple(fields)
-        return super(DCInfo, mcs).__new__(mcs, classname, bases, class_dict)
-
-
-class WorkInfo(metaclass=DCInfo):
+class BookInfo:
     FIELDS = (
         Field(DCNS('creator'), 'authors', Person, salias='author',
               multiple=True),
@@ -140,6 +124,48 @@ class WorkInfo(metaclass=DCInfo):
         Field(WLNS('contentWarning'), 'content_warnings', multiple=True,
               required=False),
         Field(WLNS('developmentStage'), 'stage', required=False),
+
+        Field(DCNS('audience'), 'audiences', text.Audience, salias='audience', multiple=True,
+              required=False),
+
+        Field(DCNS('subject.period'), 'epochs', text.Epoch, salias='epoch', multiple=True,
+              required=False),
+        Field(DCNS('subject.type'), 'kinds', text.Kind, salias='kind', multiple=True,
+              required=False),
+        Field(DCNS('subject.genre'), 'genres', text.Genre, salias='genre', multiple=True,
+              required=False),
+        Field('category.legimi', 'legimi', text.LegimiCategory, required=False),
+        Field('category.thema.main', 'thema_main', text.MainThemaCategory, required=False),
+        Field('category.thema', 'thema', text.ThemaCategory, required=False, multiple=True),
+        Field(DCNS('subject.location'), 'location', required=False),
+
+        Field(DCNS('contributor.translator'), 'translators',
+              Person,  salias='translator', multiple=True, required=False),
+        Field(DCNS('relation.hasPart'), 'parts', WLURI,
+              multiple=True, required=False),
+        Field(DCNS('relation.isVariantOf'), 'variant_of', WLURI,
+              required=False),
+
+        Field(DCNS('relation.coverImage.url'), 'cover_url', required=False),
+        Field(DCNS('relation.coverImage.attribution'), 'cover_by',
+              required=False),
+        Field(DCNS('relation.coverImage.source'), 'cover_source',
+              required=False),
+        # WLCover-specific.
+        Field(WLNS('coverBarColor'), 'cover_bar_color', required=False),
+        Field(WLNS('coverBoxPosition'), 'cover_box_position', required=False),
+        Field(WLNS('coverClass'), 'cover_class', default=['default']),
+        Field(WLNS('coverLogoUrl'), 'cover_logo_urls', multiple=True,
+              required=False),
+        Field(WLNS('endnotes'), 'endnotes', BoolValue,
+              required=False),
+
+        Field('pdf-id',  'isbn_pdf',  required=False),
+        Field('epub-id', 'isbn_epub', required=False),
+        Field('mobi-id', 'isbn_mobi', required=False),
+        Field('txt-id',  'isbn_txt',  required=False),
+        Field('html-id', 'isbn_html', required=False),
+
     )
 
     @classmethod
@@ -348,51 +374,6 @@ class WorkInfo(metaclass=DCInfo):
                     result[field.salias] = str(v)
 
         return result
-
-
-class BookInfo(WorkInfo):
-    FIELDS = (
-        Field(DCNS('audience'), 'audiences', text.Audience, salias='audience', multiple=True,
-              required=False),
-
-        Field(DCNS('subject.period'), 'epochs', text.Epoch, salias='epoch', multiple=True,
-              required=False),
-        Field(DCNS('subject.type'), 'kinds', text.Kind, salias='kind', multiple=True,
-              required=False),
-        Field(DCNS('subject.genre'), 'genres', text.Genre, salias='genre', multiple=True,
-              required=False),
-        Field('category.legimi', 'legimi', text.LegimiCategory, required=False),
-        Field('category.thema.main', 'thema_main', text.MainThemaCategory, required=False),
-        Field('category.thema', 'thema', text.ThemaCategory, required=False, multiple=True),
-        Field(DCNS('subject.location'), 'location', required=False),
-
-        Field(DCNS('contributor.translator'), 'translators',
-              Person,  salias='translator', multiple=True, required=False),
-        Field(DCNS('relation.hasPart'), 'parts', WLURI,
-              multiple=True, required=False),
-        Field(DCNS('relation.isVariantOf'), 'variant_of', WLURI,
-              required=False),
-
-        Field(DCNS('relation.coverImage.url'), 'cover_url', required=False),
-        Field(DCNS('relation.coverImage.attribution'), 'cover_by',
-              required=False),
-        Field(DCNS('relation.coverImage.source'), 'cover_source',
-              required=False),
-        # WLCover-specific.
-        Field(WLNS('coverBarColor'), 'cover_bar_color', required=False),
-        Field(WLNS('coverBoxPosition'), 'cover_box_position', required=False),
-        Field(WLNS('coverClass'), 'cover_class', default=['default']),
-        Field(WLNS('coverLogoUrl'), 'cover_logo_urls', multiple=True,
-              required=False),
-        Field(WLNS('endnotes'), 'endnotes', BoolValue,
-              required=False),
-
-        Field('pdf-id',  'isbn_pdf',  required=False),
-        Field('epub-id', 'isbn_epub', required=False),
-        Field('mobi-id', 'isbn_mobi', required=False),
-        Field('txt-id',  'isbn_txt',  required=False),
-        Field('html-id', 'isbn_html', required=False),
-    )
 
 
 def parse(file_name, cls=BookInfo):

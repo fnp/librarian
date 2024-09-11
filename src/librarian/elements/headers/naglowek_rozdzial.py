@@ -5,8 +5,8 @@ from ..base import WLElement
 
 
 class NaglowekRozdzial(WLElement):
+    NUMBERING = 's'
     SECTION_PRECEDENCE = 2
-    SHOULD_HAVE_ID = True
     
     TXT_TOP_MARGIN = 4
     TXT_BOTTOM_MARGIN = 2
@@ -14,6 +14,7 @@ class NaglowekRozdzial(WLElement):
     TXT_LEGACY_BOTTOM_MARGIN = 0
 
     HTML_TAG = 'h3'
+    HTML_CLASS = 'wl'
 
     EPUB_TAG = 'h2'
     EPUB_CLASS = 'h3'

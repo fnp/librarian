@@ -1,0 +1,21 @@
+<tabela>
+  <wiersz>
+    <kol>a</kol>
+    <kol>b</kol>
+  </wiersz>
+  <wiersz>
+    <kol>c</kol>
+    <kol>d</kol>
+  </wiersz>
+</tabela>
+
+<tabela ramka="1">
+  <wiersz>
+    <kol>a</kol>
+    <kol>b</kol>
+  </wiersz>
+  <wiersz>
+    <kol>c</kol>
+    <kol>d</kol>
+  </wiersz>
+</tabela>
