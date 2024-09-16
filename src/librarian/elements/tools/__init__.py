@@ -70,3 +70,13 @@ class Tab(WLElement):
         }
 
     get_epub_attr = get_html_attr
+
+    def txt_build(self, builder):
+        szer = self.get('szer', '1').strip()
+        if szer.endswith('em'):
+            szer = szer[:-2]
+        try:
+            szer = int(szer)
+        except:
+            szer = 1
+        builder.push_text(' ' * 4 * szer)

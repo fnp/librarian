@@ -6,6 +6,10 @@ from ..base import WLElement
 
 class Tabela(WLElement):
     NUMBERING = 'i'
+    CAN_HAVE_TEXT = False
+
+    TXT_TOP_MARGIN = 3
+    TXT_BOTTOM_MARGIN = 3
 
     EPUB_TAG = HTML_TAG = 'table'
 

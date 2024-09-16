@@ -7,7 +7,8 @@ from ..base import WLElement
 class Dedykacja(WLElement):
     NUMBERING = 'i'
 
-    TXT_LEGACY_TOP_MARGIN = 2
+    TXT_TOP_MARGIN = 2
+    TXT_BOTTOM_MARGIN = 4
 
     EPUB_TAG = HTML_TAG = "div"
     EPUB_CLASS = HTML_CLASS = "dedication"

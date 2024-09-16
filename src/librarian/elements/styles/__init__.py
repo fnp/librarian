@@ -2,7 +2,7 @@
 # Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
 from .indeks_dolny import IndeksDolny
-from .mat import Mat
+from .mat import Mat, M, MRow, MFenced, MFrac, MSup
 from .slowo_obce import SlowoObce
 from .tytul_dziela import TytulDziela
 from .wieksze_odstepy import WiekszeOdstepy

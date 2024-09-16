@@ -132,11 +132,11 @@ WL_ELEMENTS = {
     "wywiad_odp": blocks.WywiadOdp,
 
     # Inline MathML, should really be namespaced.
-    "mrow": etree.ElementBase,
-    "mi": etree.ElementBase,
-    "mo": etree.ElementBase,
-    "msup": etree.ElementBase,
-    "mn": etree.ElementBase,
-    "mfrac": etree.ElementBase,
-    "mfenced": etree.ElementBase,
+    "mrow": styles.MRow,
+    "mi": styles.M,
+    "mo": styles.M,
+    "msup": styles.MSup,
+    "mn": styles.M,
+    "mfrac": styles.MFrac,
+    "mfenced": styles.MFenced,
 }

@@ -45,12 +45,11 @@ class WLElement(etree.ElementBase):
     text_substitutions = [
         ('---', '—'),
         ('--', '–'),
-        #('...', '…'),  # Temporary turnoff for epub
+        ('...', '…'),
         (',,', '„'),
         ('"', '”'),
         ('\ufeff', ''),
-
-        ("'", "\u2019"),    # This was enabled for epub.
+        ("'", "\u2019"),
     ]
 
     @property
@@ -118,9 +117,9 @@ class WLElement(etree.ElementBase):
         text = text or ''
         for e, s in self.text_substitutions:
             text = text.replace(e, s)
-            # FIXME: TEmporary turnoff
-#        text = re.sub(r'\s+', ' ', text)
-### TODO: Added now for epub
+
+        if getattr(builder, 'normalize_whitespace', False):
+            text = re.sub(r'\s+', ' ', text)
 
         if getattr(builder, 'hyphenator', None) is not None:
             newt = ''
@@ -144,8 +143,12 @@ class WLElement(etree.ElementBase):
                     text = text.rstrip()
             builder.push_text(text)
         for i, child in enumerate(self):
+            real_child_count = 0
             if isinstance(child, WLElement):
                 getattr(child, build_method)(builder)
+                self.after_child(builder, real_child_count)
+                real_child_count += 1
+
             # FIXME base builder api
             elif getattr(builder, 'debug', False) and child.tag is etree.Comment:
                 builder.process_comment(child)
@@ -155,21 +158,23 @@ class WLElement(etree.ElementBase):
                     text = text.rstrip()
                 builder.push_text(text)
 
+    def after_child(self, builder, child_count):
+        fn = getattr(builder, 'after_child_fn', None)
+        if fn:
+            getattr(self, builder.after_child_fn)(builder, child_count)
+
+    def txt_after_child(self, builder, child_count):
+        pass
+
     def _txt_build_inner(self, builder):
         self._build_inner(builder, 'txt_build')
 
     def txt_build(self, builder):
-        if hasattr(self, 'TXT_LEGACY_TOP_MARGIN'):
-            builder.push_legacy_margin(self.TXT_LEGACY_TOP_MARGIN)
-        else:
-            builder.push_margin(self.TXT_TOP_MARGIN)
+        builder.push_margin(self.TXT_TOP_MARGIN)
         builder.push_text(self.TXT_PREFIX, True)
         self._txt_build_inner(builder)
         builder.push_text(self.TXT_SUFFIX, True)
-        if hasattr(self, 'TXT_LEGACY_BOTTOM_MARGIN'):
-            builder.push_legacy_margin(self.TXT_LEGACY_BOTTOM_MARGIN)
-        else:
-            builder.push_margin(self.TXT_BOTTOM_MARGIN)
+        builder.push_margin(self.TXT_BOTTOM_MARGIN)
 
     def _html_build_inner(self, builder):
         self._build_inner(builder, 'html_build')

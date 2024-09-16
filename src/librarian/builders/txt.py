@@ -15,14 +15,6 @@ class TxtFragment:
         self.current_margin = 0
         self.starting_block = True
 
-    def push_legacy_margin(self, margin):
-        if margin:
-            if self.pieces:
-                self.pieces[-1] = self.pieces[-1].rstrip(' ')
-            self.pieces.append('\r\n' * margin)
-            self.current_margin += margin
-            self.starting_block = True
-        
     def push_margin(self, margin):
         if margin:
             if self.pieces:
@@ -47,8 +39,11 @@ class TxtBuilder:
     """
     file_extension = "txt"
     identifier = "txt"
+    after_child_fn = 'txt_after_child'
 
+    debug = False
     orphans = False
+    normalize_whitespace = True
     
     default_license_description = {
         "pol": (
@@ -107,9 +102,6 @@ class TxtBuilder:
     def push_margin(self, margin):
         self.current_fragments[-1].push_margin(margin)
         
-    def push_legacy_margin(self, margin, where=None):
-        self.current_fragments[-1].push_legacy_margin(margin)
-        
     def build(self, document, raw_text=False, **kwargs):
         document.tree.getroot().txt_build(self)
         meta = document.meta
@@ -123,27 +115,26 @@ class TxtBuilder:
                     for translator in meta.translators
                 )
             )
-            #builder.push_margin(2)
-            self.push_legacy_margin(1)
+            builder.push_margin(2)
 
         if meta.isbn_txt:
-            #builder.push_margin(2)
-            self.push_legacy_margin(1)
+            self.push_margin(2)
             isbn = meta.isbn_txt
             if isbn.startswith(('ISBN-' , 'ISBN ')):
                 isbn = isbn[5:]
             self.push_text('ISBN {isbn}'.format(isbn=isbn))
             #builder.push_margin(5)
 
-        #builder.push_margin(4)
-        self.push_legacy_margin(1)
+        self.push_margin(4)
         self.exit_fragment()
         
-        text = ''.join(self.fragments['header'].pieces) +  ''.join(self.fragments[None].pieces)
+        text = ''.join(self.fragments[None].pieces).lstrip()
 
         if raw_text:
             result = text
         else:
+            text = ''.join(self.fragments['header'].pieces) +  text
+
             if meta.license:
                 license_description = self.license_description['pol'].format(meta=meta)
             else:

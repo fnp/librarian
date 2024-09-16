@@ -50,7 +50,7 @@ setup(
             "librarian=librarian.command_line:main"
         ]
     },
-    scripts=['scripts/book2html',
+    scripts=[
              'scripts/book2txt',
              'scripts/book2pdf',
              'scripts/book2fb2',
