@@ -64,32 +64,6 @@ def reg_ends_white():
     _register_function(ends_white)
 
 
-def reg_wrap_words():
-    def wrap_words(context, text, wrapping):
-        """
-        XPath extension function automatically wrapping words
-        in passed text.
-        """
-        if isinstance(text, list):
-            text = ''.join(text)
-        if not wrapping:
-            return text
-
-        words = re.split(r'\s', text)
-
-        line_length = 0
-        lines = [[]]
-        for word in words:
-            line_length += len(word) + 1
-            if line_length > wrapping:
-                # Max line length was exceeded. We create new line
-                lines.append([])
-                line_length = len(word)
-            lines[-1].append(word)
-        return '\n'.join(' '.join(line) for line in lines)
-    _register_function(wrap_words)
-
-
 def reg_person_name():
     def person_name(context, text):
         """ Converts "Name, Forename" to "Forename Name" """

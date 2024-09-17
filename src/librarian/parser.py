@@ -222,14 +222,6 @@ class WLDocument:
 
     # Converters
 
-    def as_html(self, *args, **kwargs):
-        from librarian import html
-        return html.transform(self, *args, **kwargs)
-
-    def as_text(self, *args, **kwargs):
-        from librarian import text
-        return text.transform(self, *args, **kwargs)
-
     def as_pdf(self, *args, **kwargs):
         from librarian import pdf
         return pdf.transform(self, *args, **kwargs)

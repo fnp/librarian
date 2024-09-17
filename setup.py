@@ -51,7 +51,6 @@ setup(
         ]
     },
     scripts=[
-             'scripts/book2txt',
              'scripts/book2pdf',
              'scripts/book2fb2',
              'scripts/book2cover',

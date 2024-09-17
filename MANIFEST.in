@@ -4,7 +4,6 @@ include NOTICE
 include tox.ini
 recursive-include scripts *.py *.css
 recursive-include tests *.py *.xml *.html *.out *.txt *.jpeg
-include src/librarian/xslt/*.xslt
 include src/librarian/pdf/*
 include src/librarian/fb2/*
 include src/librarian/fonts/*
