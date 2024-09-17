@@ -240,6 +240,8 @@ class AbstraktHtmlBuilder(HtmlBuilder):
     def build(self, document, element=None, **kwargs):
         if element is None:
             element = document.tree.find('//abstrakt')
+        if element is None:
+            return OutputFile.from_bytes(b'')
         element.attrib['_force'] = '1'
         return super().build(document, element, **kwargs)
 

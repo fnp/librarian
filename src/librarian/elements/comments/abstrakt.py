@@ -9,7 +9,7 @@ class Abstrakt(WLElement):
         pass
 
     def html_build(self, builder):
-        if not self.attrib['_force']:
+        if not self.attrib.get('_force', False):
             return
         return super().html_build(builder)
 

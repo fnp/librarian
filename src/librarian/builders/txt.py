@@ -115,7 +115,7 @@ class TxtBuilder:
                     for translator in meta.translators
                 )
             )
-            builder.push_margin(2)
+            self.push_margin(2)
 
         if meta.isbn_txt:
             self.push_margin(2)
