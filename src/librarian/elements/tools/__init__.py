@@ -6,8 +6,9 @@ from ..base import WLElement
 
 class Numeracja(WLElement):
     NUMBERING = True
-    def assign_id(self, builder):
-        builder.counters['_visible'] = int(self.get('start', 1))
+
+    def assign_id(self, document):
+        document.counters['_visible'] = int(self.get('start', 1))
 
 
 class Rownolegle(WLElement):

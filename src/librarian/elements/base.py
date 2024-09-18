@@ -354,16 +354,16 @@ class WLElement(etree.ElementBase):
             prefix = 'f' # default numbering prefix
         return prefix
 
-    def assign_id(self, builder):
+    def assign_id(self, document):
         numbering = self.numbering
         if numbering:
-            number = str(builder.counters[numbering])
+            number = str(document.counters[numbering])
             self.attrib['_id'] = self.id_prefix + number
-            builder.counters[numbering] += 1
+            document.counters[numbering] += 1
 
             if numbering == 'main':
-                self.attrib['_visible_numbering'] = str(builder.counters['_visible'])
-                builder.counters['_visible'] += 1
+                self.attrib['_visible_numbering'] = str(document.counters['_visible'])
+                document.counters['_visible'] += 1
 
             if numbering == 'fn':
                 self.attrib['_visible_numbering'] = number

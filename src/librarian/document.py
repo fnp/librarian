@@ -1,7 +1,7 @@
 # This file is part of Librarian, licensed under GNU Affero GPLv3 or later.
 # Copyright © Fundacja Wolne Lektury. See NOTICE for more information.
 #
-from collections import Counter
+from collections import defaultdict, Counter
 import gettext
 import os
 import re
@@ -17,6 +17,7 @@ class WLDocument:
         source = filename or urllib.request.urlopen(url)
         tree = etree.parse(source, parser=parser)
         self.tree = tree
+        self.counters = defaultdict(lambda: 1)
         tree.getroot().document = self
 
         self.preprocess()
@@ -40,6 +41,12 @@ class WLDocument:
         # Change slash-verses into real verses.
         for _e, elem in etree.iterwalk(self.tree, ('start',), 'strofa'):
             elem.preprocess()
+
+    def assign_ids(self):
+        # Assign IDs depth-first, to account for any <numeracja> inside.
+        for _e, elem in etree.iterwalk(self.tree, events=('end',)):
+            if getattr(elem, 'NUMBERING', None):
+                elem.assign_id(self)
 
     @property
     def children(self):

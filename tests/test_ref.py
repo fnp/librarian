@@ -11,9 +11,7 @@ from lxml import etree
 class RefTests(TestCase):
     def test_snippet(self):
         doc = WLDocument(filename=get_fixture('text', 'miedzy-nami-nic-nie-bylo.xml'))
-
-        hb = builders['html']()
-        hb.assign_ids(doc.tree)
+        doc.assign_ids()
 
         refs = []
         for ref in doc.references():

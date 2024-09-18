@@ -32,7 +32,6 @@ class HtmlBuilder:
         self.header = etree.Element('h1')
 
         self.footnotes = etree.Element('div', id='footnotes')
-        self.counters = defaultdict(lambda: 1)
 
         self.nota_red = etree.Element('div', id='nota_red')
 
@@ -71,8 +70,7 @@ class HtmlBuilder:
 
     def build(self, document, element=None, **kwargs):
         self.document = document
-
-        self.assign_ids(self.document.tree)
+        self.document.assign_ids()
         self.prepare_images()
 
         if element is None:
@@ -81,12 +79,6 @@ class HtmlBuilder:
         element.html_build(self)
         self.postprocess(document)
         return self.output()
-
-    def assign_ids(self, tree):
-        # Assign IDs depth-first, to account for any <numeracja> inside.
-        for _e, elem in etree.iterwalk(tree, events=('end',)):
-            if getattr(elem, 'NUMBERING', None):
-                elem.assign_id(self)
 
     def prepare_images(self):
         # Temporarily use the legacy method, before transitioning to external generators.
@@ -135,7 +127,7 @@ class HtmlBuilder:
         if self.with_toc:
             add_table_of_contents(self.tree)
 
-        if self.counters['fn'] > 1:
+        if self.document.counters['fn'] > 1:
             fnheader = etree.Element("h3")
             fnheader.text = _("Footnotes")
             self.footnotes.insert(0, fnheader)
