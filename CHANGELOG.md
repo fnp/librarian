@@ -2,6 +2,17 @@
 
 This document records all notable changes to Librarian.
 
+## 24.9
+
+- Remove old API for HTML, TXT generators. Move to new API.
+- The HTML format is changed:
+    - text-elements now have 'wl' class and id attribute,
+    - magic 'secN' ids are removed
+    - 'a.target' elements removed
+    - numbering anchors class changed to wl-num
+- Removed all code related to art gallery.
+- Drop Python 3.7.
+
 ## 24.5
 
 - Smaller images in EPUB (600px width instead of 1200px).
