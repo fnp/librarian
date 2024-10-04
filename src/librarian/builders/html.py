@@ -127,7 +127,7 @@ class HtmlBuilder:
         if self.with_toc:
             add_table_of_contents(self.tree)
 
-        if self.document.counters['fn'] > 1:
+        if len(self.footnotes):
             fnheader = etree.Element("h3")
             fnheader.text = _("Footnotes")
             self.footnotes.insert(0, fnheader)
