@@ -11,11 +11,11 @@ class SekcjaAsterysk(WLElement):
     EPUB_TAG = HTML_TAG = "p"
     HTML_CLASS = HTML_CLASS = "spacer-asterisk"
 
-    def _txt_build_inner(self, builder):
+    def txt_build_inner(self, builder):
         builder.push_text('*')
 
-    def _html_build_inner(self, builder):
+    def html_build_inner(self, builder):
         builder.push_text("*")
 
-    _epub_build_inner = _html_build_inner
+    epub_build_inner = html_build_inner
 

@@ -77,6 +77,7 @@ class Builder:
 
 
 class EpubBuilder(Builder):
+    build_method_fn = 'epub_build'
     file_extension = 'epub'
     isbn_field = 'isbn_epub'
     orphans = True

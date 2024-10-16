@@ -15,16 +15,16 @@ class ListaOsob(WLElement):
     HTML_TAG = "div"
     HTML_CLASS = "person-list"
 
-    def _html_build_inner(self, builder):
+    def html_build_inner(self, builder):
         ol = etree.Element('ol')
         builder.create_fragment('list', ol)
-        super(ListaOsob, self)._html_build_inner(builder)
+        super().html_build_inner(builder)
         builder.cursor.append(ol)
         builder.forget_fragment('list')
 
-    def _epub_build_inner(self, builder):
+    def epub_build_inner(self, builder):
         ol = etree.Element('ol')
         builder.create_fragment('list', ol)
-        super(ListaOsob, self)._epub_build_inner(builder)
+        super().epub_build_inner(builder)
         builder.cursor.append(ol)
         builder.forget_fragment('list')

@@ -37,6 +37,7 @@ class TxtFragment:
 class TxtBuilder:
     """
     """
+    build_method_fn = 'txt_build'
     file_extension = "txt"
     identifier = "txt"
     after_child_fn = 'txt_after_child'

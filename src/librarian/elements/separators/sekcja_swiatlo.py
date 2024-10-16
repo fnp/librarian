@@ -13,5 +13,5 @@ class SekcjaSwiatlo(WLElement):
     EPUB_TAG = 'p'
     EPUB_CLASS = 'spacer'
 
-    def _epub_build_inner(self, builder):
+    def epub_build_inner(self, builder):
         builder.push_text("\u00a0")

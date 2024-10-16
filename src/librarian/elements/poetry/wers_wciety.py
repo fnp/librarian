@@ -12,19 +12,19 @@ class WersWciety(Wers):
         v = self.attrib.get('typ')
         return int(v) if v else 1
 
-    def _txt_build_inner(self, builder):
+    def txt_build_inner(self, builder):
         ## Temporary legacy compatibility fix.
         typ = min(self.typ, 2)
 
         builder.push_text('  ' * self.typ, prepared=True)
-        super(WersWciety, self)._txt_build_inner(builder)
+        super().txt_build_inner(builder)
 
     def get_html_attr(self, builder):
-        attr = super(WersWciety, self).get_html_attr(builder)
+        attr = super().get_html_attr(builder)
         attr['class'] += f" verse-indent-{self.typ}"
         return attr
 
     def get_epub_attr(self, builder):
-        attr = super(WersWciety, self).get_html_attr(builder)
+        attr = super().get_html_attr(builder)
         attr['style'] = "margin-left: {}em".format(self.typ)
         return attr

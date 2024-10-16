@@ -9,7 +9,45 @@ from librarian.html import add_table_of_contents, add_table_of_themes, add_image
 from librarian import OutputFile
 
 
-class HtmlBuilder:
+class TreeBuilder:
+    @property
+    def cursor(self):
+        return self.current_cursors[-1]
+
+    def enter_fragment(self, fragment):
+        cursor = self.cursors.get(fragment, self.cursor)
+        self.current_cursors.append(cursor)
+
+    def exit_fragment(self):
+        self.current_cursors.pop()
+
+    def create_fragment(self, name, element):
+        assert name not in self.cursors
+        self.cursors[name] = element
+
+    def forget_fragment(self, name):
+        del self.cursors[name]
+
+    def start_element(self, tag, attrib=None):
+        self.current_cursors.append(etree.SubElement(
+            self.cursor,
+            tag,
+            **(attrib or {})
+        ))
+
+    def end_element(self):
+        self.current_cursors.pop()
+
+    def push_text(self, text):
+        cursor = self.cursor
+        if len(cursor):
+            cursor[-1].tail = (cursor[-1].tail or '') + text
+        else:
+            cursor.text = (cursor.text or '') + text
+
+
+class HtmlBuilder(TreeBuilder):
+    build_method_fn = 'html_build'
     file_extension = "html"
     with_themes = True
     with_toc = True
@@ -49,24 +87,6 @@ class HtmlBuilder:
             return self._base_url
         else:
             return 'https://wolnelektury.pl/media/book/pictures/{}/'.format(self.document.meta.url.slug)
-
-    @property
-    def cursor(self):
-        return self.current_cursors[-1]
-
-    def enter_fragment(self, fragment):
-        cursor = self.cursors.get(fragment, self.cursor)
-        self.current_cursors.append(cursor)
-
-    def exit_fragment(self):
-        self.current_cursors.pop()
-
-    def create_fragment(self, name, element):
-        assert name not in self.cursors
-        self.cursors[name] = element
-
-    def forget_fragment(self, name):
-        del self.cursors[name]
 
     def build(self, document, element=None, **kwargs):
         self.document = document
@@ -132,23 +152,6 @@ class HtmlBuilder:
             fnheader.text = _("Footnotes")
             self.footnotes.insert(0, fnheader)
             self.tree.append(self.footnotes)
-
-    def start_element(self, tag, attrib=None):
-        self.current_cursors.append(etree.SubElement(
-            self.cursor,
-            tag,
-            **(attrib or {})
-        ))
-
-    def end_element(self):
-        self.current_cursors.pop()
-
-    def push_text(self, text):
-        cursor = self.cursor
-        if len(cursor):
-            cursor[-1].tail = (cursor[-1].tail or '') + text
-        else:
-            cursor.text = (cursor.text or '') + text
 
     def add_visible_number(self, element):
         assert '_id' in element.attrib, etree.tostring(element)

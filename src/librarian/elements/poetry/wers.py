@@ -22,8 +22,8 @@ class Wers(WLElement):
             return self.stanza.meta
         return super(Wers, self).meta
 
-    def _epub_build_inner(self, builder):
-        super()._epub_build_inner(builder)
+    def epub_build_inner(self, builder):
+        super().epub_build_inner(builder)
         builder.push_text('''\u00a0''')
 
     @property
@@ -44,9 +44,9 @@ class Wers(WLElement):
             attr['class'] += ' verse-stretched'
         return attr
 
-    def _html_build_inner(self, builder):
+    def html_build_inner(self, builder):
         if self.is_stretched:
             builder.start_element('span')
-        super()._html_build_inner(builder)
+        super().html_build_inner(builder)
         if self.is_stretched:
             builder.end_element()

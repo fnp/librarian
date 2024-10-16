@@ -133,7 +133,8 @@ class WLElement(etree.ElementBase):
 
         return text
 
-    def _build_inner(self, builder, build_method):
+    def build_inner(self, builder):
+        build_method = builder.build_method_fn
         child_count = len(self)
         if self.CAN_HAVE_TEXT and self.text:
             text = self.normalize_text(self.text, builder)
@@ -166,18 +167,18 @@ class WLElement(etree.ElementBase):
     def txt_after_child(self, builder, child_count):
         pass
 
-    def _txt_build_inner(self, builder):
-        self._build_inner(builder, 'txt_build')
+    def txt_build_inner(self, builder):
+        self.build_inner(builder)
 
     def txt_build(self, builder):
         builder.push_margin(self.TXT_TOP_MARGIN)
         builder.push_text(self.TXT_PREFIX, True)
-        self._txt_build_inner(builder)
+        self.txt_build_inner(builder)
         builder.push_text(self.TXT_SUFFIX, True)
         builder.push_margin(self.TXT_BOTTOM_MARGIN)
 
-    def _html_build_inner(self, builder):
-        self._build_inner(builder, 'html_build')
+    def html_build_inner(self, builder):
+        self.build_inner(builder)
 
     def get_html_attr(self, builder):
         attr = self.HTML_ATTR.copy()
@@ -204,12 +205,12 @@ class WLElement(etree.ElementBase):
                 self.get_html_attr(builder),
             )
 
-        self._html_build_inner(builder)
+        self.html_build_inner(builder)
         if self.HTML_TAG:
             builder.end_element()
 
-    def _epub_build_inner(self, builder):
-        self._build_inner(builder, 'epub_build')
+    def epub_build_inner(self, builder):
+        self.build_inner(builder)
 
     def get_epub_attr(self, builder):
         attr = self.EPUB_ATTR.copy()
@@ -255,7 +256,7 @@ class WLElement(etree.ElementBase):
                 attr
             )
 
-        self._epub_build_inner(builder)
+        self.epub_build_inner(builder)
         if self.EPUB_TAG:
             builder.end_element()
 

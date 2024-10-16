@@ -16,7 +16,7 @@ class PodtytulCzesc(WLElement):
     EPUB_TAG = "h2"
     EPUB_CLASS = "h2"
 
-    def _epub_build_inner(self, builder):
+    def epub_build_inner(self, builder):
         builder.start_element('small', {})
-        super()._epub_build_inner(builder)
+        super().epub_build_inner(builder)
         builder.end_element()

@@ -11,7 +11,7 @@ class SeparatorLinia(WLElement):
     EPUB_TAG = HTML_TAG = "hr"
     EPUB_CLASS = HTML_CLASS = "spacer-line"
     
-    def _txt_build_inner(self, builder):
+    def txt_build_inner(self, builder):
         builder.push_text('-' * 48)
 
 

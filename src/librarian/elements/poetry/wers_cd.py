@@ -6,9 +6,9 @@ from .wers import Wers
 class WersCd(Wers):
     HTML_CLASS = Wers.HTML_CLASS + ' verse-cont'
 
-    def _txt_build_inner(self, builder):
+    def txt_build_inner(self, builder):
         builder.push_text(' ' * 24, prepared=True)
-        super(WersCd, self)._txt_build_inner(builder)
+        super().txt_build_inner(builder)
 
     EPUB_ATTR = {
         "style": "margin-left: 12em",
