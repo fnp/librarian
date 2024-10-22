@@ -16,6 +16,9 @@ class Strofa(WLElement):
     EPUB_TAG = HTML_TAG = 'div'
     EPUB_CLASS = HTML_CLASS = 'stanza'
 
+    FB2_TAG = 'stanza'
+    
+
     def epub_build(self, builder):
         super().epub_build(builder)
         builder.start_element(

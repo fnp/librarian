@@ -12,3 +12,5 @@ class Dedykacja(WLElement):
 
     EPUB_TAG = HTML_TAG = "div"
     EPUB_CLASS = HTML_CLASS = "dedication"
+
+    FB2_TAG = 'cite'

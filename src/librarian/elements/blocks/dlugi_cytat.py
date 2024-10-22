@@ -14,3 +14,5 @@ class DlugiCytat(WLElement):
 
     EPUB_TAG = 'div'
     EPUB_CLASS = 'block'
+
+    FB2_TAG = 'cite'

@@ -37,7 +37,9 @@ class WLElement(etree.ElementBase):
     EPUB_ATTR = {}
     EPUB_CLASS = None
     EPUB_START_CHUNK = False
-   
+
+    FB2_TAG = None
+
     CAN_HAVE_TEXT = True
     STRIP = False
     NUMBERING = None
@@ -207,6 +209,25 @@ class WLElement(etree.ElementBase):
 
         self.html_build_inner(builder)
         if self.HTML_TAG:
+            builder.end_element()
+
+    def fb2_build(self, builder):
+        if self.SECTION_PRECEDENCE:
+            builder.start_section(self.SECTION_PRECEDENCE)
+            builder.start_element('title')
+            builder.start_element('p')
+
+        if self.FB2_TAG:
+            builder.start_element(
+                self.FB2_TAG,
+                #self.get_fb2_attr(builder),
+            )
+
+        self.build_inner(builder)
+        if self.FB2_TAG:
+            builder.end_element()
+        if self.SECTION_PRECEDENCE:
+            builder.end_element()
             builder.end_element()
 
     def epub_build_inner(self, builder):

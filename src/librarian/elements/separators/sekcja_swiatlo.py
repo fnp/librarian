@@ -15,3 +15,7 @@ class SekcjaSwiatlo(WLElement):
 
     def epub_build_inner(self, builder):
         builder.push_text("\u00a0")
+
+    def fb2_build(self, builder):
+        for i in range(3):
+            builder.simple_element('empty-line')

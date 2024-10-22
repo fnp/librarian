@@ -12,3 +12,5 @@ class MottoPodpis(WLElement):
 
     EPUB_TAG = "div"
     EPUB_CLASS = "motto_podpis"
+
+    FB2_TAG = 'p'

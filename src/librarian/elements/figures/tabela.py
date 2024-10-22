@@ -11,7 +11,7 @@ class Tabela(WLElement):
     TXT_TOP_MARGIN = 3
     TXT_BOTTOM_MARGIN = 3
 
-    EPUB_TAG = HTML_TAG = 'table'
+    EPUB_TAG = HTML_TAG = FB2_TAG = 'table'
 
     def get_html_attr(self, builder):
         if self.attrib.get('ramka', '') == '1':

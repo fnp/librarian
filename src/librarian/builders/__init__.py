@@ -9,6 +9,7 @@ from .daisy import DaisyBuilder
 from .epub import EpubBuilder
 from .mobi import MobiBuilder
 from .pdf import PdfBuilder
+from .fb2 import FB2Builder
 
 
 builders = OrderedDict([
@@ -23,4 +24,5 @@ builders = OrderedDict([
     ("epub", EpubBuilder),
     ("mobi", MobiBuilder),
     ("pdf", PdfBuilder),
+    ("fb2", FB2Builder),
 ])

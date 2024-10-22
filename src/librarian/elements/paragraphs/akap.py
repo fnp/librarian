@@ -16,6 +16,8 @@ class Akap(WLElement):
     HTML_TAG = 'p'
     HTML_CLASS = 'wl paragraph'
 
+    FB2_TAG = 'p'
+
     has_visible_numbering = True
 
     @property

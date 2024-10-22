@@ -10,4 +10,6 @@ class Nota(WLElement):
     EPUB_TAG = HTML_TAG = "div"
     EPUB_CLASS = HTML_CLASS = "note"
 
+    FB2_TAG = 'cite'
+
     SUPPRESS_NUMBERING = {'main': 'i'}

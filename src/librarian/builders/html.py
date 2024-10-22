@@ -45,6 +45,11 @@ class TreeBuilder:
         else:
             cursor.text = (cursor.text or '') + text
 
+    def simple_element(self, tag, text='', attrib=None):
+        self.start_element(tag, attrib)
+        self.push_text(text)
+        self.end_element()
+
 
 class HtmlBuilder(TreeBuilder):
     build_method_fn = 'html_build'

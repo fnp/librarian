@@ -77,7 +77,8 @@ RDFNS = XMLNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 DCNS = XMLNamespace('http://purl.org/dc/elements/1.1/')
 XHTMLNS = XMLNamespace("http://www.w3.org/1999/xhtml")
 PLMETNS = XMLNamespace("http://dl.psnc.pl/schemas/plmet/")
-
+FB2NS = XMLNamespace("http://www.gribuser.ru/xml/fictionbook/2.0")
+XLINKNS = XMLNamespace("http://www.w3.org/1999/xlink")
 WLNS = EmptyNamespace()
 
 

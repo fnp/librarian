@@ -13,6 +13,7 @@ class Wers(WLElement):
     EPUB_TAG = HTML_TAG = 'div'
     EPUB_CLASS = 'verse'
     HTML_CLASS = 'wl verse'
+    FB2_TAG = 'v'
 
     NUMBERING = 'main'
 

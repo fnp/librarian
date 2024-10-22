@@ -19,3 +19,8 @@ class SekcjaAsterysk(WLElement):
 
     epub_build_inner = html_build_inner
 
+    def fb2_build(self, builder):
+        builder.simple_element('empty-line')
+        builder.simple_element('p', '*')
+        builder.simple_element('empty-line')
+

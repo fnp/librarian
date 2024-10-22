@@ -6,6 +6,6 @@ from ..base import WLElement
 
 class Wiersz(WLElement):
     CAN_HAVE_TEXT = False
-    EPUB_TAG = HTML_TAG = 'tr'
+    EPUB_TAG = HTML_TAG = FB2_TAG = 'tr'
     TXT_TOP_MARGIN = 1
     TXT_BOTTOM_MARGIN = 1
