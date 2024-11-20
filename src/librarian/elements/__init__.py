@@ -79,6 +79,7 @@ WL_ELEMENTS = {
     "pe": footnotes.PE,
     "pr": footnotes.PR,
     "pt": footnotes.PT,
+    "ptrad": footnotes.PTrad,
 
     "ref": ref.Ref,
 
@@ -127,9 +128,13 @@ WL_ELEMENTS = {
     "rownolegle": tools.Rownolegle,
     "tab": tools.Tab,
 
-    # Section
     "wywiad_pyt": blocks.WywiadPyt,
     "wywiad_odp": blocks.WywiadOdp,
+
+    # Biblical
+    "werset": bible.Werset,
+    "sekcja_petucha": bible.Petucha,
+    "sekcja_stuma": bible.Stuma,
 
     # Inline MathML, should really be namespaced.
     "mrow": styles.MRow,

@@ -134,3 +134,11 @@ class PE(Footnote):
     def qualifier(self):
         _ = self.gettext
         return _("source editor's footnote")
+
+
+class PTrad(Footnote):
+    """Przypis tradycyjny."""
+    @property
+    def qualifier(self):
+        _ = self.gettext
+        return _("traditional footnote")
