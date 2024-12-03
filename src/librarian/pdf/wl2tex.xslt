@@ -348,7 +348,7 @@
 
 
 <xsl:template
-    match="naglowek_osoba|naglowek_podrozdzial|podtytul_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|srodtytul|podtytul_czesc|podtytul_rozdzial|podtytul_akt|podtytul_scena">
+    match="naglowek_osoba|naglowek_podrozdzial|podtytul_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|srodtytul|podtytul_czesc|podtytul_rozdzial|podtytul_akt|podtytul_scena|werset">
   <xsl:choose>
     <xsl:when test="@inline">
       <xsl:apply-templates mode="inline"/>

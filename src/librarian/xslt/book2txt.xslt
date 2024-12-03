@@ -177,7 +177,7 @@
 <xsl:apply-templates mode="inline" />
 </xsl:template>
 
-<xsl:template match="akap|akap_dialog|akap_cd">
+<xsl:template match="akap|akap_dialog|akap_cd|werset">
 <xsl:variable name="content">
     <xsl:apply-templates select="*|text()" mode="inline" />
 </xsl:variable>
@@ -275,7 +275,7 @@
 <!-- = (contain other inline tags and special tags) = -->
 <!-- ================================================ -->
 <!-- Annotations -->
-<xsl:template match="pa|pe|pr|pt" mode="inline" />
+<xsl:template match="pa|pe|pr|pt|ptrad" mode="inline" />
 
 <!-- Other inline tags -->
 <xsl:template match="mat" mode="inline"><xsl:apply-templates mode="inline" /></xsl:template>

@@ -4,7 +4,7 @@
 from lxml import etree
 from . import (blocks, comments, drama, figures, footnotes, front, headers,
                masters, paragraphs, poetry, ref, root, separators, styles, themes,
-               tools, base)
+               tools, base, bible)
 
 
 WL_ELEMENTS = {
@@ -17,6 +17,7 @@ WL_ELEMENTS = {
     "coverLogoUrl": etree.ElementBase,
     "contentWarning": etree.ElementBase,
     "endnotes": etree.ElementBase,
+    "original": etree.ElementBase,
 
     "utwor": root.Utwor,
     "dramat_wierszowany_l": masters.Master,
@@ -131,6 +132,8 @@ WL_ELEMENTS = {
     "wywiad_pyt": blocks.WywiadPyt,
     "wywiad_odp": blocks.WywiadOdp,
 
+    "werset": bible.Werset,
+    
     # Inline MathML, should really be namespaced.
     "mrow": etree.ElementBase,
     "mi": etree.ElementBase,

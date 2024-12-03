@@ -19,6 +19,12 @@
 		<p><xsl:apply-templates mode="inline"/></p>
 	</xsl:template>
 
+	<xsl:template mode="para" match="werset">
+		<!-- paragraphs & similar -->
+
+		<p><xsl:apply-templates mode="inline"/></p>
+	</xsl:template>
+
 	<xsl:template mode="para" match="dlugi_cytat|motto|dedykacja|nota">
 		<cite><xsl:apply-templates mode="para"/></cite>
 	</xsl:template>

@@ -115,6 +115,7 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, ga
         document.clean_ed_note()
         document.clean_ed_note('abstrakt')
         document.fix_pa_akap()
+        document.hebr_protect()
         
         if not options:
             options = {}
@@ -311,7 +312,8 @@ def any_ancestor(element, test):
 
 
 def add_anchors(root):
-    counter = 1
+    link_prefix = "f"
+    counter = {"f": 1}
     visible_counter = 1
     for element in root.iterdescendants():
         def f(e):
@@ -329,18 +331,21 @@ def add_anchors(root):
                 visible_counter = int(element.get('data-start'))
             except ValueError:
                 visible_counter = 1
+            if element.get("data-link"):
+                link_prefix = element.get("data-link")
+                counter[link_prefix] = 1
 
         if any_ancestor(element, f):
             continue
 
         if element.tag == 'div' and 'verse' in element.get('class', ''):
             if visible_counter == 1 or visible_counter % 5 == 0:
-                add_anchor(element, "f%d" % counter, link_text=visible_counter)
-            counter += 1
+                add_anchor(element, "%s%d" % (link_prefix, counter[link_prefix]), link_text=visible_counter)
+            counter[link_prefix] += 1
             visible_counter += 1
         elif 'paragraph' in element.get('class', ''):
-            add_anchor(element, "f%d" % counter, link_text=visible_counter)
-            counter += 1
+            add_anchor(element, "%s%d" % (link_prefix, counter[link_prefix]), link_text=visible_counter)
+            counter[link_prefix] += 1
             visible_counter += 1
 
 

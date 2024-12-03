@@ -5,7 +5,8 @@ from ..base import WLElement
 
 
 class Numeracja(WLElement):
-    pass
+    def build_epub(self, builder):
+        builder.numbering = 0
 
 
 class Rownolegle(WLElement):

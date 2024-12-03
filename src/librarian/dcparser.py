@@ -106,7 +106,7 @@ class DCInfo(type):
 class WorkInfo(metaclass=DCInfo):
     FIELDS = (
         Field(DCNS('creator'), 'authors', Person, salias='author',
-              multiple=True),
+              multiple=True, required=False),
         Field(DCNS('title'), 'title'),
         Field(DCNS('type'), 'type', required=False, multiple=True),
 
@@ -140,6 +140,7 @@ class WorkInfo(metaclass=DCInfo):
         Field(WLNS('contentWarning'), 'content_warnings', multiple=True,
               required=False),
         Field(WLNS('developmentStage'), 'stage', required=False),
+        Field(WLNS('original'), 'original', required=False),
     )
 
     @classmethod

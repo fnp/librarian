@@ -82,6 +82,7 @@ class EpubBuilder(Builder):
     orphans = True
 
     def __init__(self, *args, debug=False, **kwargs):
+        self.numbering = 0
         self.chars = set()
         self.fundr = 0
         self.debug = debug
@@ -288,7 +289,7 @@ class EpubBuilder(Builder):
                 file_as=str(author),
                 uid='creator{}'.format(i)
             )
-        for translator in self.document.meta.translators:
+        for i, translator in enumerate(self.document.meta.translators):
             self.output.add_author(
                 translator.readable(),
                 file_as=str(translator),

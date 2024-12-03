@@ -12,9 +12,9 @@
 	xmlns:l="http://www.w3.org/1999/xlink">
 
 	<!-- footnote body mode -->
-	<xsl:template match="pa|pe|pr|pt" mode="footnotes">
+	<xsl:template match="pa|pe|pr|pt|ptrad" mode="footnotes">
 		<!-- we number them absolutely -->
-		<xsl:variable name="n" select="count(preceding::pa) + count(preceding::pe) + count(preceding::pr) + count(preceding::pt) + 1"/>
+		<xsl:variable name="n" select="count(preceding::pa) + count(preceding::pe) + count(preceding::pr) + count(preceding::pt) + count(preceding::ptrad) + 1"/>
 
 		<xsl:element name="section">
 			<xsl:attribute name="id">fn<xsl:value-of select="$n"/></xsl:attribute>
@@ -31,14 +31,17 @@
                 </xsl:if>
                 <xsl:if test="local-name() = 'pe'">
                     <xsl:text> [przypis edytorski]</xsl:text>
+                </xsl:if>
+                <xsl:if test="local-name() = 'ptrad'">
+                    <xsl:text> [przypis tradycyjny]</xsl:text>
                 </xsl:if></p>
 		</xsl:element>
 	</xsl:template>
 	<xsl:template match="text()" mode="footnotes"/>
 
 	<!-- footnote links -->
-	<xsl:template match="pa|pe|pr|pt" mode="inline">
-		<xsl:variable name="n" select="count(preceding::pa) + count(preceding::pe) + count(preceding::pr) + count(preceding::pt) + 1"/>
+	<xsl:template match="pa|pe|pr|pt|ptrad" mode="inline">
+		<xsl:variable name="n" select="count(preceding::pa) + count(preceding::pe) + count(preceding::pr) + count(preceding::pt) + count(preceding::ptrad) + 1"/>
 		<xsl:element name="a">
 			<xsl:attribute name="type">note</xsl:attribute>
 			<xsl:attribute name="l:href">#fn<xsl:value-of select="$n"/></xsl:attribute>

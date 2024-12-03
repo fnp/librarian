@@ -96,14 +96,14 @@
 <xsl:template name="book-text">
     <div id="book-text">
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
-        <xsl:if test="count(descendant::*[self::pe or self::pa or self::pr or self::pt][not(parent::extra)])">
+        <xsl:if test="count(descendant::*[self::pe or self::pa or self::pr or self::pt or self::ptrad][not(parent::extra)])">
             <div id="footnotes">
                 <h3>Przypisy</h3>
-                <xsl:for-each select="descendant::*[self::pe or self::pa or self::pr or self::pt][not(parent::extra)]">
+                <xsl:for-each select="descendant::*[self::pe or self::pa or self::pr or self::pt or self::ptrad][not(parent::extra)]">
                     <div>
                         <xsl:attribute name="class">fn-<xsl:value-of select="name()" /></xsl:attribute>
                         <a name="{concat('footnote-', generate-id(.))}" />
-                        <a href="{concat('#anchor-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt]) + 1" />]</a>
+                        <a href="{concat('#anchor-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt or self::ptrad]) + 1" />]</a>
                         <xsl:choose>
                             <xsl:when test="count(akap|akap_cd|strofa) = 0">
                                 <p><xsl:apply-templates select="text()|*" mode="inline" />
@@ -111,6 +111,7 @@
                                 <xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if>
                                 <xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if>
                                 <xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if>
+                                <xsl:if test="name()='ptrad'"> [przypis tradycyjny]</xsl:if>
                                 </p>
                             </xsl:when>
                             <xsl:otherwise>
@@ -120,6 +121,7 @@
                                 <xsl:if test="name()='pt'"> [przypis tłumacza]</xsl:if>
                                 <xsl:if test="name()='pr'"> [przypis redakcyjny]</xsl:if>
                                 <xsl:if test="name()='pe'"> [przypis edytorski]</xsl:if>
+                                <xsl:if test="name()='ptrad'"> [przypis tradycyjny]</xsl:if>
                               </p>
                             </xsl:otherwise>
                         </xsl:choose>
@@ -464,9 +466,9 @@
 <!-- = (contain other inline tags and special tags) = -->
 <!-- ================================================ -->
 <!-- Annotations -->
-<xsl:template match="pa|pe|pr|pt" mode="inline">
+<xsl:template match="pa|pe|pr|pt|ptrad" mode="inline">
     <a name="{concat('anchor-', generate-id(.))}" />
-    <a href="{concat('#footnote-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt]) + 1" />]</a>
+    <a href="{concat('#footnote-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt or self::ptrad]) + 1" />]</a>
 </xsl:template>
 
 <xsl:template match="ref" mode="inline">
@@ -487,7 +489,15 @@
 </xsl:template>
 
 <xsl:template match="slowo_obce" mode="inline">
-    <em class="foreign-word"><xsl:apply-templates mode="inline" /></em>
+  <em>
+    <xsl:attribute name="class">
+      <xsl:text>foreign-word</xsl:text>
+      <xsl:if test="@protect">
+	<xsl:text> foreign-word-protected</xsl:text>
+      </xsl:if>
+    </xsl:attribute>
+    <xsl:apply-templates mode="inline" />
+  </em>
 </xsl:template>
 
 <xsl:template match="tytul_dziela" mode="inline">
@@ -625,6 +635,15 @@
 </xsl:template>
 
 
+<xsl:template match="werset">
+    <p class="werset paragraph">
+      <xsl:call-template name="block-args" />
+      <xsl:call-template name="section-anchor"/>
+	<xsl:apply-templates mode="inline" />
+    </p>
+</xsl:template>
+
+
 <!-- ================ -->
 <!-- = IGNORED TAGS = -->
 <!-- ================ -->
@@ -670,6 +689,9 @@
 	<span class="numeracja">
 		<xsl:attribute name="data-start">
 			<xsl:value-of select="@start" />
+		</xsl:attribute>
+		<xsl:attribute name="data-link">
+			<xsl:value-of select="@link" />
 		</xsl:attribute>
 	</span>
 </xsl:template>

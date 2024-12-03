@@ -192,19 +192,26 @@ class WLDocument:
 
         for node in self.edoc.xpath('|'.join(
                 '//%s//%s' % (note_tag, tag) for tag in
-                ('pa', 'pe', 'pr', 'pt', 'begin', 'end', 'motyw'))):
+                ('pa', 'pe', 'pr', 'pt', 'ptrad', 'begin', 'end', 'motyw'))):
             tail = node.tail
             node.clear()
             node.tag = 'span'
             node.tail = tail
 
     def fix_pa_akap(self):
-        for pa in ('pa','pe','pr','pt'):
+        for pa in ('pa','pe','pr','pt', 'ptrad'):
             for akap in self.edoc.findall(f'//{pa}/akap'):
                 akap.getparent().set('blocks', 'true')
                 if not akap.getparent().index(akap):
                     akap.set('inline', 'true')
             
+    def hebr_protect(self):
+        for s in self.edoc.findall('//slowo_obce'):
+            if not s.text and len(s) == 1 and s[0].tag == 'slowo_obce':
+                continue
+            if re.match(r'^[\s\u0590-\u05ff]+$', s.text):
+                s.attrib['protect'] = 'true'
+
     def editors(self):
         """Returns a set of all editors for book and its children.
 

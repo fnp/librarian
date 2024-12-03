@@ -751,6 +751,10 @@ Letters={Uppercase}
 \par{\N#1}%
 }
 
+\newcommand{\werset}[1]{%
+\par{\noindent{\ignorespaces#1\vspace{1em}}}%
+}
+
 \newcommand{\mottopodpis}[1]{%
 \begin{em}%
 \begin{flushright}%

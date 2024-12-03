@@ -134,6 +134,30 @@ class AuthorBox(Widget):
 
             self.textboxes = [author_box]
 
+        elif translators:
+            translators_shortened = False
+            translator_box = None
+            while translator_box is None:
+                translator_str = 'tłum. ' + ', '.join(translators)
+                if translators_shortened:
+                    translator_str += ' i in.'
+                try:
+                    translator_box = TextBox(
+                        self.width,
+                        self.m.leading * 2,
+                        [translator_str],
+                        translator_font,
+                        1,
+                        self.m.leading,
+                        0,
+                        1, 0
+                    )
+                except DoesNotFit:
+                    translators.pop()
+                    translators_shortened = True
+
+            self.textboxes = [translator_box]
+
         if self.textboxes:
             self.margin_top = self.textboxes[0].margin_top
 
