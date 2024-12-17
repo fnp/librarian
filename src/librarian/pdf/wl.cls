@@ -839,7 +839,9 @@ Letters={Uppercase}
 \par{\N#1}%
 }
 \newcommand{\miejscedata}[1]{%
-\par{\raggedright\N#1}%
+\begin{flushright}%
+\par{\N#1}%
+\end{flushright}%
 }
 \newcommand{\nagloweklistu}[1]{%
 \begin{center}%
@@ -847,10 +849,14 @@ Letters={Uppercase}
 \end{center}%
 }
 \newcommand{\pozdrowienie}[1]{%
-\par{\hspace{4em}\N#1}%
+\begin{flushright}%
+\par{\N#1}%
+\end{flushright}%
 }
 \newcommand{\podpis}[1]{%
-\par{\hspace{4em}\N#1}%
+\begin{flushright}%
+\par{\N#1}%
+\end{flushright}%
 }
 
 
