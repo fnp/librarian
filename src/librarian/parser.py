@@ -209,7 +209,7 @@ class WLDocument:
         for s in self.edoc.findall('//slowo_obce'):
             if not s.text and len(s) == 1 and s[0].tag == 'slowo_obce':
                 continue
-            if re.match(r'^[\s\u0590-\u05ff]+$', s.text):
+            if re.match(r'^[\s\u0590-\u05ff]+$', s.text or ''):
                 s.attrib['protect'] = 'true'
 
     def editors(self):

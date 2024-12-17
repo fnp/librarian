@@ -828,6 +828,32 @@ Letters={Uppercase}
 {\scshape \MakeLowercase{#1}}%
 }
 
+
+\newcommand{\list}[1]{%
+\begin{quotation}%
+#1%
+\end{quotation}%
+}
+  
+\newcommand{\adresat}[1]{%
+\par{\N#1}%
+}
+\newcommand{\miejscedata}[1]{%
+\par{\raggedright\N#1}%
+}
+\newcommand{\nagloweklistu}[1]{%
+\begin{center}%
+\par{\N#1}%
+\end{center}%
+}
+\newcommand{\pozdrowienie}[1]{%
+\par{\hspace{4em}\N#1}%
+}
+\newcommand{\podpis}[1]{%
+\par{\hspace{4em}\N#1}%
+}
+
+
 \newcommand{\sekcjaswiatlo}{%
 \vspace{30pt}%
 }

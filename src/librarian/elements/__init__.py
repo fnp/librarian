@@ -4,7 +4,7 @@
 from lxml import etree
 from . import (blocks, comments, drama, figures, footnotes, front, headers,
                masters, paragraphs, poetry, ref, root, separators, styles, themes,
-               tools, base, bible)
+               tools, base, bible, letter)
 
 
 WL_ELEMENTS = {
@@ -133,6 +133,13 @@ WL_ELEMENTS = {
     "wywiad_odp": blocks.WywiadOdp,
 
     "werset": bible.Werset,
+
+    "list": letter.List,
+    "adresat": letter.Adresat,
+    "miejsce_data": letter.MiejsceData,
+    "naglowek_listu": letter.NaglowekListu,
+    "pozdrowienie": letter.Pozdrowienie,
+    "podpis": letter.Podpis,
     
     # Inline MathML, should really be namespaced.
     "mrow": etree.ElementBase,

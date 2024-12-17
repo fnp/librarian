@@ -227,6 +227,15 @@ div.didaskalia
     margin: 0;
     text-indent: 1.2em;
 }
+.paragraph.nagloweklistu {
+    text-align: center;
+    margin: .5em 0;
+    text-indent: 0;
+}
+.paragraph.miejscedata, .paragraph.pozdrowienie, .paragraph.podpis {
+    text-align: right;
+    text-indent: 0;
+}
 
 h1 + .paragraph, h2 + .paragraph
 {

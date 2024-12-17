@@ -187,6 +187,54 @@
 <xsl:value-of select="wl:wrap_words(wl:strip($content), $wrapping)" />
 </xsl:template>
 
+<xsl:template match="list">
+<xsl:text>
+
+
+</xsl:text>
+<xsl:apply-templates />
+<xsl:text>
+
+
+</xsl:text>
+</xsl:template>
+<xsl:template match="adesat">
+  <xsl:text>
+                </xsl:text>
+  <xsl:apply-templates select="*|text()" mode="inline" />
+  <xsl:text>
+</xsl:text>
+</xsl:template>
+<xsl:template match="miejsce_data">
+  <xsl:text>
+                </xsl:text>
+  <xsl:apply-templates select="*|text()" mode="inline" />
+  <xsl:text>
+</xsl:text>
+</xsl:template>
+<xsl:template match="naglowek_listu">
+  <xsl:text>
+
+        </xsl:text>
+  <xsl:apply-templates select="*|text()" mode="inline" />
+  <xsl:text>
+</xsl:text>
+</xsl:template>
+<xsl:template match="pozdrowienie">
+  <xsl:text>
+    </xsl:text>
+  <xsl:apply-templates select="*|text()" mode="inline" />
+  <xsl:text>
+</xsl:text>
+</xsl:template>
+<xsl:template match="podpis">
+  <xsl:text>
+        </xsl:text>
+  <xsl:apply-templates select="*|text()" mode="inline" />
+  <xsl:text>
+</xsl:text>
+</xsl:template>
+
 <xsl:template match="strofa">
 <xsl:text>
 </xsl:text>

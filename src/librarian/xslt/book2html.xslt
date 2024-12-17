@@ -358,6 +358,45 @@
     </p>
 </xsl:template>
 
+<xsl:template match="list">
+    <blockquote class="letter"><xsl:apply-templates /></blockquote>
+</xsl:template>
+<xsl:template match="adresat">
+  <p class="paragraph adresat">
+    <xsl:call-template name="block-args" />
+    <xsl:call-template name="section-anchor"/>
+    <xsl:apply-templates mode="inline" />
+  </p>
+</xsl:template>
+<xsl:template match="miejsce_data">
+  <p class="paragraph miejsce_data">
+    <xsl:call-template name="block-args" />
+    <xsl:call-template name="section-anchor"/>
+    <xsl:apply-templates mode="inline" />
+  </p>
+</xsl:template>
+<xsl:template match="naglowek_listu">
+  <p class="paragraph naglowek_listu">
+    <xsl:call-template name="block-args" />
+    <xsl:call-template name="section-anchor"/>
+    <xsl:apply-templates mode="inline" />
+  </p>
+</xsl:template>
+<xsl:template match="pozdrowienie">
+  <p class="paragraph pozdrowienie">
+    <xsl:call-template name="block-args" />
+    <xsl:call-template name="section-anchor"/>
+    <xsl:apply-templates mode="inline" />
+  </p>
+</xsl:template>
+<xsl:template match="podpis">
+  <p class="paragraph podpis">
+    <xsl:call-template name="block-args" />
+    <xsl:call-template name="section-anchor"/>
+    <xsl:apply-templates mode="inline" />
+  </p>
+</xsl:template>
+
 <xsl:template match="strofa" mode="inline">
     <xsl:apply-templates select="." />
 </xsl:template>
