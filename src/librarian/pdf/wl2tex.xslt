@@ -348,7 +348,7 @@
 
 
 <xsl:template
-    match="naglowek_osoba|naglowek_podrozdzial|podtytul_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|srodtytul|podtytul_czesc|podtytul_rozdzial|podtytul_akt|podtytul_scena|werset|list|adresat|miejsce_data|naglowek_listu|pozdrowienie|podpis">
+    match="naglowek_osoba|naglowek_podrozdzial|podtytul_podrozdzial|miejsce_czas|didaskalia|lista_osoba|akap|akap_dialog|akap_cd|motto_podpis|naglowek_listy|srodtytul|podtytul_czesc|podtytul_rozdzial|podtytul_akt|podtytul_scena|werset|adresat|miejsce_data|naglowek_listu|pozdrowienie|podpis">
   <xsl:choose>
     <xsl:when test="@inline">
       <xsl:apply-templates mode="inline"/>
@@ -363,6 +363,13 @@
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
+
+<xsl:template match="list">
+  <cmd name="wllist">
+    <parm><xsl:apply-templates mode="inline"/></parm>
+  </cmd>
+</xsl:template>
+
 
 <xsl:template match="naglowek_czesc|naglowek_rozdzial|naglowek_akt|naglowek_scena">
     <cmd>

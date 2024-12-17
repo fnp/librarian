@@ -829,7 +829,7 @@ Letters={Uppercase}
 }
 
 
-\newcommand{\list}[1]{%
+\newcommand{\wllist}[1]{%
 \begin{quotation}%
 #1%
 \end{quotation}%
