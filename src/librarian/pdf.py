@@ -463,6 +463,8 @@ def load_including_children(wldoc=None, provider=None, uri=None):
     text = re.sub(r"([\u0400-\u04ff]+)", r"<alien>\1</alien>", text)
     # Geometric shapes.
     text = re.sub(r"([\u25a0-\u25ff]+)", r"<alien>\1</alien>", text)
+    # Hebrew
+    text = re.sub(r"([\u0590-\u05ff]+)", r"<fallback>\1</fallback>", text)
 
     document = WLDocument.from_bytes(text.encode('utf-8'),
                                      parse_dublincore=True, provider=provider)

@@ -173,6 +173,13 @@ Scale=0.85,
 LetterSpace=-1.0
 ] {DejaVu Serif}
 
+\newfontfamily\fallback[
+SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+Numbers=OldStyle,
+Scale=0.85,
+LetterSpace=-1.0
+] {Open Sans}
+
 \ifenablewlfont
 \setmainfont [
 %ExternalLocation,
@@ -788,17 +795,20 @@ Letters={Uppercase}
     \newcommand{\pe}[1]{\NoCaseChange{\endnote{#1 [przypis edytorski]}}}
     \newcommand{\pr}[1]{\NoCaseChange{\endnote{#1 [przypis redakcyjny]}}}
     \newcommand{\pt}[1]{\NoCaseChange{\endnote{#1 [przypis tłumacza]}}}
+    \newcommand{\ptrad}[1]{\NoCaseChange{\endnote{#1 [przypis z tradycji]}}}
   \else
     \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
     \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1 [przypis edytorski]}}}
     \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1 [przypis redakcyjny]}}}
     \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1 [przypis tłumacza]}}}
+    \newcommand{\ptrad}[1]{\NoCaseChange{\footnote{#1 [przypis z tradycji]}}}
   \fi
 \else
   \newcommand{\pa}[1]{}
   \newcommand{\pe}[1]{}
   \newcommand{\pr}[1]{}
   \newcommand{\pt}[1]{}
+  \newcommand{\ptrad}[1]{}
 \fi
 
 \newcommand{\mat}[1]{$#1$}

@@ -448,7 +448,7 @@
 
 
 <xsl:template mode="inline"
-    match="pa|pe|pr|pt|mat|didask_tekst|slowo_obce|wyroznienie|osoba|indeks_dolny|wieksze_odstepy">
+    match="pa|pe|pr|pt|ptrad|mat|didask_tekst|slowo_obce|wyroznienie|osoba|indeks_dolny|wieksze_odstepy">
     <cmd>
         <xsl:attribute name="name">
 		<xsl:value-of select="wl:texcommand(name())" />
@@ -546,7 +546,7 @@
 </xsl:template>
 
 <xsl:template name="strip-for-toc">
-    <xsl:for-each select="./text() | nbsp | dywiz | alien | slowo_obce">
+    <xsl:for-each select="./text() | nbsp | dywiz | alien | fallback | slowo_obce">
         <xsl:choose>
             <xsl:when test="name() = 'nbsp'">
                 <xsl:text> </xsl:text>
@@ -555,6 +555,9 @@
                 <xsl:text>-</xsl:text>
             </xsl:when>
             <xsl:when test="name() = 'alien'">
+                <xsl:apply-templates mode="inline" />
+            </xsl:when>
+            <xsl:when test="name() = 'fallback'">
                 <xsl:apply-templates mode="inline" />
             </xsl:when>
             <xsl:when test="name() = 'slowo_obce'">
@@ -655,6 +658,12 @@
 <xsl:template match="alien" mode="inline">
     <group>
         <cmd name="alien" />
+        <xsl:apply-templates mode="inline" />
+    </group>
+</xsl:template>
+<xsl:template match="fallback" mode="inline">
+    <group>
+        <cmd name="fallback" />
         <xsl:apply-templates mode="inline" />
     </group>
 </xsl:template>
