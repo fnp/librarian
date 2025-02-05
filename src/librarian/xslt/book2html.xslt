@@ -95,6 +95,9 @@
 
 <xsl:template name="book-text">
     <div id="book-text">
+      <xsl:attribute name="lang">
+	<xsl:value-of select="@lang" />
+      </xsl:attribute>
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
         <xsl:if test="count(descendant::*[self::pe or self::pa or self::pr or self::pt or self::ptrad][not(parent::extra)])">
             <div id="footnotes">

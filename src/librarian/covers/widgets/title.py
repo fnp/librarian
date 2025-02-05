@@ -27,6 +27,15 @@ class TitleBox(Widget):
             layout_engine=PIL.ImageFont.Layout.BASIC
         )
         title_font.set_variation_by_axes([800])
+        title_font_2 = PIL.ImageFont.truetype(
+            get_resource('fonts/OpenSans-VariableFont_wdth,wght.ttf'),
+            self.m.font_size,
+            layout_engine=PIL.ImageFont.Layout.BASIC
+        )
+        title_font_2.set_variation_by_axes([700, 700])
+        font_fallbacks = {
+            ('\u0590', '\u05FF'): title_font_2,
+        }
 
         lines = self.lines or (int(self.height * (176/200) / self.m.leading) - 0)
         
@@ -38,7 +47,8 @@ class TitleBox(Widget):
             lines,
             self.m.leading,
             self.m.tracking,
-            .5, .5
+            .5, .5,
+            font_fallbacks=font_fallbacks
         )
         self.margin_top = self.tb.margin_top
             

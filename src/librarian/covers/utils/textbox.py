@@ -3,6 +3,7 @@
 #
 import PIL.Image
 import PIL.ImageDraw
+import bidi
 
 
 def split_words(text):
@@ -17,16 +18,6 @@ def split_words(text):
     return words
 
 
-
-def text_with_tracking(draw, tracking, pos, text, fill=None, font=None):
-    x, y = pos
-    for c in text:
-        # TODO: adjust for kerning?
-        width = font.getlength(c)
-        draw.text((x, y), c, fill=fill, font=font)
-        x += width + tracking
-
-
 class DoesNotFit(Exception):
     pass
 
@@ -34,11 +25,13 @@ class DoesNotFit(Exception):
 class TextBox:
     def __init__(self, width, height, texts,
                  font, lines, leading, tracking,
-                 align_h, align_v):
+                 align_h, align_v,
+                 font_fallbacks=None):
         self.width = width
         self.height = height
         self.texts = texts
         self.font = font
+        self.font_fallbacks = font_fallbacks
         self.lines = lines
         self.leading = leading
         self.tracking = tracking
@@ -58,9 +51,36 @@ class TextBox:
         if self.grouping is None:
             raise DoesNotFit()
 
+    def get_font_for_char(self, c):
+        if self.font_fallbacks:
+            for char_range, font in self.font_fallbacks.items():
+                if char_range[0] <= c <= char_range[1]:
+                    return font
+        return self.font
+
     def get_length(self, text):
-        return self.font.getlength(text) + self.tracking * len(text)
-        
+        text = bidi.get_display(text, base_dir='L')
+        groups = []
+        for c in text:
+            font = self.get_font_for_char(c)
+            if groups and font is groups[-1][0]:
+                groups[-1][1] += c
+            else:
+                groups.append([font, c])
+
+        return sum(
+            font.getlength(t)
+            for (font, t) in groups
+        ) + self.tracking * len(text)
+
+    def text_with_tracking(self, draw, pos, text, fill=None):
+        x, y = pos
+        for c in bidi.get_display(text, base_dir='L'):
+            cfont = self.get_font_for_char(c)
+            width = cfont.getlength(c)
+            draw.text((x, y), c, fill=fill, font=cfont)
+            x += width + self.tracking
+
     def as_pil_image(self, color):
         img = PIL.Image.new('RGBA', (self.width, self.height + 2 * self.margin_top))
         draw = PIL.ImageDraw.ImageDraw(img)
@@ -72,9 +92,9 @@ class TextBox:
             x = (self.width - group[0] + self.tracking) * self.align_h
             self.align_h *  - group[0] / 2
             for s, w in group[1]:
-                text_with_tracking(
-                    draw, self.tracking, (x, y),
-                    w, fill=color, font=self.font
+                self.text_with_tracking(
+                    draw, (x, y),
+                    w, fill=color
                 )
                 x += s + self.glue
             y += self.leading

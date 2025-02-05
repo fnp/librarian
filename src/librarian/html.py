@@ -9,7 +9,7 @@ import urllib.parse
 import urllib.request
 
 from lxml import etree
-from librarian import XHTMLNS, ParseError, OutputFile
+from librarian import XHTMLNS, DCNS, ParseError, OutputFile
 from librarian import functions
 from PIL import Image
 
@@ -111,6 +111,10 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, ga
         if flags:
             for flag in flags:
                 document.edoc.getroot().set(flag, 'yes')
+
+        ltag = document.edoc.find('//' + DCNS('language'))
+        lang = functions.lang_code_3to2(ltag.text) or 'pl'
+        document.edoc.getroot().set('lang', lang)
 
         document.clean_ed_note()
         document.clean_ed_note('abstrakt')
