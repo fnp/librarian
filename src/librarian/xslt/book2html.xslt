@@ -99,7 +99,7 @@
 	<xsl:value-of select="@lang" />
       </xsl:attribute>
         <xsl:apply-templates select="powiesc|opowiadanie|liryka_l|liryka_lp|dramat_wierszowany_l|dramat_wierszowany_lp|dramat_wspolczesny" />
-        <xsl:if test="count(descendant::*[self::pe or self::pa or self::pr or self::pt or self::ptrad][not(parent::extra)])">
+        <xsl:if test="not(@nonotes) and count(descendant::*[self::pe or self::pa or self::pr or self::pt or self::ptrad][not(parent::extra)])">
             <div id="footnotes">
                 <h3>Przypisy</h3>
                 <xsl:for-each select="descendant::*[self::pe or self::pa or self::pr or self::pt or self::ptrad][not(parent::extra)]">
@@ -509,8 +509,10 @@
 <!-- ================================================ -->
 <!-- Annotations -->
 <xsl:template match="pa|pe|pr|pt|ptrad" mode="inline">
+  <xsl:if test="not(//@nonotes)">
     <a name="{concat('anchor-', generate-id(.))}" />
     <a href="{concat('#footnote-', generate-id(.))}" class="annotation">[<xsl:number value="count(preceding::*[self::pa or self::pe or self::pr or self::pt or self::ptrad]) + 1" />]</a>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template match="ref" mode="inline">
