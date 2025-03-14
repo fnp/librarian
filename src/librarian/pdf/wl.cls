@@ -178,7 +178,7 @@ SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
 Numbers=OldStyle,
 Scale=0.85,
 LetterSpace=-1.0
-] {Open Sans}
+] {OpenSans-VariableFont_wdth,wght.ttf}
 
 \ifenablewlfont
 \setmainfont [

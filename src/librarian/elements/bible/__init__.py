@@ -4,6 +4,7 @@ from ..base import WLElement
 class Werset(WLElement):
     STRIP = True
     NUMBERING = 'main'
+    SHOULD_HAVE_ID = True
 
     TXT_TOP_MARGIN = 1
     TXT_BOTTOM_MARGIN = 1

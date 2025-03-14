@@ -404,6 +404,7 @@ def transform(wldoc, verbose=False, save_tex=None, morefloats=None,
         # LaTeX -> PDF
         shutil.copy(get_resource('pdf/wl.cls'), temp)
         shutil.copy(get_resource('res/wl-logo.png'), temp)
+        shutil.copy(get_resource('fonts/OpenSans-VariableFont_wdth,wght.ttf'), temp)
 
         if latex_dir:
             return temp
