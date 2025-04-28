@@ -40,11 +40,11 @@ setup(
         'Pillow>=9.1.0',
         'texml',
         'ebooklib',
-        'aeneas',
         'mutagen',
         'qrcode',
         'requests',
         'fonttools',
+        'python-bidi',
     ],
     entry_points = {
         "console_scripts": [

@@ -136,7 +136,7 @@ class WLElement(etree.ElementBase):
         for i, child in enumerate(self):
             if isinstance(child, WLElement):
                 getattr(child, build_method)(builder)
-            elif getattr(builder, 'debug') and child.tag is etree.Comment:
+            elif getattr(builder, 'debug', False) and child.tag is etree.Comment:
                 builder.process_comment(child)
             if self.CAN_HAVE_TEXT and child.tail:
                 text = self.normalize_text(child.tail, builder)

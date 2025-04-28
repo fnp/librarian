@@ -113,7 +113,10 @@ def transform(wldoc, stylesheet='legacy', options=None, flags=None, css=None, ga
                 document.edoc.getroot().set(flag, 'yes')
 
         ltag = document.edoc.find('//' + DCNS('language'))
-        lang = functions.lang_code_3to2(ltag.text) or 'pl'
+        if ltag is not None:
+            lang = functions.lang_code_3to2(ltag.text)
+        else:
+            lang = 'pl'
         document.edoc.getroot().set('lang', lang)
 
         document.clean_ed_note()

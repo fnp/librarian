@@ -5,8 +5,6 @@ from copy import deepcopy
 import subprocess
 import tempfile
 import zipfile
-from aeneas.executetask import ExecuteTask
-from aeneas.task import Task
 from lxml import etree
 import mutagen
 from librarian import OutputFile, get_resource
@@ -117,7 +115,7 @@ class DaisyBuilder:
                 directory + "book%d.mp3" % i,
             )
 
-            config_string = "task_language=pol|is_text_type=unparsed|is_text_unparsed_id_regex=sec\d+$|is_text_unparsed_id_sort=numeric|os_task_file_format=tab"
+            config_string = "task_language=pol|is_text_type=unparsed|is_text_unparsed_id_regex=sec\\d+$|is_text_unparsed_id_sort=numeric|os_task_file_format=tab"
             task = Task(config_string=config_string)
 
             with tempfile.TemporaryDirectory() as temp:
