@@ -127,6 +127,8 @@ WL_ELEMENTS = {
     "numeracja": tools.Numeracja,
     "rownolegle": tools.Rownolegle,
     "tab": tools.Tab,
+    "audio": tools.Audio,
+    "br": tools.Br,
 
     # Section
     "wywiad_pyt": blocks.WywiadPyt,

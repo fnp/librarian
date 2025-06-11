@@ -448,7 +448,7 @@
 
 
 <xsl:template mode="inline"
-    match="pa|pe|pr|pt|ptrad|mat|didask_tekst|slowo_obce|wyroznienie|osoba|indeks_dolny|wieksze_odstepy">
+    match="pa|pe|pr|pt|ptrad|mat|didask_tekst|slowo_obce|wyroznienie|osoba|indeks_dolny|wieksze_odstepy|br">
     <cmd>
         <xsl:attribute name="name">
 		<xsl:value-of select="wl:texcommand(name())" />

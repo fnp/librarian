@@ -566,6 +566,10 @@
     <em class="person"><xsl:apply-templates mode="inline" /></em>
 </xsl:template>
 
+<xsl:template match="br" mode="inline">
+    <br/>
+</xsl:template>
+
 <xsl:template match="www" mode="inline">
     <a target="_blank">
         <xsl:attribute name="href">

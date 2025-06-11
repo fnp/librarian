@@ -37,3 +37,12 @@ class Tab(WLElement):
 
     get_epub_attr = get_html_attr
 
+
+class Audio(WLElement):
+    def build_epub(self, builder):
+        return
+
+
+class Br(WLElement):
+    TXT_SUFFIX = "\n"
+    EPUB_TAG = HTML_TAG = "br"

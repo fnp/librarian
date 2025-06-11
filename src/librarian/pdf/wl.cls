@@ -837,6 +837,9 @@ Letters={Uppercase}
 \newcommand{\osoba}[1]{%
 {\scshape \MakeLowercase{#1}}%
 }
+\newcommand{\br}[1]{%
+\\
+}
 
 
 \newcommand{\wllist}[1]{%
