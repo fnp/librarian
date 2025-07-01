@@ -596,6 +596,21 @@
 </xsl:template>
 
 
+<xsl:template match="audio">
+  <span>
+    <xsl:attribute name="data-audio-part">
+      <xsl:value-of select="@part"/>
+    </xsl:attribute>
+    <xsl:attribute name="data-audio-ts">
+      <xsl:value-of select="@ts"/>
+    </xsl:attribute>
+  </span>
+</xsl:template>
+<xsl:template match="audio" mode="inline">
+  <xsl:apply-templates select="." />
+</xsl:template>
+
+
 <!-- ================ -->
 <!-- = SPECIAL TAGS = -->
 <!-- ================ -->
