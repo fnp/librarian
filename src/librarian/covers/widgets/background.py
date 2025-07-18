@@ -5,6 +5,7 @@ import io
 import time
 from urllib.request import urlopen
 import PIL.Image
+from PIL import ImageOps
 from .base import Widget
 
 
@@ -27,6 +28,7 @@ class Background(Widget):
                     break
                 
             img = PIL.Image.open(data)
+            img = ImageOps.exif_transpose(img)
 
             if self.crop_to_square:
                 # crop top square.
