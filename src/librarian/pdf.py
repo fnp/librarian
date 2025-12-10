@@ -167,9 +167,9 @@ def hack_motifs(doc):
         while stanza is not None and stanza.tag != 'strofa':
             verse, stanza = stanza, stanza.getparent()
         breaks_before = sum(
-            1 for i in verse.itersiblings('br', preceding=True)
+            1 for i in verse.itersiblings('br_', preceding=True)
         )
-        breaks_after = sum(1 for i in verse.itersiblings('br'))
+        breaks_after = sum(1 for i in verse.itersiblings('br_'))
         if (breaks_before == 0 and breaks_after > 0) or breaks_after == 1:
             move_by = 1
             if breaks_after == 2:
@@ -180,7 +180,7 @@ def hack_motifs(doc):
             moved_motif.tail = None
             moved_motif.set('moved', str(move_by))
 
-            for br in verse.itersiblings('br'):
+            for br in verse.itersiblings('br_'):
                 if move_by > 1:
                     move_by -= 1
                     continue

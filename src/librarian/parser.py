@@ -98,7 +98,7 @@ class WLDocument:
             raise ParseError(e)
 
     def swap_endlines(self):
-        """Converts line breaks in stanzas into <br/> tags."""
+        """Converts line breaks in stanzas into <br_/> tags."""
         # only swap inside stanzas
         for elem in self.edoc.iter('strofa'):
             for child in list(elem):
@@ -106,14 +106,14 @@ class WLDocument:
                     chunks = self.LINE_SWAP_EXPR.split(child.tail)
                     ins_index = elem.index(child) + 1
                     while len(chunks) > 1:
-                        ins = etree.Element('br')
+                        ins = etree.Element('br_')
                         ins.tail = chunks.pop()
                         elem.insert(ins_index, ins)
                     child.tail = chunks.pop(0)
             if elem.text:
                 chunks = self.LINE_SWAP_EXPR.split(elem.text)
                 while len(chunks) > 1:
-                    ins = etree.Element('br')
+                    ins = etree.Element('br_')
                     ins.tail = chunks.pop()
                     elem.insert(0, ins)
                 elem.text = chunks.pop(0)

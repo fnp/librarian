@@ -409,18 +409,18 @@
     <xsl:call-template name="block-args" />
       <xsl:call-template name="section-anchor"/>
         <xsl:choose>
-            <xsl:when test="count(br) > 0">
+            <xsl:when test="count(br_) > 0">
                 <xsl:call-template name="verse">
-                    <xsl:with-param name="verse-content" select="br[1]/preceding-sibling::text() | br[1]/preceding-sibling::node()" />
-                    <xsl:with-param name="verse-type" select="br[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej' or name() = 'wers_srodek'][1]" />
+                    <xsl:with-param name="verse-content" select="br_[1]/preceding-sibling::text() | br_[1]/preceding-sibling::node()" />
+                    <xsl:with-param name="verse-type" select="br_[1]/preceding-sibling::*[name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej' or name() = 'wers_srodek'][1]" />
                 </xsl:call-template>
-                <xsl:for-each select="br">		
-        			<!-- Each BR tag "consumes" text after it -->
-                    <xsl:variable name="lnum" select="count(preceding-sibling::br)" />
+                <xsl:for-each select="br_">
+                  <!-- Each BR_ tag "consumes" text after it -->
+                    <xsl:variable name="lnum" select="count(preceding-sibling::br_)" />
                     <xsl:call-template name="verse">
                         <xsl:with-param name="verse-content"
-                            select="following-sibling::text()[count(preceding-sibling::br) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br) = $lnum+1]" />
-                        <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej' or name() = 'wers_srodek')][1]" />
+                            select="following-sibling::text()[count(preceding-sibling::br_) = $lnum+1] | following-sibling::node()[count(preceding-sibling::br_) = $lnum+1]" />
+                        <xsl:with-param name="verse-type" select="following-sibling::*[count(preceding-sibling::br_) = $lnum+1 and (name() = 'wers_wciety' or name() = 'wers_akap' or name() = 'wers_cd' or name() = 'wers_do_prawej' or name() = 'wers_srodek')][1]" />
                     </xsl:call-template>
                 </xsl:for-each>
             </xsl:when>
