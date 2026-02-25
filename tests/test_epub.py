@@ -38,7 +38,7 @@ class EpubTests(unittest.TestCase):
         # Check that we have a valid EPUB.
         self.assertEqual(
             subprocess.call([
-                'epubcheck', '-quiet', epub_file.get_filename()
+                'java', '-jar', '/usr/bin/epubcheck', '-quiet', epub_file.get_filename()
             ]),
             0
         )

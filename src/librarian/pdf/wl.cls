@@ -167,14 +167,14 @@
 %\fi
 
 \newfontfamily\alien[
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+SmallCapsFeatures = {Letters=SmallCaps},
 Numbers=OldStyle,
 Scale=0.85,
 LetterSpace=-1.0
 ] {DejaVu Serif}
 
 \newfontfamily\fallback[
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+SmallCapsFeatures = {Letters=SmallCaps},
 Numbers=OldStyle,
 Scale=0.85,
 LetterSpace=-1.0
@@ -182,39 +182,16 @@ LetterSpace=-1.0
 
 \ifenablewlfont
 \setmainfont [
-%ExternalLocation,
 UprightFont = JunicodeWL-Regular,
 ItalicFont = JunicodeWL-Italic,
 BoldFont = JunicodeWL-Regular,
 BoldItalicFont = JunicodeWL-Italic,
 SmallCapsFont = JunicodeWL-Regular,
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+SmallCapsFeatures = {Letters=SmallCaps},
 Numbers=OldStyle,
 Scale=1.04,
 LetterSpace=-1.0
 ] {JunicodeWL}
-
-%\setmainfont [
-%UprightFont = NotoSerif-Regular,
-%ItalicFont = NotoSerif-Italic,
-%BoldFont = NotoSerif-Regular,
-%BoldItalicFont = NotoSerif-Italic,
-%SmallCapsFont = NotoSerif-Regular,
-%SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-%Scale=1.04,
-%LetterSpace=-1.0
-%] {NotoSerif}
-
-%\setsansfont [
-%UprightFont = NotoSansDisplay-Regular,
-%ItalicFont = NotoSansDisplay-Italic,
-%BoldFont = NotoSansDisplay-Regular,
-%BoldItalicFont = NotoSansDisplay-Italic,
-%SmallCapsFont = NotoSansDisplay-Regular,
-%SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-%Scale=1.04,
-%LetterSpace=-1.0
-%] {NotoSansDisplay}
 
 \defaultfontfeatures{
 SizeFeatures={
@@ -225,13 +202,13 @@ SizeFeatures={
 }
 
 \renewcommand{\textsc}[1]{%
-{\addfontfeature{
+{\scshape
+\addfontfeature{
 SizeFeatures={
   {Size={-10.5}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
   {Size={10.5-12}, Scale=1.2, FakeStretch=1.02, LetterSpace=8.0 },
   {Size={12-}, FakeStretch=1.0, LetterSpace=8.0 }
 },
-Letters={SmallCaps,UppercaseSmallCaps}
 }
 #1}
 }
@@ -459,7 +436,7 @@ SizeFeatures={
   {Size={10.5-12}, Scale=1.2, FakeStretch=1.00, LetterSpace=8.0 },
   {Size={12-}, FakeStretch=2.0, LetterSpace=8.0 }
 },
-Letters={Uppercase}
+RawFeature=+case
 }
 \iflargefont
 \MakeUppercase{\scalefont{2}#1}

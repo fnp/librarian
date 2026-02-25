@@ -8,6 +8,7 @@ locale:
 
 
 build:
-	python setup.py sdist
-	mv dist/`python setup.py --fullname`.tar.gz dist/librarian.tar.gz
 	docker build -t wl/librarian:latest .
+
+build_test:
+	docker build -t wl/librarian-test:latest --target test .

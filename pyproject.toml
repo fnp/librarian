@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=62.6", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "librarian"
+version = "26.2"
+description = "Converter from WolneLektury.pl XML-based language to XHTML, TXT and other formats"
+authors = [
+    {name = "Fundacja Wolne Lektury"}
+]
+maintainers = [
+    {name = "Radek Czajka", email = "radekczajka@wolnelektury.pl"}
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+Homepage = "http://github.com/fnp/librarian"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.scripts]
+librarian = "librarian.command_line:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+librarian = [
+    "xslt/*.xslt",
+    "pdf/*",
+    "fb2/*",
+    "fonts/*",
+    "res/**",
+    "locale/**",
+]
+
+[tool.setuptools]
+script-files = [
+    "scripts/book2html",
+    "scripts/book2txt",
+    "scripts/book2pdf",
+    "scripts/book2fb2",
+    "scripts/book2cover"
+]
