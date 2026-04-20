@@ -237,12 +237,13 @@ class WLElement(etree.ElementBase):
             builder.end_element()
 
     def validate(self):
+        from librarian.elements.comments import Abstrakt
         from librarian.elements.masters import Master
         from librarian.elements.blocks import DlugiCytat, PoezjaCyt
         from librarian.elements.footnotes import Footnote
 
         if self.SECTION_PRECEDENCE:
-            assert isinstance(self.getparent(), (Master, DlugiCytat, PoezjaCyt, Footnote)), \
+            assert isinstance(self.getparent(), (Master, DlugiCytat, PoezjaCyt, Footnote, Abstrakt)), \
                     'Header {} inside a <{}> instead of a master.'.format(
                             etree.tostring(self, encoding='unicode'), self.getparent().tag)
 
