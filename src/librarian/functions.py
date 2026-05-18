@@ -154,3 +154,15 @@ def reg_mathml_epub(output):
         return name
     mathml.count = 0
     _register_function(mathml)
+
+    
+def reg_getratio():
+    def getratio(context, text):
+        if isinstance(text, list):
+            text = ''.join(text)
+        m = re.match(r'(\d+)%', text)
+        if m is not None:
+            return int(m.group(1)) / 100
+        else:
+            return 1
+    _register_function(getratio)

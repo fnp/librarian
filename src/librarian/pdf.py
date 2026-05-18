@@ -37,6 +37,7 @@ functions.reg_strip()
 functions.reg_starts_white()
 functions.reg_ends_white()
 functions.reg_texcommand()
+functions.reg_getratio()
 
 STYLESHEETS = {
     'wl2tex': 'pdf/wl2tex.xslt',

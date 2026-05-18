@@ -880,8 +880,8 @@ RawFeature=+case
 \fi
 }
 
-\newcommand{\ilustr}[2]{%
+\newcommand{\ilustr}[3]{%
 \vspace{1em}%
-\par{\noindent\includegraphics[width=\linewidth]{#1}}%
+\par{\noindent\includegraphics[width=#3\linewidth]{#1}}%
 \vspace{1em}
 }

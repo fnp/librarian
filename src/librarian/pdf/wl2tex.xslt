@@ -312,6 +312,7 @@
       <cmd name="ilustr">
         <parm><xsl:value-of select="@src" /></parm>
         <parm><xsl:value-of select="@alt" /></parm>
+        <parm><xsl:value-of select="wl:getratio(@szer)" /></parm>
       </cmd>
     </xsl:otherwise>
   </xsl:choose>
