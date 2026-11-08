@@ -1,0 +1,10 @@
+lxml>=2.2,<5.0
+Pillow>=9.1.0
+texml
+ebooklib==0.19
+mutagen
+qrcode
+requests
+fonttools
+python-bidi
+drawsvg
