@@ -1,4 +1,4 @@
-.PHONY: build
+.PHONY: build build_test test
 
 
 locale:
@@ -11,4 +11,11 @@ build:
 	docker build -t wl/librarian:latest .
 
 build_test:
-	docker build -t wl/librarian-test:latest --target test .
+	docker build -t wl/librarian-test:latest --target test \
+		--build-arg UID=$$(id -u) --build-arg GID=$$(id -g) .
+
+# Runs tests on the mounted working tree. Pass tox args via ARGS, e.g.:
+#   make test ARGS="-e py312"
+test:
+	docker run --rm -v "$(CURDIR)":/src -e UV_CACHE_DIR=/src/.tox/.uv-cache \
+		wl/librarian-test:latest tox $(ARGS)

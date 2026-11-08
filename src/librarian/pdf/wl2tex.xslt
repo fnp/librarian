@@ -10,7 +10,7 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
 
-<xsl:output encoding="utf-8" indent="yes" version="2.0" />
+<xsl:output encoding="utf-8" indent="yes" />
 
 <xsl:template match="utwor">
     <TeXML xmlns="http://getfo.sourceforge.net/texml/ns1">

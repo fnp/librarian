@@ -28,36 +28,22 @@ RUN fc-cache
 
 
 
-FROM base AS pythons
+FROM base AS test
 
 USER root
 
 RUN  apt-get update && apt-get install -y \
      epubcheck \
-     pyenv \
      && rm -rf /var/lib/apt/lists/*
 
 USER app
 
-RUN pyenv install 3.11.11
-RUN pyenv install 3.10.16
-RUN pyenv install 3.9.21
-RUN pyenv install 3.8.20
+# tox-uv makes tox create envs with uv; uv provides the other Pythons
+# (3.12 is the system one). Preinstall them so runs don't download them.
+RUN pip install tox tox-uv
+RUN uv python install 3.8 3.9 3.10 3.11
 
-RUN pyenv global system 3.11.11 3.10.16 3.9.21 3.8.20
-ENV PATH="/app/.pyenv/shims:$PATH"
-
-
-FROM pythons AS test
-
-
-USER app
-WORKDIR /app
-
-RUN pip install tox
-
-COPY --chown=app:app . .
-
+WORKDIR /src
 CMD ["tox"]
 
 
